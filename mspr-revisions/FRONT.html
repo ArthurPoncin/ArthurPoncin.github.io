@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>FRONT — Révisions MSPR</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a href="#fiche-de-revision--mspr-front"
+id="toc-fiche-de-revision--mspr-front">Fiche de revision :
+MSPR-FRONT</a>
+<ul>
+<li><a href="#0-vocabulaire-a-connaitre-avant-de-lire"
+id="toc-0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#1-tldr" id="toc-1-tldr">1. TL;DR</a></li>
+<li><a href="#2-flux-dauthentification-cote-front"
+id="toc-2-flux-dauthentification-cote-front">2. Flux d'authentification
+cote front</a></li>
+<li><a href="#3-stack-technique" id="toc-3-stack-technique">3. Stack
+technique</a></li>
+<li><a href="#4-structure-du-projet" id="toc-4-structure-du-projet">4.
+Structure du projet</a></li>
+<li><a href="#5-points-techniques-importants"
+id="toc-5-points-techniques-importants">5. Points techniques
+importants</a></li>
+<li><a href="#6-code-essentiel-a-savoir-expliquer-au-jury"
+id="toc-6-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</a></li>
+<li><a href="#7-questions-probables-du-jury"
+id="toc-7-questions-probables-du-jury">7. Questions probables du
+jury</a></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1 id="fiche-de-revision--mspr-front">Fiche de revision :
+MSPR-FRONT</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR1. Objectif : comprendre
+le role du dashboard, l'organisation Vue 3 et les points techniques
+importants, sans rentrer dans le detail des templates.</p>
+</blockquote>
+<hr />
+<h2 id="0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<table>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SPA</strong> (Single Page Application)</td>
+<td>Application web ou la navigation se fait sans recharger la page. Le
+routeur change le contenu dynamiquement.</td>
+</tr>
+<tr>
+<td><strong>Vue 3</strong></td>
+<td>Framework JavaScript front-end, concurrent de React et Angular.
+Utilise un systeme de <strong>composants reactifs</strong>.</td>
+</tr>
+<tr>
+<td><strong>SFC</strong> (Single File Component)</td>
+<td>Fichier <code>.vue</code> qui regroupe dans un seul fichier le
+template HTML, la logique TypeScript (<code>&lt;script&gt;</code>) et le
+style CSS (<code>&lt;style scoped&gt;</code>).</td>
+</tr>
+<tr>
+<td><strong>Composition API</strong></td>
+<td>Facon moderne d'ecrire des composants Vue : la logique est dans une
+fonction <code>setup()</code> (ou <code>&lt;script setup&gt;</code>)
+avec des variables reactives (<code>ref()</code>,
+<code>computed()</code>). Remplace l'ancienne "Options API".</td>
+</tr>
+<tr>
+<td><strong>Reactivite</strong></td>
+<td>Principe Vue : quand une variable reactive change, la vue se re-rend
+automatiquement. Pas de <code>setState()</code> manuel.</td>
+</tr>
+<tr>
+<td><strong>Pinia</strong></td>
+<td>Gestionnaire d'etat global pour Vue 3. Permet de partager des
+donnees entre plusieurs composants sans les passer en props. Successeur
+officiel de Vuex.</td>
+</tr>
+<tr>
+<td><strong>Store</strong></td>
+<td>Module Pinia qui expose un etat + des actions (ex :
+<code>authStore</code>, <code>dataQualityStore</code>).</td>
+</tr>
+<tr>
+<td><strong>Vue Router</strong></td>
+<td>Bibliotheque officielle de routage Vue. Mappe une URL a un composant
+de vue.</td>
+</tr>
+<tr>
+<td><strong>Guard de route</strong></td>
+<td>Fonction executee avant ou apres une navigation (ex : rediriger vers
+<code>/login</code> si pas authentifie).</td>
+</tr>
+<tr>
+<td><strong>Vite</strong></td>
+<td>Outil de build et serveur de dev ultra-rapide. Remplace Webpack.
+Gere le hot reload, le bundling, TypeScript.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-tldr">1. TL;DR</h2>
+<p><strong>MSPR-FRONT</strong> est le <strong>dashboard
+d'administration</strong> du projet, destine aux admins et data
+scientists (pas aux utilisateurs finaux). Il permet de :</p>
+<ul>
+<li>Visualiser les metriques de qualite des donnees (completude, taux de
+rejet, anomalies)</li>
+<li>Consulter le rapport ETL et les stats analytiques</li>
+<li>Nettoyer et editer les anomalies detectees</li>
+<li>Valider ou rejeter les enregistrements en attente</li>
+<li>Exporter les donnees en JSON ou CSV</li>
+</ul>
+<p><strong>Stack</strong> :</p>
+<ul>
+<li>Vue 3.5 + Composition API + <code>&lt;script setup&gt;</code></li>
+<li>TypeScript 6</li>
+<li>Vite 8 (bundler + dev server)</li>
+<li>Vue Router 5</li>
+<li>Pinia 3 (state global)</li>
+<li>Chart.js 4.5 (visualisations)</li>
+<li>Vitest 4 (tests)</li>
+<li>ESLint + oxlint + Prettier</li>
+</ul>
+<p><strong>Port dev</strong> : 5173. <strong>Communique avec</strong> :
+MSPR-AUTH (<code>:3000</code>) pour l'authentification et MSPR-API
+(<code>:8080/api</code>) pour les donnees metier.</p>
+<hr />
+<h2 id="2-flux-dauthentification-cote-front">2. Flux d'authentification
+cote front</h2>
+<pre class="mermaid"><code>sequenceDiagram
+    participant U as User
+    participant V as AuthView
+    participant S as authStore (Pinia)
+    participant API as MSPR-AUTH
+    participant LS as localStorage
+
+    U-&gt;&gt;V: Saisit email + mot de passe
+    V-&gt;&gt;S: login(email, password)
+    S-&gt;&gt;API: POST /api/auth/sign-in/email&lt;br/&gt;credentials: &#39;include&#39;
+    API--&gt;&gt;S: Cookie de session + { user }
+    S-&gt;&gt;API: GET /api/jwt&lt;br/&gt;credentials: &#39;include&#39;
+    API--&gt;&gt;S: { token: &quot;eyJ...&quot; }
+    S-&gt;&gt;LS: setSession({ user, tokens })
+    S--&gt;&gt;V: resolved
+    V-&gt;&gt;V: router.push(&#39;/dashboard&#39;)
+
+    Note over LS: Session persistee&lt;br/&gt;clef : healthai.auth.session
+
+    U-&gt;&gt;V: Navigation vers /dashboard
+    V-&gt;&gt;S: beforeEach guard
+    S-&gt;&gt;LS: getSession()
+    LS--&gt;&gt;S: { user, tokens }
+    S--&gt;&gt;V: isAuthenticated = true</code></pre>
+<p><strong>A retenir</strong> :</p>
+<ul>
+<li>Le front tient <strong>une seule source de verite</strong> : le
+<code>localStorage</code> (via <code>authSessionManager</code>).</li>
+<li>L'appel <code>GET /api/jwt</code> recupere un JWT signe en HS512 que
+l'API Spring Boot saura valider.</li>
+<li>Le <strong>cookie</strong> better-auth reste dans le navigateur pour
+pouvoir rebootstraper si le localStorage est vide (ex : apres
+verification email, Vue vient d'etre rechargee).</li>
+</ul>
+<hr />
+<h2 id="3-stack-technique">3. Stack technique</h2>
+<table>
+<thead>
+<tr>
+<th>Composant</th>
+<th>Role</th>
+<th>Pourquoi ce choix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Vue 3.5</strong></td>
+<td>Framework UI</td>
+<td>Alternative a React, plus pedagogique : template HTML classique,
+reactivite explicite, moins de "magie". Ecosysteme francais fort
+(Quasar, Nuxt).</td>
+</tr>
+<tr>
+<td><strong>Composition API +
+<code>&lt;script setup&gt;</code></strong></td>
+<td>Style de composant</td>
+<td>Plus concis que l'Options API. Meilleure inference TypeScript.
+Reutilisation de logique via composables. Standard de fait en Vue
+3.</td>
+</tr>
+<tr>
+<td><strong>TypeScript 6</strong></td>
+<td>Typage statique</td>
+<td>Evite les bugs bas niveau (typo de propriete, undefined).
+Auto-completion IDE excellente. Types partages avec le backend pour les
+DTOs.</td>
+</tr>
+<tr>
+<td><strong>Vite 8</strong></td>
+<td>Bundler / dev server</td>
+<td>10x plus rapide que Webpack au demarrage grace aux ES modules
+natifs. Hot Module Replacement instantane. Standard Vue 3.</td>
+</tr>
+<tr>
+<td><strong>Vue Router 5</strong></td>
+<td>Routage SPA</td>
+<td>Bibliotheque officielle. Supporte le code splitting, les guards, les
+meta.</td>
+</tr>
+<tr>
+<td><strong>Pinia 3</strong></td>
+<td>State management</td>
+<td>Successeur officiel de Vuex (plus simple, mieux type, support
+Composition API). Modulaire : un fichier par store.</td>
+</tr>
+<tr>
+<td><strong>Chart.js 4.5</strong></td>
+<td>Visualisations</td>
+<td>Tres complet (bar, line, donut, radar) et performant pour les
+tailles de dataset du dashboard. Alternative plus lourde : D3.js.</td>
+</tr>
+<tr>
+<td><strong>Vitest 4</strong></td>
+<td>Tests</td>
+<td>Compatible API Jest mais base sur Vite (partage la config). Tres
+rapide.</td>
+</tr>
+<tr>
+<td><strong>oxlint + ESLint</strong></td>
+<td>Lint</td>
+<td><strong>oxlint</strong> (Rust) est ultra-rapide pour les regles de
+base, <strong>ESLint</strong> complete avec les regles Vue/TypeScript
+specifiques. Les deux tournent en parallele.</td>
+</tr>
+<tr>
+<td><strong>Prettier</strong></td>
+<td>Formatage</td>
+<td>Standard industrie. Zero discussion sur le style.</td>
+</tr>
+<tr>
+<td><strong>FontAwesome</strong></td>
+<td>Icones</td>
+<td>Librairie d'icones populaire, tree-shaking natif (on importe
+seulement les icones utilisees).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-structure-du-projet">4. Structure du projet</h2>
+<pre><code>src/
+  views/                    # Les 4 vues (une par route)
+    AuthView.vue            # /       (login + register + forgot-password)
+    DashboardView.vue       # /dashboard
+    DataCleaningView.vue    # /data-cleaning
+    ValidationView.vue      # /validation
+
+  components/
+    common/                 # Composants generiques reutilisables
+      BaseModal.vue         # Modal de base (teleport, overlay, close)
+      ConfirmDialog.vue     # Dialogue de confirmation (oui/non)
+      MetricsCard.vue       # Carte de KPI avec animation de valeur
+
+    dashboard/              # Composants specifiques au dashboard
+      BusinessKpisSection.vue
+      DataFlowStatus.vue
+      DataQualitySection.vue
+      EtlReportSection.vue
+      NutritionActivitySection.vue
+      UserProgressionSection.vue
+
+  stores/                   # 3 stores Pinia (state global)
+    auth.ts                 # Session utilisateur + login/logout/register
+    dataQuality.ts          # Metriques, anomalies, flux, analytics, rapport ETL
+    validation.ts           # Workflow de validation des enregistrements
+
+  services/                 # Clients HTTP (fetch)
+    api.ts                  # Client REST vers MSPR-API (ajoute le JWT auto)
+    auth.ts                 # Client vers MSPR-AUTH + gestion localStorage
+
+  router/
+    index.ts                # 4 routes + guards (requireAuth, guestOnly)
+
+  types/
+    index.ts                # Toutes les interfaces TypeScript (DataQualityMetrics, AuthSession, ...)
+
+  utils/
+    helpers.ts              # Formatters (date, nombre, pourcentage) + traductions FR + export</code></pre>
+<p><strong>Principe</strong> : <strong>separation stricte par
+responsabilite</strong>. Un composant (<code>.vue</code>) ne fait jamais
+d'appel HTTP direct, il passe toujours par un store, qui lui-meme passe
+par un service.</p>
+<hr />
+<h2 id="5-points-techniques-importants">5. Points techniques
+importants</h2>
+<h3 id="51-composition-api-avec-script-setup">5.1 Composition API avec
+<code>&lt;script setup&gt;</code></h3>
+<p>Exemple minimal d'un composant :</p>
+<pre class="vue"><code>&lt;script setup lang=&quot;ts&quot;&gt;
+import { ref, computed } from &#39;vue&#39;
+
+interface Props {
+  title: string
+  value: number
+}
+const props = defineProps&lt;Props&gt;()
+
+const count = ref(0)
+const doubled = computed(() =&gt; count.value * 2)
+
+function increment() {
+  count.value++
+}
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;h1&gt;{{ props.title }}&lt;/h1&gt;
+  &lt;button @click=&quot;increment&quot;&gt;{{ count }} / {{ doubled }}&lt;/button&gt;
+&lt;/template&gt;</code></pre>
+<p>Points cle :</p>
+<ul>
+<li><strong>Pas de <code>return {}</code> explicite</strong> : tout ce
+qui est declare dans <code>&lt;script setup&gt;</code> est disponible
+dans le template automatiquement.</li>
+<li><code>ref(0)</code> cree une valeur <strong>reactive</strong> :
+<code>count.value++</code> declenche un re-render automatiquement.</li>
+<li><code>computed(() =&gt; ...)</code> : valeur derivee qui se met a
+jour quand ses dependances changent.</li>
+<li><code>defineProps&lt;Props&gt;()</code> : genere le typage des props
+a partir de l'interface TypeScript.</li>
+</ul>
+<h3 id="52-stores-pinia-avec-le-style-composition">5.2 Stores Pinia avec
+le style composition</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">const</span> useAuthStore <span class="op">=</span> <span class="fu">defineStore</span>(<span class="st">&#39;auth&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// State = ref()</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> session <span class="op">=</span> <span class="fu">ref</span><span class="op">&lt;</span>AuthSession <span class="op">|</span> <span class="dt">null</span><span class="op">&gt;</span>(<span class="kw">null</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> loading <span class="op">=</span> <span class="fu">ref</span>(<span class="kw">false</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Getters = computed()</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> isAuthenticated <span class="op">=</span> <span class="fu">computed</span>(() <span class="kw">=&gt;</span> session<span class="op">.</span><span class="at">value</span> <span class="op">!==</span> <span class="kw">null</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Actions = fonctions async</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">async</span> <span class="kw">function</span> <span class="fu">login</span>(email<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> password<span class="op">:</span> <span class="dt">string</span>) {</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    loading<span class="op">.</span><span class="at">value</span> <span class="op">=</span> <span class="kw">true</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> {</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      session<span class="op">.</span><span class="at">value</span> <span class="op">=</span> <span class="cf">await</span> authApi<span class="op">.</span><span class="fu">login</span>(email<span class="op">,</span> password)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">finally</span> {</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      loading<span class="op">.</span><span class="at">value</span> <span class="op">=</span> <span class="kw">false</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { session<span class="op">,</span> loading<span class="op">,</span> isAuthenticated<span class="op">,</span> login }</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<p><strong>Pattern "setup store"</strong> (equivalent de
+<code>&lt;script setup&gt;</code> pour un store) :</p>
+<ul>
+<li>State, getters, actions definis comme des <code>ref</code>,
+<code>computed</code>, fonctions.</li>
+<li>On renvoie ce qui doit etre expose.</li>
+<li>Dans n'importe quel composant :
+<code>const auth = useAuthStore(); auth.login(...)</code>.</li>
+</ul>
+<p><strong>Avantages vs Vuex</strong> : pas de mutations, pas de modules
+imbriques, inference TypeScript parfaite.</p>
+<h3 id="53-vue-router-avec-guards-de-navigation">5.3 Vue Router avec
+guards de navigation</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> router <span class="op">=</span> <span class="fu">createRouter</span>({</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  history<span class="op">:</span> <span class="fu">createWebHistory</span>(import<span class="op">.</span><span class="at">meta</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">BASE_URL</span>)<span class="op">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  routes<span class="op">:</span> [</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    { path<span class="op">:</span> <span class="st">&#39;/&#39;</span><span class="op">,</span> component<span class="op">:</span> AuthView<span class="op">,</span> meta<span class="op">:</span> { guestOnly<span class="op">:</span> <span class="kw">true</span> } }<span class="op">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    { path<span class="op">:</span> <span class="st">&#39;/dashboard&#39;</span><span class="op">,</span> component<span class="op">:</span> DashboardView<span class="op">,</span> meta<span class="op">:</span> { requireAuth<span class="op">:</span> <span class="kw">true</span> } }<span class="op">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    { path<span class="op">:</span> <span class="st">&#39;/data-cleaning&#39;</span><span class="op">,</span> component<span class="op">:</span> DataCleaningView<span class="op">,</span> meta<span class="op">:</span> { requireAuth<span class="op">:</span> <span class="kw">true</span> } }<span class="op">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    { path<span class="op">:</span> <span class="st">&#39;/validation&#39;</span><span class="op">,</span> component<span class="op">:</span> ValidationView<span class="op">,</span> meta<span class="op">:</span> { requireAuth<span class="op">:</span> <span class="kw">true</span> } }<span class="op">,</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    { path<span class="op">:</span> <span class="st">&#39;/:pathMatch(.*)*&#39;</span><span class="op">,</span> redirect<span class="op">:</span> <span class="st">&#39;/&#39;</span> }<span class="op">,</span>  <span class="co">// 404 -&gt; home</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>router<span class="op">.</span><span class="fu">beforeEach</span>(<span class="kw">async</span> (to) <span class="kw">=&gt;</span> {</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> isAuthenticated <span class="op">=</span> authSessionManager<span class="op">.</span><span class="fu">hasValidSession</span>()</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (isAuthenticated) {</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (to<span class="op">.</span><span class="at">meta</span><span class="op">.</span><span class="at">guestOnly</span>) <span class="cf">return</span> { name<span class="op">:</span> <span class="st">&#39;dashboard&#39;</span> }</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">true</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Tentative de bootstrap depuis le cookie Better Auth</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (to<span class="op">.</span><span class="at">meta</span><span class="op">.</span><span class="at">requireAuth</span> <span class="op">||</span> to<span class="op">.</span><span class="at">meta</span><span class="op">.</span><span class="at">guestOnly</span>) {</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> bootstrapped <span class="op">=</span> <span class="cf">await</span> <span class="fu">useAuthStore</span>()<span class="op">.</span><span class="fu">bootstrapFromSession</span>()</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (bootstrapped) {</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (to<span class="op">.</span><span class="at">meta</span><span class="op">.</span><span class="at">guestOnly</span>) <span class="cf">return</span> { name<span class="op">:</span> <span class="st">&#39;dashboard&#39;</span> }</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="kw">true</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (to<span class="op">.</span><span class="at">meta</span><span class="op">.</span><span class="at">requireAuth</span>) <span class="cf">return</span> { name<span class="op">:</span> <span class="st">&#39;auth&#39;</span> }</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">true</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<p><strong>Pattern des meta</strong> : chaque route porte des
+metadonnees (<code>requireAuth</code>, <code>guestOnly</code>) que le
+guard consulte. Evite de dupliquer la logique d'auth dans chaque
+composant.</p>
+<p><strong>Bootstrap depuis cookie</strong> : cas particulier
+post-verification email. Better Auth a cree un cookie de session cote
+navigateur, mais le <code>localStorage</code> est vide (car l'email de
+verification ouvre le lien dans un nouvel onglet). Le guard appelle
+<code>/api/session</code> avec <code>credentials: include</code> pour
+recuperer l'utilisateur depuis le cookie et recreer une session
+locale.</p>
+<h3 id="54-client-api-avec-injection-automatique-du-jwt">5.4 Client API
+avec injection automatique du JWT</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ApiClient {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> <span class="kw">async</span> <span class="fu">request</span><span class="op">&lt;</span>T<span class="op">&gt;</span>(endpoint<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> options<span class="op">:</span> RequestInit <span class="op">=</span> {})<span class="op">:</span> <span class="bu">Promise</span><span class="op">&lt;</span>T<span class="op">&gt;</span> {</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> url <span class="op">=</span> <span class="vs">`</span><span class="sc">${</span>API_BASE_URL<span class="sc">}${</span>endpoint<span class="sc">}</span><span class="vs">`</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> accessToken <span class="op">=</span> authSessionManager<span class="op">.</span><span class="fu">getAccessToken</span>()</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(url<span class="op">,</span> {</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="op">...</span>options<span class="op">,</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      headers<span class="op">:</span> {</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;Content-Type&#39;</span><span class="op">:</span> <span class="st">&#39;application/json&#39;</span><span class="op">,</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">...</span>(accessToken <span class="op">?</span> { Authorization<span class="op">:</span> <span class="vs">`Bearer </span><span class="sc">${</span>accessToken<span class="sc">}</span><span class="vs">`</span> } <span class="op">:</span> {})<span class="op">,</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">...</span>(options<span class="op">.</span><span class="at">headers</span> <span class="im">as</span> <span class="bu">Record</span><span class="op">&lt;</span><span class="dt">string</span><span class="op">,</span> <span class="dt">string</span><span class="op">&gt;</span>)<span class="op">,</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>      }<span class="op">,</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>response<span class="op">.</span><span class="at">ok</span>) {</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">Error</span>(<span class="vs">`API Error: </span><span class="sc">${</span>response<span class="op">.</span><span class="at">status</span><span class="sc">}</span><span class="vs"> </span><span class="sc">${</span>response<span class="op">.</span><span class="at">statusText</span><span class="sc">}</span><span class="vs">`</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response<span class="op">.</span><span class="fu">json</span>()</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="kw">get</span><span class="op">&lt;</span>T<span class="op">&gt;</span>(endpoint<span class="op">:</span> <span class="dt">string</span>) { <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="fu">request</span><span class="op">&lt;</span>T<span class="op">&gt;</span>(endpoint<span class="op">,</span> { method<span class="op">:</span> <span class="st">&#39;GET&#39;</span> }) }</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">post</span><span class="op">&lt;</span>T<span class="op">&gt;</span>(endpoint<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> data<span class="op">:</span> <span class="dt">unknown</span>) { <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="fu">request</span><span class="op">&lt;</span>T<span class="op">&gt;</span>(endpoint<span class="op">,</span> { method<span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span> body<span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(data) }) }</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ...</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>Point cle</strong> : chaque requete vers MSPR-API recoit
+automatiquement le header
+<code>Authorization: Bearer &lt;jwt&gt;</code>. Les stores/composants
+n'ont pas a s'en occuper. Si pas de JWT, on envoie la requete quand meme
+(l'API renverra 401, gere ailleurs).</p>
+<h3 id="55-gestion-de-la-session-dans-le-localstorage">5.5 Gestion de la
+session dans le localStorage</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> AUTH_SESSION_STORAGE_KEY <span class="op">=</span> <span class="st">&#39;healthai.auth.session&#39;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> ACCESS_TOKEN_TTL_MS <span class="op">=</span> <span class="dv">1000</span> <span class="op">*</span> <span class="dv">60</span> <span class="op">*</span> <span class="dv">60</span>  <span class="co">// 1h</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">const</span> authSessionManager <span class="op">=</span> {</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">getSession</span>()<span class="op">:</span> AuthSession <span class="op">|</span> <span class="dt">null</span> {</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> stored <span class="op">=</span> localStorage<span class="op">.</span><span class="fu">getItem</span>(AUTH_SESSION_STORAGE_KEY)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> session <span class="op">=</span> <span class="fu">parseStoredSession</span>(stored)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (session <span class="op">&amp;&amp;</span> <span class="fu">isExpired</span>(session<span class="op">.</span><span class="at">tokens</span><span class="op">.</span><span class="at">expiresAt</span>)) {</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>      localStorage<span class="op">.</span><span class="fu">removeItem</span>(AUTH_SESSION_STORAGE_KEY)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="kw">null</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> session</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setSession</span>(session<span class="op">:</span> AuthSession)<span class="op">:</span> <span class="dt">void</span> {</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    localStorage<span class="op">.</span><span class="fu">setItem</span>(AUTH_SESSION_STORAGE_KEY<span class="op">,</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(session))</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hasValidSession</span>()<span class="op">:</span> <span class="dt">boolean</span> {</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="fu">getSession</span>() <span class="op">!==</span> <span class="kw">null</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>Choix volontaire : localStorage, pas cookie cote
+front</strong>. Raisons :</p>
+<ul>
+<li>Le <strong>cookie</strong> est gere cote AUTH (HttpOnly, SameSite)
+pour la session.</li>
+<li>Le <strong>JWT</strong> sert a appeler MSPR-API : il doit etre
+accessible en JS pour l'ajouter au header <code>Authorization</code>. Un
+cookie HttpOnly ne serait pas lisible depuis <code>fetch</code>.</li>
+<li><strong>Risque</strong> : localStorage est accessible depuis
+JavaScript, donc vulnerable a XSS. Mitigation : Vue 3 echappe tout par
+defaut dans <code>{{ }}</code>, on n'utilise pas <code>v-html</code>
+avec du contenu externe.</li>
+</ul>
+<h3 id="56-mode-mock-pour-developpement-sans-backend">5.6 Mode mock pour
+developpement sans backend</h3>
+<p>Dans <code>.env</code> :</p>
+<pre><code>VITE_USE_MOCK=true
+VITE_API_BASE_URL=http://localhost:8080/api
+VITE_AUTH_BASE_URL=http://localhost:3000</code></pre>
+<p>Quand <code>VITE_USE_MOCK=true</code>, les services API renvoient des
+donnees statiques (<code>mockData</code> dans <code>api.ts</code>) au
+lieu d'appeler le backend. Permet de developper l'UI sans
+MSPR-API/DB/AUTH qui tournent.</p>
+<p><strong>Remarque</strong> : dans le <code>Dockerfile</code> (build de
+prod), on force <code>VITE_USE_MOCK=false</code>. Les variables
+<code>VITE_*</code> sont injectees dans le bundle au <strong>build
+time</strong>, pas au runtime.</p>
+<h3 id="57-lint-double--oxlint--eslint">5.7 Lint double : oxlint +
+ESLint</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;scripts&quot;</span><span class="er">:</span> <span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;lint&quot;</span><span class="fu">:</span> <span class="st">&quot;run-s lint:*&quot;</span><span class="fu">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;lint:oxlint&quot;</span><span class="fu">:</span> <span class="st">&quot;oxlint . --fix&quot;</span><span class="fu">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;lint:eslint&quot;</span><span class="fu">:</span> <span class="st">&quot;eslint . --fix --cache&quot;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Pourquoi deux linters :</p>
+<ul>
+<li><strong>oxlint</strong> : linter ecrit en <strong>Rust</strong>,
+extremement rapide (~100x ESLint). Implemente les regles ESLint de base
+et les plus populaires. Parfait pour un premier passage rapide.</li>
+<li><strong>ESLint</strong> : extensible via plugins. On utilise
+<code>eslint-plugin-vue</code> (regles specifiques aux
+<code>.vue</code>) et <code>@vue/eslint-config-typescript</code> (regles
+TS). Incontournable pour Vue mais plus lent.</li>
+<li><strong><code>eslint-plugin-oxlint</code></strong> : integre pour
+qu'ESLint sache quelles regles oxlint a deja verifiees et ne les refasse
+pas. Evite les doublons.</li>
+</ul>
+<p><code>run-s</code> (de <code>npm-run-all2</code>) execute les scripts
+en sequence : oxlint d'abord (corrections rapides), ESLint ensuite
+(regles Vue).</p>
+<h3 id="58-theme-sombre-avec-variables-css">5.8 Theme sombre avec
+variables CSS</h3>
+<p>L'application utilise un <strong>design system sombre</strong> via
+des variables CSS globales :</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="in">:root</span> {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="va">--c-surface</span><span class="ch">:</span> <span class="cn">#1c1c1e</span><span class="op">;</span>       <span class="co">/* fond de carte */</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="va">--c-surface-2</span><span class="ch">:</span> <span class="cn">#2c2c2e</span><span class="op">;</span>     <span class="co">/* fond d&#39;input */</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="va">--c-brand</span><span class="ch">:</span> <span class="cn">#30d158</span><span class="op">;</span>         <span class="co">/* vert iOS */</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="va">--c-brand-xlight</span><span class="ch">:</span> <span class="fu">rgba(</span><span class="dv">48</span><span class="op">,</span> <span class="dv">209</span><span class="op">,</span> <span class="dv">88</span><span class="op">,</span> <span class="dv">0.1</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="va">--c-text</span><span class="ch">:</span> <span class="cn">#ffffff</span><span class="op">;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="va">--c-text-muted</span><span class="ch">:</span> <span class="cn">#8e8e93</span><span class="op">;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="va">--c-border</span><span class="ch">:</span> <span class="fu">rgba(</span><span class="dv">255</span><span class="op">,</span> <span class="dv">255</span><span class="op">,</span> <span class="dv">255</span><span class="op">,</span> <span class="dv">0.1</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="va">--c-danger</span><span class="ch">:</span> <span class="cn">#ff453a</span><span class="op">;</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="va">--c-energy</span><span class="ch">:</span> <span class="cn">#ff9f0a</span><span class="op">;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="va">--c-info</span><span class="ch">:</span> <span class="cn">#0a84ff</span><span class="op">;</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="va">--radius</span><span class="ch">:</span> <span class="dv">12</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Avantage : pour changer le theme (ex : passer en clair), on modifie
+les variables a un seul endroit. Inspiration visuelle <strong>iOS
+Dark</strong>.</p>
+<h3 id="59-accessibilite-rgaa-niveau-aa">5.9 Accessibilite RGAA niveau
+AA</h3>
+<p>Plusieurs techniques appliquees systematiquement :</p>
+<ul>
+<li><strong>Labels explicites</strong>
+(<code>&lt;label for="..."&gt;</code>) + <code>aria-label</code> sur les
+boutons icones.</li>
+<li><strong><code>role="alert"</code> /
+<code>role="status"</code></strong> pour que les lecteurs d'ecran
+annoncent les erreurs et messages.</li>
+<li><strong>Focus visible</strong> avec
+<code>outline: 2px solid var(--c-brand)</code> (pas de
+<code>outline: none</code> sans alternative).</li>
+<li><strong>Navigation clavier</strong> : tous les elements interactifs
+sont <code>&lt;button&gt;</code> (focusables et cliquables avec
+Enter/Space).</li>
+<li><strong><code>prefers-reduced-motion</code></strong> : desactive les
+animations pour les utilisateurs sensibles.</li>
+<li><strong>Contrastes</strong> : le theme sombre respecte un ratio de
+contraste &gt;= 4.5:1 (texte normal) et &gt;= 3:1 (texte large).</li>
+</ul>
+<h3 id="510-dockerfile-multi-stage-avec-build-args-vite">5.10 Dockerfile
+multi-stage avec build args Vite</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> node:22-alpine <span class="kw">AS</span> builder</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WORKDIR</span> /app</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">ARG</span> VITE_AUTH_BASE_URL=http://localhost:3000</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ARG</span> VITE_API_BASE_URL=http://localhost:8080/api</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ARG</span> VITE_USE_MOCK=false</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> VITE_AUTH_BASE_URL=$VITE_AUTH_BASE_URL</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> VITE_API_BASE_URL=$VITE_API_BASE_URL</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> VITE_USE_MOCK=$VITE_USE_MOCK</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> package*.json ./</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">npm</span> ci</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> . .</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">npm</span> run build-only</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> node:22-alpine</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="kw">WORKDIR</span> /app</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">npm</span> install <span class="at">-g</span> serve <span class="dt">\</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&amp;&amp;</span> <span class="ex">addgroup</span> <span class="at">-S</span> app <span class="kw">&amp;&amp;</span> <span class="ex">adduser</span> <span class="at">-S</span> app <span class="at">-G</span> app</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> <span class="op">--from=builder</span> <span class="op">--chown=app:app</span> /app/dist ./dist</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="kw">USER</span> app</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="kw">EXPOSE</span> 5173</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="kw">HEALTHCHECK</span> <span class="op">--interval=30s</span> <span class="op">--timeout=5s</span> <span class="op">--start-period=15s</span> <span class="op">--retries=3</span> \</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CMD</span> <span class="fu">wget</span> <span class="at">-q</span> <span class="at">-O-</span> http://localhost:5173/ <span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="bu">exit</span> 1</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="kw">CMD</span> [<span class="st">&quot;serve&quot;</span>, <span class="st">&quot;-s&quot;</span>, <span class="st">&quot;dist&quot;</span>, <span class="st">&quot;-l&quot;</span>, <span class="st">&quot;5173&quot;</span>]</span></code></pre></div>
+<p>Points importants :</p>
+<ul>
+<li><strong>Multi-stage</strong> : builder avec Node + npm (lourd) puis
+runtime avec <code>serve</code> qui sert juste les fichiers
+statiques.</li>
+<li><strong><code>ARG</code> + <code>ENV</code></strong> : les variables
+<code>VITE_*</code> sont passees au build via
+<code>docker build --build-arg VITE_API_BASE_URL=...</code>. Elles sont
+<strong>inlinees</strong> dans le bundle JavaScript a la compilation
+(Vite les remplace dans le code). <strong>Pas moyen de les changer apres
+le build</strong> : le bundle contient les URLs en dur.</li>
+<li><strong>User non-root <code>app</code></strong> : bonne pratique de
+securite.</li>
+<li><strong>Healthcheck</strong> : teste que <code>serve</code> repond
+sur le port 5173.</li>
+</ul>
+<p>Le docker-compose racine passe ces args :</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">front</span><span class="kw">:</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">build</span><span class="kw">:</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">context</span><span class="kw">:</span><span class="at"> ./MSPR-FRONT</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">args</span><span class="kw">:</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">VITE_AUTH_BASE_URL</span><span class="kw">:</span><span class="at"> http://localhost:3000</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">VITE_API_BASE_URL</span><span class="kw">:</span><span class="at"> http://localhost:8080/api</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">VITE_USE_MOCK</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;false&quot;</span></span></code></pre></div>
+<h3 id="511-cicd-githubworkflowsciyml">5.11 CI/CD
+(<code>.github/workflows/ci.yml</code>)</h3>
+<p>Sur push/PR vers <code>main</code> :</p>
+<ol type="1">
+<li><strong>type-check</strong> (<code>vue-tsc --build</code>) : verifie
+le typage TypeScript <strong>dans les fichiers
+<code>.vue</code></strong>. <code>vue-tsc</code> est une surcouche de
+<code>tsc</code> qui comprend la syntax Vue.</li>
+<li><strong>lint</strong> (<code>npm run lint</code>) : oxlint +
+ESLint.</li>
+<li><strong>test</strong> (<code>vitest --run</code>) : tests unitaires
+en mode "run-once" (pas watch).</li>
+<li><strong>publish</strong> : si tout passe et qu'on est sur
+<code>main</code> ou un tag <code>v*</code>, build et push l'image
+Docker sur GHCR.</li>
+</ol>
+<p><strong>Note sur <code>npm run build</code></strong> : le script
+<code>build</code> fait <code>run-p type-check "build-only {@}"</code>,
+c'est-a-dire type-check et build en <strong>parallele</strong>. Pratique
+en local pour aller plus vite. En CI, on separe (type-check isole =
+message d'erreur plus clair).</p>
+<hr />
+<h2 id="6-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</h2>
+<h3 id="61-un-composant-vue-3-complet-metricscard">6.1 Un composant Vue
+3 complet (MetricsCard)</h3>
+<pre class="vue"><code>&lt;template&gt;
+  &lt;div class=&quot;metrics-card&quot; :class=&quot;variant&quot;&gt;
+    &lt;div class=&quot;metrics-card__icon&quot;&gt;&lt;slot name=&quot;icon&quot; /&gt;&lt;/div&gt;
+    &lt;div class=&quot;metrics-card__content&quot;&gt;
+      &lt;h3 class=&quot;metrics-card__title&quot;&gt;{{ title }}&lt;/h3&gt;
+      &lt;p class=&quot;metrics-card__value&quot;&gt;{{ formattedValue }}&lt;/p&gt;
+      &lt;p v-if=&quot;subtitle&quot; class=&quot;metrics-card__subtitle&quot;&gt;{{ subtitle }}&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script setup lang=&quot;ts&quot;&gt;
+import { computed, ref, watch, onBeforeUnmount } from &#39;vue&#39;
+import { formatNumber, formatPercentage } from &#39;@/utils/helpers&#39;
+
+interface Props {
+  title: string
+  value: number | string
+  subtitle?: string
+  variant?: &#39;default&#39; | &#39;success&#39; | &#39;warning&#39; | &#39;danger&#39; | &#39;info&#39;
+  isPercentage?: boolean
+}
+
+const props = withDefaults(defineProps&lt;Props&gt;(), {
+  variant: &#39;default&#39;,
+  isPercentage: false,
+})
+
+const animatedValue = ref(0)
+let rafId: number | null = null
+
+watch(() =&gt; props.value, (newVal) =&gt; {
+  if (typeof newVal !== &#39;number&#39;) return
+  const start = animatedValue.value
+  const end = newVal
+  const duration = 750
+  const startTime = performance.now()
+
+  function tick(now: number) {
+    const elapsed = now - startTime
+    const p = Math.min(elapsed / duration, 1)
+    const eased = 1 - (1 - p) ** 3
+    animatedValue.value = start + (end - start) * eased
+    if (p &lt; 1) rafId = requestAnimationFrame(tick)
+  }
+  rafId = requestAnimationFrame(tick)
+}, { immediate: true })
+
+onBeforeUnmount(() =&gt; {
+  if (rafId !== null) cancelAnimationFrame(rafId)
+})
+
+const formattedValue = computed(() =&gt;
+  props.isPercentage ? formatPercentage(animatedValue.value) : formatNumber(Math.round(animatedValue.value))
+)
+&lt;/script&gt;</code></pre>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><strong>Template</strong> utilise <code>{{ }}</code> (interpolation)
+et <code>:class="variant"</code> (binding dynamique). Vue echappe
+automatiquement le contenu (protection XSS).</li>
+<li><strong><code>&lt;slot name="icon" /&gt;</code></strong> : le parent
+peut injecter n'importe quel contenu dans cette zone (ici, une icone
+FontAwesome).</li>
+<li><strong><code>watch(source, callback)</code></strong> : reagit au
+changement de la prop <code>value</code> et anime la valeur de
+<code>animatedValue</code> avec une cubic ease via
+<code>requestAnimationFrame</code>.</li>
+<li><strong><code>onBeforeUnmount</code></strong> : hook Vue qui
+s'execute juste avant la suppression du composant. On annule le
+<code>rAF</code> pour eviter une fuite memoire.</li>
+<li><strong><code>&lt;style scoped&gt;</code></strong> : les styles sont
+isoles au composant (classes renommees automatiquement avec un hash).
+Pas de pollution globale.</li>
+</ul>
+<h3 id="62-un-store-pinia-complet-authstore">6.2 Un store Pinia complet
+(authStore)</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { defineStore } <span class="im">from</span> <span class="st">&#39;pinia&#39;</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { ref<span class="op">,</span> computed } <span class="im">from</span> <span class="st">&#39;vue&#39;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="im">type</span> { AuthSession } <span class="im">from</span> <span class="st">&#39;@/types&#39;</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { authApi<span class="op">,</span> authSessionManager<span class="op">,</span> tryBootstrapFromCookie } <span class="im">from</span> <span class="st">&#39;@/services/auth&#39;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">const</span> useAuthStore <span class="op">=</span> <span class="fu">defineStore</span>(<span class="st">&#39;auth&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> session <span class="op">=</span> <span class="fu">ref</span><span class="op">&lt;</span>AuthSession <span class="op">|</span> <span class="dt">null</span><span class="op">&gt;</span>(authSessionManager<span class="op">.</span><span class="fu">getSession</span>())</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> loading <span class="op">=</span> <span class="fu">ref</span>(<span class="kw">false</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> error <span class="op">=</span> <span class="fu">ref</span><span class="op">&lt;</span><span class="dt">string</span> <span class="op">|</span> <span class="dt">null</span><span class="op">&gt;</span>(<span class="kw">null</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> isAuthenticated <span class="op">=</span> <span class="fu">computed</span>(() <span class="kw">=&gt;</span> session<span class="op">.</span><span class="at">value</span> <span class="op">!==</span> <span class="kw">null</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> currentUser <span class="op">=</span> <span class="fu">computed</span>(() <span class="kw">=&gt;</span> session<span class="op">.</span><span class="at">value</span><span class="op">?.</span><span class="at">user</span> <span class="op">??</span> <span class="kw">null</span>)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">function</span> <span class="fu">setSession</span>(next<span class="op">:</span> AuthSession <span class="op">|</span> <span class="dt">null</span>) {</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    session<span class="op">.</span><span class="at">value</span> <span class="op">=</span> next</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (next) authSessionManager<span class="op">.</span><span class="fu">setSession</span>(next)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> authSessionManager<span class="op">.</span><span class="fu">clearSession</span>()</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  <span class="kw">async</span> <span class="kw">function</span> <span class="fu">login</span>(email<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> password<span class="op">:</span> <span class="dt">string</span>) {</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    loading<span class="op">.</span><span class="at">value</span> <span class="op">=</span> <span class="kw">true</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    error<span class="op">.</span><span class="at">value</span> <span class="op">=</span> <span class="kw">null</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> {</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> next <span class="op">=</span> <span class="cf">await</span> authApi<span class="op">.</span><span class="fu">login</span>(email<span class="op">,</span> password)</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">setSession</span>(next)</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">catch</span> (e) {</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>      error<span class="op">.</span><span class="at">value</span> <span class="op">=</span> e <span class="kw">instanceof</span> <span class="bu">Error</span> <span class="op">?</span> e<span class="op">.</span><span class="at">message</span> <span class="op">:</span> <span class="st">&#39;Erreur&#39;</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>      <span class="cf">throw</span> e</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">finally</span> {</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>      loading<span class="op">.</span><span class="at">value</span> <span class="op">=</span> <span class="kw">false</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>  <span class="kw">async</span> <span class="kw">function</span> <span class="fu">bootstrapFromSession</span>()<span class="op">:</span> <span class="bu">Promise</span><span class="op">&lt;</span><span class="dt">boolean</span><span class="op">&gt;</span> {</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> next <span class="op">=</span> <span class="cf">await</span> <span class="fu">tryBootstrapFromCookie</span>()</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (next) { <span class="fu">setSession</span>(next)<span class="op">;</span> <span class="cf">return</span> <span class="kw">true</span> }</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">false</span></span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>  <span class="kw">async</span> <span class="kw">function</span> <span class="fu">logout</span>() {</span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> authApi<span class="op">.</span><span class="fu">logout</span>()</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">setSession</span>(<span class="kw">null</span>)</span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> { session<span class="op">,</span> loading<span class="op">,</span> error<span class="op">,</span> isAuthenticated<span class="op">,</span> currentUser<span class="op">,</span> login<span class="op">,</span> bootstrapFromSession<span class="op">,</span> logout }</span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>defineStore('auth', () =&gt; { ... })</code> : <strong>setup
+store</strong> (style Composition API). Le store est un fichier a part,
+mais utilise les memes primitives (<code>ref</code>,
+<code>computed</code>) qu'un composant.</li>
+<li>La fonction retourne <strong>ce qui est expose</strong>. Le reste
+est prive au store.</li>
+<li><strong>Usage dans un composant</strong> :
+<code>const auth = useAuthStore(); auth.login(email, pwd)</code>.
+L'appel a <code>useAuthStore()</code> renvoie <strong>la meme
+instance</strong> a chaque fois (singleton), donc tous les composants
+partagent l'etat.</li>
+<li><code>bootstrapFromSession</code> gere le cas specifique
+post-verification email : on restaure la session depuis le cookie
+better-auth si le localStorage est vide.</li>
+</ul>
+<h3 id="63-guard-de-navigation-routerindexts">6.3 Guard de navigation
+(router/index.ts)</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>router<span class="op">.</span><span class="fu">beforeEach</span>(<span class="kw">async</span> (to) <span class="kw">=&gt;</span> {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> isAuthenticated <span class="op">=</span> authSessionManager<span class="op">.</span><span class="fu">hasValidSession</span>()</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (isAuthenticated) {</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (to<span class="op">.</span><span class="at">meta</span><span class="op">.</span><span class="at">guestOnly</span>) <span class="cf">return</span> { name<span class="op">:</span> <span class="st">&#39;dashboard&#39;</span> }  <span class="co">// deja connecte -&gt; dashboard</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">true</span>  <span class="co">// laisse passer</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Pas de session locale : tente un bootstrap depuis le cookie better-auth</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (to<span class="op">.</span><span class="at">meta</span><span class="op">.</span><span class="at">requireAuth</span> <span class="op">||</span> to<span class="op">.</span><span class="at">meta</span><span class="op">.</span><span class="at">guestOnly</span>) {</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> bootstrapped <span class="op">=</span> <span class="cf">await</span> <span class="fu">useAuthStore</span>()<span class="op">.</span><span class="fu">bootstrapFromSession</span>()</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (bootstrapped) {</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (to<span class="op">.</span><span class="at">meta</span><span class="op">.</span><span class="at">guestOnly</span>) <span class="cf">return</span> { name<span class="op">:</span> <span class="st">&#39;dashboard&#39;</span> }</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="kw">true</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (to<span class="op">.</span><span class="at">meta</span><span class="op">.</span><span class="at">requireAuth</span>) <span class="cf">return</span> { name<span class="op">:</span> <span class="st">&#39;auth&#39;</span> }  <span class="co">// force le login</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">true</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>beforeEach</code> s'execute <strong>avant chaque
+navigation</strong>. On peut renvoyer :
+<ul>
+<li><code>true</code> -&gt; autorise</li>
+<li><code>{ name: 'xxx' }</code> -&gt; redirige</li>
+<li><code>false</code> -&gt; bloque</li>
+</ul></li>
+<li>Les <strong>meta</strong> sur les routes
+(<code>requireAuth: true</code>, <code>guestOnly: true</code>)
+centralisent la logique : on ne duplique pas
+<code>if (authenticated)</code> dans chaque composant.</li>
+<li><strong>Pattern "guest only"</strong> : redirige un utilisateur deja
+connecte depuis <code>/</code> (login) vers
+<code>/dashboard</code>.</li>
+<li><strong>Pattern "require auth"</strong> : redirige un utilisateur
+non connecte depuis <code>/dashboard</code> vers <code>/</code>
+(login).</li>
+</ul>
+<h3 id="64-formulaire-dauthentification-extrait-de-authview">6.4
+Formulaire d'authentification (extrait de AuthView)</h3>
+<pre class="vue"><code>&lt;template&gt;
+  &lt;form v-if=&quot;mode === &#39;login&#39;&quot; @submit.prevent=&quot;submitLogin&quot;&gt;
+    &lt;label for=&quot;email&quot;&gt;Email&lt;/label&gt;
+    &lt;input id=&quot;email&quot; v-model.trim=&quot;loginForm.email&quot; type=&quot;email&quot; required /&gt;
+
+    &lt;label for=&quot;password&quot;&gt;Mot de passe&lt;/label&gt;
+    &lt;input id=&quot;password&quot; v-model=&quot;loginForm.password&quot; type=&quot;password&quot; required minlength=&quot;8&quot; /&gt;
+
+    &lt;p v-if=&quot;errorMessage&quot; role=&quot;alert&quot;&gt;{{ errorMessage }}&lt;/p&gt;
+
+    &lt;button type=&quot;submit&quot; :disabled=&quot;authStore.loading&quot;&gt;
+      {{ authStore.loading ? &#39;Connexion...&#39; : &#39;Se connecter&#39; }}
+    &lt;/button&gt;
+  &lt;/form&gt;
+&lt;/template&gt;
+
+&lt;script setup lang=&quot;ts&quot;&gt;
+import { ref } from &#39;vue&#39;
+import { useRouter } from &#39;vue-router&#39;
+import { useAuthStore } from &#39;@/stores/auth&#39;
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+const mode = ref&lt;&#39;login&#39; | &#39;register&#39; | &#39;forgot&#39;&gt;(&#39;login&#39;)
+const loginForm = ref({ email: &#39;&#39;, password: &#39;&#39; })
+const localError = ref&lt;string | null&gt;(null)
+
+async function submitLogin() {
+  try {
+    await authStore.login(loginForm.value.email, loginForm.value.password)
+    await router.push({ name: &#39;dashboard&#39; })
+  } catch (e) {
+    localError.value = e instanceof Error ? e.message : &#39;Erreur&#39;
+  }
+}
+&lt;/script&gt;</code></pre>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><strong><code>v-model.trim</code></strong> : two-way binding entre
+l'input et la variable reactive. Le modificateur <code>.trim</code>
+retire les espaces automatiquement.</li>
+<li><strong><code>@submit.prevent</code></strong> : ecoute l'evenement
+submit ET appelle <code>preventDefault()</code> (evite le reload de la
+page par le navigateur).</li>
+<li><strong><code>:disabled="authStore.loading"</code></strong> : bouton
+desactive pendant l'appel API. Empeche le double-click.</li>
+<li><strong><code>role="alert"</code></strong> : accessibilite, les
+lecteurs d'ecran annoncent le message d'erreur.</li>
+<li>Le composant delegue la logique au <code>authStore</code> : il ne
+sait pas comment on se connecte, il sait juste qu'il faut appeler
+<code>login()</code>.</li>
+</ul>
+<h3 id="65-utilitaires-de-formatage">6.5 Utilitaires de formatage</h3>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">// utils/helpers.ts</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">formatNumber</span>(num<span class="op">:</span> <span class="dt">number</span>)<span class="op">:</span> <span class="dt">string</span> {</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">new</span> <span class="bu">Intl</span><span class="op">.</span><span class="fu">NumberFormat</span>(<span class="st">&#39;fr-FR&#39;</span>)<span class="op">.</span><span class="fu">format</span>(num)   <span class="co">// 1234567 -&gt; &quot;1 234 567&quot;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">formatPercentage</span>(value<span class="op">:</span> <span class="dt">number</span><span class="op">,</span> decimals <span class="op">=</span> <span class="dv">1</span>)<span class="op">:</span> <span class="dt">string</span> {</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="vs">`</span><span class="sc">${</span>value<span class="op">.</span><span class="fu">toFixed</span>(decimals)<span class="sc">}</span><span class="vs"> %`</span>               <span class="co">// 85.237 -&gt; &quot;85.2 %&quot;</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">formatDate</span>(isoDate<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> <span class="dt">string</span> {</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">new</span> <span class="bu">Intl</span><span class="op">.</span><span class="fu">DateTimeFormat</span>(<span class="st">&#39;fr-FR&#39;</span><span class="op">,</span> {</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    year<span class="op">:</span> <span class="st">&#39;numeric&#39;</span><span class="op">,</span> month<span class="op">:</span> <span class="st">&#39;long&#39;</span><span class="op">,</span> day<span class="op">:</span> <span class="st">&#39;numeric&#39;</span><span class="op">,</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    hour<span class="op">:</span> <span class="st">&#39;2-digit&#39;</span><span class="op">,</span> minute<span class="op">:</span> <span class="st">&#39;2-digit&#39;</span><span class="op">,</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  })<span class="op">.</span><span class="fu">format</span>(<span class="kw">new</span> <span class="bu">Date</span>(isoDate))                        <span class="co">// &quot;2026-04-22T14:30:00Z&quot; -&gt; &quot;22 avril 2026, 14:30&quot;</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">downloadFile</span>(blob<span class="op">:</span> <span class="bu">Blob</span><span class="op">,</span> filename<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> <span class="dt">void</span> {</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> url <span class="op">=</span> URL<span class="op">.</span><span class="fu">createObjectURL</span>(blob)</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> link <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">createElement</span>(<span class="st">&#39;a&#39;</span>)</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>  link<span class="op">.</span><span class="at">href</span> <span class="op">=</span> url</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>  link<span class="op">.</span><span class="at">download</span> <span class="op">=</span> filename</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>  <span class="bu">document</span><span class="op">.</span><span class="at">body</span><span class="op">.</span><span class="fu">appendChild</span>(link)</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>  link<span class="op">.</span><span class="fu">click</span>()</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>  <span class="bu">document</span><span class="op">.</span><span class="at">body</span><span class="op">.</span><span class="fu">removeChild</span>(link)</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>  URL<span class="op">.</span><span class="fu">revokeObjectURL</span>(url)                            <span class="co">// libere la memoire</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>Intl.NumberFormat</code> et <code>Intl.DateTimeFormat</code>
+sont des <strong>APIs natives du navigateur</strong> pour la
+localisation. Pas besoin de moment.js ou de librairie tierce.</li>
+<li>Le parametre <code>'fr-FR'</code> pilote le formatage selon la
+locale francaise (separateur d'espace pour les milliers, dates en
+francais).</li>
+<li><code>downloadFile</code> est une astuce classique : cree un
+<code>Blob URL</code>, declenche un clic sur un
+<code>&lt;a download&gt;</code> temporaire, puis libere l'URL. Utilise
+pour les exports CSV/JSON.</li>
+</ul>
+<h3 id="66-configuration-vitest-vitestconfigts">6.6 Configuration Vitest
+(<code>vitest.config.ts</code>)</h3>
+<p>Les tests unitaires couvrent les stores et utils. Exemple d'un test
+de store :</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { describe<span class="op">,</span> it<span class="op">,</span> expect<span class="op">,</span> beforeEach<span class="op">,</span> vi } <span class="im">from</span> <span class="st">&#39;vitest&#39;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { setActivePinia<span class="op">,</span> createPinia } <span class="im">from</span> <span class="st">&#39;pinia&#39;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { useAuthStore } <span class="im">from</span> <span class="st">&#39;@/stores/auth&#39;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> <span class="op">*</span> <span class="im">as</span> authService <span class="im">from</span> <span class="st">&#39;@/services/auth&#39;</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="st">&#39;useAuthStore&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">beforeEach</span>(() <span class="kw">=&gt;</span> {</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">setActivePinia</span>(<span class="fu">createPinia</span>())</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">it</span>(<span class="st">&#39;login stocke la session en cas de succes&#39;</span><span class="op">,</span> <span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    vi<span class="op">.</span><span class="fu">spyOn</span>(authService<span class="op">.</span><span class="at">authApi</span><span class="op">,</span> <span class="st">&#39;login&#39;</span>)<span class="op">.</span><span class="fu">mockResolvedValue</span>({</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>      user<span class="op">:</span> { id<span class="op">:</span> <span class="st">&#39;1&#39;</span><span class="op">,</span> username<span class="op">:</span> <span class="st">&#39;arthur&#39;</span><span class="op">,</span> email<span class="op">:</span> <span class="st">&#39;a@b.c&#39;</span><span class="op">,</span> role<span class="op">:</span> <span class="st">&#39;admin&#39;</span> }<span class="op">,</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>      tokens<span class="op">:</span> { accessToken<span class="op">:</span> <span class="st">&#39;jwt&#39;</span><span class="op">,</span> refreshToken<span class="op">:</span> <span class="st">&#39;ref&#39;</span><span class="op">,</span> expiresAt<span class="op">:</span> <span class="st">&#39;2099-01-01&#39;</span> }<span class="op">,</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> store <span class="op">=</span> <span class="fu">useAuthStore</span>()</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> store<span class="op">.</span><span class="fu">login</span>(<span class="st">&#39;a@b.c&#39;</span><span class="op">,</span> <span class="st">&#39;password&#39;</span>)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(store<span class="op">.</span><span class="at">isAuthenticated</span>)<span class="op">.</span><span class="fu">toBe</span>(<span class="kw">true</span>)</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(store<span class="op">.</span><span class="at">currentUser</span><span class="op">?.</span><span class="at">email</span>)<span class="op">.</span><span class="fu">toBe</span>(<span class="st">&#39;a@b.c&#39;</span>)</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>setActivePinia(createPinia())</code> : isole le store pour
+chaque test (pas de fuite d'etat entre tests).</li>
+<li><code>vi.spyOn(obj, 'method').mockResolvedValue(...)</code> : mocke
+la methode pour ne pas appeler vraiment l'API AUTH dans le test.</li>
+<li>On teste <strong>le comportement observable</strong>
+(<code>isAuthenticated</code>, <code>currentUser</code>), pas
+l'implementation interne.</li>
+</ul>
+<hr />
+<h2 id="7-questions-probables-du-jury">7. Questions probables du
+jury</h2>
+<h3 id="q1-pourquoi-vue-3-plutot-que-react-ou-angular-">Q1. Pourquoi Vue
+3 plutot que React ou Angular ?</h3>
+<ul>
+<li><strong>React</strong> : librairie UI, il faut assembler un
+ecosysteme (router, state management, forms). Plus puissant a grande
+echelle, mais plus de decisions a prendre.</li>
+<li><strong>Angular</strong> : framework complet mais beaucoup de
+concepts (modules, DI, services, RxJS, templates avec syntax speciale).
+Courbe d'apprentissage raide.</li>
+<li><strong>Vue 3</strong> : le "juste milieu". Template HTML classique,
+reactivite explicite, ecosysteme officiel coherent (Vue Router + Pinia +
+Vite). Excellent pour un projet de taille MSPR.</li>
+</ul>
+<p>Pour un dashboard admin, le choix est peu determinant : les trois
+feraient tres bien le travail. Vue 3 est cependant plus rapide a prendre
+en main pour une equipe junior.</p>
+<h3 id="q2-composition-api-vs-options-api-quelle-difference-">Q2.
+Composition API vs Options API, quelle difference ?</h3>
+<ul>
+<li><strong>Options API</strong> (Vue 2, toujours supportee en Vue 3) :
+le composant est un objet
+<code>{ data() {}, methods: {}, computed: {} }</code>. La logique est
+dispersee par type.</li>
+<li><strong>Composition API</strong> (Vue 3, recommandee) : la logique
+est dans une fonction <code>setup()</code> ou un
+<code>&lt;script setup&gt;</code>. On declare <code>ref</code>,
+<code>computed</code>, etc. On peut regrouper la logique par
+<strong>fonctionnalite</strong> (tout ce qui concerne X est
+ensemble).</li>
+</ul>
+<p>Avantages Composition API :</p>
+<ul>
+<li><strong>Reutilisation</strong> : on extrait de la logique dans un
+"composable" (fonction qui retourne des <code>ref</code>) partage entre
+plusieurs composants.</li>
+<li><strong>TypeScript</strong> : inference beaucoup plus precise.</li>
+<li><strong>Lisibilite</strong> : pour un gros composant, tout ce qui
+traite d'un feature est groupe au lieu d'etre eparpille entre
+<code>data</code>, <code>methods</code>, <code>computed</code>,
+<code>watch</code>.</li>
+</ul>
+<h3 id="q3-pourquoi-pinia-et-pas-vuex-">Q3. Pourquoi Pinia et pas Vuex
+?</h3>
+<ul>
+<li><strong>Vuex</strong> etait le gestionnaire officiel pour Vue 2.
+Syntaxe verbeuse (mutations separees des actions, modules imbriques,
+types complexes).</li>
+<li><strong>Pinia</strong> a ete adopte comme successeur officiel pour
+Vue 3. Plus simple : pas de mutations, juste des fonctions qui modifient
+l'etat directement.</li>
+<li>Meilleur support TypeScript (inference automatique).</li>
+<li>Modulaire : un fichier par store, pas d'arbre de modules.</li>
+<li>API Composition API-friendly : un store ressemble a un
+composant.</li>
+</ul>
+<h3
+id="q4-pourquoi-stocker-le-jwt-dans-le-localstorage-et-pas-dans-un-cookie-httponly-">Q4.
+Pourquoi stocker le JWT dans le localStorage et pas dans un cookie
+HttpOnly ?</h3>
+<p>Compromis classique :</p>
+<ul>
+<li><strong>Cookie HttpOnly</strong> : inaccessible au JavaScript -&gt;
+protege contre XSS. Mais le navigateur ne l'envoie qu'automatiquement
+(pas moyen de l'ajouter manuellement a une requete fetch vers une autre
+origine).</li>
+<li><strong>localStorage</strong> : accessible en JS -&gt; on peut
+l'ajouter au header <code>Authorization: Bearer ...</code> a chaque
+requete cross-origin. Mais un XSS peut le voler.</li>
+</ul>
+<p>Ici on a fait <strong>les deux</strong> :</p>
+<ul>
+<li>Le cookie de session reste cote AUTH (HttpOnly, SameSite, proteger
+contre CSRF/XSS).</li>
+<li>Le JWT dans localStorage est utilise uniquement pour appeler
+MSPR-API cross-origin.</li>
+</ul>
+<p>Mitigation XSS : Vue 3 echappe tout par defaut dans
+<code>{{ }}</code>, pas de <code>v-html</code> sur du contenu
+utilisateur, et CSP en production.</p>
+<h3 id="q5-comment-le-front-gere-t-il-une-session-expiree-">Q5. Comment
+le front gere-t-il une session expiree ?</h3>
+<p>Deux niveaux :</p>
+<ul>
+<li><strong>Verification locale</strong> :
+<code>authSessionManager.getSession()</code> verifie
+<code>isExpired(session.tokens.expiresAt)</code> a chaque lecture. Si
+expire, la session est supprimee du localStorage.</li>
+<li><strong>Reponse 401 du serveur</strong> :
+l'<code>ApiClient.request</code> leve une erreur. Pour l'instant, on ne
+l'intercepte pas automatiquement (pas de retry/refresh). Amelioration
+possible : catcher 401, appeler <code>refreshAccessToken</code>, rejouer
+la requete.</li>
+</ul>
+<p>Le <code>refreshAccessToken</code> actuel appelle simplement
+<code>GET /api/jwt</code> pour regenerer un JWT, tant que le cookie de
+session (cote AUTH) est encore valide.</p>
+<h3 id="q6-que-fait-vite-et-pourquoi-cest-different-de-webpack-">Q6. Que
+fait Vite et pourquoi c'est different de Webpack ?</h3>
+<ul>
+<li><strong>Webpack</strong> bundle tout le code en un seul gros fichier
+avant de l'envoyer au navigateur. Long au premier demarrage sur un gros
+projet (~30s).</li>
+<li><strong>Vite</strong> utilise les <strong>ES modules natifs</strong>
+du navigateur en developpement : chaque fichier est servi separement a
+la demande. Demarrage instantane (&lt;1s).</li>
+<li>Pour la production, Vite utilise <strong>Rollup</strong> pour faire
+un bundle optimise.</li>
+</ul>
+<p>Resultat : experience de dev bien meilleure (HMR instantane), meme
+taille de bundle en prod.</p>
+<h3 id="q7-pourquoi-deux-linters-oxlint--eslint-">Q7. Pourquoi deux
+linters (oxlint + ESLint) ?</h3>
+<ul>
+<li><strong>oxlint</strong> : linter JavaScript/TypeScript ecrit en
+<strong>Rust</strong>. ~100x plus rapide qu'ESLint sur les regles de
+base. Ideal pour un feedback instantane pendant le dev.</li>
+<li><strong>ESLint</strong> : extensible via plugins. On utilise les
+plugins officiels Vue (<code>eslint-plugin-vue</code>) et TypeScript qui
+n'existent pas dans oxlint.</li>
+</ul>
+<p>Le plugin <code>eslint-plugin-oxlint</code> desactive dans ESLint les
+regles deja verifiees par oxlint, pour eviter la duplication. Les deux
+tournent en sequence (<code>run-s</code>).</p>
+<h3 id="q8-comment-tester-un-composant-vue-qui-fait-des-appels-api-">Q8.
+Comment tester un composant Vue qui fait des appels API ?</h3>
+<p>Avec <strong>@vue/test-utils</strong> + <strong>Vitest</strong> +
+mocking :</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { mount } <span class="im">from</span> <span class="st">&#39;@vue/test-utils&#39;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { setActivePinia<span class="op">,</span> createPinia } <span class="im">from</span> <span class="st">&#39;pinia&#39;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> AuthView <span class="im">from</span> <span class="st">&#39;@/views/AuthView.vue&#39;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">it</span>(<span class="st">&#39;affiche le message d</span><span class="sc">\&#39;</span><span class="st">erreur si le login echoue&#39;</span><span class="op">,</span> <span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setActivePinia</span>(<span class="fu">createPinia</span>())</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> wrapper <span class="op">=</span> <span class="fu">mount</span>(AuthView)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ... simuler la saisie du formulaire</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ... mocker le store pour renvoyer une erreur</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">// ... asserter que l&#39;element d&#39;erreur est visible</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<p>Dans notre projet, on teste <strong>surtout les stores et
+utils</strong> (logique metier), pas les composants eux-memes. Raisons
+:</p>
+<ul>
+<li>Les composants sont surtout de la presentation, peu de logique.</li>
+<li>Les stores concentrent la logique -&gt; beaucoup de valeur a les
+tester.</li>
+<li>Les tests de composants sont fragiles (changement de template = test
+casse).</li>
+</ul>
+<h3 id="q9-lui-est-elle-accessible-">Q9. L'UI est-elle accessible ?</h3>
+<p>Le projet vise <strong>RGAA niveau AA</strong> :</p>
+<ul>
+<li>Labels explicites, <code>aria-label</code> sur les icones.</li>
+<li><code>role="alert"</code> / <code>role="status"</code> pour annoncer
+les changements.</li>
+<li>Focus visible, navigation clavier complete.</li>
+<li>Contrastes conformes (ratio &gt;= 4.5:1).</li>
+<li><code>prefers-reduced-motion</code> pour desactiver les
+animations.</li>
+<li>Structure HTML semantique (<code>&lt;section&gt;</code>,
+<code>&lt;nav&gt;</code>, <code>&lt;header&gt;</code>).</li>
+</ul>
+<p>Amelioration possible : passer un audit Lighthouse / axe-core en CI
+pour detecter les regressions d'accessibilite.</p>
+<h3
+id="q10-comment-mettre-a-jour-lurl-de-lapi-en-prod-sans-rebuilder-">Q10.
+Comment mettre a jour l'URL de l'API en prod sans rebuilder ?</h3>
+<p><strong>Actuellement, on ne peut pas.</strong> Les variables
+<code>VITE_*</code> sont inlinees dans le bundle au build. Pour changer
+<code>VITE_API_BASE_URL</code>, il faut reconstruire l'image Docker.</p>
+<p>Alternatives possibles :</p>
+<ul>
+<li><strong>Config a l'execution</strong> : le front charge
+<code>/config.json</code> au demarrage (fichier servi par le reverse
+proxy). On peut changer le JSON sans rebuild.</li>
+<li><strong>Variables d'environnement serveur</strong> : si on sert via
+un Node custom au lieu de <code>serve</code>, on peut injecter des
+valeurs dans <code>index.html</code> au runtime.</li>
+</ul>
+<p>Pour la MSPR, un rebuild est acceptable (deploiement via CI/CD de
+toute facon).</p>
+<h3 id="q11-pourquoi-un-mode-mock-pour-le-dev-">Q11. Pourquoi un mode
+mock pour le dev ?</h3>
+<p>Trois raisons :</p>
+<ul>
+<li><strong>Dev autonome</strong> : on peut developper l'UI sans lancer
+MSPR-DB + MSPR-ETL + MSPR-AUTH + MSPR-API. Utile en avion ou avec un
+backend en cours de refacto.</li>
+<li><strong>Demos</strong> : on peut montrer le dashboard avec des
+donnees interessantes meme si le backend renvoie pour l'instant des
+donnees pauvres.</li>
+<li><strong>Tests</strong> : les mocks servent aussi aux tests
+unitaires.</li>
+</ul>
+<p>Activation via une simple variable d'env
+(<code>VITE_USE_MOCK=true</code>), commit dans <code>.env.example</code>
+comme valeur par defaut locale.</p>
+<h3
+id="q12-le-front-fait-du-state-global-avec-pinia-cest-justifie-pour-4-vues-">Q12.
+Le front fait du state global avec Pinia, c'est justifie pour 4 vues
+?</h3>
+<p>Oui, pour 2 raisons :</p>
+<ul>
+<li><strong>Partage de session</strong> : le store <code>auth</code> est
+utilise par AuthView, le router guard, et potentiellement par d'autres
+vues qui veulent afficher le nom de l'utilisateur. Sans store, il
+faudrait propager via props ou events, tres verbeux.</li>
+<li><strong>Partage de donnees metier</strong> : le store
+<code>dataQuality</code> peut etre utilise par DashboardView
+<strong>et</strong> par DataCleaningView. Si on clique sur "Resoudre une
+anomalie" dans DataCleaningView, DashboardView voit automatiquement
+l'anomalie disparaitre de son compteur (reactivite Pinia).</li>
+</ul>
+<p>Pour un projet tres simple (1 seule vue, pas de session), on se
+passerait de Pinia et on utiliserait juste
+<code>provide</code>/<code>inject</code> ou des <code>ref</code>
+locales. Ici c'est justifie.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

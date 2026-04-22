@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>DB — Révisions MSPR</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a href="#fiche-de-revision--mspr-db"
+id="toc-fiche-de-revision--mspr-db">Fiche de revision : MSPR-DB</a>
+<ul>
+<li><a href="#0-vocabulaire-a-connaitre-avant-de-lire"
+id="toc-0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#1-tldr" id="toc-1-tldr">1. TL;DR</a></li>
+<li><a href="#2-qui-ecrit-qui-lit" id="toc-2-qui-ecrit-qui-lit">2. Qui
+ecrit, qui lit</a></li>
+<li><a href="#3-stack-technique" id="toc-3-stack-technique">3. Stack
+technique</a></li>
+<li><a href="#4-les-tables" id="toc-4-les-tables">4. Les tables</a></li>
+<li><a href="#5-points-techniques-importants"
+id="toc-5-points-techniques-importants">5. Points techniques
+importants</a></li>
+<li><a href="#6-code-essentiel-a-savoir-expliquer-au-jury"
+id="toc-6-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</a></li>
+<li><a href="#7-questions-probables-du-jury"
+id="toc-7-questions-probables-du-jury">7. Questions probables du
+jury</a></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1 id="fiche-de-revision--mspr-db">Fiche de revision : MSPR-DB</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR1. Objectif : comprendre
+le role du service, le schema global et les points techniques
+importants, sans rentrer dans le detail colonne par colonne.</p>
+</blockquote>
+<hr />
+<h2 id="0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<table>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SGBD</strong></td>
+<td>Systeme de Gestion de Base de Donnees. Le moteur qui stocke et
+interroge les donnees (ici : PostgreSQL).</td>
+</tr>
+<tr>
+<td><strong>Schema</strong></td>
+<td>Structure de la base : la liste des tables, de leurs colonnes et de
+leurs relations.</td>
+</tr>
+<tr>
+<td><strong>Table</strong></td>
+<td>Stockage tabulaire typé (des lignes et des colonnes). Equivalent
+d'une feuille Excel, mais avec des types forts.</td>
+</tr>
+<tr>
+<td><strong>Migration</strong></td>
+<td>Script SQL versionne qui <strong>modifie le schema</strong> (ajoute
+une table, une colonne, un index). Chaque migration se lance une seule
+fois.</td>
+</tr>
+<tr>
+<td><strong>Index</strong></td>
+<td>Structure secondaire qui <strong>accelere les lectures</strong> sur
+une colonne, au prix d'un cout en ecriture et stockage. Equivalent de
+l'index d'un livre.</td>
+</tr>
+<tr>
+<td><strong>Contrainte d'unicite</strong></td>
+<td>Regle SQL qui <strong>interdit les doublons</strong> sur une colonne
+ou un groupe de colonnes.</td>
+</tr>
+<tr>
+<td><strong>Cle etrangere (FK)</strong></td>
+<td>Colonne qui <strong>pointe vers la cle primaire d'une autre
+table</strong> (ex : <code>user_id -&gt; users.id</code>). Garantit
+l'integrite referentielle.</td>
+</tr>
+<tr>
+<td><strong>Volume Docker</strong></td>
+<td>Dossier <strong>persistant</strong> stocke en dehors du conteneur.
+Si on supprime le conteneur, les donnees du volume restent.</td>
+</tr>
+<tr>
+<td><strong>docker-entrypoint-initdb.d</strong></td>
+<td>Dossier special de l'image PostgreSQL : tous les <code>.sql</code>
+qui s'y trouvent sont executes automatiquement au
+<strong>premier</strong> demarrage du conteneur.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-tldr">1. TL;DR</h2>
+<p><strong>MSPR-DB</strong> est le service de <strong>base de donnees
+centrale</strong> du projet. C'est un conteneur PostgreSQL 17 qui
+embarque les migrations SQL dans son image Docker. Au premier demarrage,
+toutes les migrations s'appliquent automatiquement et creent le
+schema.</p>
+<ul>
+<li><strong>Stack</strong> : PostgreSQL 17 (image
+<code>postgres:17-alpine</code>)</li>
+<li><strong>Ecrit par</strong> : MSPR-ETL (insertions via
+<code>pg_load</code>)</li>
+<li><strong>Lu par</strong> : MSPR-API (CRUD via Spring Data JPA) et
+MSPR-FRONT (indirectement via l'API)</li>
+<li><strong>Contenu</strong> : 6 tables metier + 1 table de journal
+(<code>etl_logs</code>)</li>
+<li><strong>Port hote</strong> : 5434 (mappe sur 5432 interne au
+conteneur)</li>
+<li><strong>Reseau</strong> : <code>mspr_data_network</code></li>
+<li><strong>Persistence</strong> : volume Docker nomme
+<code>postgres_data</code></li>
+</ul>
+<p>Un deuxieme conteneur PostgreSQL (<code>auth-db</code>, port 5433)
+est gere separement par MSPR-AUTH. MSPR-DB ne stocke
+<strong>pas</strong> les donnees d'authentification.</p>
+<hr />
+<h2 id="2-qui-ecrit-qui-lit">2. Qui ecrit, qui lit</h2>
+<pre class="mermaid"><code>flowchart LR
+    ETL[MSPR-ETL] --&gt;|INSERT pandas -&gt; psycopg2| DB[(MSPR-DB&lt;br/&gt;PostgreSQL 17)]
+    API[MSPR-API&lt;br/&gt;Spring Boot] --&gt;|SELECT/INSERT/UPDATE&lt;br/&gt;via JPA| DB
+    FRONT[MSPR-FRONT] --&gt;|HTTP REST| API
+
+    DB -.persiste.-&gt; VOL[(volume postgres_data)]</code></pre>
+<p>L'ETL est le <strong>seul producteur</strong> de donnees metier.
+L'API expose ces donnees au front, plus quelques ajouts/modifications
+manuels (endpoints CRUD).</p>
+<hr />
+<h2 id="3-stack-technique">3. Stack technique</h2>
+<table>
+<thead>
+<tr>
+<th>Composant</th>
+<th>Role</th>
+<th>Pourquoi ce choix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PostgreSQL 17</td>
+<td>Moteur de BDD</td>
+<td>Standard open-source le plus complet. Supporte nativement JSONB,
+tableaux (<code>TEXT[]</code>), <code>UNIQUE NULLS NOT DISTINCT</code>,
+index GIN</td>
+</tr>
+<tr>
+<td>Image <code>alpine</code></td>
+<td>Packaging leger</td>
+<td>Base Linux Alpine : ~80 Mo contre ~400 Mo pour l'image debian. Plus
+rapide a telecharger, surface d'attaque reduite</td>
+</tr>
+<tr>
+<td><code>docker-entrypoint-initdb.d</code></td>
+<td>Mecanisme de migration</td>
+<td>Fonction <strong>native</strong> de l'image PostgreSQL : aucun outil
+tiers (Flyway, Liquibase) a installer. Tres simple pour un projet
+MSPR</td>
+</tr>
+<tr>
+<td>Volume nomme <code>postgres_data</code></td>
+<td>Persistence</td>
+<td>Les donnees survivent a un <code>docker compose down</code>. Il faut
+un <code>down -v</code> pour tout effacer</td>
+</tr>
+<tr>
+<td>Healthcheck <code>pg_isready</code></td>
+<td>Fiabilite</td>
+<td>Permet aux autres services (API, ETL) d'<strong>attendre</strong>
+que la BDD soit prete via
+<code>depends_on: condition: service_healthy</code></td>
+</tr>
+</tbody>
+</table>
+<p>Le Dockerfile tient en 3 lignes :</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> postgres:17-alpine</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> migrations/*.sql /docker-entrypoint-initdb.d/</span></code></pre></div>
+<p>Tout le reste (user, password, mount du volume, reseau) est configure
+dans le <code>docker-compose.yml</code> racine.</p>
+<hr />
+<h2 id="4-les-tables">4. Les tables</h2>
+<p>7 tables au total (6 metier + 1 journal). Les tables metier sont
+<strong>independantes</strong> (aucune FK entre elles depuis V7).</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Role</th>
+<th>Source des donnees</th>
+<th>Volumetrie attendue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>exercises</code></td>
+<td>Catalogue d'exercices (squat, pompe, traction...) avec muscles
+cibles, equipements, instructions</td>
+<td>Pipeline <code>exercisedb</code></td>
+<td>~1500 lignes</td>
+</tr>
+<tr>
+<td><code>nutrition_entries</code></td>
+<td>Donnees nutritionnelles d'aliments (calories, macronutriments,
+micronutriments)</td>
+<td>Pipeline <code>nutrition_dataset</code></td>
+<td>~650 lignes</td>
+</tr>
+<tr>
+<td><code>exercise_entries</code></td>
+<td>Seances de sport (type, duree, calories brulees, BPM)</td>
+<td>Pipeline <code>gym_tracking</code></td>
+<td>~2700 lignes</td>
+</tr>
+<tr>
+<td><code>biometric_entries</code></td>
+<td>Mesures corporelles (poids, taille, BMI, frequence cardiaque,
+demographiques)</td>
+<td>Pipeline <code>gym_tracking</code></td>
+<td>~2700 lignes</td>
+</tr>
+<tr>
+<td><code>diet_recommendations</code></td>
+<td>Recommandations dietetiques par profil patient (pathologie, regime,
+activite)</td>
+<td>Pipeline <code>diet_recommendations</code></td>
+<td>~1000 lignes</td>
+</tr>
+<tr>
+<td><code>etl_logs</code></td>
+<td>Journal des runs ETL (lignes lues, inserees, rejetees, statut,
+details)</td>
+<td>ETL lui-meme (<code>log_etl_run</code>)</td>
+<td>croit au fil du temps</td>
+</tr>
+</tbody>
+</table>
+<p>Pour le schema detaille de chaque table, voir
+<code>MSPR-DB/migrations/V1__init_schema.sql</code> et
+<code>V2__diet_recommendations.sql</code>.</p>
+<h3 id="note-sur-la-table-users-supprimee">Note sur la table
+<code>users</code> (supprimee)</h3>
+<p>Le schema initial contenait une table <code>users</code> avec FK
+<code>user_id</code> dans les tables d'entries. Elle a ete
+<strong>supprimee</strong> par la migration V7 : les datasets sources
+(Kaggle) sont anonymes et heterogenes, sans identifiant utilisateur
+commun, donc les FK etaient toujours NULL. Les profils utilisateurs
+reels sont stockes dans <strong>MSPR-AUTH</strong> (base
+<code>auth_db</code>, separee).</p>
+<hr />
+<h2 id="5-points-techniques-importants">5. Points techniques
+importants</h2>
+<h3 id="51-mecanisme-de-migration">5.1 Mecanisme de migration</h3>
+<blockquote>
+<p><strong>Pas de Flyway, pas de Liquibase.</strong> On utilise le
+mecanisme natif de l'image PostgreSQL : les fichiers <code>.sql</code>
+deposes dans <code>/docker-entrypoint-initdb.d/</code> sont executes en
+ordre alphanumerique au <strong>premier</strong> demarrage du conteneur
+(quand le dossier de donnees <code>/var/lib/postgresql/data</code> est
+vide).</p>
+</blockquote>
+<p>Consequences importantes :</p>
+<ul>
+<li>Si on relance le conteneur sans supprimer le volume, <strong>les
+migrations ne sont pas rejouees</strong>. Elles ne tournent qu'une
+fois.</li>
+<li>Pour appliquer une nouvelle migration sur une base existante, il
+faut la passer manuellement
+(<code>docker exec ... psql -f V8__...sql</code>), ou faire un
+<code>docker compose down -v</code> (efface tout, pas recommande en
+prod).</li>
+<li>En MSPR, ce mode simplifie est acceptable. En production reelle, on
+utiliserait Flyway ou Liquibase pour tracer quelles migrations ont deja
+ete appliquees dans une table <code>schema_version</code>.</li>
+</ul>
+<h3 id="52-convention-de-nommage-des-migrations">5.2 Convention de
+nommage des migrations</h3>
+<p>Inspire de Flyway : <code>V{numero}__{description}.sql</code>.
+L'ordre alphanumerique donne l'ordre d'execution.</p>
+<table>
+<thead>
+<tr>
+<th>Fichier</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>V1__init_schema.sql</code></td>
+<td>Creation des 6 tables initiales + <code>users</code> + tous les
+index</td>
+</tr>
+<tr>
+<td><code>V2__diet_recommendations.sql</code></td>
+<td>Ajout de la table <code>diet_recommendations</code></td>
+</tr>
+<tr>
+<td><code>V3__add_unique_constraints.sql</code></td>
+<td>Contraintes <code>UNIQUE NULLS NOT DISTINCT</code> pour que l'ETL
+puisse utiliser <code>ON CONFLICT DO NOTHING</code></td>
+</tr>
+<tr>
+<td><code>V4__fix_nutrition_schema.sql</code></td>
+<td>Ajout colonne <code>carbsg</code> dans
+<code>nutrition_entries</code> (correction d'incoherence)</td>
+</tr>
+<tr>
+<td><code>V5__add_missing_columns.sql</code></td>
+<td>Ajout <code>age</code> dans <code>biometric_entries</code></td>
+</tr>
+<tr>
+<td><code>V6__biometric_add_demographics.sql</code></td>
+<td>Ajout <code>gender</code>, <code>experience_level</code> dans
+<code>biometric_entries</code></td>
+</tr>
+<tr>
+<td><code>V7__drop_users_table.sql</code></td>
+<td>Suppression de la table <code>users</code> et de toutes les FK
+<code>user_id</code></td>
+</tr>
+</tbody>
+</table>
+<p>Les migrations V4 a V7 utilisent <code>IF NOT EXISTS</code> /
+<code>IF EXISTS</code> pour etre <strong>idempotentes</strong> : si on
+les rejoue par erreur, elles ne plantent pas.</p>
+<h3 id="53-types-postgresql-utilises">5.3 Types PostgreSQL utilises</h3>
+<ul>
+<li><strong><code>BIGSERIAL</code></strong> : entier 64 bits
+auto-incremente. Utilise comme cle primaire (<code>id</code>) sur toutes
+les tables.</li>
+<li><strong><code>DECIMAL(p, s)</code></strong> : nombre decimal precis
+(ex : <code>DECIMAL(8, 2)</code> = jusqu'a 8 chiffres dont 2 apres la
+virgule). Utilise pour les mesures (calories, poids). <strong>On evite
+<code>FLOAT</code></strong> pour ne pas perdre en precision sur les
+calculs medicaux.</li>
+<li><strong><code>VARCHAR(n)</code></strong> : chaine de longueur
+variable avec limite. Utilise pour les libellés courts.</li>
+<li><strong><code>TEXT</code></strong> : chaine sans limite. Utilise
+pour les instructions d'exercice (longues).</li>
+<li><strong><code>TEXT[]</code></strong> : <strong>tableau de
+chaines</strong> stocke dans une seule colonne. Utilise pour
+<code>body_parts</code>, <code>target_muscles</code>,
+<code>equipments</code>. Evite de faire une table de jointure quand on
+n'a pas besoin de requeter sur les elements.</li>
+<li><strong><code>TIMESTAMP</code></strong> : date + heure. Avec
+<code>DEFAULT NOW()</code> pour les <code>created_at</code>.</li>
+</ul>
+<h3 id="54-index--pourquoi-et-lesquels">5.4 Index : pourquoi et
+lesquels</h3>
+<blockquote>
+<p><strong>Un index est un duplicata trie de la colonne, stocke a part,
+qui permet a PostgreSQL de trouver une ligne en O(log n) au lieu de
+O(n).</strong> Le cout : plus de stockage, ecritures un peu plus lentes
+(il faut maintenir l'index a jour).</p>
+</blockquote>
+<p>On a 3 types d'index dans le projet :</p>
+<h4 id="index-gin-sur-les-text">Index GIN sur les
+<code>TEXT[]</code></h4>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_exercises_body_parts <span class="kw">ON</span> exercises <span class="kw">USING</span> GIN (body_parts);</span></code></pre></div>
+<p><strong>GIN</strong> (Generalized Inverted Index) est specifique aux
+types composites (tableaux, JSONB, full-text). Il permet de repondre
+tres vite a "quels exercices ciblent les pectoraux ?" (requete
+<code>WHERE 'pectorals' = ANY(body_parts)</code>). Sans GIN, il faudrait
+scanner toute la table.</p>
+<h4 id="index-b-tree-sur-les-colonnes-de-filtrage">Index B-tree sur les
+colonnes de filtrage</h4>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_nutrition_status <span class="kw">ON</span> nutrition_entries (status);</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_etl_logs_started <span class="kw">ON</span> etl_logs (started_at <span class="kw">DESC</span>);</span></code></pre></div>
+<p><strong>B-tree</strong> est l'index par defaut, bon pour les egalites
+(<code>WHERE status = 'NETTOYE'</code>) et les tris
+(<code>ORDER BY started_at DESC</code>).</p>
+<h4
+id="contraintes-unique-qui-creent-des-index-automatiquement">Contraintes
+UNIQUE (qui creent des index automatiquement)</h4>
+<p><code>UNIQUE NULLS NOT DISTINCT (food_name, category, meal_type, source)</code>
+sur <code>nutrition_entries</code>. Cree un index qui sert a la fois a
+:</p>
+<ul>
+<li>interdire les doublons (contrainte metier)</li>
+<li>accelerer les recherches sur ce tuple (effet secondaire)</li>
+</ul>
+<h3 id="55-unique-nulls-not-distinct--pourquoi-">5.5
+<code>UNIQUE NULLS NOT DISTINCT</code> : pourquoi ?</h3>
+<p>Probleme : le comportement standard SQL considere que
+<code>NULL != NULL</code>. Donc deux lignes avec
+<code>category = NULL, meal_type = NULL</code> seraient <strong>toutes
+les deux acceptees</strong> par une contrainte UNIQUE classique, creant
+un doublon logique.</p>
+<p>Solution : depuis PostgreSQL 15, on peut ecrire
+<code>UNIQUE NULLS NOT DISTINCT (col1, col2, ...)</code>. Les NULLs sont
+alors traites comme des valeurs egales entre elles. Concretement : deux
+lignes <code>(Apple, NULL, NULL, NUTRITION_DATASET)</code> sont bien
+detectees comme doublons et la deuxieme est rejetee par
+<code>ON CONFLICT</code>.</p>
+<p>C'est <strong>indispensable</strong> ici parce que les datasets
+Kaggle ont souvent des champs manquants, et sans cette option le
+pipeline ETL creerait des doublons a chaque run.</p>
+<h3 id="56-persistence-et-reinitialisation">5.6 Persistence et
+reinitialisation</h3>
+<ul>
+<li><strong>Persistence</strong> : le volume <code>postgres_data</code>
+est monte sur <code>/var/lib/postgresql/data</code> du conteneur. Les
+donnees survivent a tout, sauf un
+<code>docker compose down -v</code>.</li>
+<li><strong>Reinitialiser la base from scratch</strong> :
+<code>docker compose down -v &amp;&amp; docker compose up -d db</code>.
+Relance toutes les migrations depuis V1.</li>
+<li><strong>Export CSV</strong> : le script
+<code>scripts/export_clean_data.sh</code> dump toutes les tables en CSV
+via <code>\COPY ... TO STDOUT WITH CSV HEADER</code>. Utile pour livrer
+les donnees aux data scientists sans acces direct a la base.</li>
+</ul>
+<h3 id="57-healthcheck-et-dependances-docker">5.7 Healthcheck et
+dependances Docker</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">healthcheck</span><span class="kw">:</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">test</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;CMD-SHELL&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;pg_isready -U healthai_user -d healthai&quot;</span><span class="kw">]</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">interval</span><span class="kw">:</span><span class="at"> 10s</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">timeout</span><span class="kw">:</span><span class="at"> 5s</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">retries</span><span class="kw">:</span><span class="at"> </span><span class="dv">5</span></span></code></pre></div>
+<p><code>pg_isready</code> est un outil livre avec PostgreSQL qui
+verifie si le serveur accepte des connexions. Pendant que la BDD se
+prepare (quelques secondes au demarrage), elle est marquee
+<code>unhealthy</code>.</p>
+<p>Les autres services utilisent cela pour attendre :</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">api</span><span class="kw">:</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">depends_on</span><span class="kw">:</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">db</span><span class="kw">:</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">condition</span><span class="kw">:</span><span class="at"> service_healthy</span></span></code></pre></div>
+<p>L'API ne demarre pas tant que la BDD ne repond pas. Evite les crashes
+au demarrage ("connection refused").</p>
+<h3 id="58-ci-githubworkflowsciyml">5.8 CI
+(<code>.github/workflows/ci.yml</code>)</h3>
+<p>2 jobs :</p>
+<ol type="1">
+<li><strong>validate</strong> : lance un PostgreSQL 17 dans GitHub
+Actions et <strong>rejoue toutes les migrations</strong> en ordre
+(<code>for f in $(ls migrations/V*__*.sql | sort -V)</code>). Si une
+migration est cassee, le CI echoue.</li>
+<li><strong>publish</strong> : si <code>validate</code> passe et qu'on
+est sur <code>main</code>, build et push l'image Docker sur
+<strong>GHCR</strong> (GitHub Container Registry, nom d'image :
+<code>ghcr.io/whitefoxxyt/mspr-db</code>).</li>
+</ol>
+<hr />
+<h2 id="6-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</h2>
+<p>Les morceaux SQL cle a pouvoir commenter a l'oral.</p>
+<h3 id="61-creation-dune-table-avec-types-forts">6.1 Creation d'une
+table avec types forts</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> exercises (</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span> BIGSERIAL <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    external_id <span class="dt">VARCHAR</span>(<span class="dv">100</span>) <span class="kw">UNIQUE</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    name <span class="dt">VARCHAR</span>(<span class="dv">255</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    body_parts TEXT <span class="dt">ARRAY</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    target_muscles TEXT <span class="dt">ARRAY</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    secondary_muscles TEXT <span class="dt">ARRAY</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    equipments TEXT <span class="dt">ARRAY</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    instructions TEXT,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    gif_url <span class="dt">VARCHAR</span>(<span class="dv">500</span>),</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">source</span> <span class="dt">VARCHAR</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;EXERCISEDB&#39;</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    created_at <span class="dt">TIMESTAMP</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> NOW()</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>BIGSERIAL PRIMARY KEY</code> : entier 64 bits auto-incremente,
+cle primaire. Chaque insert se voit attribuer un <code>id</code> unique
+automatiquement.</li>
+<li><code>UNIQUE NOT NULL</code> sur <code>external_id</code> : on ne
+peut pas avoir deux exercices avec le meme identifiant source, et il
+doit etre renseigne.</li>
+<li><code>TEXT ARRAY</code> (synonyme de <code>TEXT[]</code>) : une
+colonne qui contient une <strong>liste</strong> de chaines. Permet
+d'eviter une table de jointure quand on n'a pas besoin de requeter sur
+les elements individuels.</li>
+<li><code>DEFAULT NOW()</code> : si on ne precise pas
+<code>created_at</code> lors de l'insert, PostgreSQL met l'horodatage du
+moment. Tres pratique pour l'audit.</li>
+</ul>
+<h3 id="62-index-gin-sur-un-tableau">6.2 Index GIN sur un tableau</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_exercises_body_parts <span class="kw">ON</span> exercises <span class="kw">USING</span> GIN (body_parts);</span></code></pre></div>
+<p>Requete associee :</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> name <span class="kw">FROM</span> exercises <span class="kw">WHERE</span> <span class="st">&#39;pectorals&#39;</span> <span class="op">=</span> <span class="kw">ANY</span>(target_muscles);</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li>GIN = Generalized Inverted Index. C'est comme un index inverse dans
+un moteur de recherche : pour chaque valeur possible dans les tableaux,
+il stocke la liste des lignes qui la contiennent.</li>
+<li>Sans cet index, la requete ci-dessus ferait un "sequential scan"
+(parcours lineaire) de toute la table. Avec l'index, PostgreSQL saute
+directement aux lignes pertinentes.</li>
+<li>Cout : l'index pese en stockage (proportionnel au nombre d'elements
+dans les tableaux), et ralentit legerement les inserts. Pour un
+catalogue statique de 1500 exercices, c'est negligeable.</li>
+</ul>
+<h3 id="63-migration-idempotente-alter-table--if-not-exists">6.3
+Migration idempotente (ALTER TABLE ... IF NOT EXISTS)</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- V6__biometric_add_demographics.sql</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> biometric_entries</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">COLUMN</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> gender <span class="dt">VARCHAR</span>(<span class="dv">10</span>),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">COLUMN</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> experience_level <span class="dt">INTEGER</span>;</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>IF NOT EXISTS</code> rend la migration
+<strong>idempotente</strong> : si on la relance, elle ne plante pas
+("column already exists"). Elle detecte que la colonne est deja la et ne
+fait rien.</li>
+<li>Sans cela, relancer la migration sur une base deja migree leverait
+une erreur et bloquerait les suivantes.</li>
+<li>On utilise aussi <code>IF EXISTS</code> pour les suppressions :
+<code>DROP COLUMN IF EXISTS user_id</code>,
+<code>DROP CONSTRAINT IF EXISTS ...</code>.</li>
+</ul>
+<h3 id="64-contrainte-unique-nulls-not-distinct">6.4 Contrainte UNIQUE
+NULLS NOT DISTINCT</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- V3__add_unique_constraints.sql</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> nutrition_entries</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> uq_nutrition_entry</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">UNIQUE</span> <span class="kw">NULLS</span> <span class="kw">NOT</span> <span class="kw">DISTINCT</span> (food_name, <span class="kw">category</span>, meal_type, <span class="kw">source</span>);</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li>Contrainte composite : le tuple
+<code>(food_name, category, meal_type, source)</code> doit etre unique
+pour toute la table.</li>
+<li><code>NULLS NOT DISTINCT</code> (PostgreSQL 15+) : les
+<code>NULL</code> sont traites comme egaux entre eux. Sans cela, deux
+lignes <code>(Apple, NULL, NULL, ...)</code> seraient considerees
+differentes et la contrainte ne bloquerait pas le doublon.</li>
+<li>Cette contrainte rend possible le
+<code>ON CONFLICT DO NOTHING</code> de l'ETL : c'est ce qui garantit
+l'idempotence cote base.</li>
+</ul>
+<h3 id="65-dockerfile-minimaliste">6.5 Dockerfile minimaliste</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> postgres:17-alpine</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> migrations/*.sql /docker-entrypoint-initdb.d/</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li>On part de l'image officielle <code>postgres:17-alpine</code> qui a
+tout PostgreSQL pre-installe.</li>
+<li>On copie juste les migrations dans le dossier special
+<code>/docker-entrypoint-initdb.d/</code> :
+l'<strong>entrypoint</strong> de l'image execute automatiquement tous
+les <code>.sql</code> de ce dossier au premier demarrage, en ordre
+alphanumerique.</li>
+<li><strong>Aucune ligne de code Python/Java/Go</strong> n'est
+necessaire : tout le cycle de vie est geré par l'image de base. C'est
+l'idee : "on se sert du mecanisme existant plutot que de
+reinventer".</li>
+</ul>
+<h3 id="66-configuration-docker-compose-healthcheck--volume--reseau">6.6
+Configuration docker-compose (healthcheck + volume + reseau)</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">db</span><span class="kw">:</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> postgres:17-alpine</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> mspr-healthai-db</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_DB</span><span class="kw">:</span><span class="at"> healthai</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_USER</span><span class="kw">:</span><span class="at"> healthai_user</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_PASSWORD</span><span class="kw">:</span><span class="at"> password</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> postgres_data:/var/lib/postgresql/data</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ./MSPR-DB/migrations:/docker-entrypoint-initdb.d:ro</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">healthcheck</span><span class="kw">:</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">test</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;CMD-SHELL&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;pg_isready -U healthai_user -d healthai&quot;</span><span class="kw">]</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">interval</span><span class="kw">:</span><span class="at"> 10s</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">timeout</span><span class="kw">:</span><span class="at"> 5s</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">retries</span><span class="kw">:</span><span class="at"> </span><span class="dv">5</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;5434:5432&quot;</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">networks</span><span class="kw">:</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mspr_data_network</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">security_opt</span><span class="kw">:</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> no-new-privileges:true</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">postgres_data</span><span class="kw">:</span></span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><strong>Variables <code>POSTGRES_*</code></strong> : lues par
+l'entrypoint de l'image pour creer la base et l'utilisateur au premier
+demarrage.</li>
+<li><strong>2 volumes</strong> : un nomme (<code>postgres_data</code>)
+pour la persistence des donnees, un bind mount en lecture seule
+(<code>:ro</code>) pour exposer les migrations au conteneur sans les
+inclure dans l'image.</li>
+<li><strong>Mapping <code>5434:5432</code></strong> : le port 5432 du
+conteneur est expose sur le port 5434 de la machine hote (evite de
+conflicter avec un PostgreSQL local sur 5432, et avec l'auth-db qui est
+sur 5433).</li>
+<li><strong><code>no-new-privileges: true</code></strong> : securite
+Docker. Empeche un processus du conteneur d'obtenir plus de droits que
+le conteneur lui-meme (meme via setuid).</li>
+</ul>
+<h3 id="67-ci--rejeu-des-migrations-dans-un-postgres-de-test">6.7 CI :
+rejeu des migrations dans un Postgres de test</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">postgres</span><span class="kw">:</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> postgres:17-alpine</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env</span><span class="kw">:</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_DB</span><span class="kw">:</span><span class="at"> healthai_test</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_USER</span><span class="kw">:</span><span class="at"> healthai_user</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_PASSWORD</span><span class="kw">:</span><span class="at"> test</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Application sequentielle des migrations</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env</span><span class="kw">:</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">PGHOST</span><span class="kw">:</span><span class="at"> localhost</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">PGPORT</span><span class="kw">:</span><span class="at"> </span><span class="dv">5432</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">PGUSER</span><span class="kw">:</span><span class="at"> healthai_user</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">PGPASSWORD</span><span class="kw">:</span><span class="at"> test</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">PGDATABASE</span><span class="kw">:</span><span class="at"> healthai_test</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="fu">    run</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>      for f in $(ls migrations/V*__*.sql | sort -V); do</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>        echo &quot;Applying $f...&quot;</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>        psql -v ON_ERROR_STOP=1 -f &quot;$f&quot;</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>      done</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li>GitHub Actions lance un <strong>vrai</strong> PostgreSQL ephemere
+pour ce job (bloc <code>services:</code>).</li>
+<li>On applique <strong>toutes les migrations</strong> (<code>V1</code>,
+<code>V2</code>, ..., <code>V7</code>) dans l'ordre via
+<code>sort -V</code> (tri "version" qui gere <code>V10</code> apres
+<code>V9</code>).</li>
+<li><code>psql -v ON_ERROR_STOP=1</code> : si une migration echoue,
+<code>psql</code> s'arrete immediatement avec un code d'erreur non nul,
+ce qui fait echouer le job CI. Protection contre "la migration passe en
+local mais casse quand rejouee from scratch".</li>
+</ul>
+<hr />
+<h2 id="7-questions-probables-du-jury">7. Questions probables du
+jury</h2>
+<h3 id="q1-pourquoi-postgresql-et-pas-mysql-sqlite-ou-mongodb-">Q1.
+Pourquoi PostgreSQL et pas MySQL, SQLite ou MongoDB ?</h3>
+<ul>
+<li><strong>SQLite</strong> : base fichier mono-process, pas adaptee a
+une architecture multi-services ou plusieurs conteneurs (ETL, API)
+lisent/ecrivent en concurrence.</li>
+<li><strong>MySQL</strong> : tres bonne base mais moins riche en
+fonctionnalites (pas de <code>TEXT[]</code> natif, moins bon support
+JSON, pas de <code>UNIQUE NULLS NOT DISTINCT</code>).</li>
+<li><strong>MongoDB</strong> : base NoSQL orientee document. Pas adaptee
+aux donnees relationnelles avec contraintes strictes (types forts,
+unicite composite) comme ici. On l'utilise d'ailleurs dans MSPR2 pour le
+microservice recommandations, ou c'est plus adapte.</li>
+<li><strong>PostgreSQL</strong> coche toutes les cases : relationnel
+strict, types riches (arrays, JSONB), full-text search, extensions
+(PostGIS, pg_trgm), et c'est le standard de l'industrie.</li>
+</ul>
+<h3 id="q2-pourquoi-ne-pas-utiliser-flyway-ou-liquibase-">Q2. Pourquoi
+ne pas utiliser Flyway ou Liquibase ?</h3>
+<p>Ces outils tracent les migrations deja appliquees dans une table
+<code>schema_version</code>, ce qui permet de gerer des environnements
+long-vivants (prod, staging, dev). Pour la MSPR, on n'en a pas besoin
+:</p>
+<ul>
+<li>Un seul environnement reel (local / CI).</li>
+<li><code>docker compose down -v</code> + relance = reset propre en
+quelques secondes.</li>
+<li>Les migrations V4 a V7 sont ecrites de maniere
+<strong>idempotente</strong> (<code>IF NOT EXISTS</code>), donc on peut
+les rejouer sans casse si besoin.</li>
+</ul>
+<p>En production reelle avec plusieurs environnements et pas de droit au
+reset, on passerait a Flyway sans hesiter.</p>
+<h3 id="q3-pourquoi-avoir-supprime-la-table-users-">Q3. Pourquoi avoir
+supprime la table <code>users</code> ?</h3>
+<p>Les datasets ingeres (Kaggle) sont <strong>anonymises</strong> : il
+n'y a pas de colonne "user_id" dans les CSV. Du coup, les FK
+<code>user_id</code> dans les tables <code>nutrition_entries</code>,
+<code>exercise_entries</code>, <code>biometric_entries</code> etaient
+<strong>toutes a NULL</strong>. Cette table n'apportait rien et polluait
+le schema. La migration V7 la supprime.</p>
+<p>Les vrais utilisateurs de l'application sont dans MSPR-AUTH (base
+<code>auth_db</code> separee, geree par better-auth). La separation base
+metier / base auth est volontaire : separation des responsabilites et
+possibilite de scaler independamment.</p>
+<h3 id="q4-pourquoi-un-index-gin-sur-les-tableaux-">Q4. Pourquoi un
+index GIN sur les tableaux ?</h3>
+<p>Parce qu'on veut pouvoir requeter "trouve-moi les exercices qui
+ciblent les pectoraux" en <code>O(log n)</code>. Sans index, PostgreSQL
+devrait scanner les 1500 lignes de la table <code>exercises</code> et
+tester le tableau de chaque ligne. Avec un index GIN, il sait
+directement quelles lignes contiennent <code>pectorals</code> dans
+<code>target_muscles</code>.</p>
+<h3 id="q5-a-quoi-sert-unique-nulls-not-distinct-">Q5. A quoi sert
+<code>UNIQUE NULLS NOT DISTINCT</code> ?</h3>
+<p>Le SQL standard dit que <code>NULL != NULL</code>. Donc une
+contrainte UNIQUE classique sur
+<code>(food_name, category, meal_type, source)</code> laisse passer
+<strong>deux lignes</strong>
+<code>(Apple, NULL, NULL, NUTRITION_DATASET)</code> comme si elles
+etaient differentes. On aurait un doublon logique a chaque run ETL.</p>
+<p><code>UNIQUE NULLS NOT DISTINCT</code> (dispo en PostgreSQL 15+)
+traite les NULL comme egaux. Deux lignes identiques meme avec des NULL
+sont bien detectees comme doublon, et
+l'<code>ON CONFLICT DO NOTHING</code> de l'ETL fonctionne.</p>
+<h3 id="q6-que-se-passe-t-il-si-on-perd-le-volume-postgres_data-">Q6.
+Que se passe-t-il si on perd le volume <code>postgres_data</code> ?</h3>
+<p>On perd <strong>toutes les donnees</strong> de la BDD. Mais :</p>
+<ul>
+<li>Le schema est rejouable via les migrations au prochain
+demarrage.</li>
+<li>Les donnees metier sont re-ingerables via l'ETL (les CSV/JSON sont
+dans <code>MSPR-ETL/data/raw/</code>, versionnes dans le repo).</li>
+<li>Les vrais utilisateurs sont dans <code>auth_db</code> (autre
+volume).</li>
+</ul>
+<p>Donc perte de donnees reelle = uniquement les <code>etl_logs</code>
+et les modifications CRUD manuelles via l'API. Pour une prod reelle, on
+ferait un backup regulier (<code>pg_dump</code> quotidien).</p>
+<h3 id="q7-pourquoi-le-port-5434-sur-lhote-">Q7. Pourquoi le port 5434
+sur l'hote ?</h3>
+<p>Trois PostgreSQL se baladent dans le projet :</p>
+<ul>
+<li>Un eventuellement installe en local sur 5432 (celui du dev).</li>
+<li>MSPR-AUTH sur 5433.</li>
+<li>MSPR-DB sur 5434.</li>
+</ul>
+<p>Choisir des ports non standard evite les collisions. En
+<strong>interne</strong> au reseau Docker, tous sont sur 5432 par defaut
+(chacun dans son conteneur isole), c'est juste le mapping vers l'hote
+qui change.</p>
+<h3 id="q8-comment-monitore-t-on-la-sante-de-la-bdd-">Q8. Comment
+monitore-t-on la sante de la BDD ?</h3>
+<ul>
+<li><strong>Healthcheck Docker</strong> (<code>pg_isready</code> toutes
+les 10s) : le plus basique. Indique si PostgreSQL accepte des
+connexions.</li>
+<li><strong>Requete sur <code>etl_logs</code></strong> : permet de voir
+si les derniers runs ETL ont ecrit correctement.</li>
+<li><strong>Logs Docker</strong> :
+<code>docker logs mspr-healthai-db</code> pour voir les erreurs SQL, les
+lenteurs, les problemes de connexion.</li>
+<li>En prod, on brancherait un exporter Prometheus (ex :
+<code>postgres_exporter</code>) pour sortir des metriques (taille des
+tables, requetes lentes, nombre de connexions).</li>
+</ul>
+<h3 id="q9-les-index-ont-un-cout-pourquoi-en-avoir-autant-">Q9. Les
+index ont un cout, pourquoi en avoir autant ?</h3>
+<p>Chaque index accelere les lectures mais ralentit les ecritures (il
+faut maintenir l'index a jour a chaque INSERT/UPDATE/DELETE). Ici :</p>
+<ul>
+<li>Les donnees sont surtout <strong>lues</strong> (l'API fait beaucoup
+de SELECT pour le dashboard).</li>
+<li>Les ecritures sont concentrees dans des <strong>batchs ETL</strong>
+nocturnes, donc peu sensibles a la performance.</li>
+<li>La volumetrie est faible (quelques milliers de lignes) : meme avec
+tous ces index, le cout reste negligeable.</li>
+</ul>
+<p>Bref, le ratio lecture/ecriture favorise clairement l'indexation.</p>
+<h3
+id="q10-pourquoi-utiliser-decimal-plutot-que-float-pour-les-mesures-">Q10.
+Pourquoi utiliser <code>DECIMAL</code> plutot que <code>FLOAT</code>
+pour les mesures ?</h3>
+<p><code>FLOAT</code> est une representation binaire approximative :
+<code>0.1 + 0.2 != 0.3</code> en pratique. Pour des mesures medicales
+(calories, poids, BMI), une erreur d'arrondi pourrait avoir des
+consequences (pharmacologie, calculs de dose).
+<code>DECIMAL(p, s)</code> est une representation decimale exacte,
+adaptee aux calculs financiers et medicaux.</p>
+<p>Cout : legerement plus lent et plus lourd en stockage, mais non
+significatif a notre volumetrie.</p>
+<h3
+id="q11-la-colonne-etl_logsdetails-est-de-type-text-pas-jsonb-pourquoi-">Q11.
+La colonne <code>etl_logs.details</code> est de type TEXT, pas JSONB.
+Pourquoi ?</h3>
+<p><strong>C'est un choix d'origine a ameliorer.</strong> La colonne
+stocke effectivement du JSON (serialise par <code>json.dumps</code> cote
+Python), mais le type de colonne est <code>TEXT</code> dans le schema
+actuel. Consequence : on ne peut pas faire
+<code>details-&gt;&gt;'error'</code> directement, il faudrait caster
+<code>details::jsonb-&gt;&gt;'error'</code>.</p>
+<p>Une future migration <code>V8__etl_logs_details_jsonb.sql</code>
+convertirait proprement la colonne en <code>JSONB</code> avec
+<code>ALTER TABLE etl_logs ALTER COLUMN details TYPE JSONB USING details::jsonb</code>.
+Cela accelererait aussi les requetes analytiques sur les runs ETL.</p>
+<h3 id="q12-comment-sauvegarderrestaurer-la-bdd-">Q12. Comment
+sauvegarder/restaurer la BDD ?</h3>
+<ul>
+<li><strong>Sauvegarde</strong> :
+<code>docker exec mspr-healthai-db pg_dump -U healthai_user healthai &gt; backup.sql</code>.
+Genere un fichier SQL avec tout le schema et les donnees.</li>
+<li><strong>Restauration</strong> :
+<code>docker exec -i mspr-healthai-db psql -U healthai_user healthai &lt; backup.sql</code>.</li>
+<li>Pour les exports analytiques (data scientists), on utilise
+<code>scripts/export_clean_data.sh</code> qui genere des CSV par table
+via <code>\COPY ... TO STDOUT</code>.</li>
+</ul>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

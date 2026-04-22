@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>API — Révisions MSPR</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a href="#fiche-de-revision--mspr-api"
+id="toc-fiche-de-revision--mspr-api">Fiche de revision : MSPR-API</a>
+<ul>
+<li><a href="#0-vocabulaire-a-connaitre-avant-de-lire"
+id="toc-0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#1-tldr" id="toc-1-tldr">1. TL;DR</a></li>
+<li><a href="#2-flux-dune-requete-typique"
+id="toc-2-flux-dune-requete-typique">2. Flux d'une requete
+typique</a></li>
+<li><a href="#3-stack-technique" id="toc-3-stack-technique">3. Stack
+technique</a></li>
+<li><a href="#4-les-9-controllers" id="toc-4-les-9-controllers">4. Les 9
+controllers</a></li>
+<li><a href="#5-points-techniques-importants"
+id="toc-5-points-techniques-importants">5. Points techniques
+importants</a></li>
+<li><a href="#6-code-essentiel-a-savoir-expliquer-au-jury"
+id="toc-6-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</a></li>
+<li><a href="#7-questions-probables-du-jury"
+id="toc-7-questions-probables-du-jury">7. Questions probables du
+jury</a></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1 id="fiche-de-revision--mspr-api">Fiche de revision : MSPR-API</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR1. Objectif : comprendre
+le role du service, l'architecture en couches et les points techniques
+importants, sans rentrer dans le detail de chaque endpoint.</p>
+</blockquote>
+<hr />
+<h2 id="0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<table>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>REST</strong></td>
+<td>Style d'architecture web qui represente les donnees comme des
+"ressources" avec une URL, manipulees via des verbes HTTP (GET, POST,
+PUT, DELETE).</td>
+</tr>
+<tr>
+<td><strong>Spring Boot</strong></td>
+<td>Framework Java qui simplifie la creation d'applications web :
+configuration par defaut, serveur embarque (Tomcat), injection de
+dependances automatique.</td>
+</tr>
+<tr>
+<td><strong>JPA / Hibernate</strong></td>
+<td>JPA est la specification Java pour manipuler des bases
+relationnelles via des objets. <strong>Hibernate</strong> est
+l'implementation la plus connue. Permet d'ecrire
+<code>userRepo.save(user)</code> au lieu de
+<code>INSERT INTO...</code>.</td>
+</tr>
+<tr>
+<td><strong>Entity</strong></td>
+<td>Classe Java annotee <code>@Entity</code> qui correspond a une table
+en base. Chaque instance = une ligne.</td>
+</tr>
+<tr>
+<td><strong>Controller / Service / Repository</strong></td>
+<td>Les 3 couches classiques en Spring : le <strong>controller</strong>
+recoit les requetes HTTP, le <strong>service</strong> contient la
+logique metier, le <strong>repository</strong> parle a la base.</td>
+</tr>
+<tr>
+<td><strong>DTO</strong> (Data Transfer Object)</td>
+<td>Objet "pivot" utilise pour les echanges HTTP. Isole la forme des
+reponses/requetes de la structure interne des entities.</td>
+</tr>
+<tr>
+<td><strong>JWT Bearer</strong></td>
+<td>Mode d'authentification HTTP : le client envoie
+<code>Authorization: Bearer &lt;jwt&gt;</code> a chaque requete, le
+serveur valide le JWT.</td>
+</tr>
+<tr>
+<td><strong>Injection de dependances</strong></td>
+<td>Le framework instancie les objets et les passe en parametre du
+constructeur. Evite de faire <code>new UserService()</code>
+partout.</td>
+</tr>
+<tr>
+<td><strong>Actuator</strong></td>
+<td>Module Spring Boot qui expose des endpoints techniques
+(<code>/actuator/health</code>, <code>/info</code>,
+<code>/metrics</code>) pour monitorer l'application.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-tldr">1. TL;DR</h2>
+<p><strong>MSPR-API</strong> est l'<strong>API REST metier</strong> du
+projet. Elle expose les donnees ingerees par l'ETL au front Vue 3, et
+fournit aussi un CRUD pour que les admins/data scientists puissent
+corriger les donnees a la main.</p>
+<ul>
+<li><strong>Stack</strong> : Spring Boot 4.0.3 + Java 21 + Spring Data
+JPA (Hibernate) + Spring Security</li>
+<li><strong>Port</strong> : 8080</li>
+<li><strong>Context path</strong> : <code>/api</code> (toutes les URLs
+commencent par <code>/api/...</code>)</li>
+<li><strong>BDD</strong> : PostgreSQL <code>healthai</code> (MSPR-DB)
+via JDBC</li>
+<li><strong>Auth</strong> : valide les JWT emis par MSPR-AUTH avec
+<code>BETTER_AUTH_SECRET</code> (HS512). <strong>Aucun appel runtime a
+MSPR-AUTH.</strong></li>
+<li><strong>Doc</strong> : Swagger UI sur
+<code>http://localhost:8080/api/swagger-ui.html</code></li>
+<li><strong>9 controllers</strong> repartis en 3 groupes : metier
+(Exercise, Nutrition, Workout, Biometric, DietRecommendation), qualite
+des donnees (DataQuality, Validation), utilitaires (Export, Health)</li>
+</ul>
+<hr />
+<h2 id="2-flux-dune-requete-typique">2. Flux d'une requete typique</h2>
+<pre class="mermaid"><code>flowchart LR
+    F[MSPR-FRONT] --&gt;|GET /api/nutrition&lt;br/&gt;Authorization: Bearer jwt| FILTER[JwtAuthenticationFilter]
+    FILTER --&gt;|valide via BETTER_AUTH_SECRET| CTRL[NutritionController]
+    CTRL --&gt; SVC[NutritionService]
+    SVC --&gt; REPO[NutritionEntryRepository]
+    REPO --&gt;|SQL via Hibernate| DB[(healthai)]
+
+    DB --&gt;|ResultSet| REPO
+    REPO --&gt;|Entity| SVC
+    SVC --&gt;|mapToDTO| CTRL
+    CTRL --&gt;|JSON| F</code></pre>
+<p><strong>Principe</strong> : separation stricte des responsabilites
+entre les couches. Chaque couche ne connait que la couche juste en
+dessous.</p>
+<hr />
+<h2 id="3-stack-technique">3. Stack technique</h2>
+<table>
+<thead>
+<tr>
+<th>Composant</th>
+<th>Role</th>
+<th>Pourquoi ce choix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Java 21 LTS</strong></td>
+<td>Langage</td>
+<td>Version long-terme supportee jusqu'en 2031. Apporte les records,
+pattern matching, virtual threads.</td>
+</tr>
+<tr>
+<td><strong>Spring Boot 4.0.3</strong></td>
+<td>Framework</td>
+<td>Standard Java pour les APIs. Auto-configuration, serveur Tomcat
+embarque, ecosysteme massif.</td>
+</tr>
+<tr>
+<td><strong>Spring Data JPA</strong></td>
+<td>Acces BDD</td>
+<td>On declare une interface
+<code>JpaRepository&lt;Entity, Long&gt;</code> et Spring genere toutes
+les methodes CRUD.</td>
+</tr>
+<tr>
+<td><strong>Hibernate</strong> (via JPA)</td>
+<td>ORM</td>
+<td>Traduit les appels Java en SQL PostgreSQL. Gere le lazy loading, les
+transactions, le cache.</td>
+</tr>
+<tr>
+<td><strong>Spring Security 6</strong></td>
+<td>Authentification</td>
+<td>Filtre HTTP configurable, integre les mecanismes classiques (JWT,
+sessions, OAuth).</td>
+</tr>
+<tr>
+<td><strong>jjwt</strong> 0.12.3</td>
+<td>Librairie JWT</td>
+<td>Impl Java populaire (io.jsonwebtoken), API fluente pour
+signer/valider des JWT.</td>
+</tr>
+<tr>
+<td><strong>Springdoc OpenAPI</strong> 3.0.2</td>
+<td>Documentation</td>
+<td>Genere la doc Swagger UI a partir des annotations
+(<code>@Operation</code>, <code>@Tag</code>). Zero fichier manuel.</td>
+</tr>
+<tr>
+<td><strong>JaCoCo</strong> 0.8.11</td>
+<td>Code coverage</td>
+<td>Mesure la couverture des tests (lignes + branches). Seuil
+<strong>minimum 80%</strong> enforce dans le build Maven.</td>
+</tr>
+<tr>
+<td><strong>SonarQube</strong></td>
+<td>Qualite code</td>
+<td>Analyse statique : bugs, code smells, duplications, securite. Plugin
+Maven active.</td>
+</tr>
+<tr>
+<td><strong>Maven</strong></td>
+<td>Build</td>
+<td>Standard Java. <code>./mvnw</code> (wrapper) permet de builder sans
+installation globale de Maven.</td>
+</tr>
+<tr>
+<td><strong>Docker multi-stage</strong></td>
+<td>Packaging</td>
+<td>2 etapes : builder Maven (qui compile) puis runtime JRE Alpine
+(juste ce qu'il faut pour executer). Image finale ~200 Mo vs ~1 Go avec
+le JDK complet.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-les-9-controllers">4. Les 9 controllers</h2>
+<h3
+id="groupe-1--controllers-metier-expose-les-donnees-de-la-bdd">Groupe 1
+: controllers metier (expose les donnees de la BDD)</h3>
+<table>
+<thead>
+<tr>
+<th>Controller</th>
+<th>Endpoints</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ExerciseController</code></td>
+<td><code>GET /exercises</code> (pagine),
+<code>GET /exercises/{id}</code></td>
+<td>Catalogue d'exercices en lecture seule (1500 entrees alimentees par
+l'ETL)</td>
+</tr>
+<tr>
+<td><code>NutritionController</code></td>
+<td>CRUD complet <code>/nutrition</code></td>
+<td>Gestion des entrees nutritionnelles</td>
+</tr>
+<tr>
+<td><code>WorkoutController</code></td>
+<td>CRUD complet <code>/workouts</code></td>
+<td>Gestion des seances d'exercice</td>
+</tr>
+<tr>
+<td><code>BiometricController</code></td>
+<td>CRUD complet <code>/biometrics</code></td>
+<td>Gestion des mesures corporelles</td>
+</tr>
+<tr>
+<td><code>DietRecommendationController</code></td>
+<td><code>GET /diet-recommendations</code> (pagine),
+<code>GET /{id}</code>, <code>GET /stats</code></td>
+<td>Recommandations alimentaires + stats agregees</td>
+</tr>
+</tbody>
+</table>
+<h3 id="groupe-2--controllers-qualite-des-donnees-dashboard">Groupe 2 :
+controllers qualite des donnees (dashboard)</h3>
+<table>
+<thead>
+<tr>
+<th>Controller</th>
+<th>Endpoints</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DataQualityController</code></td>
+<td><code>GET /data-quality/metrics</code>, <code>/anomalies</code>
+(CRUD), <code>/flows</code>, <code>/analytics/overview</code>,
+<code>/etl-report</code></td>
+<td>Metriques de qualite, detection d'anomalies, rapport ETL</td>
+</tr>
+<tr>
+<td><code>ValidationController</code></td>
+<td><code>GET /validation/records</code> (pagine par statut),
+<code>PUT /{id}</code>, <code>POST /{id}/validate</code></td>
+<td>Workflow de validation manuelle des entrees suspectes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="groupe-3--controllers-utilitaires">Groupe 3 : controllers
+utilitaires</h3>
+<table>
+<thead>
+<tr>
+<th>Controller</th>
+<th>Endpoints</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ExportController</code></td>
+<td><code>POST /export</code> (JSON ou CSV)</td>
+<td>Export des tables avec filtrage par type</td>
+</tr>
+<tr>
+<td><code>HealthController</code></td>
+<td><code>GET /health</code></td>
+<td>Healthcheck custom (status + timestamp + version)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong> : le <code>HealthController</code> custom
+coexiste avec les endpoints Spring Actuator
+(<code>/api/actuator/health</code> et <code>/api/actuator/info</code>)
+qui eux sont generes automatiquement par le module
+<code>spring-boot-starter-actuator</code>.</p>
+<hr />
+<h2 id="5-points-techniques-importants">5. Points techniques
+importants</h2>
+<h3
+id="51-architecture-en-couches-controller---service---repository">5.1
+Architecture en couches Controller -&gt; Service -&gt; Repository</h3>
+<p>C'est le pattern standard Spring. Chaque couche a <strong>une
+responsabilite unique</strong> :</p>
+<ul>
+<li><strong>Controller</strong> : traduit HTTP &lt;-&gt; Java. Ne
+contient <strong>aucune logique metier</strong>, juste le routage et la
+mise en forme des reponses.</li>
+<li><strong>Service</strong> : contient la logique metier (validation
+croisee, transactions, orchestration). Utilise un ou plusieurs
+repositories.</li>
+<li><strong>Repository</strong> : parle a la base via Spring Data JPA.
+Pas de logique, juste des requetes.</li>
+</ul>
+<p>Cette separation permet de tester chaque couche independamment (le
+service avec un repo mocké, le controller avec un service mocké).</p>
+<h3 id="52-spring-data-jpa--des-repositories-quasi-vides">5.2 Spring
+Data JPA : des repositories quasi-vides</h3>
+<p>Exemple de <code>ExerciseRepository</code> :</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Repository</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> ExerciseRepository <span class="kw">extends</span> JpaRepository<span class="op">&lt;</span>Exercise<span class="op">,</span> <span class="bu">Long</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>C'est <strong>tout</strong>. En heritant de
+<code>JpaRepository</code>, on obtient gratuitement :
+<code>save()</code>, <code>findById()</code>, <code>findAll()</code>,
+<code>findAll(Pageable)</code>, <code>deleteById()</code>,
+<code>count()</code>, <code>existsById()</code>, etc.</p>
+<p>Pour des requetes personnalisees, on ajoute des methodes :</p>
+<ul>
+<li><strong>Methodes nommees</strong> :
+<code>countByStatus(String)</code>. Spring deduit la requete du
+nom.</li>
+<li><strong>Annotation <code>@Query</code></strong> avec du JPQL
+(langage proche SQL mais sur les entities) ou du SQL natif.</li>
+</ul>
+<p>Exemple reel dans <code>NutritionEntryRepository</code> :</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Query</span><span class="op">(</span><span class="st">&quot;SELECT n FROM NutritionEntry n WHERE n.calories &gt; :maxCalories OR n.calories &lt; 0&quot;</span><span class="op">)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span>NutritionEntry<span class="op">&gt;</span> <span class="fu">findCalorieOutliers</span><span class="op">(</span><span class="bu">BigDecimal</span> maxCalories<span class="op">);</span></span></code></pre></div>
+<h3 id="53-mapping-auto-camelcase---snake_case">5.3 Mapping auto
+camelCase &lt;-&gt; snake_case</h3>
+<p>La convention Java est <code>camelCase</code> (<code>foodName</code>,
+<code>proteinG</code>), la convention PostgreSQL est
+<code>snake_case</code> (<code>food_name</code>,
+<code>protein_g</code>). On configure une fois pour toutes :</p>
+<pre class="properties"><code>spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy</code></pre>
+<p>Hibernate fait la conversion automatiquement. On peut neanmoins
+forcer un nom avec <code>@Column(name = "food_name")</code> quand il y a
+ambiguite.</p>
+<h3 id="54-jpa-en-mode-validate-pas-update-pas-create">5.4 JPA en mode
+<code>validate</code> (pas <code>update</code>, pas
+<code>create</code>)</h3>
+<pre class="properties"><code>spring.jpa.hibernate.ddl-auto=validate</code></pre>
+<p>Au demarrage, Hibernate <strong>verifie</strong> que le schema de la
+base correspond aux entities Java. Il ne modifie <strong>rien</strong>.
+Si une colonne manque ou que le type est different, l'application refuse
+de demarrer.</p>
+<p>Pourquoi : les migrations sont <strong>centralisees dans
+MSPR-DB</strong>. Autoriser l'API a modifier le schema serait une source
+de conflits (deux services qui ajoutent des colonnes differemment). Le
+mode <code>validate</code> est la ceinture de securite.</p>
+<h3 id="55-security--validation-jwt-sans-appel-a-mspr-auth">5.5 Security
+: validation JWT sans appel a MSPR-AUTH</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// SecurityConfig.java (extrait)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>http</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">sessionManagement</span><span class="op">(</span>session <span class="op">-&gt;</span> session<span class="op">.</span><span class="fu">sessionCreationPolicy</span><span class="op">(</span>SessionCreationPolicy<span class="op">.</span><span class="fu">STATELESS</span><span class="op">))</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">csrf</span><span class="op">(</span>csrf <span class="op">-&gt;</span> csrf<span class="op">.</span><span class="fu">disable</span><span class="op">())</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">authorizeHttpRequests</span><span class="op">(</span>authz <span class="op">-&gt;</span> authz</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">requestMatchers</span><span class="op">(</span><span class="st">&quot;/api/public/**&quot;</span><span class="op">,</span> <span class="st">&quot;/api/swagger-ui/**&quot;</span><span class="op">,</span> <span class="st">&quot;/api/actuator/health&quot;</span><span class="op">).</span><span class="fu">permitAll</span><span class="op">()</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="op">.</span><span class="fu">anyRequest</span><span class="op">().</span><span class="fu">authenticated</span><span class="op">())</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">addFilterBefore</span><span class="op">(</span><span class="kw">new</span> <span class="fu">JwtAuthenticationFilter</span><span class="op">(</span>jwtTokenProvider<span class="op">),</span> UsernamePasswordAuthenticationFilter<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span></code></pre></div>
+<p>Trois points cle :</p>
+<ul>
+<li><strong><code>STATELESS</code></strong> : Spring Security ne cree
+pas de session HTTP cote serveur. Chaque requete est traitee
+independamment, l'authentification provient uniquement du JWT dans le
+header. Ideal pour une API REST scalable.</li>
+<li><strong>CSRF desactive</strong> : les attaques CSRF exploitent les
+cookies de session. Sans session, pas de vecteur d'attaque. Desactiver
+est correct.</li>
+<li><strong><code>JwtAuthenticationFilter</code></strong> : un filtre
+custom intercepte chaque requete, extrait le JWT du header
+<code>Authorization: Bearer ...</code>, le valide avec
+<code>BETTER_AUTH_SECRET</code> via <code>JwtTokenProvider</code>, et
+pose un <code>Authentication</code> dans le <code>SecurityContext</code>
+si valide.</li>
+</ul>
+<p><strong>Point critique : la validation est purement cryptographique,
+aucun appel reseau vers MSPR-AUTH.</strong> L'API peut scaler
+horizontalement sans charger l'auth.</p>
+<h3 id="56-validation-de-la-cle-jwt-au-demarrage">5.6 Validation de la
+cle JWT au demarrage</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// JwtTokenProvider.java</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="dt">int</span> MIN_SECRET_BYTES <span class="op">=</span> <span class="dv">64</span><span class="op">;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="at">@PostConstruct</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> <span class="fu">validateSecret</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> length <span class="op">=</span> jwtSecret<span class="op">.</span><span class="fu">getBytes</span><span class="op">(</span>StandardCharsets<span class="op">.</span><span class="fu">UTF_8</span><span class="op">).</span><span class="fu">length</span><span class="op">;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>length <span class="op">&lt;</span> MIN_SECRET_BYTES<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IllegalStateException</span><span class="op">(</span><span class="st">&quot;app.jwt.secret must be at least 64 bytes for HS512&quot;</span><span class="op">);</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>HS512</strong> (HMAC-SHA512) exige une cle d'au moins 64
+octets (512 bits) pour etre cryptographiquement solide.
+<code>@PostConstruct</code> = cette methode est appelee par Spring juste
+apres l'injection du champ <code>jwtSecret</code>. Si la cle est trop
+courte, l'application refuse de demarrer (fail-fast).</p>
+<h3 id="57-gestion-derreur-centralisee">5.7 Gestion d'erreur
+centralisee</h3>
+<p><code>GlobalExceptionHandler</code>
+(<code>@RestControllerAdvice</code>) intercepte les exceptions remontees
+par n'importe quel controller et les convertit en reponses HTTP JSON
+homogenes :</p>
+<table>
+<thead>
+<tr>
+<th>Exception</th>
+<th>Statut HTTP</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ResourceNotFoundException</code> (custom)</td>
+<td>404 Not Found</td>
+<td>Entity absente (<code>findById(id).orElseThrow(...)</code>)</td>
+</tr>
+<tr>
+<td><code>UnauthorizedAccessException</code> (custom)</td>
+<td>403 Forbidden</td>
+<td>User connecte mais pas autorise</td>
+</tr>
+<tr>
+<td><code>MethodArgumentNotValidException</code> (Spring)</td>
+<td>422 Unprocessable Entity</td>
+<td>Validation <code>@Valid</code> echouee (DTO invalide)</td>
+</tr>
+<tr>
+<td><code>AuthenticationException</code> (Spring)</td>
+<td>401 Unauthorized</td>
+<td>JWT invalide ou absent</td>
+</tr>
+<tr>
+<td><code>RuntimeException</code> (fallback)</td>
+<td>400 Bad Request</td>
+<td>Erreur non prevue mais fautive client</td>
+</tr>
+<tr>
+<td><code>Exception</code> (catch-all)</td>
+<td>500 Internal Server Error</td>
+<td>Erreur serveur</td>
+</tr>
+</tbody>
+</table>
+<p>Toutes les reponses d'erreur ont la meme forme
+(<code>ErrorResponse</code>), ce qui simplifie le code cote front.</p>
+<h3 id="58-injection-de-dependances-par-constructeur">5.8 Injection de
+dependances par constructeur</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">@RestController</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="at">@RequestMapping</span><span class="op">(</span><span class="st">&quot;/nutrition&quot;</span><span class="op">)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> NutritionController <span class="op">{</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> NutritionService nutritionService<span class="op">;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">NutritionController</span><span class="op">(</span>NutritionService nutritionService<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">nutritionService</span> <span class="op">=</span> nutritionService<span class="op">;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ...</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>On ne fait <strong>jamais</strong>
+<code>new NutritionService()</code>. Spring instancie les beans
+(composants) et les injecte en parametre du constructeur. Les champs
+sont <code>final</code>, ce qui garantit l'immutabilite et facilite les
+tests (on peut passer un mock au constructeur).</p>
+<h3 id="59-transactions-jpa">5.9 Transactions JPA</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Transactional</span><span class="op">(</span>readOnly <span class="op">=</span> <span class="kw">true</span><span class="op">)</span>   <span class="co">// pour les lectures</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> Page<span class="op">&lt;</span>NutritionEntryDTO<span class="op">&gt;</span> <span class="fu">listNutritionEntries</span><span class="op">(</span><span class="bu">Pageable</span> pageable<span class="op">)</span> <span class="op">{</span> <span class="kw">...</span> <span class="op">}</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="at">@Transactional</span>                     <span class="co">// pour les ecritures</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> NutritionEntryDTO <span class="fu">createNutritionEntry</span><span class="op">(</span>NutritionEntryDTO dto<span class="op">)</span> <span class="op">{</span> <span class="kw">...</span> <span class="op">}</span></span></code></pre></div>
+<ul>
+<li><code>@Transactional</code> ouvre une transaction au debut de la
+methode et la commit a la fin. Si exception -&gt; rollback
+automatique.</li>
+<li><code>readOnly = true</code> : optimisation Hibernate (pas de dirty
+checking, lecture plus rapide). A utiliser pour tous les reads.</li>
+</ul>
+<h3 id="510-documentation-openapi-swagger-ui">5.10 Documentation OpenAPI
+(Swagger UI)</h3>
+<p>L'interface est disponible sur
+<code>http://localhost:8080/api/swagger-ui.html</code>. Elle est generee
+automatiquement a partir des annotations :</p>
+<ul>
+<li><code>@Tag(name = "Nutrition")</code> sur le controller -&gt; groupe
+dans l'UI</li>
+<li><code>@Operation(summary = "...")</code> sur chaque methode -&gt;
+description de l'endpoint</li>
+<li><code>@SecurityRequirement(name = "bearer-jwt")</code> -&gt; indique
+que l'endpoint requiert un JWT</li>
+</ul>
+<p>Avantage enorme : la doc est <strong>toujours a jour</strong> avec le
+code (pas de doc separee qui se desynchronise). On peut aussi tester les
+endpoints directement depuis l'UI (bouton "Try it out").</p>
+<h3 id="511-dockerfile-multi-stage">5.11 Dockerfile multi-stage</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> maven:3.9-eclipse-temurin-21 as builder</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">WORKDIR</span> /build</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> pom.xml .</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">mvn</span> dependency:go-offline <span class="at">-q</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> src/main/ src/main/</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">mvn</span> clean package <span class="at">-DskipTests</span> <span class="at">-q</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> eclipse-temurin:21-jre-alpine</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="kw">WORKDIR</span> /app</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">addgroup</span> <span class="at">-S</span> spring <span class="kw">&amp;&amp;</span> <span class="ex">adduser</span> <span class="at">-S</span> spring <span class="at">-G</span> spring</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> <span class="op">--from=builder</span> /build/target/*.jar app.jar</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="fu">chown</span> spring:spring app.jar</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="kw">USER</span> spring</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="kw">EXPOSE</span> 8080</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="kw">HEALTHCHECK</span> <span class="kw">CMD</span> <span class="ex">nc</span> <span class="at">-z</span> localhost 8080 <span class="kw">||</span> <span class="bu">exit</span> 1</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="kw">ENTRYPOINT</span> [<span class="st">&quot;java&quot;</span>, <span class="st">&quot;-jar&quot;</span>, <span class="st">&quot;app.jar&quot;</span>]</span></code></pre></div>
+<p><strong>Deux stages</strong> :</p>
+<ul>
+<li><strong>builder</strong> : image complete avec Maven + JDK 21 (~1
+Go). Compile le code en <code>.jar</code>.</li>
+<li><strong>runtime</strong> : image legere avec seulement le JRE Alpine
+(~200 Mo). Copie le <code>.jar</code> du builder et l'execute.</li>
+</ul>
+<p>Resultat : l'image finale est <strong>5x plus legere</strong> et ne
+contient <strong>ni Maven ni le code source</strong> (seulement le
+binaire).</p>
+<h3 id="512-cicd">5.12 CI/CD</h3>
+<p><code>.github/workflows/ci.yml</code> : 2 jobs sur push/PR vers
+<code>main</code>.</p>
+<ol type="1">
+<li><strong>test</strong> : <code>./mvnw test</code>. Les tests Maven
+declenchent aussi l'analyse JaCoCo (si seuil &lt; 80%, le build
+echoue).</li>
+<li><strong>publish</strong> : si <code>test</code> passe et qu'on est
+sur un push, publie l'image Docker sur GHCR
+(<code>ghcr.io/whitefoxxyt/mspr-api</code>).</li>
+</ol>
+<p>SonarQube est configure via <code>sonar-project.properties</code> et
+le plugin Maven. Il peut etre lance localement avec
+<code>./mvnw sonar:sonar</code> contre une instance SonarQube.</p>
+<hr />
+<h2 id="6-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</h2>
+<h3 id="61-anatomie-dun-crud-controller--service--repository">6.1
+Anatomie d'un CRUD (Controller + Service + Repository)</h3>
+<p><strong>Controller</strong> : traduit HTTP &lt;-&gt; Java, zero
+logique.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">@RestController</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="at">@RequestMapping</span><span class="op">(</span><span class="st">&quot;/nutrition&quot;</span><span class="op">)</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> NutritionController <span class="op">{</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> NutritionService nutritionService<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">NutritionController</span><span class="op">(</span>NutritionService nutritionService<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">nutritionService</span> <span class="op">=</span> nutritionService<span class="op">;</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@PostMapping</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> ResponseEntity<span class="op">&lt;</span>NutritionEntryDTO<span class="op">&gt;</span> <span class="fu">createNutritionEntry</span><span class="op">(</span><span class="at">@Valid</span> <span class="at">@RequestBody</span> NutritionEntryDTO dto<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        NutritionEntryDTO saved <span class="op">=</span> nutritionService<span class="op">.</span><span class="fu">createNutritionEntry</span><span class="op">(</span>dto<span class="op">);</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">status</span><span class="op">(</span>HttpStatus<span class="op">.</span><span class="fu">CREATED</span><span class="op">).</span><span class="fu">body</span><span class="op">(</span>saved<span class="op">);</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Service</strong> : logique metier, transactions, mapping
+entity &lt;-&gt; DTO.</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Service</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> NutritionService <span class="op">{</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> NutritionEntryRepository repo<span class="op">;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">NutritionService</span><span class="op">(</span>NutritionEntryRepository repo<span class="op">)</span> <span class="op">{</span> <span class="kw">this</span><span class="op">.</span><span class="fu">repo</span> <span class="op">=</span> repo<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Transactional</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> NutritionEntryDTO <span class="fu">createNutritionEntry</span><span class="op">(</span>NutritionEntryDTO dto<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        NutritionEntry entry <span class="op">=</span> <span class="kw">new</span> <span class="fu">NutritionEntry</span><span class="op">();</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        entry<span class="op">.</span><span class="fu">setFoodName</span><span class="op">(</span>dto<span class="op">.</span><span class="fu">getFoodName</span><span class="op">());</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        entry<span class="op">.</span><span class="fu">setCalories</span><span class="op">(</span>dto<span class="op">.</span><span class="fu">getCalories</span><span class="op">());</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">// ... (autres setters)</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>        NutritionEntry saved <span class="op">=</span> repo<span class="op">.</span><span class="fu">save</span><span class="op">(</span>entry<span class="op">);</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">mapToDTO</span><span class="op">(</span>saved<span class="op">);</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Repository</strong> : Spring Data JPA genere tout
+gratuitement.</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Repository</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> NutritionEntryRepository <span class="kw">extends</span> JpaRepository<span class="op">&lt;</span>NutritionEntry<span class="op">,</span> <span class="bu">Long</span><span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> <span class="fu">countByStatus</span><span class="op">(</span><span class="bu">String</span> status<span class="op">);</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li>Le <code>@RestController</code> combine <code>@Controller</code> +
+<code>@ResponseBody</code> : toutes les methodes renvoient directement
+du JSON.</li>
+<li><code>@Valid</code> declenche la validation du DTO (annotations
+<code>@NotBlank</code>, <code>@Positive</code>). Si invalide, exception
+interceptee par le <code>GlobalExceptionHandler</code> -&gt; 422.</li>
+<li><code>@Transactional</code> (niveau service) : si une exception
+survient, tout est rollback. Permet aussi a Hibernate de differer les
+inserts jusqu'au commit.</li>
+<li>Le repository est <strong>une interface</strong> : pas
+d'implementation ecrite par nous, Spring Data genere le proxy a
+l'execution.</li>
+</ul>
+<h3 id="62-validation-dun-jwt-jwtauthenticationfilter">6.2 Validation
+d'un JWT (JwtAuthenticationFilter)</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> JwtAuthenticationFilter <span class="kw">extends</span> OncePerRequestFilter <span class="op">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> JwtTokenProvider tokenProvider<span class="op">;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">protected</span> <span class="dt">void</span> <span class="fu">doFilterInternal</span><span class="op">(</span>HttpServletRequest req<span class="op">,</span> HttpServletResponse res<span class="op">,</span> FilterChain chain<span class="op">)</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>            <span class="kw">throws</span> ServletException<span class="op">,</span> <span class="bu">IOException</span> <span class="op">{</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>            <span class="bu">String</span> jwt <span class="op">=</span> <span class="fu">getJwtFromRequest</span><span class="op">(</span>req<span class="op">);</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>jwt<span class="op">)</span> <span class="op">&amp;&amp;</span> tokenProvider<span class="op">.</span><span class="fu">isTokenValid</span><span class="op">(</span>jwt<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>                <span class="bu">String</span> email <span class="op">=</span> tokenProvider<span class="op">.</span><span class="fu">getEmailFromToken</span><span class="op">(</span>jwt<span class="op">);</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>                <span class="bu">String</span> name <span class="op">=</span> tokenProvider<span class="op">.</span><span class="fu">getNameFromToken</span><span class="op">(</span>jwt<span class="op">);</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>                UsernamePasswordAuthenticationToken auth <span class="op">=</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">new</span> <span class="fu">UsernamePasswordAuthenticationToken</span><span class="op">(</span>email<span class="op">,</span> name<span class="op">,</span> <span class="kw">null</span><span class="op">);</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>                SecurityContextHolder<span class="op">.</span><span class="fu">getContext</span><span class="op">().</span><span class="fu">setAuthentication</span><span class="op">(</span>auth<span class="op">);</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">Exception</span> ex<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>            log<span class="op">.</span><span class="fu">debug</span><span class="op">(</span><span class="st">&quot;Rejected invalid JWT: {}&quot;</span><span class="op">,</span> ex<span class="op">.</span><span class="fu">getMessage</span><span class="op">());</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>        chain<span class="op">.</span><span class="fu">doFilter</span><span class="op">(</span>req<span class="op">,</span> res<span class="op">);</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> <span class="fu">getJwtFromRequest</span><span class="op">(</span>HttpServletRequest req<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>        <span class="bu">String</span> header <span class="op">=</span> req<span class="op">.</span><span class="fu">getHeader</span><span class="op">(</span><span class="st">&quot;Authorization&quot;</span><span class="op">);</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>header<span class="op">)</span> <span class="op">&amp;&amp;</span> header<span class="op">.</span><span class="fu">startsWith</span><span class="op">(</span><span class="st">&quot;Bearer &quot;</span><span class="op">))</span> <span class="op">{</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> header<span class="op">.</span><span class="fu">substring</span><span class="op">(</span><span class="dv">7</span><span class="op">);</span>  <span class="co">// retire &quot;Bearer &quot;</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>OncePerRequestFilter</code> garantit que le filtre s'execute
+une seule fois par requete (meme en cas de forward / include).</li>
+<li>On <strong>extrait</strong> le JWT du header, on
+<strong>verifie</strong> sa signature avec
+<code>BETTER_AUTH_SECRET</code>, on <strong>attache</strong>
+l'utilisateur au <code>SecurityContext</code> de Spring. Les controllers
+pourront recuperer l'utilisateur via
+<code>SecurityContextHolder</code>.</li>
+<li>Si le JWT est invalide, on ne renvoie <strong>pas d'erreur</strong>
+ici : on laisse passer la requete sans authentification. C'est la regle
+d'autorisation <code>anyRequest().authenticated()</code> qui fera un 401
+plus tard. Separation des responsabilites.</li>
+</ul>
+<h3 id="63-validation-cryptographique-jwttokenprovider">6.3 Validation
+cryptographique (JwtTokenProvider)</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Service</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> JwtTokenProvider <span class="op">{</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Value</span><span class="op">(</span><span class="st">&quot;${app.jwt.secret}&quot;</span><span class="op">)</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> jwtSecret<span class="op">;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">@PostConstruct</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">validateSecret</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>jwtSecret<span class="op">.</span><span class="fu">getBytes</span><span class="op">(</span>UTF_8<span class="op">).</span><span class="fu">length</span> <span class="op">&lt;</span> <span class="dv">64</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IllegalStateException</span><span class="op">(</span><span class="st">&quot;Secret too short for HS512&quot;</span><span class="op">);</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">SecretKey</span> <span class="fu">getSigningKey</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">new</span> <span class="bu">SecretKeySpec</span><span class="op">(</span>jwtSecret<span class="op">.</span><span class="fu">getBytes</span><span class="op">(</span>UTF_8<span class="op">),</span> <span class="st">&quot;HmacSHA512&quot;</span><span class="op">);</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">boolean</span> <span class="fu">isTokenValid</span><span class="op">(</span><span class="bu">String</span> token<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>            Jwts<span class="op">.</span><span class="fu">parser</span><span class="op">()</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">verifyWith</span><span class="op">(</span><span class="fu">getSigningKey</span><span class="op">())</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">build</span><span class="op">()</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">parseSignedClaims</span><span class="op">(</span>token<span class="op">);</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">Exception</span> e<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>            log<span class="op">.</span><span class="fu">error</span><span class="op">(</span><span class="st">&quot;JWT validation error: {}&quot;</span><span class="op">,</span> e<span class="op">.</span><span class="fu">getMessage</span><span class="op">());</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">String</span> <span class="fu">getEmailFromToken</span><span class="op">(</span><span class="bu">String</span> token<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="op">(</span><span class="bu">String</span><span class="op">)</span> Jwts<span class="op">.</span><span class="fu">parser</span><span class="op">()</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">verifyWith</span><span class="op">(</span><span class="fu">getSigningKey</span><span class="op">())</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">()</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">parseSignedClaims</span><span class="op">(</span>token<span class="op">)</span></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getPayload</span><span class="op">()</span></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">get</span><span class="op">(</span><span class="st">&quot;email&quot;</span><span class="op">);</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>@Value("${app.jwt.secret}")</code> : Spring injecte la valeur
+de la variable <code>app.jwt.secret</code> (definie dans
+<code>application.properties</code> comme
+<code>${BETTER_AUTH_SECRET}</code>). On recupere donc la meme cle que
+MSPR-AUTH.</li>
+<li><code>Jwts.parser().verifyWith(key).parseSignedClaims(token)</code>
+: la librairie <strong>jjwt</strong> fait tout en une ligne : verifie la
+signature <strong>ET</strong> que le token n'est pas expire
+(<code>exp</code>). Si invalide, elle leve une exception.</li>
+<li>HS512 = HMAC avec SHA-512. C'est de la crypto
+<strong>symetrique</strong> : meme cle pour signer (cote AUTH) et
+verifier (cote API). Simple mais il faut proteger la cle.</li>
+</ul>
+<h3 id="64-dto-avec-validation-et-pattern-builder">6.4 DTO avec
+validation et pattern Builder</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> NutritionEntryDTO <span class="op">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">Long</span> id<span class="op">;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@NotBlank</span><span class="op">(</span>message <span class="op">=</span> <span class="st">&quot;Food name is required&quot;</span><span class="op">)</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> foodName<span class="op">;</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Positive</span><span class="op">(</span>message <span class="op">=</span> <span class="st">&quot;Calories must be positive&quot;</span><span class="op">)</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">BigDecimal</span> calories<span class="op">;</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@NotBlank</span><span class="op">(</span>message <span class="op">=</span> <span class="st">&quot;Source is required&quot;</span><span class="op">)</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> source<span class="op">;</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ... getters/setters</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> Builder <span class="fu">builder</span><span class="op">()</span> <span class="op">{</span> <span class="cf">return</span> <span class="kw">new</span> <span class="fu">Builder</span><span class="op">();</span> <span class="op">}</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="kw">class</span> Builder <span class="op">{</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">private</span> NutritionEntryDTO dto <span class="op">=</span> <span class="kw">new</span> <span class="fu">NutritionEntryDTO</span><span class="op">();</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">public</span> Builder <span class="fu">foodName</span><span class="op">(</span><span class="bu">String</span> v<span class="op">)</span> <span class="op">{</span> dto<span class="op">.</span><span class="fu">foodName</span> <span class="op">=</span> v<span class="op">;</span> <span class="cf">return</span> <span class="kw">this</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>        <span class="kw">public</span> Builder <span class="fu">calories</span><span class="op">(</span><span class="bu">BigDecimal</span> v<span class="op">)</span> <span class="op">{</span> dto<span class="op">.</span><span class="fu">calories</span> <span class="op">=</span> v<span class="op">;</span> <span class="cf">return</span> <span class="kw">this</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>        <span class="kw">public</span> NutritionEntryDTO <span class="fu">build</span><span class="op">()</span> <span class="op">{</span> <span class="cf">return</span> dto<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li>Les annotations <code>@NotBlank</code>, <code>@Positive</code>,
+<code>@Email</code>, etc. sont des <strong>contraintes Bean
+Validation</strong> (JSR-380). Elles sont declaratives : pas de code de
+validation a ecrire.</li>
+<li><code>@Valid</code> dans le controller declenche leur verification.
+Si echec, Spring leve une <code>MethodArgumentNotValidException</code>
+interceptee par <code>GlobalExceptionHandler</code>.</li>
+<li>Le pattern <strong>Builder</strong>
+(<code>NutritionEntryDTO.builder().foodName("Apple").build()</code>) est
+plus lisible qu'un constructeur a 15 arguments et permet de mettre les
+champs dans n'importe quel ordre.</li>
+<li>Le DTO est <strong>separe</strong> de l'entity JPA. Avantage : on
+peut changer la structure de la table (ex : renommer une colonne) sans
+casser le format de l'API.</li>
+</ul>
+<h3 id="65-gestion-derreur-globale">6.5 Gestion d'erreur globale</h3>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="at">@RestControllerAdvice</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> GlobalExceptionHandler <span class="kw">extends</span> ResponseEntityExceptionHandler <span class="op">{</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@ExceptionHandler</span><span class="op">(</span>ResourceNotFoundException<span class="op">.</span><span class="fu">class</span><span class="op">)</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> ResponseEntity<span class="op">&lt;</span>ErrorResponse<span class="op">&gt;</span> <span class="fu">handleNotFound</span><span class="op">(</span>ResourceNotFoundException ex<span class="op">,</span> WebRequest req<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        ErrorResponse error <span class="op">=</span> ErrorResponse<span class="op">.</span><span class="fu">of</span><span class="op">(</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>            HttpStatus<span class="op">.</span><span class="fu">NOT_FOUND</span><span class="op">,</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>            ex<span class="op">.</span><span class="fu">getMessage</span><span class="op">(),</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Resource not found&quot;</span><span class="op">,</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>            req<span class="op">.</span><span class="fu">getDescription</span><span class="op">(</span><span class="kw">false</span><span class="op">).</span><span class="fu">replace</span><span class="op">(</span><span class="st">&quot;uri=&quot;</span><span class="op">,</span> <span class="st">&quot;&quot;</span><span class="op">)</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">);</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">new</span> ResponseEntity<span class="op">&lt;&gt;(</span>error<span class="op">,</span> HttpStatus<span class="op">.</span><span class="fu">NOT_FOUND</span><span class="op">);</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">protected</span> ResponseEntity<span class="op">&lt;</span><span class="bu">Object</span><span class="op">&gt;</span> <span class="fu">handleMethodArgumentNotValid</span><span class="op">(</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>            MethodArgumentNotValidException ex<span class="op">,</span> HttpHeaders h<span class="op">,</span> HttpStatusCode s<span class="op">,</span> WebRequest req<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>        ErrorResponse error <span class="op">=</span> ErrorResponse<span class="op">.</span><span class="fu">of</span><span class="op">(</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>            HttpStatus<span class="op">.</span><span class="fu">UNPROCESSABLE_ENTITY</span><span class="op">,</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Validation failed&quot;</span><span class="op">,</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>            ex<span class="op">.</span><span class="fu">getBindingResult</span><span class="op">().</span><span class="fu">getAllErrors</span><span class="op">().</span><span class="fu">get</span><span class="op">(</span><span class="dv">0</span><span class="op">).</span><span class="fu">getDefaultMessage</span><span class="op">(),</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>            req<span class="op">.</span><span class="fu">getDescription</span><span class="op">(</span><span class="kw">false</span><span class="op">).</span><span class="fu">replace</span><span class="op">(</span><span class="st">&quot;uri=&quot;</span><span class="op">,</span> <span class="st">&quot;&quot;</span><span class="op">)</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>        <span class="op">);</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">new</span> ResponseEntity<span class="op">&lt;&gt;(</span>error<span class="op">,</span> HttpStatus<span class="op">.</span><span class="fu">UNPROCESSABLE_ENTITY</span><span class="op">);</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>    <span class="co">// + handlers pour Authentication, Runtime, Exception (catch-all)</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>@RestControllerAdvice</code> : cette classe intercepte les
+exceptions <strong>de tous les controllers</strong>. Pas besoin de
+try/catch dans chaque endpoint.</li>
+<li>Chaque <code>@ExceptionHandler(XxxException.class)</code> gere un
+type d'exception specifique et renvoie une reponse HTTP appropriee (404,
+422, etc.).</li>
+<li><code>ErrorResponse</code> est une classe simple
+<code>{ status, message, error, path, timestamp }</code> : format
+homogene cote front.</li>
+<li>Bonne pratique : un catch-all
+<code>@ExceptionHandler(Exception.class)</code> pour eviter d'exposer
+les stack traces en cas d'erreur inattendue.</li>
+</ul>
+<h3 id="66-configuration-spring-security-securityfilterchain">6.6
+Configuration Spring Security (SecurityFilterChain)</h3>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Configuration</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="at">@EnableWebSecurity</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> SecurityConfig <span class="op">{</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> JwtTokenProvider jwtTokenProvider<span class="op">;</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Bean</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> CorsConfigurationSource <span class="fu">corsConfigurationSource</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>        CorsConfiguration config <span class="op">=</span> <span class="kw">new</span> <span class="fu">CorsConfiguration</span><span class="op">();</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        config<span class="op">.</span><span class="fu">setAllowedOrigins</span><span class="op">(</span><span class="bu">List</span><span class="op">.</span><span class="fu">of</span><span class="op">(</span>allowedOrigin<span class="op">));</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>        config<span class="op">.</span><span class="fu">setAllowedMethods</span><span class="op">(</span><span class="bu">List</span><span class="op">.</span><span class="fu">of</span><span class="op">(</span><span class="st">&quot;GET&quot;</span><span class="op">,</span> <span class="st">&quot;POST&quot;</span><span class="op">,</span> <span class="st">&quot;PUT&quot;</span><span class="op">,</span> <span class="st">&quot;DELETE&quot;</span><span class="op">,</span> <span class="st">&quot;OPTIONS&quot;</span><span class="op">));</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>        config<span class="op">.</span><span class="fu">setAllowCredentials</span><span class="op">(</span><span class="kw">true</span><span class="op">);</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>        UrlBasedCorsConfigurationSource source <span class="op">=</span> <span class="kw">new</span> <span class="fu">UrlBasedCorsConfigurationSource</span><span class="op">();</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>        source<span class="op">.</span><span class="fu">registerCorsConfiguration</span><span class="op">(</span><span class="st">&quot;/**&quot;</span><span class="op">,</span> config<span class="op">);</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> source<span class="op">;</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Bean</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> SecurityFilterChain <span class="fu">filterChain</span><span class="op">(</span>HttpSecurity http<span class="op">)</span> <span class="kw">throws</span> <span class="bu">Exception</span> <span class="op">{</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>        http</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">cors</span><span class="op">(</span>cors <span class="op">-&gt;</span> cors<span class="op">.</span><span class="fu">configurationSource</span><span class="op">(</span><span class="fu">corsConfigurationSource</span><span class="op">()))</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">csrf</span><span class="op">(</span>csrf <span class="op">-&gt;</span> csrf<span class="op">.</span><span class="fu">disable</span><span class="op">())</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">sessionManagement</span><span class="op">(</span>s <span class="op">-&gt;</span> s<span class="op">.</span><span class="fu">sessionCreationPolicy</span><span class="op">(</span>SessionCreationPolicy<span class="op">.</span><span class="fu">STATELESS</span><span class="op">))</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">authorizeHttpRequests</span><span class="op">(</span>authz <span class="op">-&gt;</span> authz</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">requestMatchers</span><span class="op">(</span><span class="st">&quot;/api/swagger-ui/**&quot;</span><span class="op">,</span> <span class="st">&quot;/api/v3/api-docs/**&quot;</span><span class="op">).</span><span class="fu">permitAll</span><span class="op">()</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">requestMatchers</span><span class="op">(</span><span class="st">&quot;/api/actuator/health&quot;</span><span class="op">,</span> <span class="st">&quot;/api/actuator/info&quot;</span><span class="op">).</span><span class="fu">permitAll</span><span class="op">()</span></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">anyRequest</span><span class="op">().</span><span class="fu">authenticated</span><span class="op">())</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addFilterBefore</span><span class="op">(</span><span class="kw">new</span> <span class="fu">JwtAuthenticationFilter</span><span class="op">(</span>jwtTokenProvider<span class="op">),</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>                             UsernamePasswordAuthenticationFilter<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> http<span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>@EnableWebSecurity</code> active l'infrastructure Spring
+Security. Sans cette annotation, les filtres de securite ne sont pas
+branches.</li>
+<li>La chaine de filtres est <strong>declarative</strong> : on liste les
+regles, Spring construit la chaine derriere. C'est facile a lire.</li>
+<li>L'ordre des <code>requestMatchers</code> compte : les plus
+specifiques d'abord, le catch-all (<code>anyRequest()</code>) a la
+fin.</li>
+<li><code>addFilterBefore</code> : notre
+<code>JwtAuthenticationFilter</code> s'execute <strong>avant</strong> le
+filtre de login classique de Spring (qui ne sera jamais utilise
+puisqu'on est en STATELESS).</li>
+</ul>
+<h3 id="67-configuration-multi-profils-applicationproperties">6.7
+Configuration multi-profils (<code>application.properties</code>)</h3>
+<pre class="properties"><code># Datasource : variables d&#39;env avec valeurs par defaut pour le dev local
+spring.datasource.url=jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:healthai}
+spring.datasource.username=${DB_USER:healthai_user}
+spring.datasource.password=${DB_PASSWORD:password}
+
+# JPA : validate uniquement (ne touche pas au schema)
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+
+# Flyway : desactive (migrations chez MSPR-DB)
+spring.flyway.enabled=false
+
+# JWT : meme secret que MSPR-AUTH
+app.jwt.secret=${BETTER_AUTH_SECRET}
+
+# CORS : origine autorisee (= URL du front)
+app.cors.allowed-origin=${CORS_ORIGIN:http://localhost:5173}
+
+# Server : prefixe /api pour toutes les URLs
+server.servlet.context-path=/api</code></pre>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>${VAR:default}</code> : Spring lit la variable d'environnement
+<code>VAR</code>, ou utilise <code>default</code> si elle n'est pas
+definie. Pratique : valeurs de dev dans le fichier, override en prod via
+env.</li>
+<li><code>ddl-auto=validate</code> : Hibernate verifie le schema au
+demarrage, ne le modifie <strong>jamais</strong>. Ceinture de securite
+contre une modif accidentelle.</li>
+<li><code>context-path=/api</code> : toutes les URLs Spring sont
+prefixees par <code>/api</code>. Donc
+<code>@RequestMapping("/nutrition")</code> donne l'URL
+<code>http://host:8080/api/nutrition</code>.</li>
+<li>3 profils : <code>application.properties</code> (defaut /
+prod-like), <code>application-dev.properties</code> (ajoute
+<code>show-sql=true</code> et logs TRACE Hibernate),
+<code>application-prod.properties</code> (minimise les logs).</li>
+</ul>
+<h3 id="68-dockerfile-multi-stage">6.8 Dockerfile multi-stage</h3>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stage 1 : build avec Maven complet</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> maven:3.9-eclipse-temurin-21 as builder</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WORKDIR</span> /build</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> pom.xml .</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">mvn</span> dependency:go-offline <span class="at">-q</span>    <span class="co"># telecharge les deps -&gt; cache Docker</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> src/main/ src/main/</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">mvn</span> clean package <span class="at">-DskipTests</span> <span class="at">-q</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Stage 2 : runtime minimal</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> eclipse-temurin:21-jre-alpine</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="kw">WORKDIR</span> /app</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">addgroup</span> <span class="at">-S</span> spring <span class="kw">&amp;&amp;</span> <span class="ex">adduser</span> <span class="at">-S</span> spring <span class="at">-G</span> spring</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> <span class="op">--from=builder</span> /build/target/*.jar app.jar</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="fu">chown</span> spring:spring app.jar</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="kw">USER</span> spring</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="kw">EXPOSE</span> 8080</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="kw">HEALTHCHECK</span> <span class="op">--interval=30s</span> <span class="op">--timeout=5s</span> <span class="op">--start-period=40s</span> <span class="op">--retries=3</span> \</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CMD</span> <span class="ex">nc</span> <span class="at">-z</span> localhost 8080 <span class="kw">||</span> <span class="bu">exit</span> 1</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="kw">ENTRYPOINT</span> [<span class="st">&quot;java&quot;</span>, <span class="st">&quot;-jar&quot;</span>, <span class="st">&quot;app.jar&quot;</span>]</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>FROM ... as builder</code> : nomme le premier stage. Le
+deuxieme stage peut y piocher des fichiers via
+<code>COPY --from=builder</code>.</li>
+<li><code>COPY pom.xml</code> puis
+<code>mvn dependency:go-offline</code> <strong>avant</strong>
+<code>COPY src/</code>: astuce pour <strong>cacher</strong> les
+dependances Maven dans une couche Docker separee. Si on change juste le
+code, Docker ne retelecharge pas les deps.</li>
+<li>Image finale base sur <strong>Alpine</strong> : distribution Linux
+ultra-legere (~5 Mo), pas de glibc. Reduction massive de la taille.</li>
+<li><code>USER spring</code> : on ne tourne pas en root dans le
+conteneur. Meilleure pratique de securite.</li>
+<li>Healthcheck avec <code>nc -z localhost 8080</code> : check TCP
+minimal, ne valide pas que l'app repond, juste que le port ecoute.
+Suffisant pour detecter un crash.</li>
+</ul>
+<hr />
+<h2 id="7-questions-probables-du-jury">7. Questions probables du
+jury</h2>
+<h3
+id="q1-pourquoi-spring-boot-plutot-que-node-python-flaskfastapi-ou-go-">Q1.
+Pourquoi Spring Boot plutot que Node, Python (Flask/FastAPI) ou Go
+?</h3>
+<ul>
+<li><strong>Spring Boot</strong> est le standard de l'industrie en Java
+: ecosysteme massif, maturite, documentation, forte demande sur le
+marche de l'emploi.</li>
+<li><strong>Productivite</strong> : Spring Data JPA, auto-config,
+devtools font gagner un temps fou sur des CRUD classiques.</li>
+<li><strong>Typing fort</strong> : Java 21 + Hibernate catch enormement
+d'erreurs a la compilation (erreurs de schema, mauvais types).</li>
+<li>Cout : plus verbeux que Python/Node, temps de demarrage plus long
+(~10s contre ~1s en Node). Acceptable pour notre cas.</li>
+</ul>
+<p>Pour un projet data avec ETL deja en Python, on aurait pu rester en
+Python (FastAPI). Le choix Spring Boot est pedagogique (apprendre un
+stack different) et coherent avec l'ecosysteme Java dans
+l'entreprise.</p>
+<h3 id="q2-pourquoi-des-dto-separes-des-entities-jpa-">Q2. Pourquoi des
+DTO separes des entities JPA ?</h3>
+<p>Plusieurs raisons :</p>
+<ul>
+<li><strong>Decouplage</strong> : on peut changer la structure de la
+base (renommer une colonne, ajouter une relation) sans casser le format
+de l'API. Les tests d'integration ne plantent pas a chaque
+migration.</li>
+<li><strong>Securite</strong> : on ne renvoie pas certains champs (ex :
+<code>password_hash</code> s'il en existait) en masquant simplement les
+getters dans le DTO.</li>
+<li><strong>Validation differenciee</strong> : les contraintes d'entrees
+(<code>@NotBlank</code>, <code>@Positive</code>) sont sur le DTO, pas
+sur l'entity. L'entity, elle, peut recevoir un NULL (ex : une valeur
+optionnelle).</li>
+<li><strong>Reprendre plusieurs entities</strong> : un DTO peut agreger
+des donnees de plusieurs tables (ex : <code>AnalyticsOverviewDTO</code>
+combine des comptages sur 4 tables).</li>
+</ul>
+<p>Le cout : du boilerplate (mapping entity -&gt; DTO). Les gros projets
+utilisent MapStruct pour l'automatiser. Ici le mapping est ecrit a la
+main, c'est acceptable avec 5 entities.</p>
+<h3
+id="q3-comment-lapi-valide-t-elle-le-jwt-sans-parler-a-mspr-auth-">Q3.
+Comment l'API valide-t-elle le JWT sans parler a MSPR-AUTH ?</h3>
+<p>Grace au <strong>secret partage</strong>
+<code>BETTER_AUTH_SECRET</code> injecte en variable d'environnement dans
+les deux services. MSPR-AUTH signe le JWT en HS512 avec cette cle.
+MSPR-API extrait la cle, reconstruit la signature, et compare.</p>
+<p>Pas d'appel reseau, pas de latence, pas de point de defaillance. Le
+seul inconvenient : si on voulait invalider un JWT specifique (ex : user
+desactive), l'API n'en saurait rien tant que le <code>exp</code> n'est
+pas atteint. On mitige en gardant <code>exp</code> court (1h).</p>
+<h3 id="q4-pourquoi-ddl-autovalidate-et-pas-update-ou-create-">Q4.
+Pourquoi <code>ddl-auto=validate</code> et pas <code>update</code> ou
+<code>create</code> ?</h3>
+<ul>
+<li><code>create</code> / <code>create-drop</code> : efface tout au
+demarrage, genere le schema depuis les entities. <strong>Dangereux en
+prod</strong> (perte de donnees) et non synchronise avec les migrations
+SQL de MSPR-DB.</li>
+<li><code>update</code> : compare les entities et la base, applique les
+deltas. Semble pratique mais tres risque : Hibernate peut supprimer des
+colonnes, changer des types, rater des renommages.</li>
+<li><code>validate</code> : Hibernate ne touche <strong>a rien</strong>,
+il verifie juste que le schema correspond aux entities. Si oui, tout va
+bien. Si non, l'app refuse de demarrer.</li>
+</ul>
+<p>Pour un projet ou les migrations sont <strong>pilotees par un autre
+service</strong> (MSPR-DB), <code>validate</code> est le seul mode
+acceptable.</p>
+<h3
+id="q5-pourquoi-stateless--quest-ce-que-cela-change-vs-une-session-http-classique-">Q5.
+Pourquoi STATELESS ? Qu'est-ce que cela change vs. une session HTTP
+classique ?</h3>
+<ul>
+<li><strong>Session classique</strong> : Tomcat cree une session cote
+serveur a chaque login, attache un cookie <code>JSESSIONID</code> au
+client. Les donnees de session (user id, roles, etc.) sont stockees en
+memoire du serveur. Probleme : si on a 3 instances d'API derriere un
+load balancer, chaque instance a sa propre memoire, donc il faut une
+"sticky session" (toujours router vers la meme instance).</li>
+<li><strong>STATELESS</strong> : aucune session cote serveur. Chaque
+requete est auto-suffisante (le JWT contient l'user id). On peut scaler
+horizontalement sans effort.</li>
+</ul>
+<p>C'est <strong>le choix standard pour une API REST</strong>, surtout
+en architecture microservices.</p>
+<h3 id="q6-comment-tester-un-controller-en-isolation-">Q6. Comment
+tester un controller en isolation ?</h3>
+<p>Avec Mockito (vu dans <code>NutritionControllerTest.java</code>)
+:</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="at">@ExtendWith</span><span class="op">(</span>MockitoExtension<span class="op">.</span><span class="fu">class</span><span class="op">)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> NutritionControllerTest <span class="op">{</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Mock</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> NutritionService nutritionService<span class="op">;</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">@InjectMocks</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> NutritionController controller<span class="op">;</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Test</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">createNutritionEntry</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">when</span><span class="op">(</span>nutritionService<span class="op">.</span><span class="fu">createNutritionEntry</span><span class="op">(</span><span class="fu">any</span><span class="op">())).</span><span class="fu">thenReturn</span><span class="op">(</span>dto<span class="op">);</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>        ResponseEntity<span class="op">&lt;</span>NutritionEntryDTO<span class="op">&gt;</span> response <span class="op">=</span> controller<span class="op">.</span><span class="fu">createNutritionEntry</span><span class="op">(</span>dto<span class="op">);</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">assertEquals</span><span class="op">(</span>HttpStatus<span class="op">.</span><span class="fu">CREATED</span><span class="op">,</span> response<span class="op">.</span><span class="fu">getStatusCode</span><span class="op">());</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<ul>
+<li><code>@Mock</code> cree un faux <code>NutritionService</code> qu'on
+programme (<code>when(...).thenReturn(...)</code>).</li>
+<li><code>@InjectMocks</code> injecte les mocks dans le controller.</li>
+<li>On test <strong>uniquement la logique du controller</strong> :
+routage HTTP, statut, body. Pas de base, pas de vrai service.</li>
+<li>Pour un test plus large (avec contexte Spring complet et vraie BDD),
+on utiliserait <code>@SpringBootTest</code> +
+<code>@Testcontainers</code>.</li>
+</ul>
+<h3 id="q7-la-couverture-de-tests-est-a-80-pourquoi-ce-chiffre-">Q7. La
+couverture de tests est a 80%, pourquoi ce chiffre ?</h3>
+<ul>
+<li><strong>En dessous de 50%</strong> : generalement insuffisant pour
+avoir confiance. Beaucoup de code non teste.</li>
+<li><strong>80%</strong> : sweet spot. Force a tester la majorite du
+code, laisse de la marge pour du code trivial (getters, config).</li>
+<li><strong>Au-dessus de 95%</strong> : souvent du gaspillage. Les 5%
+restants (gestion d'erreurs tres specifiques, code defensif) coutent
+enormement a tester pour peu de valeur.</li>
+</ul>
+<p>JaCoCo est configure pour <strong>faire echouer le build</strong> si
+on descend sous 80% (en lignes ou en branches). C'est une
+<strong>contrainte CI</strong> qui evite la derive.</p>
+<h3
+id="q8-lapi-expose-un-swagger-publiquement-cest-un-risque-de-securite-">Q8.
+L'API expose un Swagger publiquement. C'est un risque de securite ?</h3>
+<p>Nuance : la doc Swagger liste les endpoints, mais ne donne
+<strong>aucun acces</strong>. Un attaquant pourrait faire une recon plus
+rapide, mais les endpoints sont toujours proteges par JWT.</p>
+<p>Pour une prod stricte (sante, finance), on desactiverait Swagger en
+production (<code>springdoc.api-docs.enabled=false</code> dans
+<code>application-prod.properties</code>). Pour la MSPR, Swagger est
+utile au jury et aux data scientists, le risque est faible.</p>
+<h3
+id="q9-lexportcontroller-lit-le-rapport-etl-sur-disque-cest-inhabituel-pour-une-api-">Q9.
+L'ExportController lit le rapport ETL sur disque, c'est inhabituel pour
+une API ?</h3>
+<p>Oui, c'est un design un peu particulier.
+<code>etlReportService.getReport()</code> lit le fichier
+<code>/app/etl-data/processed/quality_report.json</code> genere par
+MSPR-ETL. Le fichier est expose via un <strong>volume partage</strong>
+en lecture seule dans le docker-compose :</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">api</span><span class="kw">:</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> ./MSPR-ETL/data:/app/etl-data:ro</span></span></code></pre></div>
+<p>Alternatives plus propres :</p>
+<ul>
+<li>Stocker le rapport en base (table <code>etl_reports</code>).</li>
+<li>Exposer un endpoint cote ETL que l'API interroge.</li>
+</ul>
+<p>Le choix du volume partage a ete fait pour simplifier : l'ETL genere
+deja le fichier, autant le lire directement. A ameliorer pour une prod
+reelle.</p>
+<h3 id="q10-pourquoi-9-controllers-et-pas-un-seul-">Q10. Pourquoi 9
+controllers et pas un seul ?</h3>
+<p>Chaque controller gere <strong>un domaine fonctionnel</strong>.
+Decouper permet :</p>
+<ul>
+<li>Fichiers plus petits (le plus gros fait 83 lignes).</li>
+<li>Tests isoles par domaine.</li>
+<li>Documentation Swagger organisee (via <code>@Tag</code>).</li>
+<li>Plusieurs personnes peuvent bosser sur des controllers differents
+sans conflit Git.</li>
+</ul>
+<p>Un controller unique de 1000 lignes serait une <strong>mauvaise
+pratique</strong> (code indigeste, responsabilites melangees, tests
+compliques).</p>
+<h3
+id="q11-comment-gerer-une-migration-de-schema-qui-ajouterait-une-colonne-obligatoire-">Q11.
+Comment gerer une migration de schema qui ajouterait une colonne
+obligatoire ?</h3>
+<ol type="1">
+<li><strong>Ajouter la colonne en SQL</strong> dans MSPR-DB (nouvelle
+migration <code>V8__add_nutrition_calories_kj.sql</code>).</li>
+<li><strong>Mettre a jour l'entity</strong> Java (nouveau
+<code>@Column private BigDecimal caloriesKj;</code> +
+getter/setter).</li>
+<li><strong>Mettre a jour le DTO</strong> si on veut l'exposer.</li>
+<li><strong>Relancer les deux services</strong> (DB applique la
+migration, API revalide son schema).</li>
+</ol>
+<p>L'ordre est crucial : la DB <strong>doit</strong> etre migree
+<strong>avant</strong> que l'API redemarre, sinon le mode
+<code>validate</code> echoue. Dans <code>docker-compose.yml</code>,
+l'API a un <code>depends_on: db: service_healthy</code>, ce qui garantit
+cet ordre.</p>
+<h3
+id="q12-lapi-renvoie-du-json-par-defaut-comment-servir-du-xml-si-demande-">Q12.
+L'API renvoie du JSON par defaut. Comment servir du XML si demande
+?</h3>
+<p>Spring Boot supporte la <strong>content negotiation</strong> : le
+client envoie <code>Accept: application/xml</code> et Spring peut
+serialiser en XML <strong>si</strong> la dependance
+<code>jackson-dataformat-xml</code> est presente. Dans notre projet elle
+ne l'est pas, donc toute requete <code>Accept: application/xml</code>
+renverra un 406 Not Acceptable. C'est un choix volontaire : on ne
+supporte que JSON (le front Vue en a besoin, pas d'autres formats
+demandes).</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

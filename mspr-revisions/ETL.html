@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>ETL — Révisions MSPR</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a href="#fiche-de-revision--mspr-etl"
+id="toc-fiche-de-revision--mspr-etl">Fiche de revision : MSPR-ETL</a>
+<ul>
+<li><a href="#0-vocabulaire-a-connaitre-avant-de-lire"
+id="toc-0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#1-tldr" id="toc-1-tldr">1. TL;DR</a></li>
+<li><a href="#2-flux-global" id="toc-2-flux-global">2. Flux
+global</a></li>
+<li><a href="#3-stack-technique" id="toc-3-stack-technique">3. Stack
+technique</a></li>
+<li><a href="#4-les-4-pipelines" id="toc-4-les-4-pipelines">4. Les 4
+pipelines</a></li>
+<li><a href="#5-points-techniques-importants"
+id="toc-5-points-techniques-importants">5. Points techniques
+importants</a></li>
+<li><a href="#6-code-essentiel-a-savoir-expliquer-au-jury"
+id="toc-6-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</a></li>
+<li><a href="#7-questions-probables-du-jury"
+id="toc-7-questions-probables-du-jury">7. Questions probables du
+jury</a></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1 id="fiche-de-revision--mspr-etl">Fiche de revision : MSPR-ETL</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR1. Objectif : comprendre
+le role du service, le flux global et les points techniques importants,
+sans rentrer dans le detail ligne a ligne.</p>
+</blockquote>
+<hr />
+<h2 id="0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<p>Les 7 termes qui reviennent partout dans cette fiche. Pas besoin de
+les retenir par coeur, mais savoir ce que chaque mot veut dire.</p>
+<table>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ETL</strong></td>
+<td>Extract, Transform, Load. Lire des donnees brutes, les nettoyer, les
+charger en base.</td>
+</tr>
+<tr>
+<td><strong>Pipeline</strong></td>
+<td>Chaine de traitement qui transforme des donnees d'une source vers
+une destination.</td>
+</tr>
+<tr>
+<td><strong>Scheduler</strong></td>
+<td>Programme qui declenche des taches a intervalle regulier (ex : tous
+les jours a 2h).</td>
+</tr>
+<tr>
+<td><strong>Expression cron</strong></td>
+<td>Syntaxe standard pour decrire un planning. Ex :
+<code>0 2 * * *</code> = "a 2h00, tous les jours".</td>
+</tr>
+<tr>
+<td><strong>DataFrame</strong></td>
+<td>Tableau en memoire (type Excel) avec colonnes typees. Concept
+central de la librairie <code>pandas</code>.</td>
+</tr>
+<tr>
+<td><strong>Idempotence</strong></td>
+<td>Propriete qui fait qu'on peut relancer la meme operation N fois sans
+creer de doublons.</td>
+</tr>
+<tr>
+<td><strong>Conteneur Docker</strong></td>
+<td>"Boite" isolee qui contient le programme et ses dependances,
+identique d'une machine a l'autre.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-tldr">1. TL;DR</h2>
+<p><strong>MSPR-ETL</strong> est le service d'<strong>ingestion</strong>
+: il prend des fichiers bruts (1 JSON + 4 CSV telecharges depuis
+Kaggle), les <strong>nettoie</strong> (validation, conversion d'unites,
+rejets), et les <strong>charge</strong> dans la base PostgreSQL
+<code>healthai</code>.</p>
+<p>C'est un ETL classique :</p>
+<ul>
+<li><strong>E</strong>xtract : lire le fichier source</li>
+<li><strong>T</strong>ransform : nettoyer, valider, convertir</li>
+<li><strong>L</strong>oad : inserer en base</li>
+</ul>
+<p>Il tourne en continu dans un conteneur Docker. Au demarrage, il lance
+ses 4 pipelines une premiere fois, puis les relance <strong>chaque nuit
+a 2h</strong> grace a un scheduler interne (APScheduler avec expression
+cron <code>0 2 * * *</code>).</p>
+<ul>
+<li><strong>Stack</strong> : Python 3.12, pandas, psycopg2,
+APScheduler</li>
+<li><strong>Entree</strong> : 1 JSON + 4 CSV dans
+<code>data/raw/</code></li>
+<li><strong>Sortie</strong> : 5 tables PostgreSQL
+(<code>exercises</code>, <code>nutrition_entries</code>,
+<code>exercise_entries</code>, <code>biometric_entries</code>,
+<code>diet_recommendations</code>) + trace dans
+<code>etl_logs</code></li>
+<li><strong>Reseau</strong> : se branche sur
+<code>mspr_data_network</code> (un reseau virtuel Docker cree par
+MSPR-DB pour que les conteneurs communiquent entre eux)</li>
+</ul>
+<hr />
+<h2 id="2-flux-global">2. Flux global</h2>
+<pre class="mermaid"><code>flowchart LR
+    subgraph Sources
+        J[exercises.json]
+        C1[nutrition.csv]
+        C2[gym_tracking x2]
+        C3[diet_recommendations.csv]
+    end
+
+    subgraph Pipeline[&quot;Pour chaque pipeline&quot;]
+        E[extract]
+        CL[clean]
+        S[save CSV/JSON]
+        L[pg_load]
+    end
+
+    J --&gt; E
+    C1 --&gt; E
+    C2 --&gt; E
+    C3 --&gt; E
+
+    E --&gt; CL
+    CL --&gt; S
+    CL --&gt; L
+
+    L --&gt; DB[(PostgreSQL healthai)]
+    L --&gt; LOG[(etl_logs)]
+    S --&gt; FS[data/processed/&lt;br/&gt;data/samples/]</code></pre>
+<p>Chaque pipeline suit <strong>le meme flux</strong> :
+<code>extract() -&gt; clean() -&gt; save_*() -&gt; pg_load()</code>. Les
+rejets (lignes invalides) sont exportes separement. Chaque run est trace
+dans la table <code>etl_logs</code> avec son statut.</p>
+<hr />
+<h2 id="3-stack-technique">3. Stack technique</h2>
+<table>
+<thead>
+<tr>
+<th>Composant</th>
+<th>Role</th>
+<th>Pourquoi ce choix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python 3.12</td>
+<td>Langage</td>
+<td>Ecosysteme data tres mature (pandas, psycopg2)</td>
+</tr>
+<tr>
+<td>pandas 2.2.2</td>
+<td>Extraction + transformation</td>
+<td>Librairie standard pour manipuler des DataFrames CSV/JSON</td>
+</tr>
+<tr>
+<td>psycopg2-binary 2.9.9</td>
+<td>Connexion PostgreSQL</td>
+<td>"Driver" = librairie qui permet a Python de parler a PostgreSQL.
+Supporte le <strong>bulk insert</strong> : inserer plusieurs lignes en
+une seule requete SQL, au lieu d'une par une (x100 plus rapide)</td>
+</tr>
+<tr>
+<td>APScheduler 3.10+</td>
+<td>Scheduler interne</td>
+<td>Permet de garder le process Python vivant et de relancer les
+pipelines sur une expression cron. Plus simple que le cron du systeme
+Linux</td>
+</tr>
+<tr>
+<td>Ruff 0.15.6</td>
+<td><strong>Linter</strong> + formateur</td>
+<td>Un linter est un outil qui lit le code et signale les erreurs /
+incoherences de style. Ruff est tres rapide et remplace black +
+flake8</td>
+</tr>
+<tr>
+<td>Pytest</td>
+<td>Tests automatises</td>
+<td>Tests unitaires + d'integration (avec un vrai Postgres lance par
+GitHub Actions)</td>
+</tr>
+<tr>
+<td>Docker + tini</td>
+<td>Packaging</td>
+<td><code>tini</code> est un mini programme qui tourne en "PID 1" (le
+processus principal du conteneur). Son role : faire suivre proprement
+les signaux d'arret (Ctrl+C, <code>docker stop</code>) a l'application
+Python</td>
+</tr>
+</tbody>
+</table>
+<p>Dependances minimales volontairement (<code>requirements.txt</code> :
+3 libs seulement). Les outils de dev (pytest, ruff) sont separes dans
+<code>requirements-dev.txt</code>.</p>
+<hr />
+<h2 id="4-les-4-pipelines">4. Les 4 pipelines</h2>
+<p>L'ordre d'execution est defini dans
+<code>pipelines/__init__.py</code> : <code>exercisedb</code> -&gt;
+<code>nutrition</code> -&gt; <code>gym_tracking</code> -&gt;
+<code>diet_recommendations</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Pipeline</th>
+<th>Source</th>
+<th>Lignes brutes</th>
+<th>Tables cibles</th>
+<th>Regles de nettoyage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>exercisedb</code></td>
+<td><code>exercises.json</code></td>
+<td>~1500</td>
+<td><code>exercises</code></td>
+<td>Rejette si <code>external_id</code> ou <code>name</code> vide. Les
+listes (muscles, equipements) sont stockees dans le type
+<code>TEXT[]</code> de PostgreSQL (une liste de chaines dans une seule
+colonne)</td>
+</tr>
+<tr>
+<td><code>nutrition_dataset</code></td>
+<td><code>daily_food_nutrition_dataset.csv</code></td>
+<td>~650</td>
+<td><code>nutrition_entries</code></td>
+<td>Calories doivent etre dans [0, 10000] sinon la ligne est rejetee.
+Les valeurs negatives de protein/carbs/fat sont
+<strong>clampees</strong> a 0 (on force a 0, on ne rejette pas)</td>
+</tr>
+<tr>
+<td><code>gym_tracking</code></td>
+<td>2 CSVs gym (reel + synthetique)</td>
+<td>973 + 1800</td>
+<td><code>exercise_entries</code>, <code>biometric_entries</code></td>
+<td>Conversions d'unites (heures -&gt; minutes, metres -&gt; cm).
+Controle des bornes sur poids, taille, BMI, BPM, fat_pct, duree</td>
+</tr>
+<tr>
+<td><code>diet_recommendations</code></td>
+<td><code>diet_recommendations_dataset.csv</code></td>
+<td>~1000</td>
+<td><code>diet_recommendations</code></td>
+<td>Rejette si <code>Patient_ID</code> vide. Bornes sur poids, taille,
+BMI</td>
+</tr>
+</tbody>
+</table>
+<h3 id="anatomie-dun-pipeline">Anatomie d'un pipeline</h3>
+<p>Chaque pipeline est un simple <strong>dictionnaire Python</strong>
+(<code>dict</code>). Pas de classe, pas d'heritage : c'est voulu, ca
+reste lisible et facile a modifier.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>PIPELINE <span class="op">=</span> {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;name&quot;</span>: <span class="st">&quot;nutrition_dataset&quot;</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;extract&quot;</span>: <span class="kw">lambda</span>: csv_extractor.extract(NUTRITION_CSV, required_columns, ...),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;clean&quot;</span>: cleaner.clean,          <span class="co"># fonction (df) -&gt; (df_propre, df_rejetes)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tables&quot;</span>: [TableConfig(...)],    <span class="co"># table(s) cible(s) + regle anti-doublon</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;source&quot;</span>: <span class="st">&quot;NUTRITION_DATASET&quot;</span>,   <span class="co"># label ajoute automatiquement dans la colonne `source`</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>Ajouter un nouveau pipeline</strong> = creer 3 fichiers
+(<code>pipelines/X.py</code>, <code>cleaners/X.py</code>, extractor si
+format nouveau) + ajouter une ligne d'import dans
+<code>pipelines/__init__.py</code>.</p>
+<hr />
+<h2 id="5-points-techniques-importants">5. Points techniques
+importants</h2>
+<h3 id="51-idempotence">5.1 Idempotence</h3>
+<blockquote>
+<p><strong>Rappel</strong> : idempotent = on peut executer l'operation
+plusieurs fois, le resultat est le meme qu'une seule execution. Pour un
+ETL, ca veut dire "relancer sans creer de doublons".</p>
+</blockquote>
+<p>Technique utilisee : chaque requete SQL <code>INSERT</code> est
+suivie de <code>ON CONFLICT ... DO NOTHING</code>. Traduction : "si
+cette ligne existe deja (selon telle contrainte d'unicite), alors ne
+fais rien, passe a la suivante". Les contraintes d'unicite sont definies
+au niveau du schema DB (migrations V3 et V7 dans MSPR-DB).</p>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Cle d'unicite (ce qui definit "la meme ligne")</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>exercises</code></td>
+<td><code>external_id</code> (identifiant de l'exercice dans la
+source)</td>
+</tr>
+<tr>
+<td><code>nutrition_entries</code></td>
+<td><code>(food_name, category, meal_type, source)</code></td>
+</tr>
+<tr>
+<td><code>exercise_entries</code></td>
+<td>le tuple complet (workout_type, duration, calories, BPMs,
+source)</td>
+</tr>
+<tr>
+<td><code>biometric_entries</code></td>
+<td>le tuple complet (weight, height, BMI, fat%, BPMs, source)</td>
+</tr>
+<tr>
+<td><code>diet_recommendations</code></td>
+<td><code>external_patient_id</code></td>
+</tr>
+</tbody>
+</table>
+<p>Consequence concrete : on peut relancer l'ETL autant de fois qu'on
+veut, aucune donnee n'est dupliquee. C'est aussi ce qui rend le "run au
+demarrage du conteneur" sans risque.</p>
+<h3 id="52-gestion-des-rejets">5.2 Gestion des rejets</h3>
+<p>Le cleaner de chaque pipeline renvoie <strong>deux
+DataFrames</strong> : les lignes propres (<code>clean_df</code>) et les
+lignes rejetees (<code>rejected_df</code>). Les rejetees embarquent une
+colonne <code>reason</code> qui explique pourquoi elles ont ete exclues
+(ex : "calories hors bornes; weight_kg hors bornes").</p>
+<p>Les rejets ne partent <strong>jamais en base</strong>. Ils sont
+exportes dans <code>data/processed/{pipeline}_rejected.json</code> pour
+pouvoir etre inspectes, corriges, et potentiellement reinjectes plus
+tard.</p>
+<p>Les fonctions de validation sont mutualisees dans
+<code>utils/cleaning.py</code> (helpers <code>init_validation</code>,
+<code>require_non_empty</code>, <code>check_bounds</code>,
+<code>split_valid_rejected</code>). Chaque cleaner les combine a sa
+sauce, mais le pattern est identique partout : accumuler les raisons de
+rejet au fur et a mesure, puis couper le DataFrame en deux a la fin.</p>
+<h3 id="53-validation-par-bornes">5.3 Validation par bornes</h3>
+<p>Les bornes sont <strong>centralisees</strong> dans
+<code>utils/validators.py</code> :</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>BOUNDS <span class="op">=</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;calories&quot;</span>: (<span class="dv">0</span>, <span class="dv">10_000</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;weight_kg&quot;</span>: (<span class="dv">20</span>, <span class="dv">300</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;height_cm&quot;</span>: (<span class="dv">50</span>, <span class="dv">250</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;bmi&quot;</span>: (<span class="dv">10</span>, <span class="dv">80</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;heart_rate&quot;</span>: (<span class="dv">30</span>, <span class="dv">250</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;fat_percentage&quot;</span>: (<span class="dv">2</span>, <span class="dv">70</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;duration_min&quot;</span>: (<span class="dv">0</span>, <span class="dv">480</span>),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Pas de hardcoding dans les cleaners, modifier une borne = 1
+ligne.</p>
+<h3 id="54-observabilite">5.4 Observabilite</h3>
+<blockquote>
+<p><strong>Observabilite</strong> = la capacite a savoir, apres coup, ce
+qui s'est passe dans le service : est-ce que ca a tourne ? combien de
+lignes ? quelles erreurs ? C'est indispensable en production pour
+deboguer sans avoir a ouvrir le code.</p>
+</blockquote>
+<p>Quatre mecanismes :</p>
+<ul>
+<li><strong>Logs structures JSON</strong> (via
+<code>utils/logger.py</code>) : chaque ligne de log est un JSON
+(<code>{"timestamp": ..., "level": "INFO", "message": ...}</code>) au
+lieu de texte libre. Avantage : facile a ingerer dans un outil de
+monitoring type Loki, Elasticsearch ou Datadog.</li>
+<li><strong>Table <code>etl_logs</code> en base</strong> : une ligne par
+run de pipeline, avec le nombre de lignes lues, inserees, rejetees, le
+statut (OK / ERREUR), et une colonne <code>details</code> au format
+<strong>JSONB</strong> (type PostgreSQL qui stocke du JSON et permet de
+faire des requetes dessus). Le JSONB contient les stats par table, le
+top des raisons de rejet, la duree du run.</li>
+<li><strong>Rapport de qualite JSON</strong> genere dans
+<code>data/processed/quality_report.json</code> apres chaque run complet
+(tous pipelines confondus). Agrege le nombre total de lignes lues /
+inserees / rejetees et le taux de rejet global.</li>
+<li><strong>Samples</strong> (5 premieres lignes brutes + 5 nettoyees)
+exportes dans <code>data/samples/</code> pour pouvoir inspecter
+visuellement l'effet du nettoyage sans avoir a ouvrir la base.</li>
+</ul>
+<h3 id="55-resilience">5.5 Resilience</h3>
+<blockquote>
+<p><strong>Resilience</strong> = capacite du service a continuer de
+fonctionner correctement face aux imprevus (erreur ponctuelle, arret
+brutal, souci reseau).</p>
+</blockquote>
+<h4 id="pool-de-connexions-db">Pool de connexions DB</h4>
+<p>Un <strong>pool de connexions</strong> est un "reservoir" de
+connexions deja ouvertes vers la base, qu'on reutilise au lieu d'en
+ouvrir une nouvelle a chaque requete. Ouvrir une connexion coute cher
+(echange TCP + authentification), le pool evite ce cout repete.</p>
+<p>Ici on utilise <code>psycopg2.pool.ThreadedConnectionPool</code>
+(min=1, max=5). L'initialisation est <strong>paresseuse</strong> (le
+pool est cree au premier appel a <code>get_cursor()</code>, pas au
+demarrage), ce qui evite un echec immediat si la base n'est pas encore
+prete.</p>
+<h4 id="context-manager-get_cursor">Context manager
+<code>get_cursor()</code></h4>
+<p>En Python, un <strong>context manager</strong> est une structure
+<code>with ... :</code> qui garantit qu'une ressource est bien liberee a
+la fin, meme si une erreur survient. Exemple typique :
+<code>with open(f) as file: ...</code> ferme toujours le fichier.</p>
+<p>Ici, <code>with get_cursor() as cur:</code> garantit que :</p>
+<ul>
+<li>un <code>COMMIT</code> est fait automatiquement si tout s'est bien
+passe</li>
+<li>un <code>ROLLBACK</code> est fait automatiquement si une exception
+est levee (on annule la transaction, la base reste propre)</li>
+<li>la connexion est remise dans le pool dans tous les cas (meme en cas
+d'erreur)</li>
+</ul>
+<h4 id="scheduler-robuste">Scheduler robuste</h4>
+<ul>
+<li><code>misfire_grace_time=3600</code> : si le run de 2h a ete rate
+(conteneur eteint, machine redemarree...), APScheduler rattrape
+l'execution tant que le retard est inferieur a 1h. Au-dela, il passe au
+prochain creneau.</li>
+<li>Gestion des <strong>signaux d'arret</strong> (<code>SIGTERM</code>
+envoye par <code>docker stop</code>, <code>SIGINT</code> envoye par
+Ctrl+C) : le scheduler attend la fin du pipeline en cours avant de
+quitter, avec un timeout de 10 minutes max. Evite de couper brutalement
+un run en plein milieu.</li>
+<li><code>tini</code> comme <strong>PID 1</strong> : dans un conteneur
+Docker, le processus principal (PID 1) a une responsabilite speciale :
+faire suivre les signaux aux processus enfants. Python ne le fait pas
+bien tout seul. <code>tini</code> est un mini programme qui le fait
+correctement : sans lui, <code>docker stop</code> enverrait le signal
+mais Python ne le recevrait jamais proprement.</li>
+</ul>
+<h4 id="bizarreries-gerees">Bizarreries gerees</h4>
+<p>Le CSV de nutrition contient des noms d'aliments avec des virgules
+("Chicken, grilled"), ce qui casse le parsing CSV classique (la virgule
+est le separateur). On a du ecrire un parser manuel dans
+<code>_extract_with_food_quirk</code> qui reconstruit le nom en
+rassemblant les colonnes en trop.</p>
+<h3 id="56-cicd-githubworkflowsciyml">5.6 CI/CD
+(<code>.github/workflows/ci.yml</code>)</h3>
+<blockquote>
+<p><strong>CI/CD</strong> = Continuous Integration / Continuous
+Delivery. Automatisation qui tourne a chaque push de code sur GitHub :
+elle verifie que le code compile, que les tests passent, que le style
+est bon, et peut publier une nouvelle version automatiquement.</p>
+</blockquote>
+<p>4 jobs declenches sur push ou PR vers <code>master</code> :</p>
+<ol type="1">
+<li><strong>lint</strong> : <code>ruff check</code> +
+<code>ruff format --check</code> (verifie le style du code sans le
+modifier)</li>
+<li><strong>test</strong> : pytest en ne lancant que les tests unitaires
+(flag <code>-m "not integration"</code>). Pas besoin de base de donnees,
+donc rapide.</li>
+<li><strong>test-integration</strong> : pytest sur les tests
+d'integration uniquement. Un vrai PostgreSQL 16 est lance dans un
+conteneur par GitHub Actions (la partie <code>services:</code> du
+workflow) pour ces tests.</li>
+<li><strong>publish</strong> : construction de l'image Docker et
+publication sur <strong>GHCR</strong> (GitHub Container Registry, le
+"registre" officiel de GitHub ou on stocke des images Docker, comme
+DockerHub mais sur GitHub). Publication conditionnelle : seulement si
+les 3 jobs precedents passent ET qu'on est sur un push vers
+<code>master</code> ou un tag de version (<code>v1.2.3</code> par
+exemple).</li>
+</ol>
+<hr />
+<h2 id="6-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</h2>
+<p>Cette section regroupe les morceaux de code les plus importants a
+savoir relire et commenter. Si le jury dit "montrez-moi comment vous
+faites X", c'est ici qu'on pointe.</p>
+<h3 id="61-lire-un-csv-en-dataframe-pandas">6.1 Lire un CSV en DataFrame
+(pandas)</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(path, encoding<span class="op">=</span><span class="st">&quot;utf-8&quot;</span>)   <span class="co"># charge le CSV en memoire</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.dropna(how<span class="op">=</span><span class="st">&quot;all&quot;</span>)                   <span class="co"># supprime les lignes 100% vides</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>required <span class="op">=</span> {<span class="st">&quot;Food_Item&quot;</span>, <span class="st">&quot;Calories (kcal)&quot;</span>, <span class="st">&quot;Protein (g)&quot;</span>}</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>missing <span class="op">=</span> required <span class="op">-</span> <span class="bu">set</span>(df.columns)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> missing:</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f&quot;Colonnes manquantes dans </span><span class="sc">{</span>path<span class="sc">}</span><span class="ss"> : </span><span class="sc">{</span>missing<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>pd.read_csv</code> charge tout le fichier en memoire sous
+forme de DataFrame (tableau 2D avec colonnes typees, comme une feuille
+Excel).</li>
+<li><code>dropna(how="all")</code> retire les lignes totalement vides
+(artefacts CSV frequents).</li>
+<li>On verifie les colonnes obligatoires <strong>avant</strong> de
+commencer le nettoyage. Si la source a change de format, on prefere
+echouer tout de suite plutot que produire de la data bancale
+silencieusement.</li>
+</ul>
+<h3 id="62-transformer-une-colonne-pandas">6.2 Transformer une colonne
+(pandas)</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Conversion en numerique : les valeurs non-numeriques deviennent NaN (Not a Number)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;calories&quot;</span>] <span class="op">=</span> pd.to_numeric(df[<span class="st">&quot;calories&quot;</span>], errors<span class="op">=</span><span class="st">&quot;coerce&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Clamp : force les valeurs negatives a 0 (au lieu de rejeter la ligne)</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;protein_g&quot;</span>] <span class="op">=</span> df[<span class="st">&quot;protein_g&quot;</span>].clip(lower<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Conversion d&#39;unites : heures -&gt; minutes, metres -&gt; cm</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;duration_min&quot;</span>] <span class="op">=</span> (df[<span class="st">&quot;Session_Duration (hours)&quot;</span>] <span class="op">*</span> <span class="dv">60</span>).<span class="bu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;height_cm&quot;</span>]    <span class="op">=</span> (df[<span class="st">&quot;Height (m)&quot;</span>] <span class="op">*</span> <span class="dv">100</span>).<span class="bu">round</span>(<span class="dv">1</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalisation d&#39;une colonne texte</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;food_name&quot;</span>] <span class="op">=</span> df[<span class="st">&quot;food_name&quot;</span>].astype(<span class="bu">str</span>).<span class="bu">str</span>.strip()</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li>pandas est <strong>vectorise</strong> : les operations s'appliquent
+a toute la colonne d'un coup, sans boucle Python explicite. C'est ce qui
+le rend rapide.</li>
+<li><code>errors="coerce"</code> : si une valeur n'est pas convertible
+en nombre, elle devient <code>NaN</code> au lieu de planter. On decidera
+plus loin si on la rejette ou la garde.</li>
+<li>On convertit toujours vers les unites attendues par la BDD (minutes,
+cm, kilos) pour que toutes les sources soient homogenes.</li>
+</ul>
+<h3 id="63-separer-les-lignes-valides-des-lignes-rejetees">6.3 Separer
+les lignes valides des lignes rejetees</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Au depart : tout est valide, aucune raison de rejet</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>valid   <span class="op">=</span> pd.Series(<span class="va">True</span>, index<span class="op">=</span>df.index)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>reasons <span class="op">=</span> pd.Series(<span class="st">&quot;&quot;</span>,   index<span class="op">=</span>df.index)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Regle 1 : calories dans [0, 10000] (NaN tolere)</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>in_bounds <span class="op">=</span> df[<span class="st">&quot;calories&quot;</span>].isna() <span class="op">|</span> df[<span class="st">&quot;calories&quot;</span>].between(<span class="dv">0</span>, <span class="dv">10_000</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>reasons   <span class="op">=</span> reasons.where(in_bounds, reasons <span class="op">+</span> <span class="st">&quot;calories hors bornes; &quot;</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>valid    <span class="op">&amp;=</span> in_bounds</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Regle 2 : food_name non vide</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>not_empty <span class="op">=</span> df[<span class="st">&quot;food_name&quot;</span>].notna() <span class="op">&amp;</span> df[<span class="st">&quot;food_name&quot;</span>].astype(<span class="bu">str</span>).<span class="bu">str</span>.strip().ne(<span class="st">&quot;&quot;</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>reasons   <span class="op">=</span> reasons.where(not_empty, reasons <span class="op">+</span> <span class="st">&quot;food_name manquant; &quot;</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>valid    <span class="op">&amp;=</span> not_empty</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Coupe le DataFrame en deux</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>df_clean    <span class="op">=</span> df[valid].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>df_rejected <span class="op">=</span> df[<span class="op">~</span>valid].copy()</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>df_rejected[<span class="st">&quot;reason&quot;</span>] <span class="op">=</span> reasons[<span class="op">~</span>valid]</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li>On utilise des <strong>masques booleens</strong> :
+<code>valid</code> est une Series qui contient <code>True</code> ou
+<code>False</code> pour chaque ligne. <code>df[valid]</code> renvoie les
+lignes ou <code>valid</code> vaut True.</li>
+<li>On <strong>accumule les raisons de rejet</strong> : si une ligne
+echoue a 2 regles, elle aura "calories hors bornes; food_name manquant;"
+dans <code>reason</code>. Tres utile pour comprendre pourquoi quelque
+chose a ete rejete.</li>
+<li>A la fin, 2 DataFrames : le propre part en base, le rejete est
+exporte en JSON pour inspection.</li>
+</ul>
+<h3 id="64-context-manager-pour-gerer-la-connexion-db">6.4 Context
+manager pour gerer la connexion DB</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> contextlib <span class="im">import</span> contextmanager</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> psycopg2 <span class="im">import</span> pool</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>_pool <span class="op">=</span> pool.ThreadedConnectionPool(minconn<span class="op">=</span><span class="dv">1</span>, maxconn<span class="op">=</span><span class="dv">5</span>, ...)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="at">@contextmanager</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_cursor():</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    conn <span class="op">=</span> _pool.getconn()              <span class="co"># emprunte une connexion au pool</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> conn.cursor() <span class="im">as</span> cur:</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> cur                    <span class="co"># &quot;donne&quot; le curseur au bloc `with`</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        conn.commit()                    <span class="co"># tout s&#39;est bien passe -&gt; commit</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span>:</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        conn.rollback()                  <span class="co"># erreur -&gt; annule la transaction</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span>                            <span class="co"># et on relance l&#39;exception</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">finally</span>:</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        _pool.putconn(conn)              <span class="co"># on rend la connexion au pool (TOUJOURS)</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilisation</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> get_cursor() <span class="im">as</span> cur:</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    cur.execute(<span class="st">&quot;INSERT INTO ...&quot;</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># si ca plante ici -&gt; rollback automatique + connexion remise au pool</span></span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li>Le <code>yield</code> coupe la fonction en deux : avant = setup
+(emprunt de la connexion), apres = teardown (commit/rollback + retour au
+pool).</li>
+<li>Le <code>finally</code> garantit que la connexion est
+<strong>toujours</strong> rendue au pool, meme en cas d'exception. Sans
+ca, on "fuirait" des connexions jusqu'a epuiser le pool.</li>
+<li>C'est le meme principe que <code>with open(f) as file:</code> qui
+ferme le fichier proprement : on delegue la gestion des ressources au
+context manager.</li>
+</ul>
+<h3 id="65-insertion-en-masse-avec-anti-doublon-psycopg2">6.5 Insertion
+en masse avec anti-doublon (psycopg2)</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> psycopg2.extras <span class="im">import</span> execute_values</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Transforme le DataFrame en liste de tuples (une ligne = un tuple)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>columns <span class="op">=</span> [<span class="st">&quot;food_name&quot;</span>, <span class="st">&quot;category&quot;</span>, <span class="st">&quot;calories&quot;</span>, <span class="st">&quot;source&quot;</span>]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>rows <span class="op">=</span> <span class="bu">list</span>(df[columns].itertuples(index<span class="op">=</span><span class="va">False</span>, name<span class="op">=</span><span class="va">None</span>))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>sql <span class="op">=</span> <span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="st">    INSERT INTO nutrition_entries (food_name, category, calories, source)</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="st">    VALUES </span><span class="sc">%s</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="st">    ON CONFLICT (food_name, category, meal_type, source) DO NOTHING</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="st">    RETURNING id</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> get_cursor() <span class="im">as</span> cur:</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> execute_values(cur, sql, rows, page_size<span class="op">=</span><span class="dv">1000</span>, fetch<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    inserted <span class="op">=</span> <span class="bu">len</span>(results)   <span class="co"># compte uniquement les vraies insertions</span></span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>execute_values</code> fait du <strong>bulk insert</strong> : 1
+requete SQL pour 1000 lignes au lieu de 1000 requetes. Sans ca, on
+aurait 1000 aller-retours reseau, tres lents.</li>
+<li><code>ON CONFLICT ... DO NOTHING</code> : si la ligne existe deja
+(selon la contrainte d'unicite), PostgreSQL l'ignore silencieusement.
+<strong>C'est ce qui rend l'ETL idempotent.</strong></li>
+<li><code>RETURNING id</code> : PostgreSQL renvoie les id des lignes
+<strong>reellement</strong> inserees (pas celles ignorees par ON
+CONFLICT). On compte le resultat pour savoir combien de nouvelles lignes
+ont ete ajoutees.</li>
+</ul>
+<h3 id="66-scheduler-cron-apscheduler">6.6 Scheduler cron
+(APScheduler)</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> apscheduler.schedulers.blocking <span class="im">import</span> BlockingScheduler</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> apscheduler.triggers.cron <span class="im">import</span> CronTrigger</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run_all_pipelines():</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> pipeline <span class="kw">in</span> PIPELINES:</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        run_pipeline(pipeline)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Run immediat au demarrage</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>run_all_pipelines()</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Puis planification recurrente</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>scheduler <span class="op">=</span> BlockingScheduler()</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>scheduler.add_job(</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    run_all_pipelines,</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    CronTrigger.from_crontab(<span class="st">&quot;0 2 * * *&quot;</span>),   <span class="co"># tous les jours a 2h</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span><span class="op">=</span><span class="st">&quot;etl_pipelines&quot;</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    misfire_grace_time<span class="op">=</span><span class="dv">3600</span>,                  <span class="co"># tolere 1h de retard</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>scheduler.start()   <span class="co"># bloque le thread, le conteneur reste vivant</span></span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>BlockingScheduler</code> est <strong>synchrone</strong> : il
+bloque le thread principal. C'est ce qu'on veut dans un conteneur Docker
+: tant qu'il tourne, le conteneur est vivant. S'il se termine, le
+conteneur s'arrete.</li>
+<li><code>CronTrigger.from_crontab("0 2 * * *")</code> parse une
+<strong>expression cron</strong> standard : minute / heure / jour du
+mois / mois / jour de la semaine. <code>0 2 * * *</code> = "a la minute
+0 de la 2e heure, tous les jours".</li>
+<li><code>misfire_grace_time=3600</code> : si la machine etait eteinte a
+2h (ex : maintenance), APScheduler rattrape le run tant que le retard
+est inferieur a 1h. Au-dela, il skippe et attend le lendemain.</li>
+</ul>
+<h3 id="67-requetes-sql-utiles-pour-auditer-les-runs">6.7 Requetes SQL
+utiles pour auditer les runs</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 10 derniers runs, chronologique</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> source_name, started_at, status, rows_inserted, rows_rejected</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> etl_logs</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> started_at <span class="kw">DESC</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">10</span>;</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">-- Runs en erreur des dernieres 24h (extraction du message d&#39;erreur depuis le JSON)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- Note : la colonne `details` est typee TEXT dans le schema actuel mais contient du JSON serialise.</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">-- Le cast `::jsonb` permet de l&#39;interroger comme du JSON natif.</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> source_name,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>       started_at,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>       details:<span class="ch">:jsonb</span><span class="op">-&gt;&gt;</span><span class="st">&#39;error&#39;</span> <span class="kw">AS</span> error_message</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> etl_logs</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> status <span class="op">=</span> <span class="st">&#39;ERREUR&#39;</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> started_at <span class="op">&gt;</span> NOW() <span class="op">-</span> <span class="dt">INTERVAL</span> <span class="st">&#39;24 hours&#39;</span>;</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">-- Taux de rejet moyen par source (indicateur qualite)</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> source_name,</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>       <span class="fu">ROUND</span>(<span class="fu">AVG</span>(rows_rejected:<span class="ch">:float</span> <span class="op">/</span> <span class="fu">NULLIF</span>(rows_read, <span class="dv">0</span>)):<span class="ch">:numeric</span>, <span class="dv">4</span>) <span class="kw">AS</span> rejection_rate</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> etl_logs</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> source_name</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> rejection_rate <span class="kw">DESC</span>;</span></code></pre></div>
+<p><strong>Ce qu'il faut savoir dire</strong> :</p>
+<ul>
+<li><code>details::jsonb-&gt;&gt;'error'</code> : le cast
+<code>::jsonb</code> convertit le TEXT en JSONB a la volee, puis
+<code>-&gt;&gt;'cle'</code> extrait la valeur sous forme de texte. Une
+future migration (V8) pourrait convertir definitivement la colonne en
+JSONB pour eviter le cast a chaque requete.</li>
+<li><code>NULLIF(rows_read, 0)</code> : retourne <code>NULL</code> si
+<code>rows_read</code> vaut 0, ce qui evite la division par zero
+(Postgres renverrait une erreur sinon).</li>
+<li>Ces requetes alimentent le dashboard MSPR-FRONT (vue
+<code>/dashboard</code>), qui affiche les metriques globales de l'ETL en
+temps reel.</li>
+</ul>
+<hr />
+<h2 id="7-questions-probables-du-jury">7. Questions probables du
+jury</h2>
+<h3
+id="q1-pourquoi-un-etl-maison-en-python-plutot-quairflow-dbt-ou-spark-">Q1.
+Pourquoi un ETL maison en Python plutot qu'Airflow, dbt ou Spark ?</h3>
+<p>Volumes faibles : moins de 5000 lignes au total, pas besoin d'un
+outil "distribue" (qui repartit le travail sur plusieurs machines).
+Airflow, dbt ou Spark sont des outils puissants mais concus pour des
+volumes massifs et de la multi-source complexe. Les deployer pour 5000
+lignes aurait apporte une grosse complexite (UI, scheduler distribue,
+fichiers de config YAML/XML) pour zero benefice reel. Un script Python
+avec APScheduler tient dans un seul conteneur, est simple a debugger, et
+suffit largement pour la MSPR. Si la volumetrie explosait (millions de
+lignes, sources en streaming temps reel), on passerait a Airflow ou
+Dagster.</p>
+<h3 id="q2-comment-garantissez-vous-lidempotence-">Q2. Comment
+garantissez-vous l'idempotence ?</h3>
+<p><code>ON CONFLICT DO NOTHING</code> sur une contrainte d'unicite
+declaree dans le schema DB (migrations V3 et V7). Chaque relance insere
+uniquement les nouvelles lignes. C'est verifie dans
+<code>tests/test_integration.py::test_load_is_idempotent</code>.</p>
+<h3 id="q3-que-se-passe-t-il-si-la-base-tombe-en-plein-run-">Q3. Que se
+passe-t-il si la base tombe en plein run ?</h3>
+<p>Deux niveaux de protection :</p>
+<ol type="1">
+<li>Le context manager <code>get_cursor()</code> detecte l'erreur,
+annule la transaction en cours (<code>ROLLBACK</code> automatique) pour
+que la base reste propre, et remet la connexion dans le pool.</li>
+<li><code>run_pipeline</code> capture l'exception, enregistre le run
+comme <code>ERREUR</code> dans <code>etl_logs</code> (avec le message
+d'erreur), puis passe au pipeline suivant.</li>
+</ol>
+<p>On ne perd aucune donnee : la prochaine execution reprendra de zero,
+et comme l'ETL est idempotent (voir 5.1), aucun doublon ne sera
+cree.</p>
+<h3 id="q4-que-faites-vous-des-lignes-rejetees-">Q4. Que faites-vous des
+lignes rejetees ?</h3>
+<p>Exportees dans <code>data/processed/{pipeline}_rejected.json</code>
+avec la raison. Pour l'instant pas de traitement automatique, mais c'est
+concu pour permettre une <strong>revue manuelle</strong> ou une
+<strong>reinjection</strong> apres correction. Le front expose une vue
+<code>/validation</code> qui pourrait s'y brancher.</p>
+<h3
+id="q5-pourquoi-4-pipelines-separes-et-pas-un-pipeline-generique-parametrable-">Q5.
+Pourquoi 4 pipelines separes et pas un pipeline generique parametrable
+?</h3>
+<p>Chaque source a sa propre logique de nettoyage (bornes, conversions,
+colonnes obligatoires). Un pipeline generique noie cette logique dans de
+la config YAML complexe. 4 modules courts et lisibles sont plus faciles
+a maintenir a cette echelle. Le pattern "dict PIPELINE" capture la
+partie commune (orchestration) sans forcer l'abstraction de la partie
+specifique (transformations).</p>
+<h3
+id="q6-votre-validation-des-bornes-est-statique-et-si-les-regles-changent-">Q6.
+Votre validation des bornes est statique. Et si les regles changent
+?</h3>
+<p>Les bornes sont centralisees dans
+<code>utils/validators.py::BOUNDS</code>. Modifier une borne = 1 ligne.
+Pour rendre cela dynamique (config externe, par source, par version), il
+suffirait de charger <code>BOUNDS</code> depuis un YAML ou une table DB
+au demarrage. Pas fait par choix de simplicite.</p>
+<h3 id="q7-strategie-de-tests-">Q7. Strategie de tests ?</h3>
+<p>Deux niveaux :</p>
+<ul>
+<li><strong>Tests unitaires</strong> : testent chaque composant en
+isolation (cleaners, validators, extractors). Ils verifient les cas
+valides, les cas aux limites des bornes (est-ce que 10 000 kcal
+exactement est accepte ?), les cas rejetes, le clamping des valeurs
+negatives. Ils tournent sans base de donnees, donc tres rapides.</li>
+<li><strong>Tests d'integration</strong>
+(<code>test_integration.py</code>) : ils utilisent un
+<strong>vrai</strong> PostgreSQL (demarre par GitHub Actions ou via
+Docker en local). Ils verifient le chemin complet
+<code>extract -&gt; clean -&gt; load</code> et s'assurent que
+l'idempotence fonctionne bien (relancer un <code>load</code> avec les
+memes donnees n'insere rien).</li>
+</ul>
+<p>Les deux categories sont separees par un <strong>marker
+pytest</strong> (un simple tag sur les tests d'integration :
+<code>pytestmark = pytest.mark.integration</code>). On peut donc lancer
+:</p>
+<ul>
+<li><code>pytest -m "not integration"</code> : uniquement les tests
+unitaires, rapides, sans Postgres</li>
+<li><code>pytest -m integration</code> : uniquement les tests
+d'integration, necessite Postgres</li>
+<li><code>pytest</code> : tous</li>
+</ul>
+<h3 id="q8-pourquoi-le-scheduler-tourne-au-demarrage-et-sur-cron-">Q8.
+Pourquoi le scheduler tourne au demarrage ET sur cron ?</h3>
+<p>Pour avoir des donnees en base des le premier up du conteneur (sinon
+il faudrait attendre 2h du matin). L'execution initiale au demarrage est
+idempotente donc sans risque. Ensuite, le cron gere les
+rafraichissements reguliers.</p>
+<h3
+id="q9-le-scheduler-est-mono-thread-pourquoi-un-pool-de-connexions-db-alors-">Q9.
+Le scheduler est mono-thread. Pourquoi un pool de connexions DB alors
+?</h3>
+<p>Un <strong>pool</strong> n'est pas la que pour faire du parallele, il
+sert aussi a :</p>
+<ul>
+<li><strong>Reutiliser</strong> une connexion entre plusieurs requetes
+(eviter le cout TCP + authentification a chaque fois qu'on parle a la
+base).</li>
+<li><strong>Isoler</strong> les operations : <code>pg_load()</code> et
+<code>log_etl_run()</code> sont deux operations distinctes. Si elles
+partageaient la meme connexion, une erreur dans la premiere pourrait
+laisser la connexion dans un etat incoherent (transaction non commitee)
+au moment ou la seconde voudrait l'utiliser. Avec un pool, chacune prend
+sa propre connexion proprement geree.</li>
+</ul>
+<h3
+id="q10-pourquoi-conserver-le-pipeline-faker_users-dans-les-anciens-readme-alors-quil-a-ete-supprime-">Q10.
+Pourquoi conserver le pipeline <code>faker_users</code> dans les anciens
+README alors qu'il a ete supprime ?</h3>
+<p>Il a ete retire (commit dedie) suite a la <strong>migration
+V7</strong> qui drop la table <code>users</code>. Les datasets sources
+sont anonymes, sans identifiant commun, donc les FK vers
+<code>users</code> n'avaient plus de sens. Les README du repo ETL
+mentionnent encore <code>faker_users</code> : a corriger pour la
+livraison finale.</p>
+<h3 id="q11-securite--le-conteneur-tourne-t-il-en-root-">Q11. Securite :
+le conteneur tourne-t-il en root ?</h3>
+<p>Non. Le Dockerfile cree un user non-privilegie <code>etl</code>, lui
+donne ownership de <code>/app</code>, et bascule dessus via
+<code>USER etl</code>. Le <code>docker-compose.yml</code> ajoute
+<code>no-new-privileges: true</code>. Les logs Docker sont rotates (max
+10Mo x 3 fichiers).</p>
+<h3 id="q12-comment-monitorer-quun-run-a-echoue-en-production-">Q12.
+Comment monitorer qu'un run a echoue en production ?</h3>
+<p>Trois vecteurs de monitoring existent :</p>
+<ul>
+<li><strong>Interroger la table <code>etl_logs</code></strong>
+directement :
+<code>SELECT source_name, status, error_count FROM etl_logs WHERE status = 'ERREUR' ORDER BY started_at DESC</code>.
+C'est la source de verite.</li>
+<li><strong>Les logs JSON stdout</strong> peuvent etre envoyes vers une
+stack de monitoring type Loki + Grafana ou Elasticsearch + Kibana, qui
+permet de visualiser les logs et configurer des alertes.</li>
+<li><strong>Le healthcheck Docker</strong> (<code>healthcheck.py</code>)
+verifie la connectivite a la base toutes les 60 secondes. Apres 3 echecs
+consecutifs, Docker marque le conteneur comme <code>unhealthy</code>, ce
+qui declenche typiquement une alerte au niveau de l'orchestrateur
+(Swarm, Kubernetes).</li>
+</ul>
+<p>En revanche, il n'y a pas d'alerting automatique (mail, Slack...)
+pour l'instant : c'etait hors du scope de la MSPR1.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>
