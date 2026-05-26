@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>MongoDB — Révisions MSPR</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a href="#fiche-de-revision-mspr-mongodb"
+id="toc-fiche-de-revision-mspr-mongodb">Fiche de revision :
+MSPR-MongoDB</a>
+<ul>
+<li><a href="#vocabulaire-a-connaitre-avant-de-lire"
+id="toc-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#tldr" id="toc-tldr">1. TL;DR</a></li>
+<li><a href="#architecture" id="toc-architecture">2.
+Architecture</a></li>
+<li><a href="#stack-technique" id="toc-stack-technique">3. Stack
+technique</a></li>
+<li><a href="#les-3-collections" id="toc-les-3-collections">4. Les 3
+collections</a></li>
+<li><a href="#points-techniques-importants"
+id="toc-points-techniques-importants">5. Points techniques
+importants</a></li>
+<li><a href="#code-essentiel-a-savoir-expliquer-au-jury"
+id="toc-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</a></li>
+<li><a href="#comparaison-rapide-postgresql-mongodb"
+id="toc-comparaison-rapide-postgresql-mongodb">7. Comparaison rapide
+PostgreSQL / MongoDB</a></li>
+<li><a href="#questions-probables-du-jury"
+id="toc-questions-probables-du-jury">8. Questions probables du
+jury</a></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1 id="fiche-de-revision-mspr-mongodb">Fiche de revision :
+MSPR-MongoDB</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR2. Objectif : comprendre
+le role du repo, le contenu des 3 collections, les index, et
+l’integration dans le compose racine.</p>
+</blockquote>
+<hr />
+<h2 id="vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<p>Les 8 termes qui reviennent partout dans cette fiche.</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NoSQL</strong></td>
+<td>“Not only SQL”. Famille de bases non-relationnelles. MongoDB stocke
+des documents JSON.</td>
+</tr>
+<tr>
+<td><strong>MongoDB</strong></td>
+<td>BDD NoSQL orientee document. Choix impose par le sujet MSPR2.</td>
+</tr>
+<tr>
+<td><strong>Collection</strong></td>
+<td>Equivalent NoSQL d’une table SQL. Contient des documents (au lieu de
+lignes).</td>
+</tr>
+<tr>
+<td><strong>Document</strong></td>
+<td>Une entree dans une collection. Format BSON (JSON binaire), peut
+etre imbrique sur N niveaux.</td>
+</tr>
+<tr>
+<td><strong>Index unique</strong></td>
+<td>Garantit l’unicite d’une cle (ex : <code>user_id</code>). Insert
+d’une cle existante = erreur.</td>
+</tr>
+<tr>
+<td><strong>Index compose</strong></td>
+<td>Index sur plusieurs champs :
+<code>{user_id: 1, created_at: -1}</code>. Optimise les queries filtrant
++ triant.</td>
+</tr>
+<tr>
+<td><strong><code>/docker-entrypoint-initdb.d/</code></strong></td>
+<td>Convention Docker MongoDB : les scripts <code>.js</code> deposes
+dans ce dossier s’executent au <strong>premier demarrage</strong>
+(volume vide).</td>
+</tr>
+<tr>
+<td><strong>GHCR</strong></td>
+<td>GitHub Container Registry. Equivalent DockerHub mais sur GitHub.
+<code>ghcr.io/whitefoxxyt/mspr-mongodb:latest</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tldr">1. TL;DR</h2>
+<p><strong>MSPR-MongoDB</strong> est un <strong>repo court</strong>
+dedie a l’initialisation des collections et des index MongoDB du moteur
+de recommandation fitness (MSPR-Reco-Fitness).</p>
+<p>C’est un repo separe pour <strong>garder la coherence</strong> avec
+MSPR-DB (qui porte les migrations PostgreSQL). Les services applicatifs
+(<code>MSPR-Reco-Fitness</code>) connaissent le <strong>schema</strong>
+de leurs documents mais ne gerent pas l’<strong>infrastructure</strong>
+des collections / index. Cette responsabilite est centralisee ici.</p>
+<ul>
+<li><strong>Stack</strong> : Mongo Shell (<code>mongosh</code>), MongoDB
+7-jammy</li>
+<li><strong>Contenu</strong> : 1 Dockerfile + 1 script JS d’init + 1
+README</li>
+<li><strong>Image publiee</strong> :
+<code>ghcr.io/whitefoxxyt/mspr-mongodb:latest</code></li>
+<li><strong>Collections initialisees</strong> :
+<code>user_fitness_profiles</code>, <code>workout_programs</code>,
+<code>recommendation_history</code></li>
+<li><strong>Index</strong> : 1 unique + 2 composes</li>
+<li><strong>Usage</strong> : lance comme service au demarrage du compose
+racine (MSPR-Deploy)</li>
+</ul>
+<p>Le sujet impose une BDD NoSQL pour le moteur de reco (livrable n 7).
+MongoDB est retenu pour les raisons developpees dans la <a
+href="Reco-Fitness.md">fiche Reco-Fitness</a>. Cette fiche couvre le
+<strong>comment</strong> : comment les collections sont creees,
+indexees, et integrees dans la stack.</p>
+<hr />
+<h2 id="architecture">2. Architecture</h2>
+<pre class="mermaid"><code>flowchart LR
+    subgraph Build[&quot;Construction image&quot;]
+        D[Dockerfile&lt;br/&gt;FROM mongo:7-jammy]
+        S[init/01-init-reco-fitness.js]
+        GHCR[ghcr.io/whitefoxxyt/&lt;br/&gt;mspr-mongodb:latest]
+    end
+
+    subgraph Runtime[&quot;Demarrage container&quot;]
+        ENTRYPOINT[/docker-entrypoint-initdb.d/&lt;br/&gt;execute uniquement&lt;br/&gt;si volume vide/]
+        M[(MongoDB 7&lt;br/&gt;:27017)]
+    end
+
+    D --&gt; GHCR
+    S -.copie au build.-&gt; ENTRYPOINT
+    GHCR --&gt; ENTRYPOINT
+    ENTRYPOINT --&gt; M
+
+    M -.lu par.-&gt; RF[MSPR-Reco-Fitness :8002]</code></pre>
+<p>Trois fichiers seulement dans le repo :</p>
+<pre><code>MSPR-MongoDB/
+├── Dockerfile          # FROM mongo:7-jammy + COPY init/ /docker-entrypoint-initdb.d/
+├── init/
+│   └── 01-init-reco-fitness.js
+└── README.md</code></pre>
+<p>L’image Docker est construite par GitHub Actions sur push vers
+<code>master</code>, puis publiee sur GHCR pour etre consommee par le
+compose racine MSPR-Deploy.</p>
+<hr />
+<h2 id="stack-technique">3. Stack technique</h2>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 20%" />
+<col style="width: 13%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>Composant</th>
+<th>Version</th>
+<th>Role</th>
+<th>Pourquoi ce choix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MongoDB</td>
+<td>7-jammy</td>
+<td>BDD NoSQL</td>
+<td>Version LTS, image jammy (Ubuntu 22.04) stable</td>
+</tr>
+<tr>
+<td>Mongo Shell (<code>mongosh</code>)</td>
+<td>embarque</td>
+<td>Execution du script d’init</td>
+<td>Standard MongoDB, evite une dependance externe</td>
+</tr>
+<tr>
+<td>Dockerfile</td>
+<td>minimal</td>
+<td>Packaging</td>
+<td>4 lignes, image legere</td>
+</tr>
+<tr>
+<td>GHCR</td>
+<td>-</td>
+<td>Publication</td>
+<td>Image accessible depuis le compose racine sans build local</td>
+</tr>
+</tbody>
+</table>
+<p>Le repo a <strong>3 fichiers</strong> et ne contient pas de code
+applicatif. C’est volontairement minimal : la responsabilite est limitee
+a l’init des collections.</p>
+<hr />
+<h2 id="les-3-collections">4. Les 3 collections</h2>
+<h3 id="user_fitness_profiles">4.1
+<code>user_fitness_profiles</code></h3>
+<p>Un seul document par utilisateur. Pattern <strong>upsert</strong> au
+niveau applicatif (<code>update_one</code> avec
+<code>upsert=True</code>).</p>
+<p><strong>Schema</strong> :</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;_id&quot;</span><span class="fu">:</span> <span class="st">&quot;ObjectId()&quot;</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;user_id&quot;</span><span class="fu">:</span> <span class="st">&quot;rzbzCOvEkAGxy3ADYY7OxFEnR5EqSm3c&quot;</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;goal&quot;</span><span class="fu">:</span> <span class="st">&quot;muscle_gain&quot;</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;equipment&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;dumbbells&quot;</span><span class="ot">,</span> <span class="st">&quot;pull_up_bar&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;limitations&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;knee_right&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;experience_level&quot;</span><span class="fu">:</span> <span class="st">&quot;intermediate&quot;</span><span class="fu">,</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;preferences&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;duration_min_per_session&quot;</span><span class="fu">:</span> <span class="dv">45</span><span class="fu">,</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;sessions_per_week&quot;</span><span class="fu">:</span> <span class="dv">4</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;updated_at&quot;</span><span class="fu">:</span> <span class="st">&quot;ISODate(&#39;2026-05-18T10:30:00Z&#39;)&quot;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Index</strong> : <code>{ user_id: 1 } unique</code>.
+L’unicite est garantie cote Mongo (et redondee cote app par
+l’upsert).</p>
+<h3 id="workout_programs">4.2 <code>workout_programs</code></h3>
+<p>Tous les programmes generes pour tous les utilisateurs. Un document
+par programme.</p>
+<p><strong>Schema</strong> :</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;_id&quot;</span><span class="fu">:</span> <span class="st">&quot;ObjectId()&quot;</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;program_id&quot;</span><span class="fu">:</span> <span class="st">&quot;uuid-v4&quot;</span><span class="fu">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;user_id&quot;</span><span class="fu">:</span> <span class="st">&quot;rzbzCOvEkAGxy3ADYY7OxFEnR5EqSm3c&quot;</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;duration_weeks&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;scoring_strategy&quot;</span><span class="fu">:</span> <span class="st">&quot;hybrid_rank_fusion&quot;</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tier_at_generation&quot;</span><span class="fu">:</span> <span class="st">&quot;premium&quot;</span><span class="fu">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;weeks&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;sessions&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;exercises&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;exercise_id&quot;</span><span class="fu">:</span> <span class="dv">1234</span><span class="fu">,</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Developpe couche&quot;</span><span class="fu">,</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;sets&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;reps&quot;</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">,</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;weight_kg&quot;</span><span class="fu">:</span> <span class="dv">60</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;level&quot;</span><span class="fu">:</span> <span class="st">&quot;intermediate&quot;</span><span class="fu">,</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;goal&quot;</span><span class="fu">:</span> <span class="st">&quot;muscle_gain&quot;</span><span class="fu">,</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;ISODate(&#39;2026-05-18T10:30:00Z&#39;)&quot;</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Index</strong> : <code>{ user_id: 1, created_at: -1 }</code>.
+Optimise la requete “historique des programmes du user X tries du plus
+recent au plus ancien”.</p>
+<p><code>program_id</code> est un <strong>UUID v4</strong> plutot que
+<code>_id</code> Mongo. Permet de l’utiliser dans les URLs
+(<code>/programs/{program_id}/feedback</code>) sans exposer la structure
+interne.</p>
+<h3 id="recommendation_history">4.3
+<code>recommendation_history</code></h3>
+<p>Feedbacks utilisateur sur les programmes / exercices.</p>
+<p><strong>Schema</strong> :</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;_id&quot;</span><span class="fu">:</span> <span class="st">&quot;ObjectId()&quot;</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;user_id&quot;</span><span class="fu">:</span> <span class="st">&quot;rzbzCOvEkAGxy3ADYY7OxFEnR5EqSm3c&quot;</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;program_id&quot;</span><span class="fu">:</span> <span class="st">&quot;ObjectId(&#39;...&#39;)&quot;</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;exercise_id&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;feedback_score&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;completed&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;feedback_comment&quot;</span><span class="fu">:</span> <span class="st">&quot;Bon programme, manque de variete sur les jambes&quot;</span><span class="fu">,</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;created_at&quot;</span><span class="fu">:</span> <span class="st">&quot;ISODate(&#39;2026-05-25T18:00:00Z&#39;)&quot;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Index</strong> : <code>{ user_id: 1, created_at: -1 }</code>.
+Idem workout_programs.</p>
+<p><strong>Cle d’idempotence applicative</strong> :
+<code>(user_id, program_id, exercise_id)</code>. Plusieurs PUT
+successifs ne creent pas de doublons (geree par
+<code>update_one(filter, upsert=True)</code>).</p>
+<p><code>exercise_id=null</code> -&gt; feedback program-level (note
+globale). <code>exercise_id=&lt;int&gt;</code> -&gt; feedback granulaire
+par exercice. Pas d’index unique Mongo car <code>null</code> est ambigu
+(selon la version Mongo, <code>null</code> peut etre considere absent ou
+egal a lui-meme).</p>
+<hr />
+<h2 id="points-techniques-importants">5. Points techniques
+importants</h2>
+<h3 id="pourquoi-un-repo-separe">5.1 Pourquoi un repo separe ?</h3>
+<p>Trois raisons :</p>
+<ol type="1">
+<li><strong>Coherence MSPR-DB</strong> : MSPR-DB porte les migrations
+PostgreSQL. MSPR-MongoDB porte les migrations MongoDB. Meme logique pour
+les deux couches de persistence.</li>
+<li><strong>Reutilisation</strong> : si on ajoute demain un microservice
+qui veut Mongo, on n’a pas a dupliquer les scripts d’init.</li>
+<li><strong>Cycle de vie</strong> : les changements de collections /
+index sont versionnes independamment du code applicatif (qui consomme la
+structure).</li>
+</ol>
+<p>Tradeoff : un repo de plus a maintenir. Acceptable au scope
+MSPR2.</p>
+<h3 id="le-script-dinit-est-idempotent">5.2 Le script d’init est
+idempotent</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> target <span class="op">=</span> db<span class="op">.</span><span class="fu">getSiblingDB</span>(<span class="st">&quot;reco_fitness&quot;</span>)<span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> collections <span class="op">=</span> [<span class="st">&quot;user_fitness_profiles&quot;</span><span class="op">,</span> <span class="st">&quot;workout_programs&quot;</span><span class="op">,</span> <span class="st">&quot;recommendation_history&quot;</span>]<span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> existing <span class="op">=</span> target<span class="op">.</span><span class="fu">getCollectionNames</span>()<span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>collections<span class="op">.</span><span class="fu">forEach</span>((name) <span class="kw">=&gt;</span> {</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>existing<span class="op">.</span><span class="fu">includes</span>(name)) {</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        target<span class="op">.</span><span class="fu">createCollection</span>(name)<span class="op">;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>target<span class="op">.</span><span class="at">user_fitness_profiles</span><span class="op">.</span><span class="fu">createIndex</span>(</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">user_id</span><span class="op">:</span> <span class="dv">1</span> }<span class="op">,</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">unique</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">name</span><span class="op">:</span> <span class="st">&quot;user_id_unique&quot;</span> }</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>target<span class="op">.</span><span class="at">workout_programs</span><span class="op">.</span><span class="fu">createIndex</span>(</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">user_id</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">created_at</span><span class="op">:</span> <span class="op">-</span><span class="dv">1</span> }<span class="op">,</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">name</span><span class="op">:</span> <span class="st">&quot;user_recent&quot;</span> }</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>target<span class="op">.</span><span class="at">recommendation_history</span><span class="op">.</span><span class="fu">createIndex</span>(</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">user_id</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">created_at</span><span class="op">:</span> <span class="op">-</span><span class="dv">1</span> }<span class="op">,</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">name</span><span class="op">:</span> <span class="st">&quot;user_recent&quot;</span> }</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code></pre></div>
+<p>Deux mecanismes d’idempotence :</p>
+<ul>
+<li><code>createCollection</code> est appele dans une boucle qui
+<strong>filtre</strong> sur l’existant
+(<code>getCollectionNames()</code>). Pas d’erreur si la collection
+existe deja.</li>
+<li><code>createIndex</code> est <strong>idempotent par defaut</strong>
+: appeler avec une cle deja indexee = no-op. Appeler avec une cle
+differente sous le meme nom = erreur (utile pour detecter les
+conflits).</li>
+</ul>
+<p>Resultat : on peut relancer le script N fois, l’etat final est le
+meme.</p>
+<h3 id="docker-entrypoint-initdb.d-nexecute-quau-premier-demarrage">5.3
+<code>/docker-entrypoint-initdb.d/</code> n’execute qu’au premier
+demarrage</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> mongo:7-jammy</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> init/ /docker-entrypoint-initdb.d/</span></code></pre></div>
+<p>L’image officielle <code>mongo:7-jammy</code> execute les scripts
+deposes dans <code>/docker-entrypoint-initdb.d/</code>
+<strong>uniquement si le volume de donnees est vide</strong> au
+demarrage. Mecanisme standard MongoDB / PostgreSQL.</p>
+<p>Consequence : pour appliquer un nouveau script d’init, il faut
+<strong>soit</strong> :</p>
+<ul>
+<li>detruire le volume
+(<code>docker compose down -v &amp;&amp; docker compose up -d</code>)
+-&gt; reset complet, perte de donnees,</li>
+<li>executer manuellement le script via <code>mongosh</code> dans le
+container existant (<code>docker exec</code>).</li>
+</ul>
+<p>Acceptable au scope MSPR2 : les changements de structure (ajout d’une
+collection, d’un index) sont rares et planifies.</p>
+<h3 id="index-nommes-pour-faciliter-le-debug">5.4 Index nommes pour
+faciliter le debug</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>target<span class="op">.</span><span class="at">user_fitness_profiles</span><span class="op">.</span><span class="fu">createIndex</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">user_id</span><span class="op">:</span> <span class="dv">1</span> }<span class="op">,</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">unique</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">name</span><span class="op">:</span> <span class="st">&quot;user_id_unique&quot;</span> }</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code></pre></div>
+<p>Le <code>name: "user_id_unique"</code> explicite est plus lisible que
+le nom auto-genere (<code>user_id_1</code>). Permet :</p>
+<ul>
+<li>de retrouver rapidement l’index dans
+<code>db.collection.getIndexes()</code>,</li>
+<li>de le supprimer ciblement avec
+<code>db.collection.dropIndex("user_id_unique")</code>,</li>
+<li>de detecter les collisions (si on ajoute un autre index sous le meme
+nom).</li>
+</ul>
+<h3 id="lordre-des-champs-dans-lindex-compose">5.5 L’ordre des champs
+dans l’index compose</h3>
+<p><code>{ user_id: 1, created_at: -1 }</code> : MongoDB peut utiliser
+cet index pour deux types de queries :</p>
+<ul>
+<li><code>find({ user_id: "..." }).sort({ created_at: -1 })</code> :
+pleinement servi par l’index, scan zero docs hors filtre.</li>
+<li><code>find({ user_id: "..." })</code> : utilise l’index pour le
+filtre, sort ignore mais OK.</li>
+</ul>
+<p>L’ordre <strong>inverse</strong>
+(<code>{ created_at: -1, user_id: 1 }</code>) <strong>ne</strong>
+servirait <strong>pas</strong> le filtre
+<code>find({ user_id: "..." })</code> efficacement (Mongo scannerait
+toutes les entrees triees par created_at avant de filtrer par
+user_id).</p>
+<p><strong>Regle generale</strong> : champ d’<strong>egalite</strong> en
+premier, champ de <strong>tri</strong> en dernier.</p>
+<h3 id="verification-post-deploiement">5.6 Verification
+post-deploiement</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> exec mspr-mongodb mongosh <span class="at">--quiet</span> <span class="at">--eval</span> <span class="st">&#39;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="st">  const t = db.getSiblingDB(&quot;reco_fitness&quot;);</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="st">  print(t.getCollectionNames());</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="st">  print(t.user_fitness_profiles.getIndexes().map(i =&gt; i.name));</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span></span></code></pre></div>
+<p>Sortie attendue :</p>
+<pre><code>[ &#39;user_fitness_profiles&#39;, &#39;workout_programs&#39;, &#39;recommendation_history&#39; ]
+[ &#39;_id_&#39;, &#39;user_id_unique&#39; ]</code></pre>
+<p><code>_id_</code> est l’index par defaut sur <code>_id</code>
+(toujours present). <code>user_id_unique</code> est notre index
+custom.</p>
+<hr />
+<h2 id="code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</h2>
+<h3 id="le-dockerfile">6.1 Le Dockerfile</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> mongo:7-jammy</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> init/ /docker-entrypoint-initdb.d/</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>L’image de base est <code>mongo:7-jammy</code> (Mongo 7 sur Ubuntu
+22.04). Version LTS, support jusqu’en 2026.</li>
+<li><code>COPY init/ /docker-entrypoint-initdb.d/</code> copie le script
+d’init dans le dossier convention MongoDB. Le script sera execute au
+premier demarrage du container.</li>
+<li>Pas d’<code>ENTRYPOINT</code> ou de <code>CMD</code> : on herite
+ceux de l’image officielle (<code>mongod</code> qui lit
+<code>/docker-entrypoint-initdb.d/</code> puis demarre le serveur).</li>
+<li>Image finale legere (~700 Mo, dont 695 Mo de MongoDB et 5 Mo
+d’init).</li>
+</ul>
+<h3 id="le-script-dinit-complet">6.2 Le script d’init complet</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> target <span class="op">=</span> db<span class="op">.</span><span class="fu">getSiblingDB</span>(<span class="st">&quot;reco_fitness&quot;</span>)<span class="op">;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> collections <span class="op">=</span> [</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;user_fitness_profiles&quot;</span><span class="op">,</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;workout_programs&quot;</span><span class="op">,</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;recommendation_history&quot;</span><span class="op">,</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>]<span class="op">;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> existing <span class="op">=</span> target<span class="op">.</span><span class="fu">getCollectionNames</span>()<span class="op">;</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>collections<span class="op">.</span><span class="fu">forEach</span>((name) <span class="kw">=&gt;</span> {</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>existing<span class="op">.</span><span class="fu">includes</span>(name)) {</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        target<span class="op">.</span><span class="fu">createCollection</span>(name)<span class="op">;</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>target<span class="op">.</span><span class="at">user_fitness_profiles</span><span class="op">.</span><span class="fu">createIndex</span>(</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">user_id</span><span class="op">:</span> <span class="dv">1</span> }<span class="op">,</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">unique</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span> <span class="dt">name</span><span class="op">:</span> <span class="st">&quot;user_id_unique&quot;</span> }</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>target<span class="op">.</span><span class="at">workout_programs</span><span class="op">.</span><span class="fu">createIndex</span>(</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">user_id</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">created_at</span><span class="op">:</span> <span class="op">-</span><span class="dv">1</span> }<span class="op">,</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">name</span><span class="op">:</span> <span class="st">&quot;user_recent&quot;</span> }</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>target<span class="op">.</span><span class="at">recommendation_history</span><span class="op">.</span><span class="fu">createIndex</span>(</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">user_id</span><span class="op">:</span> <span class="dv">1</span><span class="op">,</span> <span class="dt">created_at</span><span class="op">:</span> <span class="op">-</span><span class="dv">1</span> }<span class="op">,</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">name</span><span class="op">:</span> <span class="st">&quot;user_recent&quot;</span> }</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>db.getSiblingDB("reco_fitness")</code> cible la base
+<code>reco_fitness</code> (creee implicitement si absente).</li>
+<li>Le filtre <code>if (!existing.includes(name))</code> est
+<strong>defensif</strong> : sans ce check, <code>createCollection</code>
+leverait une erreur en cas d’execution multiple. Le test n’est pas
+strictement necessaire (mongo 6+ tolere <code>createCollection</code>
+sur existant) mais le rend lisible.</li>
+<li>L’index <code>user_id_unique</code> sur
+<code>user_fitness_profiles</code> garantit qu’un user n’a qu’<strong>un
+seul</strong> profil. L’upsert applicatif s’appuie dessus.</li>
+<li>Les deux index <code>user_recent</code> (composes) sont identiques
+en structure (<code>{user_id: 1, created_at: -1}</code>) mais sur deux
+collections distinctes.</li>
+</ul>
+<h3 id="integration-dans-le-compose-racine-mspr-deploy">6.3 Integration
+dans le compose racine MSPR-Deploy</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># docker-compose.yml (MSPR-Deploy)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">mongo</span><span class="kw">:</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> ghcr.io/whitefoxxyt/mspr-mongodb:latest</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> mspr-mongodb</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;27018:27017&quot;</span><span class="co">  # 27018 sur host pour eviter conflit avec un Mongo local</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mongo_data:/data/db</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">networks</span><span class="kw">:</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mspr_data_network</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">restart</span><span class="kw">:</span><span class="at"> unless-stopped</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">healthcheck</span><span class="kw">:</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">test</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;CMD&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;mongosh&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;--quiet&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;--eval&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;db.adminCommand(&#39;ping&#39;)&quot;</span><span class="kw">]</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">interval</span><span class="kw">:</span><span class="at"> 10s</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">timeout</span><span class="kw">:</span><span class="at"> 5s</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">retries</span><span class="kw">:</span><span class="at"> </span><span class="dv">3</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">reco-fitness</span><span class="kw">:</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> ghcr.io/whitefoxxyt/mspr-reco-fitness:latest</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> MONGO_URI=mongodb://mongo:27017</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> MONGO_DATABASE=reco_fitness</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">depends_on</span><span class="kw">:</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">mongo</span><span class="kw">:</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">condition</span><span class="kw">:</span><span class="at"> service_healthy</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Le port host est <strong>27018</strong> (pas 27017) pour eviter le
+conflit avec un Mongo deja installe sur la machine du jury.</li>
+<li>Le volume nomme <code>mongo_data</code> persiste les donnees entre
+redemarrages. <strong>Detruire ce volume</strong> = reset complet, mais
+aussi = re-execution du script d’init.</li>
+<li>Le healthcheck <code>mongosh ping</code> permet a Docker de
+monitorer le container. <code>reco-fitness</code> attend
+<code>service_healthy</code> avant de demarrer (pas juste
+<code>service_started</code>).</li>
+<li><code>MONGO_URI=mongodb://mongo:27017</code> : le client utilise le
+<strong>nom du service</strong> Docker (<code>mongo</code>), resolu par
+le DNS interne du reseau <code>mspr_data_network</code>. Pas l’IP host,
+pas le port externe.</li>
+</ul>
+<h3 id="lecture-cote-mspr-reco-fitness-driver-motor">6.4 Lecture cote
+MSPR-Reco-Fitness (driver <code>motor</code>)</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># app/db/mongo.py</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> motor.motor_asyncio</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> app.config <span class="im">import</span> settings</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>_client <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_client():</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> _client</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> _client <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        _client <span class="op">=</span> motor.motor_asyncio.AsyncIOMotorClient(</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>            settings.mongo_uri,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>            tz_aware<span class="op">=</span><span class="va">True</span>,  <span class="co"># IMPORTANT : datetimes UTC en sortie</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> _client</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_db():</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> get_client()[settings.mongo_database]</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Usage</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> get_profile(user_id: <span class="bu">str</span>):</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    db <span class="op">=</span> get_db()</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    doc <span class="op">=</span> <span class="cf">await</span> db.user_fitness_profiles.find_one({<span class="st">&quot;user_id&quot;</span>: user_id})</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> doc <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> FitnessProfile.model_validate(doc)</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>motor</code> est le <strong>driver async</strong> officiel
+MongoDB pour Python. Equivalent async de <code>pymongo</code>.
+Integration native avec FastAPI (<code>async def</code>).</li>
+<li><code>tz_aware=True</code> est <strong>obligatoire</strong> : les
+services stockent <code>datetime.now(timezone.utc)</code>. Sans
+<code>tz_aware</code>, le client renvoie des datetimes naive (sans tz),
+ce qui casse la validation Pydantic v2.</li>
+<li><code>find_one</code> retourne <code>None</code> si pas de match
+(pas une exception). On le check explicitement.</li>
+<li><code>model_validate(doc)</code> convertit le <code>dict</code>
+Mongo en <code>FitnessProfile</code> Pydantic, valide les types au
+passage.</li>
+</ul>
+<h3 id="ecriture-cote-mspr-reco-fitness">6.5 Ecriture cote
+MSPR-Reco-Fitness</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> upsert_profile(user_id: <span class="bu">str</span>, profile: FitnessProfileRequest):</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    db <span class="op">=</span> get_db()</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    doc <span class="op">=</span> {</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;user_id&quot;</span>: user_id,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;goal&quot;</span>: profile.health_goal_fitness.value,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;equipment&quot;</span>: profile.equipment,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;limitations&quot;</span>: profile.limitations,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;experience_level&quot;</span>: profile.experience_level.value,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;preferences&quot;</span>: profile.preferences.model_dump() <span class="cf">if</span> profile.preferences <span class="cf">else</span> {},</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;updated_at&quot;</span>: datetime.now(timezone.utc),</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> db.user_fitness_profiles.update_one(</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        {<span class="st">&quot;user_id&quot;</span>: user_id},</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        {<span class="st">&quot;$set&quot;</span>: doc, <span class="st">&quot;$setOnInsert&quot;</span>: {<span class="st">&quot;created_at&quot;</span>: datetime.now(timezone.utc)}},</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>        upsert<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>update_one + upsert=True</code> est le <strong>pattern
+upsert</strong> : si le filter matche, on met a jour ; sinon, on
+insere.</li>
+<li><code>$set</code> ecrase les champs existants ;
+<code>$setOnInsert</code> ne s’applique qu’a l’<strong>insert</strong>
+(pas a l’update). Permet de distinguer <code>created_at</code> (date de
+creation, fixe) de <code>updated_at</code> (date de derniere modif,
+change a chaque update).</li>
+<li>L’index unique sur <code>user_id</code> garantit qu’on n’aura jamais
+deux profils pour le meme user, meme en cas de race condition.</li>
+</ul>
+<h3 id="test-dintegration-avec-testcontainers">6.6 Test d’integration
+avec testcontainers</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tests/conftest.py</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pytest</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> testcontainers.mongodb <span class="im">import</span> MongoDbContainer</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="at">@pytest.fixture</span>(scope<span class="op">=</span><span class="st">&quot;session&quot;</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mongo_container():</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    container <span class="op">=</span> MongoDbContainer(<span class="st">&quot;mongo:7-jammy&quot;</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    container.start()</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">yield</span> container</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    container.stop()</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="at">@pytest.fixture</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> mongo_db(mongo_container):</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    uri <span class="op">=</span> mongo_container.get_connection_url()</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    client <span class="op">=</span> motor.motor_asyncio.AsyncIOMotorClient(uri, tz_aware<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    db <span class="op">=</span> client[<span class="st">&quot;reco_fitness_test&quot;</span>]</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Reproduit l&#39;init du repo MSPR-MongoDB</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> db.user_fitness_profiles.create_index(</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>        [(<span class="st">&quot;user_id&quot;</span>, <span class="dv">1</span>)], unique<span class="op">=</span><span class="va">True</span>, name<span class="op">=</span><span class="st">&quot;user_id_unique&quot;</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> db.workout_programs.create_index(</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>        [(<span class="st">&quot;user_id&quot;</span>, <span class="dv">1</span>), (<span class="st">&quot;created_at&quot;</span>, <span class="op">-</span><span class="dv">1</span>)], name<span class="op">=</span><span class="st">&quot;user_recent&quot;</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> db.recommendation_history.create_index(</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>        [(<span class="st">&quot;user_id&quot;</span>, <span class="dv">1</span>), (<span class="st">&quot;created_at&quot;</span>, <span class="op">-</span><span class="dv">1</span>)], name<span class="op">=</span><span class="st">&quot;user_recent&quot;</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">yield</span> db</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cleanup apres chaque test : drop la base entiere</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> client.drop_database(<span class="st">&quot;reco_fitness_test&quot;</span>)</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>MongoDbContainer("mongo:7-jammy")</code> demarre un MongoDB
+<strong>ephemere</strong> dans un container Docker pour chaque session
+de test.</li>
+<li>L’init est <strong>reproduit</strong> dans la fixture pour rester
+fidele a la prod. Une alternative serait de monter l’image
+<code>ghcr.io/whitefoxxyt/mspr-mongodb</code> directement, mais ca casse
+l’isolation des tests (le script d’init force la base
+<code>reco_fitness</code>).</li>
+<li>La base est <strong>droppee</strong> apres chaque test pour eviter
+les interferences. Le container, lui, reste up pour la duree de la
+session.</li>
+<li><code>tz_aware=True</code> est crucial cote test aussi : sinon les
+datetimes naive remontent et les tests echouent silencieusement sur des
+assertions de type.</li>
+</ul>
+<hr />
+<h2 id="comparaison-rapide-postgresql-mongodb">7. Comparaison rapide
+PostgreSQL / MongoDB</h2>
+<table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 39%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>PostgreSQL (MSPR-DB)</th>
+<th>MongoDB (MSPR-MongoDB)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Modele</td>
+<td>Relationnel (tables)</td>
+<td>Document (JSON)</td>
+</tr>
+<tr>
+<td>Migrations</td>
+<td>SQL versionne (V1-V15)</td>
+<td>Script JS d’init unique</td>
+</tr>
+<tr>
+<td>Schema</td>
+<td>Strict (CREATE TABLE)</td>
+<td>Implicite (defini par l’app)</td>
+</tr>
+<tr>
+<td>Transactions</td>
+<td>ACID, multi-table natif</td>
+<td>Single-doc atomique, multi-doc complexe</td>
+</tr>
+<tr>
+<td>Jointures</td>
+<td>JOIN, FK</td>
+<td>Pas de JOIN, denormalisation</td>
+</tr>
+<tr>
+<td>Index</td>
+<td>B-tree, GIN, BRIN</td>
+<td>B-tree, compose, unique, geospatial</td>
+</tr>
+<tr>
+<td>Cas d’usage MSPR</td>
+<td>Tables nutrition / exercises / biometric / meal_*</td>
+<td>Profils, programmes, feedback fitness</td>
+</tr>
+</tbody>
+</table>
+<p>Les deux bases coexistent par choix architectural : PostgreSQL pour
+le <strong>catalogue partage</strong> (exercises, biometric_entries,
+meal_plans), MongoDB pour le <strong>domaine fitness specifique</strong>
+(profils, programmes, feedback). Cf. fiche <a
+href="Data-Model.md">Data-Model</a> pour la vue globale.</p>
+<hr />
+<h2 id="questions-probables-du-jury">8. Questions probables du jury</h2>
+<h3 id="q1.-pourquoi-un-repo-separe-pour-3-fichiers">Q1. Pourquoi un
+repo separe pour 3 fichiers ?</h3>
+<p>Trois raisons :</p>
+<ol type="1">
+<li><strong>Coherence</strong> avec MSPR-DB. Memes patterns : un repo
+dedie aux migrations / init de chaque couche de persistence.</li>
+<li><strong>Reutilisation</strong> : un futur microservice qui voudra
+son propre Mongo n’aura qu’a ajouter un script dans <code>init/</code>.
+Pas de duplication.</li>
+<li><strong>Versioning independant</strong> du code applicatif. Les
+changements de collections / index ne doivent pas etre couples au cycle
+de release des services.</li>
+</ol>
+<p>C’est un choix de <strong>structure</strong>, pas de
+<strong>complexite</strong> : le repo reste trivial.</p>
+<h3 id="q2.-comment-ajoute-t-on-une-nouvelle-collection">Q2. Comment
+ajoute-t-on une nouvelle collection ?</h3>
+<ol type="1">
+<li>Editer <code>init/01-init-reco-fitness.js</code> : ajouter le nom
+dans la liste, ajouter les <code>createIndex</code> necessaires.</li>
+<li>Commit + push sur <code>master</code>. GitHub Actions rebuild et
+publie <code>ghcr.io/whitefoxxyt/mspr-mongodb:latest</code>.</li>
+<li>Pour appliquer en local / en jury :
+<code>docker compose down -v</code> (destruction du volume), puis
+<code>docker compose up -d</code> (re-execution de l’init).</li>
+</ol>
+<p>Alternative sans destruction :
+<code>docker exec mspr-mongodb mongosh --eval "&lt;script&gt;"</code>.</p>
+<p>Notes :</p>
+<ul>
+<li>Le script est <strong>idempotent</strong>, donc lancer 2 fois n’est
+pas dangereux.</li>
+<li>Pour la prod (volume permanent), on bascule sur un outil de
+migration type <strong>Mongock</strong> ou un script de migration
+manuel.</li>
+</ul>
+<h3
+id="q3.-pourquoi-indexer-user_id-1-created_at--1-plutot-que-created_at--1-user_id-1">Q3.
+Pourquoi indexer <code>{user_id: 1, created_at: -1}</code> plutot que
+<code>{created_at: -1, user_id: 1}</code> ?</h3>
+<p><strong>Regle generale</strong> : champ d’<strong>egalite</strong>
+(filtre exact) en premier, champ de <strong>plage</strong> ou
+<strong>tri</strong> en dernier.</p>
+<p>La query type est
+<code>find({user_id: "..."}).sort({created_at: -1})</code> :</p>
+<ul>
+<li><code>{user_id: 1, created_at: -1}</code> : Mongo localise le
+sous-arbre du <code>user_id</code>, puis lit les entrees triees par
+<code>created_at</code> desc. <strong>Scan zero docs hors
+filtre</strong>.</li>
+<li><code>{created_at: -1, user_id: 1}</code> : Mongo scannerait toutes
+les entrees triees par <code>created_at</code>, en filtrant par
+<code>user_id</code> au passage. Scan <strong>O(N)</strong> ou N est le
+nombre total de docs.</li>
+</ul>
+<p>Sur un user avec 100 programmes parmi 1M de programmes au total,
+c’est ~10 000x plus rapide d’avoir <code>{user_id: 1, ...}</code> en
+premier.</p>
+<h3
+id="q4.-que-se-passe-t-il-si-le-script-dinit-plante-en-cours-dexecution">Q4.
+Que se passe-t-il si le script d’init plante en cours d’execution ?</h3>
+<p>MongoDB ne fait <strong>pas</strong> de rollback du script d’init
+(pas de transaction multi-statement par defaut). Si le script crashe a
+mi-parcours, certaines collections / index existeront, d’autres non.</p>
+<p>Mitigation :</p>
+<ul>
+<li>L’idempotence du script permet de le <strong>rejouer</strong> sans
+creer de doublons. On peut donc relancer apres correction.</li>
+<li>Pas de dependance d’ordre forte entre les operations : creer
+<code>recommendation_history</code> avant <code>workout_programs</code>
+ou inverse ne change rien.</li>
+<li>Pour debug :
+<code>docker exec mspr-mongodb mongosh --quiet --eval "db.getSiblingDB('reco_fitness').getCollectionNames()"</code>
+pour voir l’etat reel.</li>
+</ul>
+<h3 id="q5.-pourquoi-mongodb-7-et-pas-8">Q5. Pourquoi MongoDB 7 et pas 8
+?</h3>
+<p>MongoDB 7 est la version <strong>LTS</strong> (Long Term Support) la
+plus recente au moment du dev (avril 2026). Support actif jusqu’en 2026,
+security patches jusqu’en 2027.</p>
+<p>MongoDB 8 est sorti debut 2025 mais reste “rapid release” (cycle
+court de support). Pour un livrable academique, on prefere la version
+stable.</p>
+<p>Le code applicatif n’utilise aucune feature recente :
+<code>update_one</code>, <code>find_one</code>,
+<code>create_index</code>. Compatible Mongo 5+ techniquement, mais on
+aligne sur 7 pour la securite.</p>
+<h3 id="q6.-comment-ce-repo-sintegre-t-il-dans-la-cicd">Q6. Comment ce
+repo s’integre-t-il dans la CI/CD ?</h3>
+<p>Workflow GitHub Actions minimal :</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> CI</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">on</span><span class="kw">:</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">push</span><span class="kw">:</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">branches</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">master</span><span class="kw">]</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pull_request</span><span class="kw">:</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">build</span><span class="kw">:</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">runs-on</span><span class="kw">:</span><span class="at"> ubuntu-latest</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/checkout@v4</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Test syntax du script d&#39;init</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="fu">        run</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>          docker run --rm -v ${{ github.workspace }}/init:/init mongo:7-jammy \</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>            mongosh --quiet --norc --eval &quot;load(&#39;/init/01-init-reco-fitness.js&#39;); print(&#39;OK&#39;)&quot;</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> docker/login-action@v3</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">registry</span><span class="kw">:</span><span class="at"> ghcr.io</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">username</span><span class="kw">:</span><span class="at"> ${{ github.actor }}</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">password</span><span class="kw">:</span><span class="at"> ${{ secrets.GITHUB_TOKEN }}</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> docker/build-push-action@v5</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">if</span><span class="kw">:</span><span class="at"> github.ref == &#39;refs/heads/master&#39;</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">push</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">tags</span><span class="kw">:</span><span class="at"> ghcr.io/whitefoxxyt/mspr-mongodb:latest</span></span></code></pre></div>
+<p>Trois etapes :</p>
+<ol type="1">
+<li><strong>Syntax check</strong> : lancer le script dans un container
+Mongo ephemere pour valider la syntaxe.</li>
+<li><strong>Login GHCR</strong> avec le token GitHub Actions.</li>
+<li><strong>Build + push</strong> uniquement sur <code>master</code>.
+Tag <code>latest</code> (acceptable au scope MSPR, en prod on tagguerait
+<code>v1.0.0</code>).</li>
+</ol>
+<h3 id="q7.-comment-se-passe-la-suppression-dun-utilisateur-rgpd">Q7.
+Comment se passe la suppression d’un utilisateur (RGPD) ?</h3>
+<p>Le repo MSPR-MongoDB ne gere pas la suppression (c’est applicatif).
+Cote MSPR-Reco-Fitness, il faudrait un endpoint
+<code>DELETE /api/v1/me/data</code> qui :</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> delete_user_data(user_id: <span class="bu">str</span>):</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    db <span class="op">=</span> get_db()</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> db.user_fitness_profiles.delete_one({<span class="st">&quot;user_id&quot;</span>: user_id})</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> db.workout_programs.delete_many({<span class="st">&quot;user_id&quot;</span>: user_id})</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> db.recommendation_history.delete_many({<span class="st">&quot;user_id&quot;</span>: user_id})</span></code></pre></div>
+<p>Pas implemente dans le scope MSPR2 mais documente dans la conduite du
+changement (livrable n 10). En production, on ajouterait un cron qui
+purge les <code>workout_programs</code> et
+<code>recommendation_history</code> de plus de 5 ans (retention RGPD
+raisonnable).</p>
+<h3 id="q8.-comment-monitorer-mongodb-en-production">Q8. Comment
+monitorer MongoDB en production ?</h3>
+<p>Trois niveaux :</p>
+<ol type="1">
+<li><strong>Healthcheck Docker</strong> : <code>mongosh ping</code>. Si
+ko, le container est marque <code>unhealthy</code> et le load balancer
+(ou orchestrateur) sort le service du pool.</li>
+<li><strong>Logs MongoDB</strong> : niveau verbosity par defaut
+(<code>-v</code>). Recuperes par Docker logs ou drivers (Loki,
+Elasticsearch).</li>
+<li><strong>Metriques internes</strong> : <code>db.serverStatus()</code>
+expose les counters (ops/sec, connections, memoire). A scraper avec un
+exporter Prometheus (<code>percona-mongodb-exporter</code>).</li>
+</ol>
+<p>Au scope MSPR2, on s’arrete au healthcheck Docker. Suffisant pour une
+demo.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

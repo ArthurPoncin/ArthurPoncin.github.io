@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Révisions MSPR2 — HealthAI Coach</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="https://arthurponcin.me/mspr2-soutenance/">Slides de soutenance MSPR2 →</a>
+  </header>
+  <main>
+    <h1>Fiches de révision — MSPR2 (TPRE502)</h1>
+    <p>Supports de révision pour la soutenance MSPR2. Une fiche par <strong>service ajouté</strong> par la MSPR2, structurée comme les <a href="../mspr-revisions/">fiches MSPR1</a> : vocabulaire, vue d'ensemble, détails techniques, exemples de code essentiels, questions possibles du jury.</p>
+    <p>Ces fiches <strong>complètent</strong> les fiches MSPR1 (ETL, DB, AUTH, API, FRONT) sans les remplacer. Elles couvrent les 11 livrables MSPR2 mappés aux 12 compétences de la grille de jury (Bloc 2 : « Développer un modèle prédictif d'une solution I.A »).</p>
+
+    <h2>Les 5 fiches</h2>
+    <ul class="fiches">
+      <li>
+        <a href="AI-Nutrition.html">1. AI-Nutrition</a>
+        <span class="stack">FastAPI · HuggingFace · Mistral · Ollama</span>
+        <span class="desc">Vision Food-101 (ViT, F1 0.91), LLM multi-provider (Mistral primaire ~4 s, Ollama fallback), DeCRIM-light + few-shot.</span>
+      </li>
+      <li>
+        <a href="Reco-Fitness.html">2. Reco-Fitness</a>
+        <span class="stack">FastAPI · MongoDB · scikit-learn · motor</span>
+        <span class="desc">Scoring hybride rule-based + RandomForest (F1 0.978), freemium graduel free / premium / premium+, feedback adaptatif.</span>
+      </li>
+      <li>
+        <a href="MongoDB.html">3. MongoDB</a>
+        <span class="stack">MongoDB 7 · Mongo shell</span>
+        <span class="desc">Init des 3 collections fitness + index composés. Image GHCR, idempotence, intégration compose racine.</span>
+      </li>
+      <li>
+        <a href="Data-Model.html">4. Modèle de données MSPR2</a>
+        <span class="stack">PostgreSQL 17 · MongoDB · JSONB</span>
+        <span class="desc">8 migrations V8-V15, 3 nouvelles tables AI-Nutrition, pivot <code>user_id</code> cross-base (nanoID better-auth), photos base64.</span>
+      </li>
+      <li>
+        <a href="Front-MSPR2.html">5. Frontend MSPR2</a>
+        <span class="stack">Vue 3.5 · Pinia 3 · Chart.js · Vite 8</span>
+        <span class="desc">11 vues utilisateur, design system éditorial, accessibilité WCAG AA (Lighthouse 100/100), sélecteur LLM, gestion robuste des APIs.</span>
+      </li>
+    </ul>
+
+    <h2>Mapping grille jury (Bloc de compétences 2)</h2>
+    <p>La grille du jury (TPRE502 — Développer un modèle prédictif d'une solution I.A) liste 12 compétences. Chaque fiche couvre une ou plusieurs compétences :</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Compétence (grille EPSI)</th>
+          <th>Fiches couvrantes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Générer / récolter / adapter des données d'entrée</td>
+          <td>AI-Nutrition (Food-101, ETL nutrition lookup), Reco-Fitness (dataset synthétique 5000+ paires)</td>
+        </tr>
+        <tr>
+          <td>Paramétrer un environnement de codage (Framework) adéquat</td>
+          <td>AI-Nutrition (FastAPI + HF Transformers + PyTorch CPU), Reco-Fitness (FastAPI + scikit-learn)</td>
+        </tr>
+        <tr>
+          <td>Coder un modèle d'apprentissage</td>
+          <td>AI-Nutrition (ViT-base <code>nateraw/food</code>), Reco-Fitness (RandomForestRegressor 200 arbres)</td>
+        </tr>
+        <tr>
+          <td>Réaliser une procédure d'entraînement (supervisé)</td>
+          <td>Reco-Fitness (split 60/20/20 train/val/test, oracle rule-based)</td>
+        </tr>
+        <tr>
+          <td>Réaliser une phase de test (analyser performance)</td>
+          <td>AI-Nutrition (F1 macro 0.916 / top-1 88.8 %), Reco-Fitness (F1 classifier 0.978)</td>
+        </tr>
+        <tr>
+          <td>Ajuster l'apprentissage du modèle</td>
+          <td>AI-Nutrition (pivot Mistral, few-shot, DeCRIM-light), Reco-Fitness (poids par <em>goal</em> versionnés)</td>
+        </tr>
+        <tr>
+          <td>Installer / configurer l'environnement</td>
+          <td>Tous (docker-compose racine, GHCR images, <code>bootstrap.sh</code>)</td>
+        </tr>
+        <tr>
+          <td>Développer des interfaces utilisateur</td>
+          <td>Front-MSPR2 (11 vues Vue 3, design system <code>tokens.css</code>)</td>
+        </tr>
+        <tr>
+          <td>Analyser besoins et maquetter</td>
+          <td>Front-MSPR2 (livrable 3 : 8 wireframes, design system)</td>
+        </tr>
+        <tr>
+          <td>Définir l'architecture logicielle</td>
+          <td>Tous (microservices, JWT shared secret, <code>FallbackChain</code>)</td>
+        </tr>
+        <tr>
+          <td>Concevoir et mettre en place une BDD relationnelle</td>
+          <td>Data-Model (V8-V15, JSONB, contraintes CHECK)</td>
+        </tr>
+        <tr>
+          <td>Développer des composants d'accès aux données SQL et NoSQL</td>
+          <td>Data-Model + MongoDB (SQLAlchemy 2.0, motor, pivot <code>user_id</code>)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Conseils de lecture</h2>
+    <ul>
+      <li><strong>Première lecture</strong> — parcourir la section <em>Vocabulaire</em> et la <em>TL;DR</em> de chaque fiche pour avoir la carte mentale complète MSPR2.</li>
+      <li><strong>Seconde lecture</strong> — focus sur les fiches du service qu'on est susceptible de présenter (Code essentiel + Questions jury).</li>
+      <li><strong>Veille de soutenance</strong> — relire la section <em>Questions probables du jury</em> de chaque fiche.</li>
+    </ul>
+
+    <h2>Structure commune</h2>
+    <p>Chaque fiche suit le même plan que les fiches MSPR1 :</p>
+    <ol>
+      <li><strong>Vocabulaire</strong> — 5 à 10 termes techniques non triviaux avec définition simple</li>
+      <li><strong>TL;DR</strong> — résumé en quelques lignes du rôle du service</li>
+      <li><strong>Stack / Architecture</strong> — technos utilisées et diagramme si pertinent</li>
+      <li><strong>Détails techniques</strong> — fonctionnement interne, patterns, choix d'implémentation</li>
+      <li><strong>Code essentiel à savoir expliquer au jury</strong> — 6 à 8 extraits commentés</li>
+      <li><strong>Questions possibles du jury</strong> — 10 à 12 questions avec réponses préparées</li>
+    </ol>
+
+    <h2>Hors scope</h2>
+    <p>Ces fiches couvrent <strong>uniquement la MSPR2</strong>. Les microservices et la documentation MSPR1 (ETL, DB, AUTH, API, FRONT v1) sont traités dans les <a href="../mspr-revisions/">fiches MSPR1</a>.</p>
+  </main>
+</body>
+</html>

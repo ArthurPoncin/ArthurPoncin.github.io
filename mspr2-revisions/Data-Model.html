@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>Data-Model — Révisions MSPR</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a href="#fiche-de-revision-modele-de-donnees-mspr2"
+id="toc-fiche-de-revision-modele-de-donnees-mspr2">Fiche de revision :
+Modele de donnees MSPR2</a>
+<ul>
+<li><a href="#vocabulaire-a-connaitre-avant-de-lire"
+id="toc-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#tldr" id="toc-tldr">1. TL;DR</a></li>
+<li><a href="#vue-densemble" id="toc-vue-densemble">2. Vue
+d’ensemble</a></li>
+<li><a href="#les-8-nouvelles-migrations-v8-a-v15"
+id="toc-les-8-nouvelles-migrations-v8-a-v15">3. Les 8 nouvelles
+migrations (V8 a V15)</a></li>
+<li><a href="#les-3-tables-postgresql-ajoutees-v8"
+id="toc-les-3-tables-postgresql-ajoutees-v8">4. Les 3 tables PostgreSQL
+ajoutees (V8)</a></li>
+<li><a href="#les-3-collections-mongodb"
+id="toc-les-3-collections-mongodb">5. Les 3 collections MongoDB</a></li>
+<li><a href="#points-techniques-importants"
+id="toc-points-techniques-importants">6. Points techniques
+importants</a></li>
+<li><a href="#code-essentiel-a-savoir-expliquer-au-jury"
+id="toc-code-essentiel-a-savoir-expliquer-au-jury">7. Code essentiel a
+savoir expliquer au jury</a></li>
+<li><a href="#questions-probables-du-jury"
+id="toc-questions-probables-du-jury">8. Questions probables du
+jury</a></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1 id="fiche-de-revision-modele-de-donnees-mspr2">Fiche de revision :
+Modele de donnees MSPR2</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR2. Objectif : comprendre
+les <strong>adaptations</strong> du schema MSPR1 pour stocker les
+artefacts IA, et comment les 3 bases (PostgreSQL healthai, PostgreSQL
+auth, MongoDB fitness) coexistent autour d’un meme
+<code>user_id</code>.</p>
+</blockquote>
+<hr />
+<h2 id="vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<p>Les 10 termes qui reviennent partout dans cette fiche.</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Migration</strong></td>
+<td>Script SQL versionne qui modifie le schema (CREATE, ALTER, DROP).
+Numerote V01, V02, …</td>
+</tr>
+<tr>
+<td><strong>JSONB</strong></td>
+<td>Type PostgreSQL stockant du JSON avec indexation possible. Plus
+rapide a lire / interroger que TEXT. Format binaire.</td>
+</tr>
+<tr>
+<td><strong>BIGSERIAL</strong></td>
+<td>Type PostgreSQL = BIGINT auto-incremente. Equivalent de
+<code>AUTO_INCREMENT</code> MySQL.</td>
+</tr>
+<tr>
+<td><strong>VARCHAR(64)</strong></td>
+<td>Chaine de caracteres de longueur max 64. Choisi pour les nanoID
+better-auth (~32 chars).</td>
+</tr>
+<tr>
+<td><strong>nanoID</strong></td>
+<td>ID alphanumerique compact emis par better-auth. Format
+<code>rzbzCOvEkAGxy3ADYY7OxFEnR5EqSm3c</code> (32 chars).</td>
+</tr>
+<tr>
+<td><strong>CHECK constraint</strong></td>
+<td>Contrainte SQL qui rejette une ligne si l’expression est fausse. Ex
+: <code>preferred_llm IN ('mistral', 'ollama')</code>.</td>
+</tr>
+<tr>
+<td><strong>TOAST</strong></td>
+<td>The Oversized-Attribute Storage Technique. Mecanisme PostgreSQL qui
+stocke les valeurs &gt; 2 Ko separement de la table principale.</td>
+</tr>
+<tr>
+<td><strong>UML</strong></td>
+<td>Unified Modeling Language. Norme de diagramme orient objet /
+relationnel.</td>
+</tr>
+<tr>
+<td><strong>Pivot ID</strong></td>
+<td>Identifiant partage entre plusieurs bases. Ici :
+<code>user_id</code> (du JWT) lie healthai, auth et fitness.</td>
+</tr>
+<tr>
+<td><strong>TEXT[]</strong></td>
+<td>Type PostgreSQL : tableau de chaines. Stocke une liste dans une
+seule colonne (ex :
+<code>allergies = ['gluten', 'lactose']</code>).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tldr">1. TL;DR</h2>
+<p>Le modele de donnees MSPR2 etend la base MSPR1 (<code>healthai</code>
+PostgreSQL 17) pour stocker les artefacts produits par les microservices
+IA, et introduit une base NoSQL MongoDB pour le moteur de reco.</p>
+<p>Trois bases coexistent dans la plateforme HealthAI Coach :</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Base</th>
+<th>Type</th>
+<th>Port</th>
+<th>Repo</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>healthai</code></td>
+<td>PostgreSQL 17</td>
+<td>5434</td>
+<td>MSPR-DB</td>
+<td>Donnees metier (catalogue exercices, nutrition, biometrie,
+<strong>analyses IA</strong>, <strong>plans repas</strong>)</td>
+</tr>
+<tr>
+<td><code>auth</code></td>
+<td>PostgreSQL 17</td>
+<td>5433</td>
+<td>MSPR-AUTH</td>
+<td>Identites, sessions, JWT (better-auth)</td>
+</tr>
+<tr>
+<td><code>fitness</code></td>
+<td>MongoDB 7</td>
+<td>27018</td>
+<td>MSPR-MongoDB</td>
+<td>Programmes fitness, profils, historique recommandations</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Heritage MSPR1</strong> : 6 tables (<code>exercises</code>,
+<code>nutrition_entries</code>, <code>exercise_entries</code>,
+<code>biometric_entries</code>, <code>diet_recommendations</code>,
+<code>etl_logs</code>) + 7 migrations (V1-V7).</p>
+<p><strong>Ajouts MSPR2</strong> :</p>
+<ul>
+<li><strong>8 nouvelles migrations</strong> (V8 a V15) sur
+<code>healthai</code></li>
+<li><strong>3 nouvelles tables</strong> PostgreSQL :
+<code>meal_analyses</code>, <code>meal_plans</code>,
+<code>nutrition_goals</code></li>
+<li><strong>3 nouvelles collections</strong> MongoDB :
+<code>user_fitness_profiles</code>, <code>workout_programs</code>,
+<code>recommendation_history</code></li>
+<li><strong>Pivot user_id</strong> unique cross-bases (alignement nanoID
+via V14)</li>
+</ul>
+<hr />
+<h2 id="vue-densemble">2. Vue d’ensemble</h2>
+<figure>
+<img src="uml-mspr2.png"
+alt="Diagramme ER global de la plateforme HealthAI Coach" />
+<figcaption aria-hidden="true">Diagramme ER global de la plateforme
+HealthAI Coach</figcaption>
+</figure>
+<pre class="mermaid"><code>flowchart LR
+    subgraph PG_auth[&quot;PostgreSQL auth (port 5433)&quot;]
+        U[user]
+        S[session]
+        A[account]
+        JW[jwks]
+    end
+
+    subgraph PG_healthai[&quot;PostgreSQL healthai (port 5434)&quot;]
+        EX[exercises]
+        NE[nutrition_entries]
+        EE[exercise_entries]
+        BE[biometric_entries]
+        DR[diet_recommendations]
+        EL[etl_logs]
+        MA[meal_analyses&lt;br/&gt;V8]
+        MP[meal_plans&lt;br/&gt;V8]
+        NG[nutrition_goals&lt;br/&gt;V8]
+    end
+
+    subgraph Mongo_fitness[&quot;MongoDB fitness (port 27018)&quot;]
+        UFP[user_fitness_profiles]
+        WP[workout_programs]
+        RH[recommendation_history]
+    end
+
+    U -.user_id du JWT.-&gt; MA
+    U -.user_id du JWT.-&gt; MP
+    U -.user_id du JWT.-&gt; NG
+    U -.user_id du JWT.-&gt; UFP
+    U -.user_id du JWT.-&gt; WP
+    U -.user_id du JWT.-&gt; RH
+
+    BE -.lecture seule.-&gt; WP</code></pre>
+<p>Le <code>user_id</code> du JWT (emis par MSPR-AUTH) est le
+<strong>fil rouge</strong> entre les trois bases. Pas de FK
+relationnelle car les bases sont separees physiquement et
+techniquement.</p>
+<hr />
+<h2 id="les-8-nouvelles-migrations-v8-a-v15">3. Les 8 nouvelles
+migrations (V8 a V15)</h2>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 34%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th>Version</th>
+<th>Fichier</th>
+<th>Apport</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V8</td>
+<td><code>V08__ai_nutrition_tables.sql</code></td>
+<td>Creation des 3 tables AI-Nutrition (<code>meal_analyses</code>,
+<code>meal_plans</code>, <code>nutrition_goals</code>)</td>
+</tr>
+<tr>
+<td>V9</td>
+<td><code>V09__ai_nutrition_enrichment.sql</code></td>
+<td>Ajout <code>nutrition_goals.health_goal</code> (CHECK),
+<code>meal_plans.inputs_hash</code>,
+<code>meal_analyses.recommendations</code></td>
+</tr>
+<tr>
+<td>V10</td>
+<td><code>V10__meal_analyses_recommendations_hash.sql</code></td>
+<td>Ajout <code>meal_analyses.recommendations_hash</code> + index dedie
+(cache LLM par tuple)</td>
+</tr>
+<tr>
+<td>V11</td>
+<td><code>V11__ai_nutrition_v11.sql</code></td>
+<td>Ajout <code>meal_analyses.imbalances</code>,
+<code>serving_sizes</code>, <code>meal_type</code>,
+<code>meal_plans.compliance_status</code>,
+<code>compliance_warnings</code></td>
+</tr>
+<tr>
+<td>V12</td>
+<td><code>V12__nutrition_goals_biometrics.sql</code></td>
+<td>Ajout <code>gender</code>, <code>age</code>, <code>weight_kg</code>,
+<code>height_cm</code>, <code>activity_level</code> (calcul TDEE
+Mifflin-St Jeor)</td>
+</tr>
+<tr>
+<td>V13</td>
+<td><code>V13__llm_backend_selection.sql</code></td>
+<td>Ajout <code>nutrition_goals.preferred_llm</code> +
+<code>meal_plans.llm_backend_used</code> + CHECK</td>
+</tr>
+<tr>
+<td>V14</td>
+<td><code>V14__user_id_to_varchar.sql</code></td>
+<td>Conversion <code>user_id</code> BIGINT -&gt; VARCHAR(64) (alignement
+nanoID better-auth)</td>
+</tr>
+<tr>
+<td>V15</td>
+<td><code>V15__meal_analyses_image_data.sql</code></td>
+<td>Conversion <code>photo_url</code> VARCHAR(500) -&gt; TEXT (data URL
+JPEG base64)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pattern d’idempotence</strong> : toutes les migrations
+utilisent <code>IF NOT EXISTS</code> (<code>CREATE TABLE</code>,
+<code>ADD COLUMN</code>, <code>CREATE INDEX</code>) et
+<code>ADD CONSTRAINT ... IF NOT EXISTS</code> (ou equivalent). Permet de
+relancer les migrations sans erreur.</p>
+<hr />
+<h2 id="les-3-tables-postgresql-ajoutees-v8">4. Les 3 tables PostgreSQL
+ajoutees (V8)</h2>
+<h3 id="meal_analyses">4.1 <code>meal_analyses</code></h3>
+<p>Une ligne par analyse photo. Audit trail complet.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> meal_analyses (</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span>                BIGSERIAL <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    user_id           <span class="dt">VARCHAR</span>(<span class="dv">64</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,        <span class="co">-- V14: nanoID better-auth</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    photo_url         TEXT,                          <span class="co">-- V15: data URL base64</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    detected_foods    JSONB <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;[]&#39;</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    macros            JSONB <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;{}&#39;</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    confidence_scores JSONB <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;{}&#39;</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    recommendations   TEXT,                          <span class="co">-- V9: insight IA</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    recommendations_hash <span class="dt">CHAR</span>(<span class="dv">64</span>),                   <span class="co">-- V10: SHA256 cache 30j</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    imbalances        TEXT[],                        <span class="co">-- V11: tags</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    serving_sizes     JSONB,                         <span class="co">-- V11: portions PNNS</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    meal_type         <span class="dt">VARCHAR</span>(<span class="dv">20</span>),                   <span class="co">-- V11: breakfast / lunch / dinner / snack</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    created_at        <span class="dt">TIMESTAMP</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> NOW()</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_meal_analyses_user_id     <span class="kw">ON</span> meal_analyses (user_id);</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_meal_analyses_created_at  <span class="kw">ON</span> meal_analyses (created_at <span class="kw">DESC</span>);</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_meal_analyses_reco_hash   <span class="kw">ON</span> meal_analyses (recommendations_hash) <span class="kw">WHERE</span> recommendations_hash <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>;</span></code></pre></div>
+<p><strong>Decisions de modelisation</strong> :</p>
+<ul>
+<li><strong>Pas de FK vers <code>users</code></strong> : la table a ete
+droppee en V7 (MSPR1). <code>user_id</code> est un identifiant opaque
+issu du JWT, decode localement.</li>
+<li><strong>JSONB pour les structures variables</strong> :
+<code>detected_foods</code> (liste de <code>{label, score}</code>),
+<code>macros</code> (dict calories/protein/carbs/fat),
+<code>serving_sizes</code> (PNNS guidelines). Permet d’evoluer le schema
+sans migration.</li>
+<li><strong><code>recommendations_hash</code> partiel index</strong>
+(<code>WHERE NOT NULL</code>) : la grande majorite des lignes ont un
+hash, mais l’option NULL existe pour les vieilles lignes pre-V10.
+L’index partiel reduit la taille de l’index.</li>
+</ul>
+<h3 id="meal_plans">4.2 <code>meal_plans</code></h3>
+<p>Une ligne par plan repas genere. Contient le plan complet en
+JSONB.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> meal_plans (</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span>                  BIGSERIAL <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    user_id             <span class="dt">VARCHAR</span>(<span class="dv">64</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">plan</span>                JSONB <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;{}&#39;</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    objective           <span class="dt">VARCHAR</span>(<span class="dv">100</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">constraints</span>         JSONB <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;{}&#39;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    inputs_hash         <span class="dt">CHAR</span>(<span class="dv">64</span>),                       <span class="co">-- V9: SHA256 cache 7j</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    compliance_status   <span class="dt">VARCHAR</span>(<span class="dv">20</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;full&#39;</span>, <span class="co">-- V11: full / partial_budget / static_fallback</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    compliance_warnings TEXT[],                          <span class="co">-- V11: messages d&#39;audit</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    llm_backend_used    <span class="dt">VARCHAR</span>(<span class="dv">20</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;ollama&#39;</span> <span class="co">-- V13: trace audit + cache filter</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">CHECK</span> (llm_backend_used <span class="kw">IN</span> (<span class="st">&#39;ollama&#39;</span>, <span class="st">&#39;mistral&#39;</span>)),</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    generated_at        <span class="dt">TIMESTAMP</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> NOW()</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_meal_plans_user_id      <span class="kw">ON</span> meal_plans (user_id);</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_meal_plans_generated_at <span class="kw">ON</span> meal_plans (generated_at <span class="kw">DESC</span>);</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_meal_plans_inputs_hash  <span class="kw">ON</span> meal_plans (inputs_hash, llm_backend_used) <span class="kw">WHERE</span> inputs_hash <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>;</span></code></pre></div>
+<p><strong>Decisions de modelisation</strong> :</p>
+<ul>
+<li><strong><code>plan</code> en JSONB</strong> : structure imbriquee
+<code>{days: [{day: 1, meals: [...]}]}</code>. Pourrait etre normalise
+en tables <code>meal_plan_days</code> / <code>meal_plan_meals</code> /
+<code>meal_plan_ingredients</code> mais la <strong>lecture est toujours
+<code>WHERE id = X</code></strong> (recuperer tout le plan d’un coup).
+Pas de gain a normaliser.</li>
+<li><strong><code>compliance_status</code> en VARCHAR + CHECK</strong>
+plutot que ENUM : les ENUM PostgreSQL sont compliques a modifier
+(<code>ALTER TYPE ... ADD VALUE</code> est non transactional). VARCHAR +
+CHECK permet d’evoluer librement.</li>
+<li><strong>Index compose
+<code>(inputs_hash, llm_backend_used)</code></strong> : critique pour le
+cache. Un switch utilisateur Mistral -&gt; Ollama doit produire un
+nouveau plan plutot qu’un cache hit cross-backend.</li>
+</ul>
+<h3 id="nutrition_goals">4.3 <code>nutrition_goals</code></h3>
+<p>Une ligne par utilisateur (pas par requete). Pattern upsert via
+<code>INSERT ... ON CONFLICT (user_id) DO UPDATE</code>.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> nutrition_goals (</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    user_id         <span class="dt">VARCHAR</span>(<span class="dv">64</span>) <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,          <span class="co">-- V14: PK directement, 1 ligne par user</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    calories_target <span class="dt">INTEGER</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    protein_g       <span class="dt">DECIMAL</span>(<span class="dv">8</span>, <span class="dv">2</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    carbs_g         <span class="dt">DECIMAL</span>(<span class="dv">8</span>, <span class="dv">2</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    fat_g           <span class="dt">DECIMAL</span>(<span class="dv">8</span>, <span class="dv">2</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    allergies       TEXT[],</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    diet_type       <span class="dt">VARCHAR</span>(<span class="dv">50</span>),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    health_goal     <span class="dt">VARCHAR</span>(<span class="dv">50</span>)                       <span class="co">-- V9: CHECK liste fermee</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">CHECK</span> (health_goal <span class="kw">IS</span> <span class="kw">NULL</span> <span class="kw">OR</span> health_goal <span class="kw">IN</span> (</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;weight_loss&#39;</span>, <span class="st">&#39;maintain&#39;</span>, <span class="st">&#39;muscle_gain&#39;</span>, <span class="st">&#39;general_health&#39;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        )),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- V12: biometrie pour calcul TDEE</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    gender          <span class="dt">VARCHAR</span>(<span class="dv">10</span>) <span class="kw">CHECK</span> (gender <span class="kw">IS</span> <span class="kw">NULL</span> <span class="kw">OR</span> gender <span class="kw">IN</span> (<span class="st">&#39;male&#39;</span>, <span class="st">&#39;female&#39;</span>)),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    age             <span class="dt">INTEGER</span>     <span class="kw">CHECK</span> (age <span class="kw">IS</span> <span class="kw">NULL</span> <span class="kw">OR</span> (age <span class="op">&gt;</span> <span class="dv">0</span> <span class="kw">AND</span> age <span class="op">&lt;</span> <span class="dv">130</span>)),</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    weight_kg       <span class="dt">DECIMAL</span>(<span class="dv">5</span>, <span class="dv">2</span>) <span class="kw">CHECK</span> (weight_kg <span class="kw">IS</span> <span class="kw">NULL</span> <span class="kw">OR</span> (weight_kg <span class="op">&gt;</span> <span class="dv">0</span> <span class="kw">AND</span> weight_kg <span class="op">&lt;</span> <span class="dv">500</span>)),</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    height_cm       <span class="dt">DECIMAL</span>(<span class="dv">5</span>, <span class="dv">2</span>) <span class="kw">CHECK</span> (height_cm <span class="kw">IS</span> <span class="kw">NULL</span> <span class="kw">OR</span> (height_cm <span class="op">&gt;</span> <span class="dv">0</span> <span class="kw">AND</span> height_cm <span class="op">&lt;</span> <span class="dv">300</span>)),</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    activity_level  <span class="dt">VARCHAR</span>(<span class="dv">20</span>)   <span class="kw">CHECK</span> (activity_level <span class="kw">IS</span> <span class="kw">NULL</span> <span class="kw">OR</span> activity_level <span class="kw">IN</span> (</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;sedentary&#39;</span>, <span class="st">&#39;light&#39;</span>, <span class="st">&#39;moderate&#39;</span>, <span class="st">&#39;active&#39;</span>, <span class="st">&#39;very_active&#39;</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    )),</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- V13: selecteur LLM utilisateur</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    preferred_llm   <span class="dt">VARCHAR</span>(<span class="dv">20</span>) <span class="kw">CHECK</span> (preferred_llm <span class="kw">IS</span> <span class="kw">NULL</span> <span class="kw">OR</span> preferred_llm <span class="kw">IN</span> (<span class="st">&#39;ollama&#39;</span>, <span class="st">&#39;mistral&#39;</span>))</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Decisions de modelisation</strong> :</p>
+<ul>
+<li><strong><code>user_id PRIMARY KEY</code></strong> : une seule ligne
+par utilisateur. Pas besoin d’un <code>id BIGSERIAL</code> separe.
+Upsert direct via <code>ON CONFLICT (user_id) DO UPDATE</code>.</li>
+<li><strong>Biometrie nullable</strong> : un profil sans donnees
+biometriques reste valide. L’endpoint <code>GET /me/macros</code>
+retourne <code>profile_completion_required=true</code> au lieu de
+planter.</li>
+<li><strong><code>allergies TEXT[]</code></strong> : tableau natif
+PostgreSQL. Stocke <code>['gluten', 'lactose']</code> dans une seule
+colonne. Indexable via GIN si besoin.</li>
+<li><strong>CHECK constraints exhaustives</strong> : toutes les colonnes
+“enum-like” ont une CHECK. Garde-fou contre les bugs applicatifs (un
+mauvais activity_level ne peut pas s’inserer).</li>
+</ul>
+<hr />
+<h2 id="les-3-collections-mongodb">5. Les 3 collections MongoDB</h2>
+<p>Detail complet dans la <a href="MongoDB.md">fiche MongoDB</a>. Resume
+:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 31%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th>Collection</th>
+<th>Document type</th>
+<th>Cle pivot</th>
+<th>Indexes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user_fitness_profiles</code></td>
+<td>Profil fitness (objectif, materiel, limitations, niveau)</td>
+<td><code>user_id</code></td>
+<td><code>user_id</code> (unique)</td>
+</tr>
+<tr>
+<td><code>workout_programs</code></td>
+<td>Programmes generes (liste d’exercices, duree, semaines)</td>
+<td><code>program_id</code> UUID</td>
+<td><code>(user_id, created_at desc)</code></td>
+</tr>
+<tr>
+<td><code>recommendation_history</code></td>
+<td>Feedback + completion des programmes</td>
+<td><code>(user_id, program_id, exercise_id)</code></td>
+<td><code>(user_id, created_at desc)</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pivot user_id</strong> : meme valeur dans les 3 bases.</p>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 56%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Base</th>
+<th>Type SQL / Mongo</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MSPR-AUTH (auth)</td>
+<td>TEXT (cle primaire)</td>
+<td>nanoID better-auth (~32 chars)</td>
+</tr>
+<tr>
+<td>PostgreSQL healthai (V14)</td>
+<td>VARCHAR(64)</td>
+<td>meme nanoID, lu depuis le JWT</td>
+</tr>
+<tr>
+<td>MongoDB fitness</td>
+<td>String (libre)</td>
+<td>meme nanoID, lu depuis le JWT</td>
+</tr>
+</tbody>
+</table>
+<p>La coherence est garantie par le <strong>JWT signe</strong> : tous
+les services decodent le meme token avec <code>BETTER_AUTH_SECRET</code>
+partage et extraient le meme <code>user_id</code>.</p>
+<hr />
+<h2 id="points-techniques-importants">6. Points techniques
+importants</h2>
+<h3 id="v14-pourquoi-changer-user_id-de-bigint-vers-varchar64">6.1 V14 :
+pourquoi changer user_id de BIGINT vers VARCHAR(64) ?</h3>
+<p>Avant V14, les colonnes <code>user_id</code> etaient declarees en
+BIGINT (heritage V8 quand le <code>user_id</code> etait suppose
+numerique).</p>
+<p>MSPR-AUTH (better-auth) emet en realite des <strong>nanoID</strong> :
+chaines alphanumeriques de ~32 caracteres, ex.
+<code>rzbzCOvEkAGxy3ADYY7OxFEnR5EqSm3c</code>. Le code AI-Nutrition
+tentait <code>int(user_id)</code> -&gt; <code>ValueError</code> -&gt;
+500.</p>
+<p>V14 corrige :</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> meal_analyses</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ALTER</span> <span class="kw">COLUMN</span> user_id <span class="kw">TYPE</span> <span class="dt">VARCHAR</span>(<span class="dv">64</span>) <span class="kw">USING</span> user_id:<span class="ch">:VARCHAR</span>(<span class="dv">64</span>);</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> meal_plans</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ALTER</span> <span class="kw">COLUMN</span> user_id <span class="kw">TYPE</span> <span class="dt">VARCHAR</span>(<span class="dv">64</span>) <span class="kw">USING</span> user_id:<span class="ch">:VARCHAR</span>(<span class="dv">64</span>);</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> nutrition_goals</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ALTER</span> <span class="kw">COLUMN</span> user_id <span class="kw">TYPE</span> <span class="dt">VARCHAR</span>(<span class="dv">64</span>) <span class="kw">USING</span> user_id:<span class="ch">:VARCHAR</span>(<span class="dv">64</span>);</span></code></pre></div>
+<ul>
+<li><strong>VARCHAR(64)</strong> couvre largement les nanoID (32 chars)
+et laisse de la marge pour un UUID (36 chars) ou un identifiant federe
+externe plus long.</li>
+<li><strong><code>USING user_id::VARCHAR(64)</code></strong> est un cast
+explicite : preserve les fixtures numeriques de dev (ex :
+<code>user_id=42</code> devient <code>"42"</code>).</li>
+<li>Aucune donnee n’a ete migree en pratique : les inserts pre-V14 ne
+pouvaient pas venir d’un client reel avec un JWT better-auth
+valide.</li>
+</ul>
+<h3 id="v13-selecteur-utilisateur-du-backend-llm">6.2 V13 : selecteur
+utilisateur du backend LLM</h3>
+<p>Apporte par le pivot Mistral (cf. fiche <a
+href="AI-Nutrition.md">AI-Nutrition</a>). Deux colonnes liees :</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> nutrition_goals</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">COLUMN</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> preferred_llm <span class="dt">VARCHAR</span>(<span class="dv">20</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CHECK</span> (preferred_llm <span class="kw">IS</span> <span class="kw">NULL</span> <span class="kw">OR</span> preferred_llm <span class="kw">IN</span> (<span class="st">&#39;ollama&#39;</span>, <span class="st">&#39;mistral&#39;</span>));</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> meal_plans</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">COLUMN</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> llm_backend_used <span class="dt">VARCHAR</span>(<span class="dv">20</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;ollama&#39;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CHECK</span> (llm_backend_used <span class="kw">IN</span> (<span class="st">&#39;ollama&#39;</span>, <span class="st">&#39;mistral&#39;</span>));</span></code></pre></div>
+<ul>
+<li><strong><code>preferred_llm</code></strong> : prefere de
+l’utilisateur. Modifiable via <code>PATCH /me/preferences</code>.
+<code>NULL</code> = utilise le defaut env
+(<code>settings.default_llm</code>).</li>
+<li><strong><code>llm_backend_used</code></strong> : trace du backend
+qui a <strong>effectivement</strong> genere le plan (apres
+FallbackChain). <code>NOT NULL DEFAULT 'ollama'</code> pour la
+retro-compatibilite (les plans persistes avant V13 ont ete generes par
+Ollama).</li>
+</ul>
+<p>Deux usages :</p>
+<ol type="1">
+<li><strong>Audit a posteriori</strong> :
+<code>SELECT llm_backend_used, COUNT(*) FROM meal_plans GROUP BY llm_backend_used</code>
+pour segmenter les analyses qualite par backend.</li>
+<li><strong>Filtre du cache</strong> : un switch utilisateur Mistral
+-&gt; Ollama doit produire un nouveau plan plutot qu’un cache hit
+cross-backend.</li>
+</ol>
+<h3 id="v15-stockage-des-photos-en-base64">6.3 V15 : stockage des photos
+en base64</h3>
+<p>Avant V15, <code>meal_analyses.photo_url</code> etait VARCHAR(500)
+prevu pour une URL externe (jamais utilisee). V15 convertit en TEXT pour
+stocker une <strong>data URL JPEG base64</strong> :</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> meal_analyses</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ALTER</span> <span class="kw">COLUMN</span> photo_url <span class="kw">TYPE</span> TEXT;</span></code></pre></div>
+<p>Trois choix :</p>
+<ul>
+<li><strong>Stockage en BDD plutot que bucket S3 / MinIO</strong> : la
+stack MSPR n’inclut ni MinIO ni volume partage. La BDD est l’option la
+plus simple.</li>
+<li><strong>Thumbnail 512x512 qualite JPEG 75</strong> : ~30-80 Ko par
+image (genere par <code>app/services/image_thumbnail.py</code> avec
+Pillow). En dessous du seuil TOAST de PostgreSQL (~2 Ko effectif, mais
+dans la pratique TOAST est efficace jusqu’a quelques Mo).</li>
+<li><strong>NULL pour les lignes pre-V15</strong> : la migration ne
+retro-remplit pas, les analyses anterieures affichent un placeholder
+cote UI.</li>
+</ul>
+<h3 id="hashes-de-cache-sha256-hex">6.4 Hashes de cache (SHA256
+hex)</h3>
+<p>Deux caches applicatifs sont implementes en BDD (pas de Redis) :</p>
+<ul>
+<li><strong><code>meal_plans.inputs_hash</code></strong> (V9) : SHA256
+hex du JSON canonicalise des inputs
+<code>(objectif, regime, allergies triees, budget, calories cible, user_id)</code>.
+TTL 7 jours. <strong>Inclut <code>llm_backend_used</code></strong> pour
+eviter cache hit cross-backend.</li>
+<li><strong><code>meal_analyses.recommendations_hash</code></strong>
+(V10) : SHA256 hex du tuple
+<code>(top_food_label, health_goal, imbalances triees)</code>. Cache
+<strong>global</strong> (sans <code>user_id</code>), TTL 30 jours.</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_hash(payload: <span class="bu">dict</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    canonical <span class="op">=</span> json.dumps(payload, sort_keys<span class="op">=</span><span class="va">True</span>, separators<span class="op">=</span>(<span class="st">&quot;,&quot;</span>, <span class="st">&quot;:&quot;</span>))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> hashlib.sha256(canonical.encode()).hexdigest()</span></code></pre></div>
+<p><strong>Important</strong> : la canonicalisation (sort_keys=True,
+separators sans espaces) garantit que deux payloads logiquement
+equivalents produisent le meme hash. Sans ca,
+<code>{"a":1, "b":2}</code> et <code>{"b":2,"a":1}</code> auraient des
+hashes differents.</p>
+<h3 id="pourquoi-pas-de-fk-vers-les-autres-bases">6.5 Pourquoi pas de FK
+vers les autres bases ?</h3>
+<p>Trois raisons :</p>
+<ol type="1">
+<li><strong>Bases physiquement separees</strong> : <code>auth</code>
+(port 5433) et <code>healthai</code> (port 5434) sont deux instances
+PostgreSQL distinctes. PostgreSQL ne supporte pas les FK cross-database
+(FDW = solution lourde et inutile ici).</li>
+<li><strong><code>fitness</code> (MongoDB) ne supporte pas les
+FK</strong> par definition (NoSQL document-oriente).</li>
+<li><strong>Couplage faible</strong> : permettre a un service de
+supprimer un user (ex : RGPD) sans casser toute la plateforme. Les bases
+sont <strong>eventuellement coherentes</strong> : si un user est
+supprime cote AUTH, les lignes orphelines dans <code>healthai</code> et
+<code>fitness</code> ne posent pas probleme car aucune requete ne peut
+etre faite sans JWT valide.</li>
+</ol>
+<p>Le pivot logique est le <strong>JWT signe</strong>. Tant qu’un
+service peut le decoder avec <code>BETTER_AUTH_SECRET</code>, il peut
+faire confiance au <code>user_id</code> qu’il contient.</p>
+<h3 id="architecture-des-migrations">6.6 Architecture des
+migrations</h3>
+<p>Les migrations PostgreSQL <code>healthai</code> sont
+<strong>centralisees</strong> dans le repo MSPR-DB (volume monte dans
+<code>/docker-entrypoint-initdb.d/</code>). Elles s’executent par ordre
+alphabetique au <strong>premier demarrage</strong> du container.</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># docker-compose.yml (MSPR-Deploy)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">healthai-db</span><span class="kw">:</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> postgres:17</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> healthai_data:/var/lib/postgresql/data</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ./MSPR-DB/migrations:/docker-entrypoint-initdb.d</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_DB</span><span class="kw">:</span><span class="at"> healthai</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_USER</span><span class="kw">:</span><span class="at"> healthai_user</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">POSTGRES_PASSWORD</span><span class="kw">:</span><span class="at"> ...</span></span></code></pre></div>
+<p>L’idempotence est garantie par :</p>
+<ul>
+<li><code>CREATE TABLE IF NOT EXISTS</code> sur les tables,</li>
+<li><code>ALTER TABLE ADD COLUMN IF NOT EXISTS</code> sur les
+colonnes,</li>
+<li><code>CREATE INDEX IF NOT EXISTS</code> sur les indexes,</li>
+<li><code>ALTER TABLE ... TYPE ... USING ...</code> sur les conversions
+(V14).</li>
+</ul>
+<p>Pour appliquer une nouvelle migration en local :
+<code>docker compose down -v &amp;&amp; docker compose up -d</code>
+(destruction du volume, re-execution de toutes les migrations).</p>
+<p>Pour la <strong>prod</strong>, on basculerait sur un outil de
+migration type <strong>Flyway</strong> ou <strong>Liquibase</strong> qui
+versionne l’historique des migrations dans une table
+<code>flyway_schema_history</code>. Hors scope MSPR2.</p>
+<h3 id="migrations-mongodb">6.7 Migrations MongoDB</h3>
+<p>Le repo MSPR-MongoDB ne gere qu’un seul script d’init
+(<code>01-init-reco-fitness.js</code>). Pas de versioning
+multi-fichiers.</p>
+<p>Si on devait ajouter une collection, on <strong>editerait</strong> le
+script et on <strong>rebuilderait</strong> l’image. Acceptable au scope
+MSPR2.</p>
+<p>Pour la prod : passer a <strong>Mongock</strong> ou un outil
+equivalent qui versionne les migrations Mongo. Pattern de versioning
+identique a Flyway/Liquibase.</p>
+<h3 id="migrations-auth-drizzle-kit">6.8 Migrations AUTH (Drizzle
+Kit)</h3>
+<p>Le repo MSPR-AUTH (Bun + Hono + Drizzle) gere ses propres migrations
+via <strong>Drizzle Kit</strong> dans <code>src/db/migrations/</code>.
+Le container <code>auth-migrate</code> (one-shot) execute les migrations
+au demarrage de la stack avant que le container <code>auth</code> ne
+demarre.</p>
+<p>Schema better-auth standard :</p>
+<table>
+<colgroup>
+<col style="width: 53%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr>
+<th>Table</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user</code></td>
+<td>Identites utilisateurs (id nanoID, email, name, email_verified,
+image)</td>
+</tr>
+<tr>
+<td><code>session</code></td>
+<td>Sessions actives (token, expires_at, ip_address, user_agent)</td>
+</tr>
+<tr>
+<td><code>account</code></td>
+<td>Comptes liees (provider_id, access_token, refresh_token,
+password)</td>
+</tr>
+<tr>
+<td><code>verification</code></td>
+<td>Tokens de verification (email, reset password)</td>
+</tr>
+<tr>
+<td><code>jwks</code></td>
+<td>Cles publiques / privees pour signer les JWT (rotation
+possible)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="code-essentiel-a-savoir-expliquer-au-jury">7. Code essentiel a
+savoir expliquer au jury</h2>
+<h3 id="v8-creation-des-3-tables-ai-nutrition">7.1 V8 : creation des 3
+tables AI-Nutrition</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> meal_analyses (</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span>                BIGSERIAL <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    user_id           BIGINT <span class="kw">NOT</span> <span class="kw">NULL</span>,                 <span class="co">-- V14 corrige en VARCHAR(64)</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    photo_url         <span class="dt">VARCHAR</span>(<span class="dv">500</span>),                    <span class="co">-- V15 corrige en TEXT</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    detected_foods    JSONB <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;[]&#39;</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    macros            JSONB <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;{}&#39;</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    confidence_scores JSONB <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;{}&#39;</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    created_at        <span class="dt">TIMESTAMP</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> NOW()</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> meal_plans (</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span>           BIGSERIAL <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    user_id      BIGINT <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">plan</span>         JSONB <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;{}&#39;</span>,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    objective    <span class="dt">VARCHAR</span>(<span class="dv">100</span>),</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">constraints</span>  JSONB <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;{}&#39;</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    generated_at <span class="dt">TIMESTAMP</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> NOW()</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> nutrition_goals (</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    user_id         BIGINT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,                <span class="co">-- V14: VARCHAR(64)</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    calories_target <span class="dt">INTEGER</span>,</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    protein_g       <span class="dt">DECIMAL</span>(<span class="dv">8</span>, <span class="dv">2</span>),</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    carbs_g         <span class="dt">DECIMAL</span>(<span class="dv">8</span>, <span class="dv">2</span>),</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    fat_g           <span class="dt">DECIMAL</span>(<span class="dv">8</span>, <span class="dv">2</span>),</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    allergies       TEXT[],</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    diet_type       <span class="dt">VARCHAR</span>(<span class="dv">50</span>)</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><strong><code>BIGSERIAL PRIMARY KEY</code></strong> :
+auto-incremente, 64-bit. Sequence implicite
+(<code>meal_analyses_id_seq</code>).</li>
+<li><strong>JSONB avec DEFAULT</strong> : <code>'[]'</code> (tableau
+vide) ou <code>'{}'</code> (objet vide). Evite NULL.</li>
+<li><strong>Pas de FK</strong> : <code>user_id</code> est juste un
+BIGINT sans contrainte, car la table <code>users</code> a ete droppee en
+V7.</li>
+<li><strong>Pas d’index sur user_id en V8</strong> : ajoutes
+immediatement apres dans la meme migration
+(<code>CREATE INDEX idx_meal_analyses_user_id ON meal_analyses (user_id)</code>).</li>
+</ul>
+<h3 id="v13-check-constraint-pour-le-selecteur-llm">7.2 V13 : CHECK
+constraint pour le selecteur LLM</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> nutrition_goals</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">COLUMN</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> preferred_llm <span class="dt">VARCHAR</span>(<span class="dv">20</span>);</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> nutrition_goals</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> nutrition_goals_preferred_llm_check</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CHECK</span> (preferred_llm <span class="kw">IS</span> <span class="kw">NULL</span> <span class="kw">OR</span> preferred_llm <span class="kw">IN</span> (<span class="st">&#39;ollama&#39;</span>, <span class="st">&#39;mistral&#39;</span>));</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> meal_plans</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">COLUMN</span> <span class="cf">IF</span> <span class="kw">NOT</span> <span class="kw">EXISTS</span> llm_backend_used <span class="dt">VARCHAR</span>(<span class="dv">20</span>) <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">DEFAULT</span> <span class="st">&#39;ollama&#39;</span>;</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> meal_plans</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ADD</span> <span class="kw">CONSTRAINT</span> meal_plans_llm_backend_used_check</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CHECK</span> (llm_backend_used <span class="kw">IN</span> (<span class="st">&#39;ollama&#39;</span>, <span class="st">&#39;mistral&#39;</span>));</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><strong>CHECK plutot qu’ENUM</strong> : ENUM PostgreSQL est
+complique a etendre (<code>ALTER TYPE ... ADD VALUE</code> non
+transactional, pas de retrait sans drop). CHECK + VARCHAR est plus
+flexible.</li>
+<li><strong><code>IS NULL OR preferred_llm IN (...)</code></strong> :
+<code>preferred_llm</code> est nullable (NULL = utiliser le defaut env).
+<code>llm_backend_used</code> est NOT NULL avec DEFAULT ‘ollama’.</li>
+<li><strong><code>IF NOT EXISTS</code></strong> sur l’ADD COLUMN, mais
+pas sur l’ADD CONSTRAINT (PostgreSQL n’a pas <code>IF NOT EXISTS</code>
+sur les contraintes &lt; 17). Si la contrainte existe deja, la migration
+plante a la 2e execution. Acceptable car le
+<code>docker-entrypoint-initdb.d/</code> execute le script une seule
+fois.</li>
+</ul>
+<h3 id="v14-conversion-de-type-sans-perte">7.3 V14 : conversion de type
+sans perte</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> meal_analyses</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ALTER</span> <span class="kw">COLUMN</span> user_id <span class="kw">TYPE</span> <span class="dt">VARCHAR</span>(<span class="dv">64</span>) <span class="kw">USING</span> user_id:<span class="ch">:VARCHAR</span>(<span class="dv">64</span>);</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> meal_plans</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ALTER</span> <span class="kw">COLUMN</span> user_id <span class="kw">TYPE</span> <span class="dt">VARCHAR</span>(<span class="dv">64</span>) <span class="kw">USING</span> user_id:<span class="ch">:VARCHAR</span>(<span class="dv">64</span>);</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> nutrition_goals</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ALTER</span> <span class="kw">COLUMN</span> user_id <span class="kw">TYPE</span> <span class="dt">VARCHAR</span>(<span class="dv">64</span>) <span class="kw">USING</span> user_id:<span class="ch">:VARCHAR</span>(<span class="dv">64</span>);</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><strong><code>USING user_id::VARCHAR(64)</code></strong> est le cast
+explicite. PostgreSQL ne sait pas automatiquement convertir BIGINT en
+VARCHAR : il faut lui dire “appelle <code>::VARCHAR(64)</code> sur
+chaque ligne”.</li>
+<li>L’operation est <strong>lourde</strong> sur une grosse table
+(re-ecrit chaque ligne). Sur <code>healthai</code>, les tables sont
+vides ou quasi-vides en V14, donc instantane.</li>
+<li>En production, on aurait fait :
+<ol type="1">
+<li>Ajouter une colonne <code>user_id_new VARCHAR(64)</code>
+nullable,</li>
+<li>Backfill <code>user_id_new = user_id::VARCHAR(64)</code>,</li>
+<li>Swap (rename <code>user_id</code> -&gt; <code>user_id_old</code>,
+<code>user_id_new</code> -&gt; <code>user_id</code>),</li>
+<li>Drop <code>user_id_old</code>.</li>
+</ol>
+Permet de ne pas lock la table pendant des minutes. Hors scope
+MSPR2.</li>
+</ul>
+<h3 id="insert-upsert-pattern-python-sqlalchemy">7.4 Insert + upsert
+pattern (Python + SQLAlchemy)</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sqlalchemy.dialects.postgresql <span class="im">import</span> insert</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> upsert_nutrition_goal(user_id: <span class="bu">str</span>, payload: <span class="bu">dict</span>, db: Session):</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    stmt <span class="op">=</span> insert(NutritionGoal).values(</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        user_id<span class="op">=</span>user_id,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">**</span>payload,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    stmt <span class="op">=</span> stmt.on_conflict_do_update(</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        index_elements<span class="op">=</span>[<span class="st">&quot;user_id&quot;</span>],</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        set_<span class="op">=</span>payload,  <span class="co"># met a jour toutes les colonnes du payload</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    db.execute(stmt)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    db.commit()</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><strong><code>insert().on_conflict_do_update()</code></strong> est
+le dialecte PostgreSQL specifique (clause <code>ON CONFLICT</code>). Pas
+dans SQL standard, pas dans MySQL (qui utilise
+<code>ON DUPLICATE KEY UPDATE</code>).</li>
+<li><strong><code>index_elements=["user_id"]</code></strong> cible la
+PK. Si la PK existe, on UPDATE ; sinon, on INSERT.</li>
+<li><strong><code>set_=payload</code></strong> ecrase
+<strong>toutes</strong> les colonnes fournies. Pour un upsert partiel
+(NULL = “ne change pas”), il faudrait
+<code>set_={col: stmt.excluded[col] for col in payload if payload[col] is not None}</code>.</li>
+<li>Le pattern garantit qu’on ne cree jamais deux lignes pour le meme
+<code>user_id</code>.</li>
+</ul>
+<h3 id="query-avec-jsonb">7.5 Query avec JSONB</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compter les analyses par type de meal</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> db.execute(text(<span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="st">    SELECT meal_type, COUNT(*) AS count</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM meal_analyses</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="st">    WHERE user_id = :user_id</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="st">      AND created_at &gt; NOW() - INTERVAL &#39;30 days&#39;</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="st">    GROUP BY meal_type</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="st">    ORDER BY count DESC</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;&quot;&quot;</span>), {<span class="st">&quot;user_id&quot;</span>: user_id}).fetchall()</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Lire un champ JSONB precis (top food label)</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>top_food <span class="op">=</span> db.execute(text(<span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="st">    SELECT detected_foods-&gt;0-&gt;&gt;&#39;label&#39; AS top_label</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM meal_analyses</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="st">    WHERE id = :id</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;&quot;&quot;</span>), {<span class="st">&quot;id&quot;</span>: analysis_id}).scalar()</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtrer sur un champ JSONB</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>high_protein <span class="op">=</span> db.execute(text(<span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="st">    SELECT id, macros</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM meal_analyses</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="st">    WHERE user_id = :user_id</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="st">      AND (macros-&gt;&gt;&#39;protein_g&#39;)::numeric &gt; 30</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;&quot;&quot;</span>), {<span class="st">&quot;user_id&quot;</span>: user_id}).fetchall()</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><strong><code>-&gt;</code></strong> retourne du JSONB (objet ou
+tableau), <strong><code>-&gt;&gt;</code></strong> retourne du TEXT
+(chaine extraite). Ex :
+<code>detected_foods-&gt;0-&gt;&gt;'label'</code> = premier element du
+tableau, champ <code>label</code>, comme TEXT.</li>
+<li><strong><code>(macros-&gt;&gt;'protein_g')::numeric</code></strong>
+: extrait du TEXT puis cast en numeric pour la comparaison. Sans le
+cast, on comparerait des strings (donc “9” &gt; “30” alphabetiquement,
+faux).</li>
+<li>Pour des <strong>queries frequentes</strong> sur un champ JSONB, on
+peut creer un index GIN ou un index B-tree sur une expression
+(<code>CREATE INDEX ON meal_analyses ((macros-&gt;&gt;'protein_g'))</code>).
+Hors scope MSPR2.</li>
+</ul>
+<h3 id="calcul-hash-de-cache-python">7.6 Calcul hash de cache
+(Python)</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> hashlib</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_inputs_hash(inputs: <span class="bu">dict</span>, llm_backend: <span class="bu">str</span>, user_id: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;SHA256 hex du tuple canonicalise (inputs, backend, user).&quot;&quot;&quot;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    payload <span class="op">=</span> {</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;user_id&quot;</span>: user_id,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;objective&quot;</span>: inputs[<span class="st">&quot;objective&quot;</span>],</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;diet_type&quot;</span>: inputs.get(<span class="st">&quot;diet_type&quot;</span>),</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;allergies&quot;</span>: <span class="bu">sorted</span>(inputs.get(<span class="st">&quot;allergies&quot;</span>, [])),  <span class="co"># tri pour stabilite</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;budget_per_day&quot;</span>: inputs.get(<span class="st">&quot;budget_per_day&quot;</span>),</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;calories_target&quot;</span>: inputs.get(<span class="st">&quot;calories_target&quot;</span>),</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;duration_days&quot;</span>: inputs[<span class="st">&quot;duration_days&quot;</span>],</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;llm_backend&quot;</span>: llm_backend,</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    canonical <span class="op">=</span> json.dumps(payload, sort_keys<span class="op">=</span><span class="va">True</span>, separators<span class="op">=</span>(<span class="st">&quot;,&quot;</span>, <span class="st">&quot;:&quot;</span>))</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> hashlib.sha256(canonical.encode()).hexdigest()</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> lookup_cached_plan(user_id, inputs, llm_backend, db):</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> compute_inputs_hash(inputs, llm_backend, user_id)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> db.execute(text(<span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="st">        SELECT id, plan, generated_at FROM meal_plans</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="st">        WHERE user_id = :user_id</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="st">          AND inputs_hash = :hash</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="st">          AND llm_backend_used = :backend</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="st">          AND generated_at &gt; NOW() - INTERVAL &#39;7 days&#39;</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="st">        ORDER BY generated_at DESC</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="st">        LIMIT 1</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="st">    &quot;&quot;&quot;</span>), {<span class="st">&quot;user_id&quot;</span>: user_id, <span class="st">&quot;hash&quot;</span>: h, <span class="st">&quot;backend&quot;</span>: llm_backend}).fetchone()</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><strong><code>sorted(allergies)</code></strong> : tri obligatoire
+pour la stabilite du hash. <code>['gluten', 'lactose']</code> et
+<code>['lactose', 'gluten']</code> doivent produire le meme hash.</li>
+<li><strong><code>json.dumps(..., sort_keys=True, separators=(",", ":"))</code></strong>
+: canonicalisation. Sans <code>sort_keys</code>, l’ordre d’iteration du
+dict Python (insertion order) produirait des hashes differents pour des
+dicts logiquement equivalents.</li>
+<li><strong>TTL 7 jours via la clause
+<code>WHERE generated_at &gt; NOW() - INTERVAL '7 days'</code></strong>
+: pas de purge proactive, juste un filtre a la lecture. Les lignes
+expirees restent en BDD mais ne sont jamais lues. A nettoyer par un cron
+mensuel en prod.</li>
+<li><strong><code>LIMIT 1</code></strong> : si plusieurs plans matchent
+(cas rare), on prend le plus recent.</li>
+</ul>
+<h3 id="diagramme-uml-global">7.7 Diagramme UML global</h3>
+<p>Le fichier <code>uml-mspr2.png</code> (rendu Mermaid) presente le
+modele complet :</p>
+<ul>
+<li>les 6 tables MSPR 1 (heritage ETL),</li>
+<li>les 3 nouvelles tables MSPR 2 PostgreSQL
+(<code>meal_analyses</code>, <code>meal_plans</code>,
+<code>nutrition_goals</code>),</li>
+<li>les 5 tables MSPR-AUTH (better-auth : <code>user</code>,
+<code>session</code>, <code>account</code>, <code>verification</code>,
+<code>jwks</code>),</li>
+<li>les 3 collections MongoDB fitness
+(<code>user_fitness_profiles</code>, <code>workout_programs</code>,
+<code>recommendation_history</code>).</li>
+</ul>
+<p>Source Mermaid (extrait pour les tables ajoutees MSPR2) :</p>
+<pre class="mermaid"><code>erDiagram
+    meal_analyses {
+        BIGSERIAL id PK
+        VARCHAR_64 user_id
+        TEXT photo_url
+        JSONB detected_foods
+        JSONB macros
+        JSONB confidence_scores
+        TEXT recommendations
+        CHAR_64 recommendations_hash
+        TEXTARRAY imbalances
+        JSONB serving_sizes
+        VARCHAR meal_type
+        TIMESTAMP created_at
+    }
+    meal_plans {
+        BIGSERIAL id PK
+        VARCHAR_64 user_id
+        JSONB plan
+        VARCHAR objective
+        JSONB constraints
+        CHAR_64 inputs_hash
+        VARCHAR compliance_status
+        TEXTARRAY compliance_warnings
+        VARCHAR llm_backend_used
+        TIMESTAMP generated_at
+    }
+    nutrition_goals {
+        VARCHAR_64 user_id PK
+        INTEGER calories_target
+        DECIMAL protein_g
+        DECIMAL carbs_g
+        DECIMAL fat_g
+        TEXTARRAY allergies
+        VARCHAR diet_type
+        VARCHAR health_goal
+        VARCHAR gender
+        INTEGER age
+        DECIMAL weight_kg
+        DECIMAL height_cm
+        VARCHAR activity_level
+        VARCHAR preferred_llm
+    }</code></pre>
+<hr />
+<h2 id="questions-probables-du-jury">8. Questions probables du jury</h2>
+<h3 id="q1.-pourquoi-3-bases-plutot-quune-seule">Q1. Pourquoi 3 bases
+plutot qu’une seule ?</h3>
+<p>Trois raisons :</p>
+<ol type="1">
+<li><strong>Specialisation</strong> : PostgreSQL est excellent pour le
+relationnel (catalogue, analyses, audit trail). MongoDB est excellent
+pour le document-oriente (programmes fitness, profils variables). Mettre
+tout dans une seule BDD aurait force des compromis.</li>
+<li><strong>Isolation des pannes</strong> : si <code>auth</code> tombe,
+on peut continuer a lire / ecrire <code>healthai</code> (degrade
+silencieux). Un seul SGBD aurait expose tout le service au moindre
+incident.</li>
+<li><strong>Contrainte du sujet</strong> : la MSPR2 impose une BDD NoSQL
+pour le moteur de reco (livrable n 7). Cela force d’avoir au moins 2
+bases.</li>
+</ol>
+<p>Pourquoi alors <strong>deux</strong> PostgreSQL
+(<code>healthai</code> + <code>auth</code>) ? Parce que
+<code>better-auth</code> gere son propre schema (geneere par Drizzle)
+qu’on ne veut pas voir polluer le schema metier. Et la BDD auth a un
+cycle de vie different (ports, migrations, backups). Acceptable au scope
+MSPR2.</p>
+<h3 id="q2.-comment-se-passe-une-migration-en-production">Q2. Comment se
+passe une migration en production ?</h3>
+<p>En production, on <strong>n’utilise pas</strong>
+<code>docker compose down -v</code> (destruction du volume = perte de
+donnees). On utilise un outil de migration type <strong>Flyway</strong>
+ou <strong>Liquibase</strong> qui :</p>
+<ol type="1">
+<li>Verifie une table <code>flyway_schema_history</code> pour savoir
+quelles migrations ont deja ete appliquees.</li>
+<li>Applique les nouvelles migrations dans l’ordre.</li>
+<li>Marque chaque migration comme appliquee.</li>
+<li>Cree un lock pour eviter les applications concurrentes
+(multi-instance).</li>
+</ol>
+<p>Au scope MSPR2, on utilise le
+<code>/docker-entrypoint-initdb.d/</code> de l’image Postgres : execute
+les scripts au <strong>premier demarrage</strong> uniquement (volume
+vide). Pour reset :
+<code>docker compose down -v &amp;&amp; up -d</code>. Acceptable pour
+une demo / dev.</p>
+<h3
+id="q3.-comment-se-gere-la-suppression-dun-utilisateur-rgpd-article-17">Q3.
+Comment se gere la suppression d’un utilisateur (RGPD article 17) ?</h3>
+<p>L’utilisateur supprime son compte cote MSPR-AUTH
+(<code>DELETE /api/auth/delete-user</code>). MSPR-AUTH retire la ligne
+<code>user</code> (cascade sur <code>session</code>,
+<code>account</code>).</p>
+<p>A ce stade, les lignes orphelines dans <code>healthai</code> et
+<code>fitness</code> ne posent <strong>pas de probleme legal</strong>
+car aucune requete ne peut etre faite sans JWT valide (et le JWT a ete
+invalide avec le compte).</p>
+<p>Pour une <strong>vraie suppression RGPD</strong>, il faudrait un cron
+qui :</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- PostgreSQL healthai</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">DELETE</span> <span class="kw">FROM</span> meal_analyses <span class="kw">WHERE</span> user_id <span class="kw">NOT</span> <span class="kw">IN</span> (<span class="kw">SELECT</span> <span class="kw">id</span> <span class="kw">FROM</span> auth.<span class="fu">user</span>);</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">DELETE</span> <span class="kw">FROM</span> meal_plans <span class="kw">WHERE</span> user_id <span class="kw">NOT</span> <span class="kw">IN</span> (<span class="kw">SELECT</span> <span class="kw">id</span> <span class="kw">FROM</span> auth.<span class="fu">user</span>);</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">DELETE</span> <span class="kw">FROM</span> nutrition_goals <span class="kw">WHERE</span> user_id <span class="kw">NOT</span> <span class="kw">IN</span> (<span class="kw">SELECT</span> <span class="kw">id</span> <span class="kw">FROM</span> auth.<span class="fu">user</span>);</span></code></pre></div>
+<p>Cross-database depuis PostgreSQL <code>healthai</code> necessiterait
+un FDW (Foreign Data Wrapper) vers <code>auth</code>. Hors scope MSPR2
+mais documente dans la conduite du changement (livrable n 10).</p>
+<p>Pour MongoDB, idem cote applicatif :</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> orphans <span class="op">=</span> <span class="cf">await</span> mongo<span class="op">.</span><span class="at">user_fitness_profiles</span><span class="op">.</span><span class="fu">distinct</span>(<span class="st">&quot;user_id&quot;</span>)<span class="op">;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> valid_ids <span class="op">=</span> <span class="cf">await</span> pgClient<span class="op">.</span><span class="fu">query</span>(<span class="st">&quot;SELECT id FROM auth.user&quot;</span>)<span class="op">;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> to_delete <span class="op">=</span> orphans<span class="op">.</span><span class="fu">filter</span>(id <span class="kw">=&gt;</span> <span class="op">!</span>valid_ids<span class="op">.</span><span class="fu">includes</span>(id))<span class="op">;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> mongo<span class="op">.</span><span class="at">user_fitness_profiles</span><span class="op">.</span><span class="fu">deleteMany</span>({<span class="dt">user_id</span><span class="op">:</span> {<span class="dt">$in</span><span class="op">:</span> to_delete}})<span class="op">;</span></span></code></pre></div>
+<h3
+id="q4.-pourquoi-jsonb-et-pas-une-table-separee-meal_plan_days-meal_plan_meals">Q4.
+Pourquoi JSONB et pas une table separee meal_plan_days / meal_plan_meals
+?</h3>
+<p>Trois raisons :</p>
+<ol type="1">
+<li><strong>Pattern d’acces</strong> : on lit toujours un plan complet
+(<code>SELECT * FROM meal_plans WHERE id = X</code>). Pas de query type
+<code>SELECT meal_name FROM ... WHERE day = 3</code>. Normaliser
+n’apporterait rien en performance lecture.</li>
+<li><strong>Variabilite</strong> : un plan peut avoir 1 a 30 jours,
+chaque jour 3 a 6 repas, chaque repas N ingredients. Modeliser ca en 3-4
+tables relationnelles serait verbeux.</li>
+<li><strong>Evolution</strong> : le LLM peut decider d’ajouter un champ
+<code>cooking_time_min</code> ou <code>prep_difficulty</code>. Avec
+JSONB, pas de migration. Avec un schema relationnel, il faut ajouter une
+colonne (ou une table).</li>
+</ol>
+<p>Inconvenient : impossible d’indexer un meal precis (“plans contenant
+du poulet”). Mais ce n’est pas un besoin actuel.</p>
+<h3
+id="q5.-comment-garantissez-vous-la-coherence-du-user_id-entre-les-3-bases">Q5.
+Comment garantissez-vous la coherence du user_id entre les 3 bases
+?</h3>
+<p>Trois mecanismes :</p>
+<ol type="1">
+<li><strong>JWT signe HS256</strong> : le token contient
+<code>user_id</code> et est signe avec <code>BETTER_AUTH_SECRET</code>.
+Si quelqu’un tente d’injecter un faux <code>user_id</code>, la signature
+ne valide pas.</li>
+<li><strong>Decode local</strong> : chaque service decode le JWT avec la
+meme cle. Le <code>user_id</code> extrait est forcement celui qui a ete
+signe par MSPR-AUTH.</li>
+<li><strong>Pas de FK cross-database</strong> : les bases sont
+<strong>eventuellement coherentes</strong>, pas immediatement
+coherentes. Un user supprime cote AUTH laisse des lignes orphelines cote
+<code>healthai</code> et <code>fitness</code>. Mais ces lignes
+deviennent inaccessibles (pas de JWT valide).</li>
+</ol>
+<p>Le seul risque est un bug applicatif qui ecrirait dans
+<code>healthai</code> ou <code>fitness</code> avec un
+<code>user_id</code> non issu du JWT (ex : <code>user_id</code> dans le
+body). Tests verrouillent ce cas.</p>
+<h3
+id="q6.-comment-evolueriez-vous-le-schema-pour-une-scalabilite-x1000">Q6.
+Comment evolueriez-vous le schema pour une scalabilite x1000 ?</h3>
+<p>Plusieurs axes :</p>
+<ol type="1">
+<li><strong>Partitioning</strong> : <code>meal_analyses</code> et
+<code>meal_plans</code> partitionnees par <code>created_at</code> (par
+mois). Permet d’archiver les vieilles donnees facilement.</li>
+<li><strong>Index B-tree partiel</strong> :
+<code>recommendations_hash</code> est deja indexe en partiel
+(<code>WHERE NOT NULL</code>). Etendre a <code>inputs_hash</code>
+aussi.</li>
+<li><strong>TimescaleDB</strong> : si on faisait du time-series sur les
+analyses, TimescaleDB (extension PostgreSQL) automatiserait le
+partitioning + compression. Hors scope MSPR2.</li>
+<li><strong>Read replicas</strong> : reads de l’historique
+<code>/me/meal-analyses</code> peuvent etre routes vers un replica.
+Streaming replication PostgreSQL.</li>
+<li><strong>Sharding MongoDB</strong> : sur <code>user_id</code>. Les
+requetes naturelles <code>{user_id: ...}</code> ciblent un seul shard,
+scaling lineaire.</li>
+</ol>
+<p>Au scope MSPR2 (cibles ~50k users), aucune de ces optimisations n’est
+necessaire.</p>
+<h3
+id="q7.-pourquoi-auth-et-healthai-sur-deux-postgresql-distincts-plutot-que-deux-schemas-dans-une-seule-instance">Q7.
+Pourquoi <code>auth</code> et <code>healthai</code> sur deux PostgreSQL
+distincts plutot que deux schemas dans une seule instance ?</h3>
+<p>Trois raisons :</p>
+<ol type="1">
+<li><strong>Cycle de vie independant</strong> : MSPR-AUTH evolue avec
+better-auth (migrations Drizzle). MSPR-DB evolue avec les besoins metier
+(migrations SQL). Deux instances permettent de redeployer l’une sans
+toucher l’autre.</li>
+<li><strong>Ports / connexions</strong> : <code>auth</code> ecoute sur
+5433, <code>healthai</code> sur 5434. Permet de configurer des pool de
+connexions independants, des timeouts differents, des credentials
+differents.</li>
+<li><strong>Securite</strong> : un compromis sur le service AUTH (vol
+des hashes de password) ne donne pas acces aux donnees metier. Defense
+en profondeur.</li>
+</ol>
+<p>Inconvenient : 2x la consommation memoire (2 instances Postgres au
+lieu d’une). ~150 Mo de RAM en plus. Acceptable.</p>
+<h3 id="q8.-comment-testez-vous-les-migrations">Q8. Comment testez-vous
+les migrations ?</h3>
+<p>Trois niveaux :</p>
+<ul>
+<li><strong>Tests d’integration AI-Nutrition / Reco-Fitness</strong> :
+utilisent <code>testcontainers</code> pour demarrer un PostgreSQL
+ephemere, <strong>appliquent toutes les migrations V1 a V14</strong>
+dans l’ordre, executent les tests, detruisent le container. Si une
+migration casse, les tests echouent.</li>
+<li><strong>Tests E2E plateforme</strong> : <code>bootstrap.sh</code>
+lance tout le stack, les tests Cypress verifient que les flux end-to-end
+marchent. Implicite validation des migrations.</li>
+<li><strong>Snapshot OpenAPI</strong> : <code>docs/openapi.json</code>
+est commit. Si une migration casse un modele SQLAlchemy, l’OpenAPI
+change et le test snapshot echoue.</li>
+</ul>
+<p>Pas de tests <strong>isoles</strong> des migrations (ex : “V14
+reussit a convertir un BIGINT en VARCHAR sans perdre les fixtures”).
+Acceptable au scope MSPR2, le coverage indirect est suffisant.</p>
+<h3 id="q9.-pourquoi-un-index-partiel-sur-recommendations_hash">Q9.
+Pourquoi un index partiel sur <code>recommendations_hash</code> ?</h3>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">INDEX</span> idx_meal_analyses_reco_hash</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ON</span> meal_analyses (recommendations_hash)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> recommendations_hash <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>;</span></code></pre></div>
+<p>Deux raisons :</p>
+<ol type="1">
+<li><strong>Taille de l’index</strong> : ne stocke pas les lignes ou
+<code>recommendations_hash IS NULL</code> (lignes pre-V10). Reduit la
+taille de l’index de ~20 % au moment de V10.</li>
+<li><strong>Performance lookup</strong> : le query
+<code>WHERE recommendations_hash = ?</code> benefice quand meme de
+l’index (les NULL ne sont jamais matches par <code>=</code>).</li>
+</ol>
+<p>Pour <code>inputs_hash</code>, idem : on indexe
+<code>(inputs_hash, llm_backend_used)</code> partiel sur
+<code>WHERE inputs_hash IS NOT NULL</code>.</p>
+<h3
+id="q10.-quelle-est-la-difference-entre-created_at-et-generated_at">Q10.
+Quelle est la difference entre <code>created_at</code> et
+<code>generated_at</code> ?</h3>
+<p><code>meal_analyses.created_at</code> : timestamp de la creation
+<strong>de l’enregistrement</strong> (insert SQL).</p>
+<p><code>meal_plans.generated_at</code> : timestamp de la
+<strong>generation du plan par le LLM</strong>. En theorie egal a
+<code>created_at</code> car on insert juste apres la generation, mais le
+nom est plus parlant pour ce qui est genere par IA.</p>
+<p>Choix de naming pour le metier. <code>created_at</code> standard
+ailleurs (audit trail), <code>generated_at</code> specifique aux
+artefacts IA pour bien signaler “c’est sorti d’un LLM, pas d’une saisie
+utilisateur”.</p>
+<h3 id="q11.-comment-se-passe-le-rollback-dune-migration">Q11. Comment
+se passe le rollback d’une migration ?</h3>
+<p>PostgreSQL <strong>ne supporte pas</strong> le rollback automatique
+d’une migration. Le <code>/docker-entrypoint-initdb.d/</code> n’a pas de
+mecanisme <code>down</code>.</p>
+<p>En cas de bug grave dans une migration en prod :</p>
+<ol type="1">
+<li><strong>Roll forward</strong> : ecrire une nouvelle migration qui
+corrige (V16 qui annule V15).</li>
+<li><strong>Restauration backup</strong> : pg_restore depuis un snapshot
+pre-V15.</li>
+</ol>
+<p>Au scope MSPR2, on a <code>docker compose down -v</code> pour reset
+complet. En prod, on utilisera Flyway qui supporte les migrations
+<code>_R__</code> repeatable et les <code>_U__</code> undo.</p>
+<h3 id="q12.-comment-monitorer-la-sante-du-modele-de-donnees">Q12.
+Comment monitorer la sante du modele de donnees ?</h3>
+<p>Plusieurs metriques a surveiller :</p>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th>Metrique</th>
+<th>Comment ?</th>
+<th>Alerte si</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Taille des tables</td>
+<td><code>pg_total_relation_size('meal_analyses')</code></td>
+<td>Croissance anormale (cible : ~1 Ko / analyse)</td>
+</tr>
+<tr>
+<td>Index hit ratio</td>
+<td><code>pg_stat_user_indexes</code></td>
+<td>&lt; 99 % (signe d’index manquant)</td>
+</tr>
+<tr>
+<td>Tables bloat</td>
+<td><code>pg_stat_user_tables.n_dead_tup</code></td>
+<td>&gt; 20 % (lancer VACUUM)</td>
+</tr>
+<tr>
+<td>Slow queries</td>
+<td><code>pg_stat_statements</code></td>
+<td>mean_exec_time &gt; 100 ms</td>
+</tr>
+<tr>
+<td>Connections actives</td>
+<td><code>pg_stat_activity</code></td>
+<td>&gt; 80 % du max_connections</td>
+</tr>
+</tbody>
+</table>
+<p>Pour MongoDB :</p>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 34%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th>Metrique</th>
+<th>Comment ?</th>
+<th>Alerte si</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Taille collections</td>
+<td><code>db.collection.stats().size</code></td>
+<td>Croissance anormale</td>
+</tr>
+<tr>
+<td>Index usage</td>
+<td><code>db.collection.aggregate([{$indexStats: {}}])</code></td>
+<td>accesses.ops faible (index inutilise)</td>
+</tr>
+<tr>
+<td>Operations / sec</td>
+<td><code>db.serverStatus().opcounters</code></td>
+<td>spike inhabituel</td>
+</tr>
+<tr>
+<td>Replication lag</td>
+<td>si secondaries</td>
+<td>&gt; 1 s</td>
+</tr>
+</tbody>
+</table>
+<p>Au scope MSPR2 : <code>pg_stat_statements</code> (extension
+PostgreSQL) suffirait pour identifier les queries lentes. Hors scope du
+livrable mais documente comme axe d’evolution.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>
