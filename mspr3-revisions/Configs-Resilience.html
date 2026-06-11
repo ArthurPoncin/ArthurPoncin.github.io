@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>Configs et résilience - Révisions MSPR3</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a
+href="#fiche-de-revision-configurations-multi-environnement-et-resilience"
+id="toc-fiche-de-revision-configurations-multi-environnement-et-resilience">Fiche
+de revision : Configurations multi-environnement et resilience</a>
+<ul>
+<li><a href="#vocabulaire-a-connaitre-avant-de-lire"
+id="toc-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#tldr" id="toc-tldr">1. TL;DR</a></li>
+<li><a href="#architecture" id="toc-architecture">2.
+Architecture</a></li>
+<li><a href="#stack-technique" id="toc-stack-technique">3. Stack
+technique</a></li>
+<li><a href="#les-3-configurations-exigees-par-le-sujet"
+id="toc-les-3-configurations-exigees-par-le-sujet">4. Les 3
+configurations exigees par le sujet</a>
+<ul>
+<li><a href="#configuration-complete"
+id="toc-configuration-complete">4.1 Configuration COMPLETE</a></li>
+<li><a href="#configuration-offline" id="toc-configuration-offline">4.2
+Configuration OFFLINE</a></li>
+<li><a href="#configuration-performance"
+id="toc-configuration-performance">4.3 Configuration
+PERFORMANCE</a></li>
+</ul></li>
+<li><a href="#overlays-additionnels-et-points-techniques"
+id="toc-overlays-additionnels-et-points-techniques">5. Overlays
+additionnels et points techniques</a>
+<ul>
+<li><a href="#le-mecanisme-de-fusion-compose-a-maitriser-absolument"
+id="toc-le-mecanisme-de-fusion-compose-a-maitriser-absolument">5.1 Le
+mecanisme de fusion Compose (a maitriser absolument)</a></li>
+<li><a href="#overlay-traefik-exposition-publique-https"
+id="toc-overlay-traefik-exposition-publique-https">5.2 Overlay TRAEFIK :
+exposition publique HTTPS</a></li>
+<li><a href="#overlay-vision-classification-photo-par-mistral"
+id="toc-overlay-vision-classification-photo-par-mistral">5.3 Overlay
+VISION : classification photo par Mistral</a></li>
+<li><a href="#overlay-watchtower-deploiement-continu-renvoi"
+id="toc-overlay-watchtower-deploiement-continu-renvoi">5.4 Overlay
+WATCHTOWER : deploiement continu (renvoi)</a></li>
+<li><a href="#overlay-gpu-ollama-accelere-par-le-gpu-nvidia"
+id="toc-overlay-gpu-ollama-accelere-par-le-gpu-nvidia">5.5 Overlay GPU :
+Ollama accelere par le GPU NVIDIA</a></li>
+<li><a href="#combinaison-de-production-sur-le-serveur"
+id="toc-combinaison-de-production-sur-le-serveur">5.6 Combinaison de
+production sur le serveur</a></li>
+</ul></li>
+<li><a href="#resilience-sauvegarde-restauration-remise-a-zero"
+id="toc-resilience-sauvegarde-restauration-remise-a-zero">6. Resilience
+: sauvegarde, restauration, remise a zero</a>
+<ul>
+<li><a href="#backup.sh-sauvegarde-horodatee"
+id="toc-backup.sh-sauvegarde-horodatee">6.1 <code>backup.sh</code> :
+sauvegarde horodatee</a></li>
+<li><a href="#restore.sh-restauration"
+id="toc-restore.sh-restauration">6.2 <code>restore.sh</code> :
+restauration</a></li>
+<li><a href="#clean.sh-remise-a-zero"
+id="toc-clean.sh-remise-a-zero">6.3 <code>clean.sh</code> : remise a
+zero</a></li>
+<li><a href="#ce-qui-est-perdu-recuperable-apres-un-clean"
+id="toc-ce-qui-est-perdu-recuperable-apres-un-clean">6.4 Ce qui est
+perdu / recuperable apres un <code>clean</code></a></li>
+<li><a href="#limites-assumees" id="toc-limites-assumees">6.5 Limites
+assumees</a></li>
+</ul></li>
+<li><a href="#code-essentiel-a-savoir-expliquer-au-jury"
+id="toc-code-essentiel-a-savoir-expliquer-au-jury">7. Code essentiel a
+savoir expliquer au jury</a>
+<ul>
+<li><a href="#loverlay-offline-complet"
+id="toc-loverlay-offline-complet">7.1 L’overlay offline complet</a></li>
+<li><a href="#le-toggle-auth_offline-dans-mspr-auth"
+id="toc-le-toggle-auth_offline-dans-mspr-auth">7.2 Le toggle
+AUTH_OFFLINE dans MSPR-AUTH</a></li>
+<li><a href="#les-limites-de-ressources-performance"
+id="toc-les-limites-de-ressources-performance">7.3 Les limites de
+ressources (performance)</a></li>
+<li><a href="#les-labels-traefik-de-lapi-routeur-blocage-metriques"
+id="toc-les-labels-traefik-de-lapi-routeur-blocage-metriques">7.4 Les
+labels Traefik de l’API (routeur + blocage metriques)</a></li>
+<li><a href="#loverlay-gpu" id="toc-loverlay-gpu">7.5 L’overlay
+GPU</a></li>
+<li><a href="#le-coeur-de-backup.sh" id="toc-le-coeur-de-backup.sh">7.6
+Le coeur de <code>backup.sh</code></a></li>
+<li><a href="#la-selection-de-sauvegarde-dans-restore.sh"
+id="toc-la-selection-de-sauvegarde-dans-restore.sh">7.7 La selection de
+sauvegarde dans <code>restore.sh</code></a></li>
+<li><a href="#la-remise-a-zero-dans-clean.sh"
+id="toc-la-remise-a-zero-dans-clean.sh">7.8 La remise a zero dans
+<code>clean.sh</code></a></li>
+</ul></li>
+<li><a href="#questions-probables-du-jury"
+id="toc-questions-probables-du-jury">8. Questions probables du jury</a>
+<ul>
+<li><a
+href="#q1.-pourquoi-des-overlays-plutot-que-trois-docker-compose-complets-dupliques"
+id="toc-q1.-pourquoi-des-overlays-plutot-que-trois-docker-compose-complets-dupliques">Q1.
+Pourquoi des overlays plutot que trois docker-compose complets dupliques
+?</a></li>
+<li><a href="#q2.-comment-docker-compose-fusionne-t-il-plusieurs--f"
+id="toc-q2.-comment-docker-compose-fusionne-t-il-plusieurs--f">Q2.
+Comment Docker Compose fusionne-t-il plusieurs <code>-f</code>
+?</a></li>
+<li><a href="#q3.-comment-le-mode-offline-fonctionne-t-il-concretement"
+id="toc-q3.-comment-le-mode-offline-fonctionne-t-il-concretement">Q3.
+Comment le mode offline fonctionne-t-il concretement ?</a></li>
+<li><a
+href="#q4.-pourquoi-la-config-performance-omet-lia-generative-et-que-voit-lutilisateur"
+id="toc-q4.-pourquoi-la-config-performance-omet-lia-generative-et-que-voit-lutilisateur">Q4.
+Pourquoi la config performance omet l’IA generative, et que voit
+l’utilisateur ?</a></li>
+<li><a
+href="#q5.-comment-la-plateforme-est-elle-exposee-en-https-et-pourquoi-traefik"
+id="toc-q5.-comment-la-plateforme-est-elle-exposee-en-https-et-pourquoi-traefik">Q5.
+Comment la plateforme est-elle exposee en HTTPS, et pourquoi Traefik
+?</a></li>
+<li><a href="#q6.-pourquoi-bloquer-les-metrics-au-public-et-comment"
+id="toc-q6.-pourquoi-bloquer-les-metrics-au-public-et-comment">Q6.
+Pourquoi bloquer les /metrics au public, et comment ?</a></li>
+<li><a href="#q7.-a-quoi-sert-ollama_num_gpu99"
+id="toc-q7.-a-quoi-sert-ollama_num_gpu99">Q7. A quoi sert
+<code>OLLAMA_NUM_GPU=99</code> ?</a></li>
+<li><a
+href="#q8.-quelle-est-la-strategie-de-sauvegarde-et-comment-restaurer"
+id="toc-q8.-quelle-est-la-strategie-de-sauvegarde-et-comment-restaurer">Q8.
+Quelle est la strategie de sauvegarde, et comment restaurer ?</a></li>
+<li><a href="#q9.-que-perd-on-si-on-detruit-les-volumes"
+id="toc-q9.-que-perd-on-si-on-detruit-les-volumes">Q9. Que perd-on si on
+detruit les volumes ?</a></li>
+<li><a href="#q10.-pourquoi-pas-de-sauvegarde-externalisee"
+id="toc-q10.-pourquoi-pas-de-sauvegarde-externalisee">Q10. Pourquoi pas
+de sauvegarde externalisee ?</a></li>
+<li><a href="#q11.-comment-teste-t-on-quune-restauration-fonctionne"
+id="toc-q11.-comment-teste-t-on-quune-restauration-fonctionne">Q11.
+Comment teste-t-on qu’une restauration fonctionne ?</a></li>
+<li><a
+href="#q12.-quelle-combinaison-tourne-en-production-sur-le-serveur"
+id="toc-q12.-quelle-combinaison-tourne-en-production-sur-le-serveur">Q12.
+Quelle combinaison tourne en production sur le serveur ?</a></li>
+</ul></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1
+id="fiche-de-revision-configurations-multi-environnement-et-resilience">Fiche
+de revision : Configurations multi-environnement et resilience</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR3 (TPRE601). Objectif :
+savoir presenter le mecanisme d’overlays Docker Compose, les trois
+configurations exigees par le sujet (complete, offline, performance),
+les overlays d’exploitation (Traefik, vision, Watchtower, GPU), la
+combinaison qui tourne en production et la strategie de sauvegarde /
+restauration / remise a zero.</p>
+</blockquote>
+<hr />
+<h2 id="vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<p>Les 10 termes qui reviennent partout dans cette fiche.</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Overlay (Compose)</strong></td>
+<td>Fichier compose partiel fusionne par-dessus un fichier de base via
+<code>-f</code>. Ne contient que les <strong>differences</strong>
+(quelques variables, labels ou limites).</td>
+</tr>
+<tr>
+<td><strong>Fusion multi <code>-f</code></strong></td>
+<td><code>docker compose -f a.yml -f b.yml up -d</code> : les services
+de meme nom sont fusionnes, le dernier fichier gagne sur les valeurs
+simples.</td>
+</tr>
+<tr>
+<td><strong>Mode degrade</strong></td>
+<td>La plateforme continue de rendre service avec des fonctionnalites
+reduites (offline : pas d’email ; performance : pas de LLM).</td>
+</tr>
+<tr>
+<td><strong>Matrice statique de secours</strong></td>
+<td>Mecanisme de repli de la generation de plans repas quand l’IA
+generative est indisponible : l’utilisateur recoit quand meme un
+plan.</td>
+</tr>
+<tr>
+<td><strong>Reverse proxy</strong></td>
+<td>Point d’entree HTTP(S) unique qui route les requetes vers les
+conteneurs selon le nom d’hote. Ici <strong>Traefik</strong>, instance
+mutualisee du serveur.</td>
+</tr>
+<tr>
+<td><strong>certresolver</strong></td>
+<td>Mecanisme Traefik de fourniture des certificats TLS. Ici le resolver
+<code>duckdns</code> avec un <strong>certificat wildcard</strong>
+<code>*.zespri.duckdns.org</code> deja emis.</td>
+</tr>
+<tr>
+<td><strong>ipAllowList</strong></td>
+<td>Middleware Traefik qui n’autorise que les IP d’une liste
+(<code>sourcerange</code>). Toute autre IP recoit un 403.</td>
+</tr>
+<tr>
+<td><strong>Offload GPU</strong></td>
+<td>Nombre de couches du modele LLM placees en <strong>VRAM</strong>
+(memoire GPU) plutot qu’en RAM CPU. Pilote par
+<code>OLLAMA_NUM_GPU</code>.</td>
+</tr>
+<tr>
+<td><strong><code>pg_dump --clean</code></strong></td>
+<td>Export SQL logique PostgreSQL ; <code>--clean</code> genere les
+<code>DROP</code> avant les <code>CREATE</code>, donc la restauration
+<strong>remplace</strong> l’existant.</td>
+</tr>
+<tr>
+<td><strong>Volume nomme</strong></td>
+<td>Stockage Docker persistant entre redemarrages ;
+<code>docker compose down -v</code> le detruit.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tldr">1. TL;DR</h2>
+<p>Le sujet TPRE601 (livrable 01) exige que la demonstration puisse etre
+executee sous <strong>trois configurations distinctes</strong> :
+<strong>complete</strong>, <strong>offline</strong> et
+<strong>performance</strong>. La reponse du depot MSPR-Deploy :
+<strong>un compose de base unique + des overlays courts</strong>,
+fusionnes a la demande par
+<code>docker compose -f docker-compose.yml -f &lt;overlay&gt;.yml up -d</code>.</p>
+<ul>
+<li><strong>9 fichiers compose</strong> : 2 bases
+(<code>docker-compose.yml</code> prod images GHCR,
+<code>docker-compose.dev.yml</code> build local) + 7 overlays
+(monitoring, offline, performance, traefik, vision, watchtower,
+gpu).</li>
+<li><strong>Complete</strong> : base + monitoring. Tous les services, IA
+generative active (Ollama local par defaut, Mistral si
+<code>MISTRAL_API_KEY</code>).</li>
+<li><strong>Offline</strong> : 2 services surcharges seulement.
+<code>AUTH_OFFLINE=true</code> (inscription/connexion sans verification
+email, aucun appel Resend) + <code>DEFAULT_LLM=ollama</code> et
+<code>MISTRAL_API_KEY</code> vide (aucun appel Mistral). Demontrable
+cable reseau debranche.</li>
+<li><strong>Performance</strong> : limites
+<code>cpus</code>/<code>memory</code> par service, demarrage allege sans
+<code>ai-nutrition</code> ni <code>ollama</code> (la generation de plans
+retombe sur la <strong>matrice statique de secours</strong>), monitoring
+reduit a prometheus + grafana + cadvisor.</li>
+<li><strong>Production (serveur)</strong> : base + monitoring + traefik
++ vision + watchtower (+ gpu une fois le passthrough valide). Exposition
+HTTPS sur <code>*.zespri.duckdns.org</code>, endpoints de metriques
+bloques au public.</li>
+<li><strong>Resilience</strong> : 3 scripts bash dans
+<code>scripts/</code> : <code>backup.sh</code> (dump horodate des 3
+bases dans <code>backups/&lt;timestamp&gt;/</code>),
+<code>restore.sh</code> (derniere sauvegarde ou dossier precis, remplace
+l’existant), <code>clean.sh</code> (remise a zero, suppression des
+volumes).</li>
+<li><strong>Limites assumees</strong> : sauvegardes locales uniquement,
+pas d’externalisation, pas de test de restauration automatise.</li>
+</ul>
+<p>Le compose de base et le bootstrap sont detailles dans la <a
+href="Deploiement.html">fiche Deploiement</a>. Le contenu de l’overlay
+monitoring est detaille dans la <a href="Observabilite.html">fiche
+Observabilite</a>.</p>
+<hr />
+<h2 id="architecture">2. Architecture</h2>
+<p>Principe : <strong>exactement 1 base + 0..n overlays</strong>. Chaque
+overlay ne redefinit que ce qui change ; Compose fusionne le tout en une
+configuration effective.</p>
+<pre class="mermaid"><code>flowchart TB
+    subgraph BASES[&quot;1 compose de base (au choix)&quot;]
+        PROD[&quot;docker-compose.yml&lt;br/&gt;prod : images GHCR&quot;]
+        DEV[&quot;docker-compose.dev.yml&lt;br/&gt;dev : build local&quot;]
+    end
+
+    subgraph OVL[&quot;Overlays cumulables&quot;]
+        MON[&quot;monitoring.yml&quot;]
+        OFF[&quot;offline.yml&quot;]
+        PERF[&quot;performance.yml&quot;]
+        TRA[&quot;traefik.yml&quot;]
+        VIS[&quot;vision.yml&quot;]
+        WT[&quot;watchtower.yml&quot;]
+        GPU[&quot;gpu.yml&quot;]
+    end
+
+    PROD --&gt; MERGE[&quot;Fusion Compose&lt;br/&gt;par cle de service&quot;]
+    DEV -.-&gt; MERGE
+    OVL --&gt; MERGE
+    MERGE --&gt; STACK[&quot;Stack effective&lt;br/&gt;docker compose up -d&quot;]</code></pre>
+<p>Les fichiers compose du depot MSPR-Deploy :</p>
+<pre><code>MSPR-Deploy/
+├── docker-compose.yml              # base prod : 11 services, images GHCR
+├── docker-compose.dev.yml          # base dev : build local des depots clones
+├── docker-compose.monitoring.yml   # overlay observabilite (10 services)
+├── docker-compose.offline.yml      # config offline (2 services surcharges)
+├── docker-compose.performance.yml  # config performance (limites CPU/RAM)
+├── docker-compose.traefik.yml      # exposition publique HTTPS (Traefik)
+├── docker-compose.vision.yml       # classification photo Mistral vision
+├── docker-compose.watchtower.yml   # deploiement continu (Watchtower)
+├── docker-compose.gpu.yml          # acceleration GPU NVIDIA pour Ollama
+├── CONFIGS.md                      # doc des configurations et combinaisons
+├── scripts/
+│   ├── backup.sh                   # sauvegarde horodatee des 3 bases
+│   ├── restore.sh                  # restauration (derniere ou dossier precis)
+│   └── clean.sh                    # remise a zero (suppression volumes)
+└── backups/                        # dumps horodates (non versionne)</code></pre>
+<p>Les 11 services de la base : <code>db</code>, <code>auth-db</code>,
+<code>auth-migrate</code>, <code>auth</code>, <code>api</code>,
+<code>etl</code>, <code>ai-nutrition</code>, <code>ollama</code>,
+<code>mongo</code>, <code>reco-fitness</code>, <code>front</code>.
+L’overlay monitoring en ajoute 10 (prometheus, alertmanager, grafana,
+loki, promtail, cadvisor, node-exporter, 2 postgres-exporter,
+mongodb-exporter).</p>
+<hr />
+<h2 id="stack-technique">3. Stack technique</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 18%" />
+<col style="width: 13%" />
+<col style="width: 43%" />
+</colgroup>
+<thead>
+<tr>
+<th>Composant</th>
+<th>Detail</th>
+<th>Role</th>
+<th>Pourquoi ce choix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docker Compose v2</td>
+<td>fusion multi <code>-f</code></td>
+<td>Orchestration + configurations</td>
+<td>Mecanisme natif, zero outil supplementaire</td>
+</tr>
+<tr>
+<td>Docker Engine 24+</td>
+<td>cgroups</td>
+<td>Applique <code>deploy.resources.limits</code> hors Swarm</td>
+<td>Limites CPU/RAM sans orchestrateur lourd</td>
+</tr>
+<tr>
+<td>Traefik</td>
+<td>instance mutualisee du serveur, reseau externe
+<code>proxy_net</code></td>
+<td>Reverse proxy HTTPS</td>
+<td>Decouverte par labels Docker, certificats automatiques</td>
+</tr>
+<tr>
+<td>DuckDNS</td>
+<td><code>*.zespri.duckdns.org</code></td>
+<td>DNS + certificat wildcard</td>
+<td>Gratuit, resolver ACME supporte par Traefik</td>
+</tr>
+<tr>
+<td>Watchtower</td>
+<td><code>containrrr/watchtower:latest</code></td>
+<td>CD : pull GHCR + recreation des conteneurs</td>
+<td>Detail dans la <a href="CICD-Qualite.html">fiche CI/CD et
+qualite</a></td>
+</tr>
+<tr>
+<td>Ollama</td>
+<td><code>gemma3:4b</code> (~3 Go)</td>
+<td>LLM local</td>
+<td>Rend le mode offline possible (aucun appel sortant)</td>
+</tr>
+<tr>
+<td>NVIDIA Container Toolkit</td>
+<td>runtime <code>nvidia</code></td>
+<td>Passthrough GPU vers le conteneur Ollama</td>
+<td>Prerequis de l’overlay gpu</td>
+</tr>
+<tr>
+<td><code>pg_dump</code> / <code>psql</code></td>
+<td>PostgreSQL</td>
+<td>Sauvegarde / restauration SQL logique</td>
+<td>Outils natifs, executes via <code>docker exec</code></td>
+</tr>
+<tr>
+<td><code>mongodump</code> / <code>mongorestore</code></td>
+<td>MongoDB</td>
+<td>Sauvegarde / restauration BSON</td>
+<td>Outils natifs, format archive en un flux</td>
+</tr>
+<tr>
+<td>Bash</td>
+<td><code>set -euo pipefail</code></td>
+<td>Scripts de resilience</td>
+<td>Portables, lisibles, sans dependance</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="les-3-configurations-exigees-par-le-sujet">4. Les 3
+configurations exigees par le sujet</h2>
+<p>Le sujet demande que la demonstration soit <strong>executable sous
+trois configurations distinctes</strong>. Chacune est une combinaison
+documentee dans <code>CONFIGS.md</code>.</p>
+<h3 id="configuration-complete">4.1 Configuration COMPLETE</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yml <span class="at">-f</span> docker-compose.monitoring.yml up <span class="at">-d</span></span></code></pre></div>
+<ul>
+<li><strong>Tous les services</strong> : API, Auth, ETL, AI-Nutrition (+
+Ollama), Reco-Fitness, Front, PostgreSQL metier + auth, MongoDB. Soit 21
+conteneurs avec le monitoring.</li>
+<li><strong>IA generative operationnelle</strong> : Ollama local par
+defaut (<code>DEFAULT_LLM: ${DEFAULT_LLM:-ollama}</code> dans la base) ;
+bascule sur Mistral possible si <code>MISTRAL_API_KEY</code> est
+renseignee dans <code>.env</code>.</li>
+<li><strong>Observabilite complete</strong> : metriques applicatives,
+conteneurs, hote, BDD + logs centralises (voir <a
+href="Observabilite.html">fiche Observabilite</a>).</li>
+</ul>
+<p>C’est la configuration de reference : tout le reste se definit par
+rapport a elle (offline retire les dependances internet, performance
+retire les services lourds).</p>
+<h3 id="configuration-offline">4.2 Configuration OFFLINE</h3>
+<p>Mode degrade <strong>demontrable sans connexion internet</strong>.
+L’overlay entier tient en quelques lignes :</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># docker-compose.offline.yml</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">auth</span><span class="kw">:</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">AUTH_OFFLINE</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;true&quot;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ai-nutrition</span><span class="kw">:</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">DEFAULT_LLM</span><span class="kw">:</span><span class="at"> ollama</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">MISTRAL_API_KEY</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yml <span class="at">-f</span> docker-compose.offline.yml up <span class="at">-d</span></span></code></pre></div>
+<p>Deux dependances internet sont neutralisees :</p>
+<ol type="1">
+<li><strong>Emails (Resend)</strong> : <code>AUTH_OFFLINE=true</code>
+est lu par le code du service AUTH
+(<code>MSPR-AUTH/src/lib/auth.ts</code>). Consequences : pas d’envoi
+d’email a l’inscription (<code>sendOnSignUp: !OFFLINE</code>), connexion
+autorisee sans email verifie
+(<code>requireEmailVerification: !OFFLINE</code>), et les fonctions
+d’envoi (verification, reset password) font un retour anticipe avec un
+simple log. <strong>Aucun appel Resend</strong>.</li>
+<li><strong>LLM (Mistral)</strong> : <code>DEFAULT_LLM=ollama</code>
+force le LLM local et <code>MISTRAL_API_KEY: ""</code>
+<strong>ecrase</strong> toute cle presente dans <code>.env</code> (la
+fusion Compose fait gagner l’overlay). <strong>Aucun appel Mistral
+possible</strong>, meme par erreur de config.</li>
+</ol>
+<p>Le front reste branche sur le backend local, seede par l’ETL
+(datasets embarques).</p>
+<p><strong>Prerequis, une seule fois avec internet</strong> : images
+construites ou pull, et modele Ollama <code>gemma3:4b</code> (~3 Go)
+telecharge dans le volume <code>ollama_data</code>. Ensuite, tout tourne
+hors-ligne : inscription, connexion, generation de plan repas par le LLM
+local.</p>
+<h3 id="configuration-performance">4.3 Configuration PERFORMANCE</h3>
+<p>Optimisee pour <strong>materiel modeste</strong> : limites de
+ressources + demarrage allege + monitoring reduit.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Coeur de stack avec limites de ressources, sans IA generative lourde</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yml <span class="at">-f</span> docker-compose.performance.yml up <span class="at">-d</span> <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  db auth-db auth-migrate auth api etl mongo reco-fitness front</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Monitoring simplifie (Prometheus + Grafana + cAdvisor)</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.monitoring.yml up <span class="at">-d</span> prometheus grafana cadvisor</span></code></pre></div>
+<p>L’overlay applique des limites <code>cpus</code> /
+<code>memory</code> par service via <code>deploy.resources.limits</code>
+(honore par Compose v2 hors Swarm, traduit en limites cgroups) :</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>cpus</th>
+<th>memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>db</td>
+<td>1.0</td>
+<td>512M</td>
+</tr>
+<tr>
+<td>auth-db</td>
+<td>0.5</td>
+<td>256M</td>
+</tr>
+<tr>
+<td>auth</td>
+<td>0.5</td>
+<td>256M</td>
+</tr>
+<tr>
+<td>api</td>
+<td>1.5</td>
+<td>768M</td>
+</tr>
+<tr>
+<td>etl</td>
+<td>0.5</td>
+<td>256M</td>
+</tr>
+<tr>
+<td>ai-nutrition</td>
+<td>1.5</td>
+<td>1500M</td>
+</tr>
+<tr>
+<td>reco-fitness</td>
+<td>1.0</td>
+<td>512M</td>
+</tr>
+<tr>
+<td>mongo</td>
+<td>0.5</td>
+<td>512M</td>
+</tr>
+<tr>
+<td>front</td>
+<td>0.5</td>
+<td>256M</td>
+</tr>
+</tbody>
+</table>
+<p>Trois mecanismes distincts a savoir expliquer :</p>
+<ol type="1">
+<li><strong>Limites de ressources</strong> : chaque service est
+plafonne, aucun ne peut affamer les autres (l’API garde le plus gros
+budget : 1.5 cpus / 768M, l’IA aurait 1.5 cpus / 1500M si
+demarree).</li>
+<li><strong>Demarrage allege</strong> : on liste explicitement les
+services a demarrer apres <code>up -d</code>. <code>ai-nutrition</code>
+et <code>ollama</code> (les plus gourmands : modele 4 milliards de
+parametres, inference CPU tres lente) ne sont pas dans la liste et rien
+n’en depend, donc ils restent eteints. La generation de plans repas
+<strong>retombe sur la matrice statique de secours</strong> :
+l’utilisateur recoit toujours un plan, sans latence LLM. Pour reintegrer
+l’IA : ajouter <code>ai-nutrition ollama</code> a la liste.</li>
+<li><strong>Monitoring simplifie</strong> : seulement
+<code>prometheus</code>, <code>grafana</code>, <code>cadvisor</code>
+(metriques essentielles conteneurs), au lieu des 10 services de
+l’overlay complet. A noter : <code>ollama</code> n’a volontairement pas
+d’entree dans l’overlay performance, il n’est pas cense tourner dans
+cette configuration.</li>
+</ol>
+<hr />
+<h2 id="overlays-additionnels-et-points-techniques">5. Overlays
+additionnels et points techniques</h2>
+<h3 id="le-mecanisme-de-fusion-compose-a-maitriser-absolument">5.1 Le
+mecanisme de fusion Compose (a maitriser absolument)</h3>
+<p><code>docker compose -f base.yml -f overlay.yml</code> fusionne les
+fichiers <strong>par cle de service</strong> : <code>api</code> dans la
+base et <code>api</code> dans l’overlay decrivent le meme service,
+Compose combine leurs attributs.</p>
+<p>Regles de fusion :</p>
+<ul>
+<li><strong>Mappings</strong> (<code>environment</code>,
+<code>labels</code> en syntaxe map) : fusionnes <strong>cle par
+cle</strong>. L’overlay ajoute ses cles et surcharge celles qui existent
+(ex : <code>MISTRAL_API_KEY: ""</code> de l’offline ecrase
+<code>${MISTRAL_API_KEY:-}</code> de la base).</li>
+<li><strong>Scalaires</strong> (<code>image</code>,
+<code>container_name</code>, <code>restart</code>) : la valeur du
+<strong>dernier <code>-f</code> gagne</strong> (ex :
+<code>image: mspr-front:traefik</code> remplace
+<code>ghcr.io/whitefoxxyt/mspr-front:latest</code>).</li>
+<li><strong>Listes</strong> (<code>ports</code>, <code>dns</code>,
+<code>tmpfs</code>) : concatenees. <code>volumes</code> : fusionnes par
+chemin de montage cible. <code>labels</code> en syntaxe liste
+<code>"cle=valeur"</code> : fusionnes par cle.</li>
+<li><strong><code>networks</code></strong> : union (la base attache
+<code>mspr_data_network</code>, l’overlay Traefik ajoute
+<code>proxy_net</code>).</li>
+<li><strong>L’ordre des <code>-f</code> compte</strong> : du plus
+generique au plus specifique.</li>
+<li><strong>Verification</strong> :
+<code>docker compose -f ... -f ... config</code> affiche la
+configuration fusionnee finale (tres utile en demo si le jury doute du
+resultat).</li>
+</ul>
+<p>Exemple concret avec les fichiers reels :</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># docker-compose.yml (base, service api, extrait)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">api</span><span class="kw">:</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> ghcr.io/whitefoxxyt/mspr-api:latest</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">DB_HOST</span><span class="kw">:</span><span class="at"> mspr-healthai-db</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">BETTER_AUTH_SECRET</span><span class="kw">:</span><span class="at"> ${BETTER_AUTH_SECRET}</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># docker-compose.traefik.yml (overlay, service api, extrait)</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">api</span><span class="kw">:</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">networks</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">mspr_data_network</span><span class="kw">,</span><span class="at"> proxy_net</span><span class="kw">]</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CORS_ORIGIN</span><span class="kw">:</span><span class="at"> https://mspr.zespri.duckdns.org</span></span></code></pre></div>
+<p>Resultat fusionne : un seul service <code>api</code>, image GHCR de
+la base, les trois variables d’environnement presentes, les deux reseaux
+attaches, plus les labels Traefik.</p>
+<h3 id="overlay-traefik-exposition-publique-https">5.2 Overlay TRAEFIK :
+exposition publique HTTPS</h3>
+<p><code>docker-compose.traefik.yml</code> place la plateforme derriere
+le reverse proxy <strong>Traefik</strong> (instance mutualisee du
+serveur, le depot n’ajoute que des labels et le reseau). Routage par nom
+d’hote sur <code>*.zespri.duckdns.org</code> :</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Sous-domaine</th>
+<th>Port interne</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>front</td>
+<td><code>mspr.zespri.duckdns.org</code></td>
+<td>5173</td>
+</tr>
+<tr>
+<td>api</td>
+<td><code>mspr-api.zespri.duckdns.org</code></td>
+<td>8080</td>
+</tr>
+<tr>
+<td>auth</td>
+<td><code>mspr-auth.zespri.duckdns.org</code></td>
+<td>3000</td>
+</tr>
+<tr>
+<td>ai-nutrition</td>
+<td><code>mspr-ai.zespri.duckdns.org</code></td>
+<td>8001</td>
+</tr>
+<tr>
+<td>reco-fitness</td>
+<td><code>mspr-reco.zespri.duckdns.org</code></td>
+<td>8000</td>
+</tr>
+<tr>
+<td>grafana</td>
+<td><code>mspr-grafana.zespri.duckdns.org</code></td>
+<td>3000</td>
+</tr>
+</tbody>
+</table>
+<p>Points cles :</p>
+<ul>
+<li><strong>TLS</strong> : entrypoint <code>websecure</code>,
+<code>tls.certresolver=duckdns</code> (certificat
+<strong>wildcard</strong> deja emis, un seul certificat couvre tous les
+sous-domaines).</li>
+<li><strong>Reseau externe <code>proxy_net</code></strong> : declare
+<code>external: true</code>, c’est le reseau de l’instance Traefik du
+serveur. Chaque service expose y est attache <strong>en plus</strong> de
+<code>mspr_data_network</code>.</li>
+<li><strong>CORS alignees sur l’origine du front</strong> :
+<code>CORS_ORIGIN</code> (api, auth) et <code>CORS_ALLOW_ORIGINS</code>
+(ai-nutrition, reco-fitness) pointent sur
+<code>https://mspr.zespri.duckdns.org</code> ;
+<code>BETTER_AUTH_URL</code> et <code>GF_SERVER_ROOT_URL</code> passent
+en URL publique.</li>
+<li><strong>Front : image locale
+<code>mspr-front:traefik</code></strong> : Vite fige les URLs des
+backends <strong>au build</strong>. L’image GHCR embarque les URLs
+localhost ; pour l’exposition publique il faut une image rebuildee
+localement avec les URLs publiques. Consequence : ce service est exclu
+de Watchtower (pas de registre source a suivre).</li>
+<li><strong>Blocage public des metriques</strong> : un middleware
+<code>ipallowlist</code> nomme <code>mspr-metrics-deny</code>
+(sourcerange <code>127.0.0.1/32</code>) est applique a des routeurs
+dedies de <strong>priorite 100</strong> qui matchent
+<code>Path(/metrics)</code> (auth, ai, reco) ou
+<code>PathPrefix(/api/actuator)</code> (api). Vu de l’exterieur, ces
+chemins repondent 403 ; <strong>Prometheus n’est pas impacte</strong>
+car il scrape en interne via le reseau Docker, sans passer par Traefik.
+Voir la <a href="Securite.html">fiche Securite</a>.</li>
+</ul>
+<h3 id="overlay-vision-classification-photo-par-mistral">5.3 Overlay
+VISION : classification photo par Mistral</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># docker-compose.vision.yml</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ai-nutrition</span><span class="kw">:</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">ANALYZE_BACKEND</span><span class="kw">:</span><span class="at"> mistral_vision</span></span></code></pre></div>
+<ul>
+<li>Bascule la classification d’aliments par photo (route A1) sur le
+backend <strong>Mistral vision</strong>, avec <strong>repli automatique
+sur Food-101</strong> (modele local HuggingFace) en cas d’echec.</li>
+<li>Utilise l’<strong>image GHCR officielle</strong>
+(<code>ghcr.io/whitefoxxyt/mspr-ai-nutrition:latest</code>, qui contient
+le code A1 depuis le commit <code>ab0f5d8</code>). Plus d’image derivee
+locale : l’image officielle est suivie par Watchtower, donc CD de bout
+en bout.</li>
+</ul>
+<h3 id="overlay-watchtower-deploiement-continu-renvoi">5.4 Overlay
+WATCHTOWER : deploiement continu (renvoi)</h3>
+<p><code>docker-compose.watchtower.yml</code> ajoute
+<strong>Watchtower</strong> : il interroge GHCR toutes les 5 minutes
+(<code>WATCHTOWER_POLL_INTERVAL: "300"</code>) et recree automatiquement
+un conteneur des qu’un nouveau <code>:latest</code> est publie. Boucle
+complete : <code>git push</code> -&gt; GitHub Actions build l’image
+-&gt; Watchtower la tire et recree le conteneur, sans intervention
+manuelle. Seuls les conteneurs listes en argument sont surveilles
+(<code>mspr-api</code>, <code>mspr-auth-service</code>,
+<code>mspr-etl</code>, <code>mspr-reco-fitness</code>,
+<code>mspr-ai-nutrition</code>) ; le front est exclu (image locale), et
+les migrations one-shot (<code>mspr-auth-migrate</code>) ne sont pas
+rejouees. Detail complet (y compris le fix
+<code>DOCKER_API_VERSION: "1.44"</code>) dans la <a
+href="CICD-Qualite.html">fiche CI/CD et qualite</a>.</p>
+<h3 id="overlay-gpu-ollama-accelere-par-le-gpu-nvidia">5.5 Overlay GPU :
+Ollama accelere par le GPU NVIDIA</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yml <span class="at">-f</span> docker-compose.gpu.yml up <span class="at">-d</span></span></code></pre></div>
+<p>Trois reglages, deux services :</p>
+<ol type="1">
+<li><strong>Reservation du GPU pour <code>ollama</code></strong> :
+<code>deploy.resources.reservations.devices</code> avec
+<code>driver: nvidia</code>, <code>count: all</code>,
+<code>capabilities: [gpu]</code>. Prerequis hote : driver NVIDIA +
+<strong>NVIDIA Container Toolkit</strong> (le runtime
+<code>nvidia</code> doit apparaitre dans <code>docker info</code>).</li>
+<li><strong><code>OLLAMA_KEEP_ALIVE: "-1"</code></strong> : le modele
+reste charge en VRAM en permanence, pas de cold start a chaque
+generation. <strong><code>OLLAMA_NUM_PARALLEL: "1"</code></strong> : une
+inference a la fois, car la carte du serveur (Quadro P1000) n’a que 4 Go
+de VRAM.</li>
+<li><strong><code>OLLAMA_NUM_GPU: "99"</code> cote
+<code>ai-nutrition</code></strong> : force l’<strong>offload
+complet</strong> du modele a chaque requete. Sans cela,
+l’auto-estimation d’Ollama est trop prudente sur la P1000 : ~1 Go
+offloade seulement, soit un split <strong>81 % CPU</strong>, alors que
+le modele entier tient en <strong>2.8 Go de VRAM mesures</strong> (100 %
+GPU). La variable vit cote client car c’est une option passee a chaque
+requete a l’API Ollama.</li>
+</ol>
+<p>Pourquoi cet overlay est important : en CPU pur, la generation
+documentee depasse <strong>200 000 ms par plan</strong>, au-dela du
+timeout applicatif. Le GPU rend la generation Gemma3:4b exploitable, et
+permet d’activer le prompt few-shot complet
+(<code>FEW_SHOT_FULL_EXAMPLES=true</code>) ainsi que l’eval LLM n=30
+(depot AI-Nutrition, <code>docs/GPU_EVAL_PLAYBOOK.md</code>).</p>
+<p>Verifications apres demarrage :
+<code>docker exec mspr-ollama nvidia-smi</code> (la carte est visible
+dans le conteneur) et <code>docker exec mspr-ollama ollama ps</code>
+(colonne PROCESSOR = GPU).</p>
+<h3 id="combinaison-de-production-sur-le-serveur">5.6 Combinaison de
+production sur le serveur</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yml <span class="at">-f</span> docker-compose.monitoring.yml <span class="dt">\</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.traefik.yml <span class="at">-f</span> docker-compose.vision.yml <span class="dt">\</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.watchtower.yml up <span class="at">-d</span></span></code></pre></div>
+<p>Plateforme <strong>exposee</strong> (Traefik HTTPS),
+<strong>supervisee</strong> (monitoring complet), <strong>maintenue a
+jour automatiquement</strong> (Watchtower), avec la classification photo
+Mistral active. Une fois le passthrough GPU valide sur l’hote, on ajoute
+<code>-f docker-compose.gpu.yml</code> a la commande.</p>
+<hr />
+<h2 id="resilience-sauvegarde-restauration-remise-a-zero">6. Resilience
+: sauvegarde, restauration, remise a zero</h2>
+<p>Trois scripts bash dans <code>scripts/</code>, qui operent sur les
+<strong>conteneurs en cours d’execution</strong> (via
+<code>docker exec</code>, pas besoin d’arreter la stack pour
+sauvegarder).</p>
+<h3 id="backup.sh-sauvegarde-horodatee">6.1 <code>backup.sh</code> :
+sauvegarde horodatee</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backup.sh</span>                  <span class="co"># dump horodate dans backups/&lt;timestamp&gt;/</span></span></code></pre></div>
+<pre class="mermaid"><code>flowchart LR
+    PG[(&quot;mspr-healthai-db&lt;br/&gt;healthai&quot;)] --&gt;|pg_dump --clean| F1[&quot;healthai.sql.gz&quot;]
+    APG[(&quot;mspr-auth-db&lt;br/&gt;auth_db&quot;)] --&gt;|pg_dump --clean| F2[&quot;auth_db.sql.gz&quot;]
+    MG[(&quot;mspr-mongo&lt;br/&gt;reco_fitness&quot;)] --&gt;|mongodump --archive| F3[&quot;mongo_reco_fitness.archive.gz&quot;]
+    F1 --&gt; DIR[&quot;backups/&amp;lt;timestamp&amp;gt;/&quot;]
+    F2 --&gt; DIR
+    F3 --&gt; DIR</code></pre>
+<ul>
+<li>Verifie d’abord que les <strong>3 conteneurs de donnees</strong>
+tournent (<code>mspr-healthai-db</code>, <code>mspr-auth-db</code>,
+<code>mspr-mongo</code>), sinon echec explicite.</li>
+<li><strong>PostgreSQL metier</strong> (<code>healthai</code>) et
+<strong>PostgreSQL auth</strong> (<code>auth_db</code>) :
+<code>pg_dump --clean --if-exists</code> pipe dans <code>gzip</code>. Le
+dump contient schema + donnees, precede des
+<code>DROP ... IF EXISTS</code>.</li>
+<li><strong>MongoDB</strong> (<code>reco_fitness</code>) :
+<code>mongodump --db reco_fitness --archive</code> pipe dans
+<code>gzip</code> (un seul flux binaire).</li>
+<li>Sortie horodatee : <code>backups/20260611-..../</code> (format
+<code>date +%Y%m%d-%H%M%S</code>, donc tri lexicographique = tri
+chronologique). Le dossier <code>backups/</code> n’est <strong>pas
+versionne</strong>.</li>
+</ul>
+<h3 id="restore.sh-restauration">6.2 <code>restore.sh</code> :
+restauration</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/restore.sh</span>                 <span class="co"># restaure la derniere sauvegarde</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/restore.sh</span> backups/XXXX    <span class="co"># restaure une sauvegarde precise</span></span></code></pre></div>
+<ul>
+<li>Sans argument : selectionne la <strong>derniere</strong> sauvegarde
+(<code>find backups/ ... | sort | tail -n1</code>, correct grace au
+format horodate).</li>
+<li>Chaque dump present est restaure individuellement (test
+<code>if [[ -f ... ]]</code>) : on peut restaurer un dossier
+partiel.</li>
+<li>PostgreSQL : <code>gunzip -c | docker exec -i ... psql</code>. Comme
+le dump a ete fait avec <code>--clean</code>, la restauration
+<strong>remplace</strong> les tables existantes.</li>
+<li>MongoDB :
+<code>gunzip -c | docker exec -i ... mongorestore --drop --archive</code>.
+Le <code>--drop</code> supprime chaque collection avant de la
+recharger.</li>
+<li>Consequence a assumer devant le jury : la restauration est un
+<strong>remplacement</strong>, pas une fusion. Les donnees ecrites apres
+la sauvegarde sont perdues.</li>
+</ul>
+<h3 id="clean.sh-remise-a-zero">6.3 <code>clean.sh</code> : remise a
+zero</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/clean.sh</span>                   <span class="co"># stack prod ; --dev pour la base dev ; --force sans confirmation</span></span></code></pre></div>
+<ul>
+<li>Demande confirmation (sauf <code>--force</code>), puis
+<code>docker compose ... down -v --remove-orphans</code> sur la base
+choisie (+ l’overlay monitoring s’il est present).</li>
+<li>Supprime <strong>tous les volumes</strong> : BDD metier, BDD auth,
+Mongo, Ollama, monitoring.</li>
+<li>Le prochain demarrage repart d’une base vierge : les migrations
+rejouent, et <strong>l’ETL recharge les datasets au prochain
+run</strong>.</li>
+</ul>
+<h3 id="ce-qui-est-perdu-recuperable-apres-un-clean">6.4 Ce qui est
+perdu / recuperable apres un <code>clean</code></h3>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 25%" />
+<col style="width: 52%" />
+</colgroup>
+<thead>
+<tr>
+<th>Volume</th>
+<th>Contenu</th>
+<th>Apres destruction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>postgres_data</code></td>
+<td>Donnees metier <code>healthai</code></td>
+<td>Tables ETL rechargees par l’ETL ; donnees ecrites par les services
+perdues sans backup</td>
+</tr>
+<tr>
+<td><code>auth_db_data</code></td>
+<td>Comptes utilisateurs, sessions</td>
+<td><strong>Perdu sans backup</strong> (irremplacable)</td>
+</tr>
+<tr>
+<td><code>mongo_data</code></td>
+<td>Profils fitness, programmes, feedbacks</td>
+<td><strong>Perdu sans backup</strong> (irremplacable)</td>
+</tr>
+<tr>
+<td><code>ollama_data</code></td>
+<td>Modele <code>gemma3:4b</code> (~3 Go)</td>
+<td>Re-telecharge au demarrage (internet requis)</td>
+</tr>
+<tr>
+<td><code>etl_data</code></td>
+<td>Exports CSV processed / samples</td>
+<td>Regenere au prochain run ETL</td>
+</tr>
+<tr>
+<td><code>prometheus_data</code>, <code>grafana_data</code>,
+<code>loki_data</code></td>
+<td>Metriques (retention 7j), dashboards, logs</td>
+<td>Historique perdu ; dashboards re-provisionnes depuis le depot</td>
+</tr>
+</tbody>
+</table>
+<p>Le perimetre de <code>backup.sh</code> (les 3 bases) couvre
+exactement les donnees non regenerables.</p>
+<h3 id="limites-assumees">6.5 Limites assumees</h3>
+<ul>
+<li><strong>Sauvegardes locales uniquement</strong> :
+<code>backups/</code> vit sur le meme disque que les volumes. Une panne
+disque emporte donnees ET sauvegardes.</li>
+<li><strong>Pas d’externalisation</strong> (stockage objet, seconde
+machine) ni de planification automatique : execution manuelle.</li>
+<li><strong>Pas de test de restauration automatise</strong> : la
+restauration est verifiee manuellement.</li>
+</ul>
+<p>Ces limites sont documentees et a presenter comme des choix de
+perimetre (voir Q10 et Q11).</p>
+<hr />
+<h2 id="code-essentiel-a-savoir-expliquer-au-jury">7. Code essentiel a
+savoir expliquer au jury</h2>
+<h3 id="loverlay-offline-complet">7.1 L’overlay offline complet</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># docker-compose.offline.yml</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">auth</span><span class="kw">:</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">AUTH_OFFLINE</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;true&quot;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ai-nutrition</span><span class="kw">:</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">DEFAULT_LLM</span><span class="kw">:</span><span class="at"> ollama</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">MISTRAL_API_KEY</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;&quot;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Tout l’overlay tient en <strong>2 services et 3 variables</strong> :
+c’est l’argument massue en faveur des overlays (la config offline n’est
+pas un fork de 250 lignes du compose de base, c’est un delta
+minimal).</li>
+<li><code>MISTRAL_API_KEY: ""</code> n’est pas decoratif : la fusion
+Compose fait que cette valeur <strong>ecrase</strong>
+<code>${MISTRAL_API_KEY:-}</code> de la base. Meme si une cle est
+presente dans <code>.env</code>, le service ne la voit pas : aucun appel
+Mistral possible.</li>
+<li><code>AUTH_OFFLINE</code> est un toggle applicatif : l’overlay ne
+fait que positionner la variable, le comportement vit dans le code du
+service AUTH (extrait suivant).</li>
+<li>Prerequis une seule fois avec internet : images +
+<code>gemma3:4b</code> dans le volume <code>ollama_data</code>.</li>
+</ul>
+<h3 id="le-toggle-auth_offline-dans-mspr-auth">7.2 Le toggle
+AUTH_OFFLINE dans MSPR-AUTH</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">// MSPR-AUTH/src/lib/auth.ts (extrait)</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">// Mode offline (config performance/offline MSPR3) : desactive la verification email</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">// et les envois Resend pour une demo sans connexion internet.</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> OFFLINE <span class="op">=</span> <span class="bu">process</span><span class="op">.</span><span class="at">env</span><span class="op">.</span><span class="at">AUTH_OFFLINE</span> <span class="op">===</span> <span class="st">&quot;true&quot;</span><span class="op">;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">const</span> auth <span class="op">=</span> <span class="fu">betterAuth</span>({</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ...</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    emailVerification<span class="op">:</span> {</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        sendOnSignUp<span class="op">:</span> <span class="op">!</span>OFFLINE<span class="op">,</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        autoSignInAfterVerification<span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">async</span> <span class="fu">sendVerificationEmail</span>({ user<span class="op">,</span> url<span class="op">,</span> token }<span class="op">,</span> request) {</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (OFFLINE) {</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>                <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&quot;[offline] verification email desactivee pour&quot;</span><span class="op">,</span> user<span class="op">.</span><span class="at">email</span>)<span class="op">;</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>            <span class="co">// ... envoi via Resend (necessite internet)</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>        }<span class="op">,</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    emailAndPassword<span class="op">:</span> {</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>        enabled<span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>        requireEmailVerification<span class="op">:</span> <span class="op">!</span>OFFLINE<span class="op">,</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>        <span class="kw">async</span> <span class="fu">sendResetPassword</span>({ user<span class="op">,</span> url<span class="op">,</span> token }<span class="op">,</span> request) {</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (OFFLINE) {</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>                <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&quot;[offline] reset password email desactive pour&quot;</span><span class="op">,</span> user<span class="op">.</span><span class="at">email</span>)<span class="op">;</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>            <span class="co">// ... envoi via Resend</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Le toggle agit a <strong>trois niveaux</strong> : pas d’email a
+l’inscription (<code>sendOnSignUp</code>), connexion autorisee sans
+email verifie (<code>requireEmailVerification</code>), et retour
+anticipe dans les deux fonctions d’envoi (garde-fou si un envoi etait
+declenche autrement).</li>
+<li>Le retour anticipe <strong>avant</strong> l’instanciation de l’appel
+Resend garantit zero requete sortante ; un log trace le comportement
+pour la demo.</li>
+<li>En mode normal (variable absente), <code>OFFLINE</code> vaut
+<code>false</code> et le comportement nominal (verification email
+obligatoire via Resend) est inchange : le meme code sert les deux
+configurations.</li>
+</ul>
+<h3 id="les-limites-de-ressources-performance">7.3 Les limites de
+ressources (performance)</h3>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># docker-compose.performance.yml (extrait)</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">db</span><span class="kw">:</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">deploy</span><span class="kw">:</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">resources</span><span class="kw">:</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">limits</span><span class="kw">:</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">cpus</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;1.0&quot;</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">memory</span><span class="kw">:</span><span class="at"> 512M</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">api</span><span class="kw">:</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">deploy</span><span class="kw">:</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">resources</span><span class="kw">:</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">limits</span><span class="kw">:</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">cpus</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;1.5&quot;</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">memory</span><span class="kw">:</span><span class="at"> 768M</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ai-nutrition</span><span class="kw">:</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">deploy</span><span class="kw">:</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">resources</span><span class="kw">:</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">limits</span><span class="kw">:</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">cpus</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;1.5&quot;</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">memory</span><span class="kw">:</span><span class="at"> 1500M</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>deploy.resources.limits</code> vient de la spec Compose ;
+historiquement reserve a Swarm, il est <strong>honore par Compose
+v2</strong> en mode standalone (traduit en limites cgroups sur le
+conteneur).</li>
+<li>Les budgets refletent les besoins reels : l’API Spring Boot (JVM) et
+l’IA ont les plus gros plafonds, les services Bun/FastAPI/front se
+contentent de 256M.</li>
+<li>Limite = plafond, pas reservation : un service qui depasse
+<code>memory</code> est tue (OOM), un service qui sature
+<code>cpus</code> est throttle. C’est ce qui protege le materiel
+modeste.</li>
+<li><code>ai-nutrition</code> a une limite definie mais n’est
+<strong>pas demarre</strong> dans la commande allegee ; la limite ne
+sert que si on le reintegre explicitement.</li>
+</ul>
+<h3 id="les-labels-traefik-de-lapi-routeur-blocage-metriques">7.4 Les
+labels Traefik de l’API (routeur + blocage metriques)</h3>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># docker-compose.traefik.yml (service api, extrait)</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">api</span><span class="kw">:</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">networks</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">mspr_data_network</span><span class="kw">,</span><span class="at"> proxy_net</span><span class="kw">]</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CORS_ORIGIN</span><span class="kw">:</span><span class="at"> https://mspr.zespri.duckdns.org</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">labels</span><span class="kw">:</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.enable=true&quot;</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.docker.network=proxy_net&quot;</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api.rule=Host(`mspr-api.zespri.duckdns.org`)&quot;</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api.entrypoints=websecure&quot;</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api.tls.certresolver=duckdns&quot;</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.services.mspr-api.loadbalancer.server.port=8080&quot;</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">      # Blocage public des endpoints de metriques (middleware declare une seule fois ici)</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.middlewares.mspr-metrics-deny.ipallowlist.sourcerange=127.0.0.1/32&quot;</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api-metrics.rule=Host(`mspr-api.zespri.duckdns.org`) &amp;&amp; PathPrefix(`/api/actuator`)&quot;</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api-metrics.entrypoints=websecure&quot;</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api-metrics.tls.certresolver=duckdns&quot;</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api-metrics.priority=100&quot;</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api-metrics.middlewares=mspr-metrics-deny&quot;</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api-metrics.service=mspr-api&quot;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><strong>Deux routeurs pour un meme service</strong> :
+<code>mspr-api</code> (trafic normal) et <code>mspr-api-metrics</code>
+(chemins de metriques). Le second a <code>priority=100</code>, donc il
+<strong>gagne</strong> sur le routeur general quand l’URL matche
+<code>PathPrefix(/api/actuator)</code>.</li>
+<li>Le middleware <code>mspr-metrics-deny</code> est un
+<code>ipallowlist</code> avec <code>sourcerange=127.0.0.1/32</code> :
+aucune IP publique ne matche jamais, donc 403 systematique. Il est
+<strong>declare une seule fois</strong> (ici) et reference par les
+routeurs metriques des autres services (auth, ai, reco) : pas de
+duplication.</li>
+<li><code>traefik.docker.network=proxy_net</code> dit a Traefik par quel
+reseau joindre le conteneur (il est attache a deux reseaux).</li>
+<li>Prometheus scrape <code>/api/actuator/prometheus</code> et les
+<code>/metrics</code> <strong>en interne</strong> via
+<code>mspr_data_network</code> : le blocage ne concerne que le chemin
+public via Traefik.</li>
+</ul>
+<h3 id="loverlay-gpu">7.5 L’overlay GPU</h3>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># docker-compose.gpu.yml (extrait)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ollama</span><span class="kw">:</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">deploy</span><span class="kw">:</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">resources</span><span class="kw">:</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">reservations</span><span class="kw">:</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">devices</span><span class="kw">:</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="kw">-</span><span class="at"> </span><span class="fu">driver</span><span class="kw">:</span><span class="at"> nvidia</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">count</span><span class="kw">:</span><span class="at"> all</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">capabilities</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">gpu</span><span class="kw">]</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">      # Modele garde charge en VRAM en permanence : evite le cold start.</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">OLLAMA_KEEP_ALIVE</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;-1&quot;</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">      # Une inference a la fois : sur une carte 4 Go (Quadro P1000 du serveur),</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co">      # multiplier les contextes ferait deborder la VRAM.</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">OLLAMA_NUM_PARALLEL</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;1&quot;</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ai-nutrition</span><span class="kw">:</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co">      # Force l&#39;offload complet du modele a chaque requete : l&#39;auto-estimation</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="co">      # d&#39;Ollama ne place que ~1 Go sur la P1000 (split 81 % CPU), alors que le</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="co">      # modele entier tient en VRAM (2.8 Go mesures, 100 % GPU).</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">OLLAMA_NUM_GPU</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;99&quot;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>reservations.devices</code> est la syntaxe Compose moderne du
+passthrough GPU (equivalent de <code>docker run --gpus all</code>).
+Prerequis hote : driver NVIDIA + NVIDIA Container Toolkit.</li>
+<li>Les trois variables repondent chacune a un probleme mesure : cold
+start (<code>KEEP_ALIVE=-1</code>), VRAM limitee a 4 Go
+(<code>NUM_PARALLEL=1</code>), auto-estimation trop prudente
+(<code>NUM_GPU=99</code>, voir Q7).</li>
+<li>Chiffre a citer : generation CPU documentee a <strong>200 000+ ms
+par plan</strong> (au-dela du timeout applicatif) ; le GPU la rend
+exploitable.</li>
+<li>Overlay <strong>optionnel et cumulable</strong> : sans GPU
+exploitable on ne l’inclut pas, Ollama tourne sur CPU. C’est exactement
+la philosophie des overlays : la capacite materielle est une dimension
+de configuration comme une autre.</li>
+</ul>
+<h3 id="le-coeur-de-backup.sh">7.6 Le coeur de
+<code>backup.sh</code></h3>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scripts/backup.sh (extrait)</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="va">TS</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$(</span><span class="fu">date</span> +%Y%m%d-%H%M%S<span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="va">OUT_DIR</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${1</span><span class="op">:-</span><span class="va">$ROOT_DIR</span>/backups/<span class="va">$TS}</span><span class="st">&quot;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">running()</span> <span class="kw">{</span> <span class="ex">docker</span> ps <span class="at">--format</span> <span class="st">&#39;{{.Names}}&#39;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-qx</span> <span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span><span class="kw">;</span> <span class="kw">}</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> <span class="st">&quot;</span><span class="va">$DB_CONTAINER</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$AUTH_DB_CONTAINER</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$MONGO_CONTAINER</span><span class="st">&quot;</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="ex">running</span> <span class="st">&quot;</span><span class="va">$c</span><span class="st">&quot;</span> <span class="kw">||</span> <span class="ex">fail</span> <span class="st">&quot;Conteneur </span><span class="va">$c</span><span class="st"> non demarre. Lance la stack avant de sauvegarder.&quot;</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="ex">log</span> <span class="st">&quot;Dump PostgreSQL metier (</span><span class="va">$DB_NAME</span><span class="st">)&quot;</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> exec <span class="st">&quot;</span><span class="va">$DB_CONTAINER</span><span class="st">&quot;</span> pg_dump <span class="at">-U</span> <span class="st">&quot;</span><span class="va">$DB_USER</span><span class="st">&quot;</span> <span class="at">--clean</span> <span class="at">--if-exists</span> <span class="st">&quot;</span><span class="va">$DB_NAME</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">gzip</span> <span class="op">&gt;</span> <span class="st">&quot;</span><span class="va">$OUT_DIR</span><span class="st">/healthai.sql.gz&quot;</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="ex">log</span> <span class="st">&quot;Dump PostgreSQL auth (</span><span class="va">$AUTH_DB_NAME</span><span class="st">)&quot;</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> exec <span class="st">&quot;</span><span class="va">$AUTH_DB_CONTAINER</span><span class="st">&quot;</span> pg_dump <span class="at">-U</span> <span class="st">&quot;</span><span class="va">$AUTH_DB_USER</span><span class="st">&quot;</span> <span class="at">--clean</span> <span class="at">--if-exists</span> <span class="st">&quot;</span><span class="va">$AUTH_DB_NAME</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">gzip</span> <span class="op">&gt;</span> <span class="st">&quot;</span><span class="va">$OUT_DIR</span><span class="st">/auth_db.sql.gz&quot;</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="ex">log</span> <span class="st">&quot;Dump MongoDB (</span><span class="va">$MONGO_DB</span><span class="st">)&quot;</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> exec <span class="st">&quot;</span><span class="va">$MONGO_CONTAINER</span><span class="st">&quot;</span> mongodump <span class="at">--db</span> <span class="st">&quot;</span><span class="va">$MONGO_DB</span><span class="st">&quot;</span> <span class="at">--archive</span> <span class="kw">|</span> <span class="fu">gzip</span> <span class="op">&gt;</span> <span class="st">&quot;</span><span class="va">$OUT_DIR</span><span class="st">/mongo_</span><span class="va">${MONGO_DB}</span><span class="st">.archive.gz&quot;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><strong>Precondition verifiee</strong> : les 3 conteneurs de donnees
+doivent tourner (<code>grep -qx</code> = match exact du nom). Echec
+explicite plutot qu’un dump partiel silencieux.</li>
+<li><code>pg_dump</code> est un export <strong>logique</strong> (SQL
+rejouable), execute <strong>dans</strong> le conteneur via
+<code>docker exec</code>, pipe vers <code>gzip</code> sur l’hote : rien
+n’est ecrit dans le conteneur.</li>
+<li><code>--clean --if-exists</code> prepare la restauration : le dump
+contient les <code>DROP IF EXISTS</code> avant les <code>CREATE</code>,
+donc <code>restore.sh</code> n’a aucune etape prealable.</li>
+<li>Sauvegarde <strong>a chaud</strong> : pg_dump prend un snapshot
+coherent par transaction ; acceptable pour ce volume de donnees.</li>
+<li><code>set -euo pipefail</code> (en tete du script) : toute commande
+qui echoue arrete le script, y compris dans un pipe.</li>
+</ul>
+<h3 id="la-selection-de-sauvegarde-dans-restore.sh">7.7 La selection de
+sauvegarde dans <code>restore.sh</code></h3>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scripts/restore.sh (extrait)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-z</span> <span class="st">&quot;</span><span class="va">$BACKUP_DIR</span><span class="st">&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">[[</span> <span class="ot">-d</span> <span class="st">&quot;</span><span class="va">$ROOT_DIR</span><span class="st">/backups&quot;</span> <span class="kw">]]</span> <span class="kw">||</span> <span class="ex">fail</span> <span class="st">&quot;Aucun dossier backups/. Precise un chemin de sauvegarde.&quot;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="va">BACKUP_DIR</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$(</span><span class="fu">find</span> <span class="st">&quot;</span><span class="va">$ROOT_DIR</span><span class="st">/backups&quot;</span> <span class="at">-mindepth</span> 1 <span class="at">-maxdepth</span> 1 <span class="at">-type</span> d <span class="kw">|</span> <span class="fu">sort</span> <span class="kw">|</span> <span class="fu">tail</span> <span class="at">-n1</span> <span class="kw">||</span> <span class="fu">true</span><span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">[[</span> <span class="ot">-n</span> <span class="st">&quot;</span><span class="va">$BACKUP_DIR</span><span class="st">&quot;</span> <span class="kw">]]</span> <span class="kw">||</span> <span class="ex">fail</span> <span class="st">&quot;Aucune sauvegarde trouvee dans backups/.&quot;</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-f</span> <span class="st">&quot;</span><span class="va">$BACKUP_DIR</span><span class="st">/healthai.sql.gz&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log</span> <span class="st">&quot;Restauration PostgreSQL metier (</span><span class="va">$DB_NAME</span><span class="st">)&quot;</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gunzip</span> <span class="at">-c</span> <span class="st">&quot;</span><span class="va">$BACKUP_DIR</span><span class="st">/healthai.sql.gz&quot;</span> <span class="kw">|</span> <span class="ex">docker</span> exec <span class="at">-i</span> <span class="st">&quot;</span><span class="va">$DB_CONTAINER</span><span class="st">&quot;</span> psql <span class="at">-U</span> <span class="st">&quot;</span><span class="va">$DB_USER</span><span class="st">&quot;</span> <span class="at">-d</span> <span class="st">&quot;</span><span class="va">$DB_NAME</span><span class="st">&quot;</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-f</span> <span class="st">&quot;</span><span class="va">$BACKUP_DIR</span><span class="st">/mongo_</span><span class="va">${MONGO_DB}</span><span class="st">.archive.gz&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log</span> <span class="st">&quot;Restauration MongoDB (</span><span class="va">$MONGO_DB</span><span class="st">)&quot;</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gunzip</span> <span class="at">-c</span> <span class="st">&quot;</span><span class="va">$BACKUP_DIR</span><span class="st">/mongo_</span><span class="va">${MONGO_DB}</span><span class="st">.archive.gz&quot;</span> <span class="kw">|</span> <span class="ex">docker</span> exec <span class="at">-i</span> <span class="st">&quot;</span><span class="va">$MONGO_CONTAINER</span><span class="st">&quot;</span> mongorestore <span class="at">--drop</span> <span class="at">--archive</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>find ... | sort | tail -n1</code> selectionne la
+<strong>derniere</strong> sauvegarde : le tri lexicographique fonctionne
+car l’horodatage est au format <code>YYYYmmdd-HHMMSS</code>.</li>
+<li>Restauration <strong>par fichier present</strong> : un dossier
+partiel (par exemple seulement <code>auth_db.sql.gz</code>) est restaure
+partiellement, sans erreur sur les fichiers absents.</li>
+<li><code>docker exec -i</code> (sans <code>-t</code>) : le flux gunzip
+passe par stdin du process dans le conteneur.</li>
+<li><code>mongorestore --drop</code> supprime chaque collection avant de
+la recharger ; cote PostgreSQL, c’est le <code>--clean</code> du dump
+qui joue ce role. Dans les deux cas : <strong>remplacement</strong>, pas
+fusion.</li>
+</ul>
+<h3 id="la-remise-a-zero-dans-clean.sh">7.8 La remise a zero dans
+<code>clean.sh</code></h3>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scripts/clean.sh (extrait)</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="va">BASE</span><span class="op">=</span><span class="st">&quot;docker-compose.yml&quot;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">[[</span> <span class="st">&quot;</span><span class="va">$MODE</span><span class="st">&quot;</span> <span class="ot">==</span> <span class="st">&quot;dev&quot;</span> <span class="kw">]]</span> <span class="kw">&amp;&amp;</span> <span class="va">BASE</span><span class="op">=</span><span class="st">&quot;docker-compose.dev.yml&quot;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="va">FILES</span><span class="op">=</span><span class="va">(</span>-f <span class="st">&quot;</span><span class="va">$BASE</span><span class="st">&quot;</span><span class="va">)</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="kw">[[</span> <span class="ot">-f</span> <span class="st">&quot;</span><span class="va">$ROOT_DIR</span><span class="st">/docker-compose.monitoring.yml&quot;</span> <span class="kw">]]</span> <span class="kw">&amp;&amp;</span> <span class="va">FILES</span><span class="op">+=</span><span class="va">(</span>-f docker-compose.monitoring.yml<span class="va">)</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="st">&quot;</span><span class="va">$FORCE</span><span class="st">&quot;</span> <span class="ot">-ne</span> 1 <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&#39;\033[1;33m[clean]\033[0m Supprime TOUS les volumes (donnees BDD, Mongo, Ollama, monitoring). Continuer ? [y/N] &#39;</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="bu">read</span> <span class="at">-r</span> <span class="va">ans</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">[[</span> <span class="st">&quot;</span><span class="va">$ans</span><span class="st">&quot;</span> <span class="ot">==</span> <span class="st">&quot;y&quot;</span> <span class="kw">||</span> <span class="st">&quot;</span><span class="va">$ans</span><span class="st">&quot;</span> <span class="ot">==</span> <span class="st">&quot;Y&quot;</span> <span class="kw">]]</span> <span class="kw">||</span> <span class="kw">{</span> <span class="bu">echo</span> <span class="st">&quot;Annule.&quot;</span><span class="kw">;</span> <span class="bu">exit</span> 0<span class="kw">;</span> <span class="kw">}</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span> <span class="bu">cd</span> <span class="st">&quot;</span><span class="va">$ROOT_DIR</span><span class="st">&quot;</span> <span class="kw">&amp;&amp;</span> <span class="ex">docker</span> compose <span class="st">&quot;</span><span class="va">${FILES</span><span class="op">[@]</span><span class="va">}</span><span class="st">&quot;</span> down <span class="at">-v</span> <span class="at">--remove-orphans</span> <span class="kw">)</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>down -v</code> : arrete les conteneurs <strong>et</strong>
+supprime les volumes nommes ; <code>--remove-orphans</code> nettoie les
+conteneurs d’overlays qui ne sont plus dans les fichiers passes.</li>
+<li>Le script inclut l’overlay monitoring dans les <code>-f</code> pour
+que ses volumes (<code>prometheus_data</code>,
+<code>grafana_data</code>, <code>loki_data</code>) soient aussi
+supprimes : sans cela, <code>down -v</code> sur la seule base les
+ignorerait.</li>
+<li><strong>Confirmation interactive</strong> par defaut (action
+destructive), <code>--force</code> pour les usages scriptes,
+<code>--dev</code> pour cibler la base dev.</li>
+<li>Apres un clean : prochain demarrage vierge, migrations rejouees,
+<strong>datasets recharges par l’ETL au prochain run</strong>. C’est la
+demo “remise a zero” du jury en une commande.</li>
+</ul>
+<hr />
+<h2 id="questions-probables-du-jury">8. Questions probables du jury</h2>
+<h3
+id="q1.-pourquoi-des-overlays-plutot-que-trois-docker-compose-complets-dupliques">Q1.
+Pourquoi des overlays plutot que trois docker-compose complets dupliques
+?</h3>
+<p>Parce que trois fichiers complets seraient trois copies de ~250
+lignes a maintenir en parallele :</p>
+<ol type="1">
+<li><strong>Pas de derive de configuration</strong> : une correction
+dans la base (nouvelle variable, healthcheck, image) profite
+immediatement a toutes les configurations. Avec trois copies, on oublie
+d’en mettre une a jour et les configs divergent silencieusement.</li>
+<li><strong>Lisibilite du delta</strong> : l’overlay offline fait 3
+variables. On voit en 5 secondes ce qui distingue la config offline de
+la complete. Dans un fichier duplique, la difference serait noyee.</li>
+<li><strong>Combinabilite</strong> : les overlays se cumulent (offline +
+gpu, performance + monitoring simplifie, production = base + 4
+overlays). Avec des fichiers monolithiques il faudrait une copie par
+combinaison.</li>
+</ol>
+<p>Tradeoff assume : il faut connaitre les regles de fusion et l’ordre
+des <code>-f</code>. Mitigation : <code>docker compose ... config</code>
+affiche le resultat fusionne, et chaque overlay documente sa commande en
+en-tete.</p>
+<h3 id="q2.-comment-docker-compose-fusionne-t-il-plusieurs--f">Q2.
+Comment Docker Compose fusionne-t-il plusieurs <code>-f</code> ?</h3>
+<p>Fusion <strong>par cle de service</strong> : deux blocs
+<code>api</code> sont combines en un seul. Ensuite, par type d’attribut
+:</p>
+<ul>
+<li><strong>Mappings</strong> (<code>environment</code>,
+<code>labels</code>) : fusionnes cle par cle, l’overlay surcharge en cas
+de conflit.</li>
+<li><strong>Scalaires</strong> (<code>image</code>,
+<code>restart</code>) : le dernier <code>-f</code> gagne.</li>
+<li><strong>Listes</strong> (<code>ports</code>, <code>tmpfs</code>) :
+concatenees ; <code>volumes</code> fusionnes par chemin cible ;
+<code>networks</code> en union.</li>
+</ul>
+<p>L’ordre des <code>-f</code> compte donc : base d’abord, overlays
+ensuite, du plus generique au plus specifique. Exemple concret du projet
+: <code>MISTRAL_API_KEY: ""</code> (offline) ecrase
+<code>${MISTRAL_API_KEY:-}</code> (base) ;
+<code>image: mspr-front:traefik</code> (traefik) remplace l’image GHCR.
+Verification : <code>docker compose -f ... -f ... config</code>.</p>
+<h3 id="q3.-comment-le-mode-offline-fonctionne-t-il-concretement">Q3.
+Comment le mode offline fonctionne-t-il concretement ?</h3>
+<p>Deux dependances internet sont neutralisees :</p>
+<ul>
+<li><strong>Verification email</strong> : <code>AUTH_OFFLINE=true</code>
+est lu dans <code>MSPR-AUTH/src/lib/auth.ts</code>. L’inscription
+n’envoie plus d’email (<code>sendOnSignUp: !OFFLINE</code>), la
+connexion n’exige plus un email verifie
+(<code>requireEmailVerification: !OFFLINE</code>), et les fonctions
+d’envoi font un retour anticipe avec un log <code>[offline]</code>.
+Aucun appel Resend.</li>
+<li><strong>Mistral</strong> : <code>DEFAULT_LLM=ollama</code> force le
+LLM local, et <code>MISTRAL_API_KEY: ""</code> ecrase toute cle de
+<code>.env</code> via la fusion. Aucun appel sortant possible.</li>
+</ul>
+<p>Prerequis une seule fois avec internet : images pull/build et
+<code>gemma3:4b</code> (~3 Go) telecharge dans le volume
+<code>ollama_data</code>. Demo type : debrancher le reseau, s’inscrire,
+se connecter, generer un plan repas via le LLM local.</p>
+<h3
+id="q4.-pourquoi-la-config-performance-omet-lia-generative-et-que-voit-lutilisateur">Q4.
+Pourquoi la config performance omet l’IA generative, et que voit
+l’utilisateur ?</h3>
+<p><code>ai-nutrition</code> + <code>ollama</code> sont les services les
+plus gourmands : modele 4 milliards de parametres (~3 Go), inference CPU
+documentee a 200 000+ ms par plan. Sur materiel modeste, ils
+satureraient la machine et degraderaient toute la stack. La commande
+allegee liste explicitement les services a demarrer sans eux ; rien n’en
+depend, donc ils restent eteints.</p>
+<p>Pour l’utilisateur : la generation de plans repas <strong>retombe sur
+la matrice statique de secours</strong>. Il recoit toujours un plan,
+immediatement, simplement moins personnalise que la version LLM. C’est
+un mode degrade voulu : on degrade la qualite de la fonctionnalite, pas
+sa disponibilite. Pour reintegrer l’IA : ajouter
+<code>ai-nutrition ollama</code> a la liste (leurs limites de ressources
+sont deja definies dans l’overlay).</p>
+<h3
+id="q5.-comment-la-plateforme-est-elle-exposee-en-https-et-pourquoi-traefik">Q5.
+Comment la plateforme est-elle exposee en HTTPS, et pourquoi Traefik
+?</h3>
+<p>L’overlay traefik attache chaque service a exposer au reseau externe
+<code>proxy_net</code> (celui de l’instance Traefik du serveur) et
+declare des labels : regle <code>Host(...)</code> par sous-domaine
+<code>*.zespri.duckdns.org</code>, entrypoint <code>websecure</code>,
+<code>tls.certresolver=duckdns</code> (certificat wildcard, un seul
+certificat pour tous les sous-domaines). Les variables CORS et URLs
+publiques sont alignees sur l’origine du front.</p>
+<p>Pourquoi Traefik plutot qu’un nginx : la configuration vit
+<strong>dans les labels du service concerne</strong> (declaratif,
+versionne avec le compose), Traefik decouvre les conteneurs
+dynamiquement via le socket Docker, et gere les certificats
+automatiquement. Pas de fichier nginx central a maintenir ni de reload
+manuel. Voir la <a href="Securite.html">fiche Securite</a> pour le volet
+exposition.</p>
+<h3 id="q6.-pourquoi-bloquer-les-metrics-au-public-et-comment">Q6.
+Pourquoi bloquer les /metrics au public, et comment ?</h3>
+<p>Les endpoints <code>/metrics</code> (auth, ai-nutrition,
+reco-fitness) et <code>/api/actuator</code> (Spring) exposent des
+informations internes : versions, latences par route, noms de jobs, etat
+des dependances. C’est de la matiere pour un attaquant (reconnaissance)
+et cela n’a aucune raison d’etre public.</p>
+<p>Mecanisme : pour chaque service expose, un <strong>routeur
+dedie</strong> matche le chemin de metriques avec
+<code>priority=100</code> (il gagne sur le routeur general) et applique
+le middleware <code>mspr-metrics-deny</code>, un
+<code>ipallowlist</code> avec <code>sourcerange=127.0.0.1/32</code>.
+Aucune IP publique ne matche : 403 systematique. Le middleware est
+declare une fois (labels du service api) et reference partout.</p>
+<p>Pourquoi ne pas supprimer ces endpoints : Prometheus en a besoin. Il
+les scrape <strong>en interne</strong> via le reseau Docker
+<code>mspr_data_network</code>, sans passer par Traefik, donc le blocage
+public ne l’affecte pas.</p>
+<h3 id="q7.-a-quoi-sert-ollama_num_gpu99">Q7. A quoi sert
+<code>OLLAMA_NUM_GPU=99</code> ?</h3>
+<p>C’est le nombre de <strong>couches du modele a offloader en
+VRAM</strong>. 99 etant superieur au nombre de couches de Gemma3:4b,
+cela force l’offload <strong>complet</strong>.</p>
+<p>Pourquoi forcer : l’auto-estimation d’Ollama est trop prudente sur la
+Quadro P1000 (4 Go) : elle ne place que ~1 Go en VRAM, soit un split
+<strong>81 % CPU</strong> et des performances proches du CPU pur. Or le
+modele entier tient en <strong>2.8 Go mesures</strong> : en forcant, on
+passe a 100 % GPU.</p>
+<p>Pourquoi la variable est cote <code>ai-nutrition</code> et pas cote
+<code>ollama</code> : c’est une <strong>option de requete</strong> de
+l’API Ollama, passee par le client a chaque generation, pas un parametre
+du serveur. Complement cote serveur : <code>OLLAMA_KEEP_ALIVE=-1</code>
+(modele garde en VRAM, pas de cold start) et
+<code>OLLAMA_NUM_PARALLEL=1</code> (une inference a la fois pour tenir
+dans 4 Go).</p>
+<h3
+id="q8.-quelle-est-la-strategie-de-sauvegarde-et-comment-restaurer">Q8.
+Quelle est la strategie de sauvegarde, et comment restaurer ?</h3>
+<ul>
+<li><strong>Quoi</strong> : les 3 bases d’etat, c’est-a-dire exactement
+les donnees non regenerables : PostgreSQL metier
+(<code>healthai</code>), PostgreSQL auth (<code>auth_db</code>,
+comptes), MongoDB (<code>reco_fitness</code>,
+profils/programmes/feedbacks).</li>
+<li><strong>Comment</strong> : <code>./scripts/backup.sh</code>, a
+chaud, via <code>docker exec</code> sur les conteneurs en cours :
+<code>pg_dump --clean --if-exists | gzip</code> pour les deux
+PostgreSQL, <code>mongodump --archive | gzip</code> pour Mongo. Le
+script verifie d’abord que les 3 conteneurs tournent.</li>
+<li><strong>Ou</strong> : dossier horodate
+<code>backups/&lt;timestamp&gt;/</code> (3 fichiers .gz), local au
+depot, non versionne.</li>
+<li><strong>Restauration</strong> : <code>./scripts/restore.sh</code>
+(derniere sauvegarde) ou <code>./scripts/restore.sh backups/XXXX</code>
+(dossier precis). <code>psql</code> rejoue le dump (qui contient les
+<code>DROP</code> grace a <code>--clean</code>),
+<code>mongorestore --drop</code> remplace les collections. Restauration
+= remplacement, pas fusion.</li>
+</ul>
+<h3 id="q9.-que-perd-on-si-on-detruit-les-volumes">Q9. Que perd-on si on
+detruit les volumes ?</h3>
+<p>Reponse en deux categories :</p>
+<ul>
+<li><strong>Regenerable</strong> : les tables chargees par l’ETL
+(rechargees au prochain run depuis les datasets), le modele Ollama
+(re-telecharge, ~3 Go, internet requis), les exports ETL, les dashboards
+Grafana (re-provisionnes depuis le depot).</li>
+<li><strong>Irremplacable sans sauvegarde</strong> : les comptes
+utilisateurs (<code>auth_db_data</code>), les donnees fitness Mongo
+(profils, programmes generes, feedbacks), et les donnees metier ecrites
+par les services apres l’ETL. Plus l’historique de metriques/logs
+(retention 7 jours, perte acceptee).</li>
+</ul>
+<p>C’est precisement ce decoupage qui justifie le perimetre de
+<code>backup.sh</code> : il couvre les 3 bases, rien d’autre. La
+sequence <code>clean.sh</code> puis <code>restore.sh</code> permet de
+demontrer la reprise au jury.</p>
+<h3 id="q10.-pourquoi-pas-de-sauvegarde-externalisee">Q10. Pourquoi pas
+de sauvegarde externalisee ?</h3>
+<p>Limite <strong>documentee et assumee</strong> : les sauvegardes
+restent sur le meme disque que les volumes, donc une panne materielle
+emporte les deux. Raisons du choix : perimetre MSPR (un seul serveur,
+pas de budget cloud), et l’objectif du livrable est de demontrer le
+mecanisme de sauvegarde/restauration, pas d’operer un PRA complet.</p>
+<p>Ce qu’on ferait en production reelle : regle <strong>3-2-1</strong>
+(3 copies, 2 supports, 1 hors site), copie vers un stockage objet ou une
+seconde machine (rclone/rsync), planification cron avec alerte en cas
+d’echec, <strong>chiffrement des dumps</strong> (donnees de sante, sujet
+RGPD), et politique de retention. Annoncer ces pistes soi-meme avant que
+le jury ne les pointe.</p>
+<h3 id="q11.-comment-teste-t-on-quune-restauration-fonctionne">Q11.
+Comment teste-t-on qu’une restauration fonctionne ?</h3>
+<p>Aujourd’hui : <strong>manuellement</strong>, et c’est demontrable en
+soutenance en quelques minutes :</p>
+<ol type="1">
+<li><code>./scripts/backup.sh</code> ; noter un element temoin (un
+compte utilisateur, un count SQL).</li>
+<li><code>./scripts/clean.sh --force</code> puis redemarrage de la stack
+(base vierge, migrations rejouees).</li>
+<li><code>./scripts/restore.sh</code> ; verifier que le compte temoin se
+reconnecte et que les counts correspondent.</li>
+</ol>
+<p>Limite assumee : pas de test automatise. Piste d’industrialisation :
+un job planifie qui restaure le dernier dump dans des conteneurs
+jetables, execute des requetes de sanite (counts non nuls, login d’un
+compte temoin) et alerte en cas d’echec. Phrase a placer : une
+sauvegarde non testee n’est pas une sauvegarde, c’est pour cela que la
+limite est explicitement documentee.</p>
+<h3
+id="q12.-quelle-combinaison-tourne-en-production-sur-le-serveur">Q12.
+Quelle combinaison tourne en production sur le serveur ?</h3>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yml <span class="at">-f</span> docker-compose.monitoring.yml <span class="dt">\</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.traefik.yml <span class="at">-f</span> docker-compose.vision.yml <span class="dt">\</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.watchtower.yml up <span class="at">-d</span></span></code></pre></div>
+<p>Soit : base prod (images GHCR) + observabilite complete + exposition
+HTTPS sur <code>*.zespri.duckdns.org</code> + classification photo
+Mistral vision + deploiement continu Watchtower. L’overlay gpu s’ajoute
+a cette commande une fois le passthrough NVIDIA valide sur l’hote
+(driver + Container Toolkit).</p>
+<p>C’est l’illustration finale du mecanisme : la production n’est pas un
+fichier a part, c’est <strong>la meme base que la demo du jury</strong>,
+plus quatre overlays. Toute correction sur la base profite a la fois aux
+configurations de demonstration et a la production.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

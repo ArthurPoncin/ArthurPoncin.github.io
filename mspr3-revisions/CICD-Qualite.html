@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>CI/CD et qualité - Révisions MSPR3</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a href="#fiche-de-revision-cicd-et-qualite"
+id="toc-fiche-de-revision-cicd-et-qualite">Fiche de revision : CI/CD et
+qualite</a>
+<ul>
+<li><a href="#vocabulaire-a-connaitre-avant-de-lire"
+id="toc-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#tldr" id="toc-tldr">1. TL;DR</a></li>
+<li><a href="#architecture" id="toc-architecture">2.
+Architecture</a></li>
+<li><a href="#la-chaine-par-service" id="toc-la-chaine-par-service">3.
+La chaine par service</a>
+<ul>
+<li><a href="#api-spring-boot-4-java-21"
+id="toc-api-spring-boot-4-java-21">3.1 API (Spring Boot 4, Java
+21)</a></li>
+<li><a href="#auth-bun-hono-better-auth"
+id="toc-auth-bun-hono-better-auth">3.2 Auth (Bun, Hono,
+better-auth)</a></li>
+<li><a href="#ai-nutrition-fastapi-python-3.12"
+id="toc-ai-nutrition-fastapi-python-3.12">3.3 AI-Nutrition (FastAPI,
+Python 3.12)</a></li>
+<li><a href="#reco-fitness-fastapi-python-3.12"
+id="toc-reco-fitness-fastapi-python-3.12">3.4 Reco-Fitness (FastAPI,
+Python 3.12)</a></li>
+<li><a href="#etl-python-3.12" id="toc-etl-python-3.12">3.5 ETL (Python
+3.12)</a></li>
+<li><a href="#front-vue-3-vite-typescript"
+id="toc-front-vue-3-vite-typescript">3.6 Front (Vue 3, Vite,
+TypeScript)</a></li>
+<li><a href="#bdd-postgresql-17-migrations-sql"
+id="toc-bdd-postgresql-17-migrations-sql">3.7 BDD (PostgreSQL 17,
+migrations SQL)</a></li>
+<li><a href="#mongodb-init-collections-index"
+id="toc-mongodb-init-collections-index">3.8 MongoDB (init collections /
+index)</a></li>
+</ul></li>
+<li><a
+href="#strategie-dimages-et-de-tags-deploiement-continu-watchtower"
+id="toc-strategie-dimages-et-de-tags-deploiement-continu-watchtower">4.
+Strategie d’images et de tags + deploiement continu Watchtower</a>
+<ul>
+<li><a href="#tags-produits-par-dockermetadata-action"
+id="toc-tags-produits-par-dockermetadata-action">4.1 Tags produits par
+<code>docker/metadata-action</code></a></li>
+<li><a href="#cd-via-watchtower-docker-compose.watchtower.yml"
+id="toc-cd-via-watchtower-docker-compose.watchtower.yml">4.2 CD via
+Watchtower (<code>docker-compose.watchtower.yml</code>)</a></li>
+</ul></li>
+<li><a href="#qualite-plan-de-test-couvertures-sonarcloud"
+id="toc-qualite-plan-de-test-couvertures-sonarcloud">5. Qualite : plan
+de test, couvertures, SonarCloud</a>
+<ul>
+<li><a href="#pyramide-de-tests-plan-de-test.md"
+id="toc-pyramide-de-tests-plan-de-test.md">5.1 Pyramide de tests
+(plan-de-test.md)</a></li>
+<li><a href="#resultats-reels-les-8-ci-au-vert-releve-du-10062026"
+id="toc-resultats-reels-les-8-ci-au-vert-releve-du-10062026">5.2
+Resultats reels : les 8 CI au vert (releve du 10/06/2026)</a></li>
+<li><a href="#couverture-mesuree" id="toc-couverture-mesuree">5.3
+Couverture mesuree</a></li>
+<li><a href="#sonarcloud-analyse-statique"
+id="toc-sonarcloud-analyse-statique">5.4 SonarCloud (analyse
+statique)</a></li>
+<li><a
+href="#point-technique-important-lincident-e2e-front-resolu-le-10062026"
+id="toc-point-technique-important-lincident-e2e-front-resolu-le-10062026">5.5
+Point technique important : l’incident e2e Front (resolu le
+10/06/2026)</a></li>
+</ul></li>
+<li><a href="#code-essentiel-a-savoir-expliquer-au-jury"
+id="toc-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</a>
+<ul>
+<li><a href="#le-workflow-ci-de-lapi-test-puis-publication-conditionnee"
+id="toc-le-workflow-ci-de-lapi-test-puis-publication-conditionnee">6.1
+Le workflow CI de l’API : test puis publication conditionnee</a></li>
+<li><a href="#le-workflow-de-publication-metadata-action-et-tags"
+id="toc-le-workflow-de-publication-metadata-action-et-tags">6.2 Le
+workflow de publication : metadata-action et tags</a></li>
+<li><a href="#la-regle-jacoco-seuil-80-bloquant-pom.xml-de-lapi"
+id="toc-la-regle-jacoco-seuil-80-bloquant-pom.xml-de-lapi">6.3 La regle
+JaCoCo : seuil 80 % bloquant (pom.xml de l’API)</a></li>
+<li><a href="#ai-nutrition-double-checkout-index-pytorch-cpu-artefacts"
+id="toc-ai-nutrition-double-checkout-index-pytorch-cpu-artefacts">6.4
+AI-Nutrition : double checkout, index PyTorch CPU, artefacts</a></li>
+<li><a href="#front-le-job-e2e-cypress-sur-lapp-buildee"
+id="toc-front-le-job-e2e-cypress-sur-lapp-buildee">6.5 Front : le job
+e2e Cypress sur l’app buildee</a></li>
+<li><a href="#loverlay-watchtower-docker-compose.watchtower.yml"
+id="toc-loverlay-watchtower-docker-compose.watchtower.yml">6.6 L’overlay
+Watchtower (docker-compose.watchtower.yml)</a></li>
+<li><a href="#validation-bdd-et-mongodb-tester-sans-code-applicatif"
+id="toc-validation-bdd-et-mongodb-tester-sans-code-applicatif">6.7
+Validation BDD et MongoDB : tester sans code applicatif</a></li>
+</ul></li>
+<li><a href="#tableau-recapitulatif" id="toc-tableau-recapitulatif">7.
+Tableau recapitulatif</a>
+<ul>
+<li><a href="#type-de-test-x-service"
+id="toc-type-de-test-x-service">7.1 Type de test x service</a></li>
+<li><a href="#seuils-de-couverture" id="toc-seuils-de-couverture">7.2
+Seuils de couverture</a></li>
+</ul></li>
+<li><a href="#questions-probables-du-jury"
+id="toc-questions-probables-du-jury">8. Questions probables du jury</a>
+<ul>
+<li><a
+href="#q1.-pourquoi-github-actions-plutot-que-jenkins-ou-gitlab-ci"
+id="toc-q1.-pourquoi-github-actions-plutot-que-jenkins-ou-gitlab-ci">Q1.
+Pourquoi GitHub Actions plutot que Jenkins ou GitLab CI ?</a></li>
+<li><a
+href="#q2.-pourquoi-deployer-latest-quelles-limites-et-comment-revenir-en-arriere"
+id="toc-q2.-pourquoi-deployer-latest-quelles-limites-et-comment-revenir-en-arriere">Q2.
+Pourquoi deployer <code>:latest</code> ? Quelles limites, et comment
+revenir en arriere ?</a></li>
+<li><a href="#q3.-que-se-passe-t-il-quand-un-test-echoue"
+id="toc-q3.-que-se-passe-t-il-quand-un-test-echoue">Q3. Que se
+passe-t-il quand un test echoue ?</a></li>
+<li><a href="#q4.-pourquoi-watchtower-plutot-quargocd-ou-flux"
+id="toc-q4.-pourquoi-watchtower-plutot-quargocd-ou-flux">Q4. Pourquoi
+Watchtower plutot qu’ArgoCD ou Flux ?</a></li>
+<li><a href="#q5.-comment-les-images-sont-elles-tracables"
+id="toc-q5.-comment-les-images-sont-elles-tracables">Q5. Comment les
+images sont-elles tracables ?</a></li>
+<li><a
+href="#q6.-sonarcloud-automatic-analysis-vs-scanner-en-ci-avantages-et-limites"
+id="toc-q6.-sonarcloud-automatic-analysis-vs-scanner-en-ci-avantages-et-limites">Q6.
+SonarCloud Automatic Analysis vs scanner en CI : avantages et limites
+?</a></li>
+<li><a href="#q7.-comment-fonctionne-le-job-e2e-du-front"
+id="toc-q7.-comment-fonctionne-le-job-e2e-du-front">Q7. Comment
+fonctionne le job e2e du front ?</a></li>
+<li><a
+href="#q8.-pourquoi-un-seuil-80-seulement-sur-lapi-et-reco-fitness"
+id="toc-q8.-pourquoi-un-seuil-80-seulement-sur-lapi-et-reco-fitness">Q8.
+Pourquoi un seuil 80 % seulement sur l’API et Reco-Fitness ?</a></li>
+<li><a
+href="#q9.-que-valent-les-notes-sonarcloud-securite-e-et-que-faire-du-backlog"
+id="toc-q9.-que-valent-les-notes-sonarcloud-securite-e-et-que-faire-du-backlog">Q9.
+Que valent les notes SonarCloud (securite E) et que faire du backlog
+?</a></li>
+<li><a href="#q10.-quelle-securite-sur-la-chaine-de-publication"
+id="toc-q10.-quelle-securite-sur-la-chaine-de-publication">Q10. Quelle
+securite sur la chaine de publication ?</a></li>
+<li><a href="#q11.-quelles-sont-les-limites-du-cd-watchtower"
+id="toc-q11.-quelles-sont-les-limites-du-cd-watchtower">Q11. Quelles
+sont les limites du CD Watchtower ?</a></li>
+<li><a href="#q12.-que-reste-t-il-a-faire-sur-la-qualite"
+id="toc-q12.-que-reste-t-il-a-faire-sur-la-qualite">Q12. Que reste-t-il
+a faire sur la qualite ?</a></li>
+</ul></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1 id="fiche-de-revision-cicd-et-qualite">Fiche de revision : CI/CD et
+qualite</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR3 (TPRE601). Objectif :
+savoir derouler la chaine complete commit -&gt; GitHub Actions -&gt;
+GHCR -&gt; Watchtower, justifier la strategie de tests et de couverture
+service par service, et commenter les indicateurs qualite (SonarCloud)
+avec leurs limites.</p>
+</blockquote>
+<hr />
+<h2 id="vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<p>Les 10 termes qui reviennent partout dans cette fiche.</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CI (integration continue)</strong></td>
+<td>A chaque push, une chaine automatisee (lint + tests + build) verifie
+que le code reste sain avant toute publication.</td>
+</tr>
+<tr>
+<td><strong>CD (deploiement continu)</strong></td>
+<td>Toute image publiee est deployee automatiquement sur l’hote, sans
+intervention manuelle. Ici : Watchtower.</td>
+</tr>
+<tr>
+<td><strong>Registre (de conteneurs)</strong></td>
+<td>Serveur qui stocke et distribue les images Docker (<code>push</code>
+depuis la CI, <code>pull</code> depuis l’hote).</td>
+</tr>
+<tr>
+<td><strong>GHCR</strong></td>
+<td>GitHub Container Registry, le registre integre a GitHub :
+<code>ghcr.io/whitefoxxyt/mspr-&lt;service&gt;</code>.</td>
+</tr>
+<tr>
+<td><strong>workflow_call</strong></td>
+<td>Declencheur GitHub Actions qui rend un workflow appelable par un
+autre (workflow reutilisable). Ici : <code>docker-publish.yml</code>
+appele par le workflow de CI.</td>
+</tr>
+<tr>
+<td><strong>semver</strong></td>
+<td>Versionnage semantique <code>MAJEUR.MINEUR.CORRECTIF</code> (ex :
+<code>v1.2.3</code>), porte par les tags Git <code>vX.Y.Z</code>.</td>
+</tr>
+<tr>
+<td><strong>Couverture</strong></td>
+<td>Pourcentage de lignes (ou de branches) du code executees par les
+tests. Mesuree par JaCoCo (Java) ou pytest-cov (Python).</td>
+</tr>
+<tr>
+<td><strong>Quality gate</strong></td>
+<td>Critere qui fait passer ou bloquer un build. Ici : la regle JaCoCo
+80 % et les dependances <code>needs</code> entre jobs.</td>
+</tr>
+<tr>
+<td><strong>Artefact (CI)</strong></td>
+<td>Fichier produit par un job et conserve apres le run : rapports de
+couverture (<code>htmlcov/</code>, <code>coverage.xml</code>),
+screenshots Cypress.</td>
+</tr>
+<tr>
+<td><strong>Watchtower</strong></td>
+<td>Conteneur qui surveille un registre et recree automatiquement les
+conteneurs listes quand une nouvelle image apparait.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tldr">1. TL;DR</h2>
+<p><strong>Industrialisation de la plateforme HealthAI Coach</strong> :
+chacun des <strong>8 depots</strong> (organisation GitHub
+<code>whitefoxxyt</code>) porte sa propre chaine GitHub Actions qui
+lint, teste, mesure la couverture, puis build et publie une image Docker
+sur GHCR. C’est la reponse au sujet : pipelines CI/CD incluant build,
+tests, analyse de code et deploiement.</p>
+<ul>
+<li><strong>CI</strong> : un workflow par depot, declenche sur push / PR
+vers la branche par defaut et sur les tags Git <code>vX.Y.Z</code>. Lint
+selon la techno (ruff, oxlint + eslint + vue-tsc,
+<code>node --check</code>), tests selon la techno (JUnit, bun test,
+pytest, Vitest + Cypress, validations SQL / mongosh).</li>
+<li><strong>Publication conditionnee</strong> :
+<code>docker-publish.yml</code> est appele via
+<code>workflow_call</code> avec <code>needs</code> sur les jobs de lint
+/ tests, et uniquement sur <code>push</code> (jamais sur PR). <strong>Un
+job rouge bloque la publication</strong> : aucune image ne part sur
+GHCR.</li>
+<li><strong>Tags d’images</strong> (<code>docker/metadata-action</code>)
+: nom de branche, semver (<code>{{version}}</code> et
+<code>{{major}}.{{minor}}</code> sur tags Git), SHA court (tracabilite),
+<code>latest</code> uniquement depuis la branche par defaut.</li>
+<li><strong>Deploiement</strong> : premier demarrage via
+<code>./bootstrap.sh</code> (tire les <code>:latest</code>, voir <a
+href="Deploiement.html">fiche Deploiement</a>), puis <strong>CD via
+Watchtower</strong> : poll GHCR toutes les 5 min
+(<code>WATCHTOWER_POLL_INTERVAL=300</code>), recreation du conteneur sur
+nouveau <code>:latest</code>, suppression de l’ancienne image
+(<code>WATCHTOWER_CLEANUP=true</code>).</li>
+<li><strong>Qualite</strong> : seuil de couverture <strong>80 %</strong>
+impose sur l’API (JaCoCo, lignes ET branches, bloquant) et Reco-Fitness
+(pytest-cov). Mesures reelles : AI-Nutrition <strong>92 %</strong> (run
+du 09/06/2026), Reco-Fitness <strong>85 %</strong> (run du 08/06/2026).
+Analyse statique <strong>SonarCloud</strong> en mode Automatic Analysis
+sur l’organisation.</li>
+<li><strong>Etat au 10/06/2026</strong> : les <strong>8 chaines CI au
+vert</strong> (rapport <code>rapport-tests-qualite.md</code>). Preuve
+vecue que le pipeline bloque : la suite e2e Cypress du Front en echec du
+26/05 au 10/06 a empeche toute publication d’image pendant la periode
+(section 5.5).</li>
+</ul>
+<p>Reference des documents : <code>MSPR-Deploy/CICD.md</code> (chaine),
+<code>MSPR-Deploy/docs/plan-de-test.md</code> (strategie),
+<code>MSPR-Deploy/docs/rapport-tests-qualite.md</code> (resultats
+releves le 10/06/2026).</p>
+<hr />
+<h2 id="architecture">2. Architecture</h2>
+<pre class="mermaid"><code>flowchart LR
+    C[commit / push&lt;br/&gt;branche par defaut ou tag vX.Y.Z] --&gt; A[GitHub Actions&lt;br/&gt;lint + tests + couverture + build]
+    A --&gt;|push uniquement, tous jobs verts| G[(GHCR&lt;br/&gt;ghcr.io/whitefoxxyt/mspr-*:latest)]
+    G --&gt;|premier deploiement| B[bootstrap.sh&lt;br/&gt;docker compose up -d]
+    G --&gt;|poll toutes les 5 min| W[Watchtower]
+    W --&gt;|nouveau :latest| R[conteneur recree&lt;br/&gt;sur l&#39;hote]</code></pre>
+<p>Le flux complet, tel que documente dans <code>CICD.md</code> :</p>
+<pre><code>commit/push (branche par defaut ou tag vX.Y.Z)
+   |
+   v
+GitHub Actions (un workflow par depot)
+   |-- lint (selon la techno)
+   |-- tests + couverture
+   |-- build de l&#39;image Docker
+   v
+publication sur GHCR (ghcr.io/whitefoxxyt/mspr-&lt;service&gt;:latest)
+   |
+   +-- premier demarrage : ./bootstrap.sh -&gt; docker compose up -d
+   |
+   v
+Watchtower (sur l&#39;hote) interroge GHCR toutes les 5 min
+   |
+   v
+nouvelle image detectee -&gt; Watchtower recree le conteneur (CD automatique)</code></pre>
+<p>Trois points structurants :</p>
+<ol type="1">
+<li><strong>Un workflow par depot</strong> : chaque service est autonome
+(sa techno, son lint, ses tests, son image). Pas de pipeline
+monolithique : un service casse n’empeche pas les autres de
+publier.</li>
+<li><strong>La publication est un workflow reutilisable</strong>
+(<code>docker-publish.yml</code>, declencheur
+<code>on: workflow_call</code>) appele depuis le workflow de CI avec
+<code>needs: [...]</code> et
+<code>if: github.event_name == 'push'</code>. Sur PR, les tests tournent
+et conditionnent la fusion, mais aucune image n’est publiee.</li>
+<li><strong>Deux modes de deploiement</strong> :
+<code>./bootstrap.sh</code> (prod : tire les images GHCR
+<code>:latest</code>) et <code>./bootstrap.sh --dev</code> (clone les 8
+depots, build local via <code>docker-compose.dev.yml</code>).
+<code>bootstrap.sh</code> prepare aussi <code>.env</code>, genere les
+secrets et dechiffre les cles API : detail dans la <a
+href="Deploiement.html">fiche Deploiement</a>. Les overlays Compose
+(monitoring, traefik, watchtower…) sont decrits dans la <a
+href="Configs-Resilience.html">fiche Configs et resilience</a>.</li>
+</ol>
+<hr />
+<h2 id="la-chaine-par-service">3. La chaine par service</h2>
+<p>Tableau de reference (issu de <code>CICD.md</code>) :</p>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 30%" />
+<col style="width: 20%" />
+<col style="width: 8%" />
+<col style="width: 10%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr>
+<th>Service</th>
+<th>Depot (whitefoxxyt)</th>
+<th>Declencheurs</th>
+<th>Lint</th>
+<th>Tests</th>
+<th>Image GHCR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API</td>
+<td>MSPR-HealthAI-Coach-API</td>
+<td>push/PR <code>main</code>, tags <code>v*.*.*</code></td>
+<td>non</td>
+<td>JUnit + JaCoCo (seuil 80 %)</td>
+<td><code>mspr-api</code></td>
+</tr>
+<tr>
+<td>Auth</td>
+<td>MSPR-HealthAI-Coach-AUTH</td>
+<td>push/PR <code>main</code>, tags <code>v*.*.*</code></td>
+<td>non</td>
+<td><code>bun test</code></td>
+<td><code>mspr-auth</code></td>
+</tr>
+<tr>
+<td>AI-Nutrition</td>
+<td>MSPR-HealthAI-Coach-AI-Nutrition</td>
+<td>push/PR <code>master</code>, tags <code>v*.*.*</code></td>
+<td>ruff</td>
+<td>pytest + couverture</td>
+<td><code>mspr-ai-nutrition</code></td>
+</tr>
+<tr>
+<td>Reco-Fitness</td>
+<td>MSPR-HealthAI-Coach-Reco-Fitness-</td>
+<td>push/PR <code>master</code>/<code>main</code>, tags
+<code>v*.*.*</code></td>
+<td>ruff</td>
+<td>pytest-cov (seuil 80 %), integration deselectionnee en CI</td>
+<td><code>mspr-reco-fitness</code></td>
+</tr>
+<tr>
+<td>ETL</td>
+<td>MSPR-HealthAI-Coach-ETL</td>
+<td>push/PR <code>master</code>/<code>main</code>, tags
+<code>v*.*.*</code></td>
+<td>ruff + format</td>
+<td>pytest unitaires + integration (PostgreSQL)</td>
+<td><code>mspr-etl</code></td>
+</tr>
+<tr>
+<td>Front</td>
+<td>MSPR-HealthAI-Coach-Dahsboard</td>
+<td>push/PR <code>main</code>, tags <code>v*.*.*</code></td>
+<td>oxlint + eslint + vue-tsc</td>
+<td>Vitest + Cypress (e2e)</td>
+<td><code>mspr-front</code></td>
+</tr>
+<tr>
+<td>BDD</td>
+<td>MSPR-HealthAI-Coach-BDD</td>
+<td>push/PR <code>main</code>, tags <code>v*.*.*</code></td>
+<td>non</td>
+<td>validation des migrations SQL (PostgreSQL)</td>
+<td><code>mspr-db</code></td>
+</tr>
+<tr>
+<td>MongoDB</td>
+<td>MSPR-HealthAI-Coach-MongoDB</td>
+<td>push/PR <code>master</code>/<code>main</code>, tags
+<code>v*.*.*</code></td>
+<td><code>node --check</code></td>
+<td>validation des collections et index (MongoDB)</td>
+<td><code>mspr-mongodb</code></td>
+</tr>
+</tbody>
+</table>
+<p>Detail par service (issu de <code>plan-de-test.md</code>) :</p>
+<h3 id="api-spring-boot-4-java-21">3.1 API (Spring Boot 4, Java 21)</h3>
+<ul>
+<li>Job <code>test</code> : <code>./mvnw test</code> sous JDK 21
+(Temurin), cache Maven.</li>
+<li>Couverture JaCoCo : rapport genere a la phase <code>test</code>,
+controle du seuil (regle <code>jacoco-check</code>, element
+<code>BUNDLE</code>, <strong>80 % lignes ET branches</strong>) a la
+phase <code>verify</code>. Bloquant : un build vert garantit le
+seuil.</li>
+<li>En local : <code>./mvnw test</code> (rapport dans
+<code>target/site/jacoco/</code>), <code>./mvnw verify</code> (controle
+du seuil).</li>
+</ul>
+<h3 id="auth-bun-hono-better-auth">3.2 Auth (Bun, Hono,
+better-auth)</h3>
+<ul>
+<li><code>bun install --frozen-lockfile</code> puis
+<code>bun test</code> (runner integre de Bun).</li>
+<li>Suites dans <code>src/__tests__/</code> : routes, entitlements,
+subscriptions, admin, templates email. Pas de seuil de couverture
+impose.</li>
+</ul>
+<h3 id="ai-nutrition-fastapi-python-3.12">3.3 AI-Nutrition (FastAPI,
+Python 3.12)</h3>
+<ul>
+<li>Job <code>lint</code> : <code>ruff check .</code> (ruff 0.8.4).</li>
+<li>Job <code>test</code> : <strong>double checkout</strong> (le depot +
+<code>MSPR-HealthAI-Coach-BDD</code> pour disposer des migrations,
+variable <code>MIGRATIONS_DIR</code>), installation des deps via
+l’<strong>index PyTorch CPU</strong>, puis
+<code>pytest -m "not slow"</code> (exclut inference reelle /
+reseau).</li>
+<li>Rapports de couverture publies en <strong>artefacts</strong> :
+<code>htmlcov/</code> (HTML) et <code>coverage.xml</code> (XML), meme si
+le job echoue (<code>if: always()</code>).</li>
+<li>Couverture pytest-cov (<code>--cov=app</code>), cible 80 %, pas de
+<code>--cov-fail-under</code> strict a ce stade. Mesure reelle :
+<strong>92 %</strong> (run du 09/06/2026).</li>
+</ul>
+<h3 id="reco-fitness-fastapi-python-3.12">3.4 Reco-Fitness (FastAPI,
+Python 3.12)</h3>
+<ul>
+<li>Job <code>lint</code> :
+<code>ruff check --config reco-fitness/ruff.toml reco-fitness/app reco-fitness/tests</code>
+(ruff 0.8.4).</li>
+<li>Job <code>test</code> :
+<code>pytest -m "not slow and not integration" -v</code>. Marqueurs
+<code>unit</code> / <code>integration</code> / <code>slow</code> : les
+tests <code>integration</code> (containers PostgreSQL + MongoDB
+ephemeres) et <code>slow</code> se lancent <strong>en local
+uniquement</strong>.</li>
+<li>Couverture pytest-cov (<code>--cov=app</code>), seuil <strong>80
+%</strong> retenu pour ce service. <code>pytest.ini</code> fixe
+<code>--cov-fail-under=0</code> : l’objectif est verifie sur le rapport
+<code>term-missing</code>. Mesure reelle : <strong>85 %</strong> (run du
+08/06/2026).</li>
+</ul>
+<h3 id="etl-python-3.12">3.5 ETL (Python 3.12)</h3>
+<ul>
+<li>Job <code>lint</code> : <code>ruff check</code> +
+<code>ruff format --check</code> (ruff 0.15.6, config
+<code>etl/pyproject.toml</code>).</li>
+<li>Job <code>test</code> :
+<code>python -m pytest tests/ -m "not integration" -v</code> (unitaires
+: cleaners, extractors).</li>
+<li>Job <code>test-integration</code> : <strong>service PostgreSQL
+16</strong> dans le runner, puis
+<code>python -m pytest tests/ -m integration -v</code> avec les
+variables <code>DB_HOST/PORT/NAME/USER/PASSWORD</code> pointant vers le
+container. Seul service avec integration reelle en CI.</li>
+</ul>
+<h3 id="front-vue-3-vite-typescript">3.6 Front (Vue 3, Vite,
+TypeScript)</h3>
+<ul>
+<li>Quatre jobs sous Node 22 : <code>lint</code> (oxlint + eslint),
+<code>type-check</code> (vue-tsc), <code>test</code> (Vitest
+<code>--run</code>), <code>e2e</code> (Cypress,
+<code>needs: [test]</code>).</li>
+<li>Le job <code>e2e</code> : build en mode test
+(<code>npm run build:test</code>), cache + installation du binaire
+Cypress, puis <code>start-server-and-test</code> qui sert l’app
+(<code>vite preview --port 4173</code>), attend que le port reponde et
+lance <code>cypress run</code>. Screenshots publies en artefact en cas
+d’echec.</li>
+<li>La publication <code>needs: [lint, type-check, test, e2e]</code> :
+les 4 jobs conditionnent l’image.</li>
+</ul>
+<h3 id="bdd-postgresql-17-migrations-sql">3.7 BDD (PostgreSQL 17,
+migrations SQL)</h3>
+<ul>
+<li>Job <code>validate</code> : service <code>postgres:17-alpine</code>,
+installation du client <code>psql</code>, application
+<strong>sequentielle</strong> des migrations
+<code>migrations/V*__*.sql</code> triees par <code>sort -V</code>, avec
+<code>psql -v ON_ERROR_STOP=1</code>. Une erreur SQL stoppe le
+pipeline.</li>
+<li>Pas de code applicatif : la validation EST le test (les migrations
+s’appliquent reellement sur un PostgreSQL vierge).</li>
+</ul>
+<h3 id="mongodb-init-collections-index">3.8 MongoDB (init collections /
+index)</h3>
+<ul>
+<li>Job <code>validate</code> : <code>node --check</code> sur chaque
+<code>init/*.js</code> (syntaxe), puis demarrage d’un container
+<code>mongo:7-jammy</code> avec les scripts montes en
+<code>docker-entrypoint-initdb.d</code>. Un <code>mongosh</code> verifie
+la presence des collections attendues
+(<code>user_fitness_profiles</code>, <code>workout_programs</code>,
+<code>recommendation_history</code>) et de l’index
+<code>user_id_unique</code>. Collection ou index manquant = job
+rouge.</li>
+</ul>
+<hr />
+<h2 id="strategie-dimages-et-de-tags-deploiement-continu-watchtower">4.
+Strategie d’images et de tags + deploiement continu Watchtower</h2>
+<h3 id="tags-produits-par-dockermetadata-action">4.1 Tags produits par
+<code>docker/metadata-action</code></h3>
+<p>Chaque publication produit plusieurs tags pour la meme image :</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 38%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Regle</th>
+<th>Tag produit</th>
+<th>Quand</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type=ref,event=branch</code></td>
+<td>nom de la branche (<code>main</code>, <code>master</code>)</td>
+<td>chaque push de branche</td>
+<td>suivre une branche</td>
+</tr>
+<tr>
+<td><code>type=semver,pattern={{version}}</code></td>
+<td><code>1.2.3</code></td>
+<td>tag Git <code>v1.2.3</code></td>
+<td>release figee</td>
+</tr>
+<tr>
+<td><code>type=semver,pattern={{major}}.{{minor}}</code></td>
+<td><code>1.2</code></td>
+<td>tag Git <code>v1.2.3</code></td>
+<td>suivre les correctifs d’une mineure</td>
+</tr>
+<tr>
+<td><code>type=sha,prefix=,format=short</code></td>
+<td>SHA court du commit</td>
+<td>chaque push</td>
+<td><strong>tracabilite</strong> : retrouver le commit exact d’une
+image</td>
+</tr>
+<tr>
+<td><code>type=raw,value=latest,enable={{is_default_branch}}</code></td>
+<td><code>latest</code></td>
+<td><strong>uniquement</strong> branche par defaut</td>
+<td>cible du deploiement prod</td>
+</tr>
+</tbody>
+</table>
+<p>Le deploiement en mode prod (<code>bootstrap.sh</code> sans option)
+tire les images <code>:latest</code>, donc celles publiees depuis la
+branche par defaut de chaque depot. Les tags <code>sha</code> et
+<code>semver</code> restent disponibles sur GHCR pour epingler ou
+revenir a un etat precis.</p>
+<h3 id="cd-via-watchtower-docker-compose.watchtower.yml">4.2 CD via
+Watchtower (<code>docker-compose.watchtower.yml</code>)</h3>
+<p>Le CD ferme la boucle : <code>git push</code> -&gt; GitHub Actions
+build et publie -&gt; Watchtower tire la nouvelle image et recree le
+conteneur, sans intervention manuelle.</p>
+<ul>
+<li><strong>Fonctionnement</strong> : le conteneur
+<code>mspr-watchtower</code> interroge GHCR toutes les 5 minutes
+(<code>WATCHTOWER_POLL_INTERVAL=300</code>). Nouveau
+<code>:latest</code> disponible = arret du conteneur, recreation avec la
+nouvelle image, suppression de l’ancienne
+(<code>WATCHTOWER_CLEANUP=true</code>).</li>
+<li><strong>Services suivis</strong> (passes en argument, donc liste
+blanche explicite) : <code>mspr-api</code>,
+<code>mspr-auth-service</code>, <code>mspr-etl</code>,
+<code>mspr-reco-fitness</code>, <code>mspr-ai-nutrition</code>. Ce sont
+des <strong>noms de conteneurs</strong> (l’image <code>mspr-auth</code>
+tourne dans le conteneur <code>mspr-auth-service</code>).</li>
+<li><strong>Front exclu volontairement</strong> :
+<code>mspr-front</code> tourne sur une image <strong>rebuildee
+localement</strong> avec les URLs publiques <strong>figees au
+build</strong> (build Vite statique), sans image GHCR a suivre. Son
+redeploiement reste manuel.</li>
+<li><strong>Limite (migrations)</strong> : le conteneur one-shot
+<code>mspr-auth-migrate</code> n’est <strong>pas</strong> rejoue par
+Watchtower. Si une mise a jour backend embarque une migration, relancer
+<code>docker compose ... up -d</code> pour declencher le conteneur de
+migration.</li>
+<li><strong>Gotcha</strong> <code>DOCKER_API_VERSION: "1.44"</code> :
+l’image <code>containrrr/watchtower</code> embarque un client Docker
+ancien (API 1.25) que le daemon recent (Docker 29) refuse (“client
+version 1.25 is too old”). On fige la version d’API client a une valeur
+supportee par le daemon.</li>
+</ul>
+<p>En production, l’overlay se combine aux autres (commande reelle de
+<code>CICD.md</code>) :</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yml <span class="at">-f</span> docker-compose.monitoring.yml <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.traefik.yml <span class="at">-f</span> docker-compose.vision.yml <span class="dt">\</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.watchtower.yml up <span class="at">-d</span></span></code></pre></div>
+<p>Le detail des overlays est dans la <a
+href="Configs-Resilience.html">fiche Configs et resilience</a>, la partie
+monitoring dans la <a href="Observabilite.html">fiche
+Observabilite</a>.</p>
+<hr />
+<h2 id="qualite-plan-de-test-couvertures-sonarcloud">5. Qualite : plan
+de test, couvertures, SonarCloud</h2>
+<h3 id="pyramide-de-tests-plan-de-test.md">5.1 Pyramide de tests
+(plan-de-test.md)</h3>
+<p>La strategie suit une pyramide classique, adaptee a la techno de
+chaque service :</p>
+<ul>
+<li><strong>Unitaires</strong> : logique metier isolee (cleaners ETL,
+scoring fitness, validators, services). Rapides, sans dependance
+externe.</li>
+<li><strong>Integration</strong> : comportement avec une dependance
+reelle (PostgreSQL, MongoDB) lancee en <strong>service ephemere</strong>
+dans la CI (ETL) ou en local (Reco-Fitness).</li>
+<li><strong>End-to-end</strong> : uniquement sur le Front, via Cypress,
+sur l’application <strong>buildee et servie</strong> (pas le dev
+server).</li>
+<li><strong>Validation</strong> : pour les services <strong>sans code
+applicatif</strong> (BDD, MongoDB), on valide l’execution reelle des
+migrations SQL et de l’init des collections / index.</li>
+</ul>
+<p>Le lint et la verification de types completent les tests selon la
+techno.</p>
+<h3 id="resultats-reels-les-8-ci-au-vert-releve-du-10062026">5.2
+Resultats reels : les 8 CI au vert (releve du 10/06/2026)</h3>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Branche</th>
+<th>Dernier run</th>
+<th>Resultat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API</td>
+<td><code>main</code></td>
+<td>08/06/2026 (run 27145460311)</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td><code>main</code></td>
+<td>08/06/2026 (run 27143017850)</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>AI-Nutrition</td>
+<td><code>master</code></td>
+<td>09/06/2026 (run 27188678630)</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>Reco-Fitness</td>
+<td><code>master</code></td>
+<td>08/06/2026 (run 27144710950)</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>ETL</td>
+<td><code>master</code></td>
+<td>20/04/2026 (run 24667234255)</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>Front</td>
+<td><code>main</code></td>
+<td>10/06/2026 (run 27270853990)</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>BDD</td>
+<td><code>main</code></td>
+<td>26/05/2026 (run 26444280468)</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>MongoDB</td>
+<td><code>master</code></td>
+<td>22/05/2026 (run 26278826349)</td>
+<td>Succes</td>
+</tr>
+</tbody>
+</table>
+<p>La verification d’exploitation associee (smoke test du 10/06/2026 :
+stack complete stable en 84 secondes, 20 conteneurs, cibles Prometheus
+10/10 UP) est detaillee dans la <a href="Observabilite.html">fiche
+Observabilite</a>.</p>
+<h3 id="couverture-mesuree">5.3 Couverture mesuree</h3>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 13%" />
+<col style="width: 32%" />
+<col style="width: 13%" />
+<col style="width: 24%" />
+</colgroup>
+<thead>
+<tr>
+<th>Service</th>
+<th>Outil</th>
+<th>Resultat mesure</th>
+<th>Seuil</th>
+<th>Enforcement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API</td>
+<td>JaCoCo</td>
+<td>&gt;= 80 % (lignes et branches)</td>
+<td>80 %</td>
+<td><strong>Bloquant</strong> : regle <code>jacoco-check</code> a la
+phase <code>verify</code>, le build vert garantit le seuil</td>
+</tr>
+<tr>
+<td>AI-Nutrition</td>
+<td>pytest-cov</td>
+<td><strong>92 %</strong> (run du 09/06/2026)</td>
+<td>cible 80 %</td>
+<td>Mesure en CI, rapports HTML/XML en artefacts</td>
+</tr>
+<tr>
+<td>Reco-Fitness</td>
+<td>pytest-cov</td>
+<td><strong>85 %</strong> (run du 08/06/2026)</td>
+<td>80 %</td>
+<td>Mesure en CI sur le rapport <code>term-missing</code></td>
+</tr>
+<tr>
+<td>Auth</td>
+<td>bun test</td>
+<td>suites passantes</td>
+<td>-</td>
+<td>Tests sans seuil</td>
+</tr>
+<tr>
+<td>ETL</td>
+<td>pytest</td>
+<td>unitaires + integration PostgreSQL passants</td>
+<td>-</td>
+<td>Tests sans seuil</td>
+</tr>
+<tr>
+<td>Front</td>
+<td>Vitest + Cypress</td>
+<td>unitaires + 6 specs e2e passants</td>
+<td>-</td>
+<td>Tests sans seuil</td>
+</tr>
+</tbody>
+</table>
+<p>Les services sans code applicatif (BDD, MongoDB) ne sont pas
+concernes par la couverture : ils sont valides par execution reelle a
+chaque run.</p>
+<h3 id="sonarcloud-analyse-statique">5.4 SonarCloud (analyse
+statique)</h3>
+<p><strong>Mode retenu : Automatic Analysis.</strong> L’application
+GitHub SonarCloud est installee sur l’organisation
+<code>whitefoxxyt</code> : analyse a chaque push, <strong>sans token ni
+etape CI dans les depots</strong>. L’activation se fait depot par depot
+depuis l’interface SonarCloud, par un administrateur de
+l’organisation.</p>
+<p>Mesures relevees le 10/06/2026 via l’API publique SonarCloud :</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 14%" />
+<col style="width: 5%" />
+<col style="width: 14%" />
+<col style="width: 17%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>Projet</th>
+<th>Lignes de code</th>
+<th>Bugs</th>
+<th>Vulnerabilites</th>
+<th>Hotspots securite</th>
+<th>Code smells</th>
+<th>Duplication</th>
+<th>Derniere analyse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI-Nutrition</td>
+<td>11 863</td>
+<td>30</td>
+<td>3</td>
+<td>18</td>
+<td>102</td>
+<td>0,7 %</td>
+<td>09/06/2026</td>
+</tr>
+<tr>
+<td>Reco-Fitness</td>
+<td>6 120</td>
+<td>35</td>
+<td>1</td>
+<td>8</td>
+<td>19</td>
+<td>1,5 %</td>
+<td>08/06/2026</td>
+</tr>
+<tr>
+<td>MongoDB</td>
+<td>importe, aucune analyse declenchee a ce jour</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Notes associees (echelle A a E) : <strong>maintenabilite A</strong>
+sur les deux projets, <strong>fiabilite C</strong>, <strong>securite
+E</strong> (tiree par les vulnerabilites ouvertes, 3 et 1
+respectivement). Ces points constituent le <strong>backlog
+qualite</strong> a traiter en continu.</p>
+<p>Limites connues (a annoncer soi-meme avant que le jury ne les pointe)
+:</p>
+<ul>
+<li><strong>La couverture n’apparait pas dans SonarCloud</strong> :
+l’Automatic Analysis n’execute pas les tests. La couverture fait foi
+<strong>en CI</strong> (section 5.3).</li>
+<li>Les depots <strong>API, Auth, ETL, Front et BDD ne sont pas encore
+importes</strong> dans l’organisation SonarCloud (import depuis
+l’interface, sans configuration cote depot).</li>
+<li>L’API conserve en complement un environnement <strong>SonarQube
+local</strong> : <code>docker-compose.sonar.yml</code> dans le depot
+API, analyse manuelle <code>mvn sonar:sonar</code> vers
+<code>http://localhost:9000</code> (proprietes
+<code>sonar.host.url</code> et
+<code>sonar.coverage.jacoco.xmlReportPaths</code> dans le
+<code>pom.xml</code>, plugin <code>sonar-maven-plugin</code>
+4.0.0.4121).</li>
+</ul>
+<h3
+id="point-technique-important-lincident-e2e-front-resolu-le-10062026">5.5
+Point technique important : l’incident e2e Front (resolu le
+10/06/2026)</h3>
+<p>C’est la <strong>preuve vecue</strong> que le pipeline bloque, a
+raconter au jury.</p>
+<ul>
+<li><strong>Symptome</strong> : suite e2e Cypress du Front en echec du
+<strong>26/05/2026 au 10/06/2026</strong> (2 specs sur 6). Consequence
+directe : la publication de l’image <code>mspr-front</code> etait
+<strong>bloquee</strong> (le job <code>publish</code> a
+<code>needs: [lint, type-check, test, e2e]</code>), conformement au
+comportement attendu du pipeline.</li>
+<li><strong>Cause 1</strong> (<code>meal-analysis.cy.ts</code>) :
+<strong>mock manquant</strong> de <code>GET /api/v1/me/macros</code>,
+appele au montage de la vue ; sans lui la vue affiche l’ecran “profil
+incomplet” a la place de la dropzone.</li>
+<li><strong>Cause 2</strong> (<code>meal-plan.cy.ts</code>) : fixture
+<code>meal-plan.json</code> restee sur une <strong>ancienne
+structure</strong>
+(<code>breakfast</code>/<code>lunch</code>/<code>dinner</code> par jour)
+au lieu du contrat actuel <code>days[].meals[]</code> (champ
+<code>est_budget_eur</code> inclus). Le contrat d’API avait evolue, la
+fixture non.</li>
+<li><strong>Resolution</strong> : apres correction, la suite complete
+passe : <strong>6 specs, 10 tests, 0 echec</strong>, verifie en local
+puis en CI (run 27270853990 du 10/06/2026).</li>
+<li><strong>Lecon</strong> : les tests e2e sur l’app buildee detectent
+les derives de contrat entre front et services ; et un pipeline qui
+bloque la publication n’est pas une theorie, il a reellement retenu une
+image non conforme pendant 15 jours.</li>
+</ul>
+<hr />
+<h2 id="code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</h2>
+<h3 id="le-workflow-ci-de-lapi-test-puis-publication-conditionnee">6.1
+Le workflow CI de l’API : test puis publication conditionnee</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MSPR-API/.github/workflows/ci.yml (extrait)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">on</span><span class="kw">:</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">push</span><span class="kw">:</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">branches</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">main</span><span class="kw">]</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">tags</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&#39;v*.*.*&#39;</span><span class="kw">]</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pull_request</span><span class="kw">:</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">branches</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">main</span><span class="kw">]</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">test</span><span class="kw">:</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Tests unitaires (Maven)</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">runs-on</span><span class="kw">:</span><span class="at"> ubuntu-latest</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/checkout@v4</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">fetch-depth</span><span class="kw">:</span><span class="at"> </span><span class="dv">0</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/setup-java@v4</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">distribution</span><span class="kw">:</span><span class="at"> temurin</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">java-version</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;21&#39;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">cache</span><span class="kw">:</span><span class="at"> maven</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">run</span><span class="kw">:</span><span class="at"> ./mvnw test</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">publish</span><span class="kw">:</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Publication de l&#39;image Docker</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">needs</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">test</span><span class="kw">]</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">if</span><span class="kw">:</span><span class="at"> github.event_name == &#39;push&#39;</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> ./.github/workflows/docker-publish.yml</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">secrets</span><span class="kw">:</span><span class="at"> inherit</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">permissions</span><span class="kw">:</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">contents</span><span class="kw">:</span><span class="at"> read</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">packages</span><span class="kw">:</span><span class="at"> write</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Les declencheurs couvrent les 3 cas : push sur <code>main</code>
+(deploiement continu via <code>latest</code>), PR (verification avant
+fusion, sans publication), tags <code>v*.*.*</code> (release
+semver).</li>
+<li><code>needs: [test]</code> : la publication <strong>attend</strong>
+le job de test et ne demarre que s’il est vert. C’est le mecanisme de
+blocage du pipeline.</li>
+<li><code>if: github.event_name == 'push'</code> : sur une PR,
+<code>publish</code> est <strong>saute</strong>. Une PR ne peut jamais
+pousser d’image, meme verte.</li>
+<li><code>uses: ./.github/workflows/docker-publish.yml</code> : appel du
+<strong>workflow reutilisable</strong> (pattern
+<code>workflow_call</code>). <code>secrets: inherit</code> transmet les
+secrets du depot au workflow appele.</li>
+<li><code>permissions</code> : le <code>GITHUB_TOKEN</code> du job est
+restreint a <code>contents: read</code> + <code>packages: write</code>
+(juste de quoi lire le code et pousser sur GHCR).</li>
+</ul>
+<h3 id="le-workflow-de-publication-metadata-action-et-tags">6.2 Le
+workflow de publication : metadata-action et tags</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MSPR-API/.github/workflows/docker-publish.yml (extrait)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">on</span><span class="kw">:</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">workflow_call</span><span class="kw">:</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">env</span><span class="kw">:</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">REGISTRY</span><span class="kw">:</span><span class="at"> ghcr.io</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">IMAGE_NAME</span><span class="kw">:</span><span class="at"> whitefoxxyt/mspr-api</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> meta</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> docker/metadata-action@v5</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">images</span><span class="kw">:</span><span class="at"> ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">          tags</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>            type=ref,event=branch</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>            type=semver,pattern={{version}}</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            type=semver,pattern={{major}}.{{minor}}</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            type=sha,prefix=,format=short</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>            type=raw,value=latest,enable={{is_default_branch}}</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> docker/build-push-action@v5</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">context</span><span class="kw">:</span><span class="at"> .</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">push</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">tags</span><span class="kw">:</span><span class="at"> ${{ steps.meta.outputs.tags }}</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">labels</span><span class="kw">:</span><span class="at"> ${{ steps.meta.outputs.labels }}</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">cache-from</span><span class="kw">:</span><span class="at"> type=gha</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">cache-to</span><span class="kw">:</span><span class="at"> type=gha,mode=max</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>on: workflow_call</code> : ce workflow ne se declenche jamais
+seul, il est <strong>appele</strong> par le workflow de CI. Garantit
+qu’aucune image ne part sans etre passee par les tests.</li>
+<li><code>docker/metadata-action</code> calcule les tags et labels OCI a
+partir du contexte Git (branche, tag, SHA). Une seule image, plusieurs
+tags.</li>
+<li><code>enable={{is_default_branch}}</code> : <code>latest</code>
+n’est produit <strong>que</strong> depuis la branche par defaut. Une
+branche de feature publie son tag de branche, jamais <code>latest</code>
+(donc jamais deployee par Watchtower).</li>
+<li><code>type=sha,prefix=,format=short</code> : chaque image porte le
+SHA court du commit qui l’a produite. <strong>Tracabilite</strong> : on
+peut toujours dire de quel commit vient ce qui tourne en prod.</li>
+<li><code>cache-from/to: type=gha</code> : cache de layers Docker porte
+par GitHub Actions, accelere les rebuilds.</li>
+<li>L’authentification GHCR utilise <code>docker/login-action</code>
+avec <code>${{ github.actor }}</code> /
+<code>${{ secrets.GITHUB_TOKEN }}</code> : token ephemere fourni par
+Actions, aucun secret a provisionner.</li>
+</ul>
+<h3 id="la-regle-jacoco-seuil-80-bloquant-pom.xml-de-lapi">6.3 La regle
+JaCoCo : seuil 80 % bloquant (pom.xml de l’API)</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">execution</span>&gt;</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">id</span>&gt;jacoco-check&lt;/<span class="kw">id</span>&gt;</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">goals</span>&gt;</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">goal</span>&gt;check&lt;/<span class="kw">goal</span>&gt;</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">goals</span>&gt;</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">configuration</span>&gt;</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">rules</span>&gt;</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">rule</span>&gt;</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                &lt;<span class="kw">element</span>&gt;BUNDLE&lt;/<span class="kw">element</span>&gt;</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                &lt;<span class="kw">limits</span>&gt;</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                    <span class="co">&lt;!-- Minimum 80% de couverture de lignes --&gt;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                    &lt;<span class="kw">limit</span>&gt;</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>                        &lt;<span class="kw">counter</span>&gt;LINE&lt;/<span class="kw">counter</span>&gt;</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>                        &lt;<span class="kw">value</span>&gt;COVEREDRATIO&lt;/<span class="kw">value</span>&gt;</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>                        &lt;<span class="kw">minimum</span>&gt;0.80&lt;/<span class="kw">minimum</span>&gt;</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>                    &lt;/<span class="kw">limit</span>&gt;</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>                    <span class="co">&lt;!-- Minimum 80% de couverture de branches --&gt;</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>                    &lt;<span class="kw">limit</span>&gt;</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>                        &lt;<span class="kw">counter</span>&gt;BRANCH&lt;/<span class="kw">counter</span>&gt;</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>                        &lt;<span class="kw">value</span>&gt;COVEREDRATIO&lt;/<span class="kw">value</span>&gt;</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>                        &lt;<span class="kw">minimum</span>&gt;0.80&lt;/<span class="kw">minimum</span>&gt;</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>                    &lt;/<span class="kw">limit</span>&gt;</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>                &lt;/<span class="kw">limits</span>&gt;</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>            &lt;/<span class="kw">rule</span>&gt;</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">rules</span>&gt;</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">configuration</span>&gt;</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">execution</span>&gt;</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Trois executions JaCoCo dans le <code>pom.xml</code> (version
+0.8.11) : <code>prepare-agent</code> (instrumente la JVM de test),
+<code>report</code> (genere le rapport a la phase <code>test</code>,
+dans <code>target/site/jacoco/</code>), <code>jacoco-check</code>
+(controle du seuil a la phase <code>verify</code>).</li>
+<li><code>element BUNDLE</code> : le seuil s’applique au <strong>module
+entier</strong>, pas classe par classe.</li>
+<li>Deux compteurs : <code>LINE</code> <strong>et</strong>
+<code>BRANCH</code> a 0.80. La couverture de branches est plus exigeante
+que les lignes (chaque <code>if</code> doit etre teste dans ses deux
+issues).</li>
+<li><code>COVEREDRATIO</code> &lt; 0.80 = echec du build a
+<code>mvn verify</code>. C’est un quality gate <strong>dans l’outil de
+build</strong>, pas dans un service externe : reproductible en local a
+l’identique.</li>
+<li>Le rapport XML (<code>target/site/jacoco/jacoco.xml</code>) est
+reference par <code>sonar.coverage.jacoco.xmlReportPaths</code> pour
+l’analyse SonarQube locale.</li>
+</ul>
+<h3 id="ai-nutrition-double-checkout-index-pytorch-cpu-artefacts">6.4
+AI-Nutrition : double checkout, index PyTorch CPU, artefacts</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MSPR-AI-Nutrition/.github/workflows/ci.yml (extrait du job test)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Checkout MSPR-DB (migrations)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/checkout@v4</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">repository</span><span class="kw">:</span><span class="at"> whitefoxxyt/MSPR-HealthAI-Coach-BDD</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">path</span><span class="kw">:</span><span class="at"> MSPR-DB</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Install dependencies</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">working-directory</span><span class="kw">:</span><span class="at"> MSPR-AI-Nutrition</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">        run</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>          pip install --extra-index-url https://download.pytorch.org/whl/cpu \</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            -r requirements.txt -r requirements-dev.txt -r requirements-eval.txt</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Run pytest (excluding slow)</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">working-directory</span><span class="kw">:</span><span class="at"> MSPR-AI-Nutrition</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">env</span><span class="kw">:</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">MIGRATIONS_DIR</span><span class="kw">:</span><span class="at"> ${{ github.workspace }}/MSPR-DB/migrations</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">run</span><span class="kw">:</span><span class="at"> pytest -m &quot;not slow&quot;</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Upload coverage HTML report</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">if</span><span class="kw">:</span><span class="at"> always()</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/upload-artifact@v4</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">name</span><span class="kw">:</span><span class="at"> coverage-html</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">path</span><span class="kw">:</span><span class="at"> MSPR-AI-Nutrition/htmlcov/</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><strong>Double checkout</strong> : le service partage la BDD
+<code>healthai</code> dont le schema vit dans le depot BDD. La CI clone
+donc <code>MSPR-HealthAI-Coach-BDD</code> a cote du code et pointe
+<code>MIGRATIONS_DIR</code> dessus : les tests rejouent les
+<strong>vraies migrations</strong>, pas un schema duplique.</li>
+<li><code>--extra-index-url https://download.pytorch.org/whl/cpu</code>
+: installe la variante <strong>CPU</strong> de PyTorch. Sans cela, pip
+tirerait la variante CUDA (des Go de plus, inutile sur un runner sans
+GPU).</li>
+<li><code>pytest -m "not slow"</code> : les tests marques
+<code>slow</code> (inference reelle, reseau) sont exclus de la CI.</li>
+<li><code>if: always()</code> sur l’upload : les rapports de couverture
+(<code>htmlcov/</code>, <code>coverage.xml</code>) sont publies
+<strong>meme si les tests echouent</strong>, pour diagnostiquer depuis
+l’interface Actions. C’est le “rapport de tests” telechargeable du
+livrable.</li>
+</ul>
+<h3 id="front-le-job-e2e-cypress-sur-lapp-buildee">6.5 Front : le job
+e2e Cypress sur l’app buildee</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MSPR-FRONT/.github/workflows/ci.yml (extrait du job e2e)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">e2e</span><span class="kw">:</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Tests e2e (Cypress)</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">needs</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">test</span><span class="kw">]</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">runs-on</span><span class="kw">:</span><span class="at"> ubuntu-latest</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">      # checkout + setup-node + npm ci ...</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Cache binaire Cypress</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/cache@v4</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ~/.cache/Cypress</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">key</span><span class="kw">:</span><span class="at"> cypress-${{ runner.os }}-${{ hashFiles(&#39;package-lock.json&#39;) }}</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Installation du binaire Cypress</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">run</span><span class="kw">:</span><span class="at"> npx cypress install</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Build de l&#39;application (mode test)</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">run</span><span class="kw">:</span><span class="at"> npm run build:test</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Tests e2e Cypress</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">run</span><span class="kw">:</span><span class="at"> npx start-server-and-test &#39;vite preview --port 4173&#39; http://localhost:4173 &#39;cypress run&#39;</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">if</span><span class="kw">:</span><span class="at"> failure()</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/upload-artifact@v4</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">name</span><span class="kw">:</span><span class="at"> cypress-screenshots</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">path</span><span class="kw">:</span><span class="at"> cypress/screenshots</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">if-no-files-found</span><span class="kw">:</span><span class="at"> ignore</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>needs: [test]</code> : l’e2e ne tourne que si les unitaires
+Vitest passent (pyramide respectee : pas la peine de payer un e2e si la
+base est cassee).</li>
+<li><code>npm run build:test</code> : on teste le <strong>build de
+production</strong> (mode test), pas le dev server. Plus proche de ce
+qui sera deploye.</li>
+<li><code>start-server-and-test 'vite preview --port 4173' http://localhost:4173 'cypress run'</code>
+: lance <code>vite preview</code> (sert le build statique sur 4173),
+<strong>attend</strong> que l’URL reponde, lance Cypress, puis coupe le
+serveur. Resout proprement le probleme “le serveur n’est pas encore pret
+quand les tests demarrent”.</li>
+<li>Le binaire Cypress (lourd) est mis en cache, cle sur le hash de
+<code>package-lock.json</code>.</li>
+<li><code>if: failure()</code> : les screenshots Cypress ne sont
+uploades <strong>qu’en cas d’echec</strong>. C’est exactement ce qui a
+servi a diagnostiquer l’incident de la section 5.5.</li>
+</ul>
+<h3 id="loverlay-watchtower-docker-compose.watchtower.yml">6.6 L’overlay
+Watchtower (docker-compose.watchtower.yml)</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">watchtower</span><span class="kw">:</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> containrrr/watchtower:latest</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> mspr-watchtower</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">restart</span><span class="kw">:</span><span class="at"> unless-stopped</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">security_opt</span><span class="kw">:</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> no-new-privileges:true</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> /var/run/docker.sock:/var/run/docker.sock</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">DOCKER_API_VERSION</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;1.44&quot;</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">WATCHTOWER_CLEANUP</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;true&quot;</span><span class="co">          # supprime l&#39;ancienne image apres maj</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">WATCHTOWER_POLL_INTERVAL</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;300&quot;</span><span class="co">     # verifie GHCR toutes les 5 min</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">WATCHTOWER_INCLUDE_RESTARTING</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;true&quot;</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">TZ</span><span class="kw">:</span><span class="at"> Europe/Paris</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">command</span><span class="kw">:</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mspr-api</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mspr-auth-service</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mspr-etl</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mspr-reco-fitness</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mspr-ai-nutrition</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Watchtower a besoin du <strong>socket Docker</strong>
+(<code>/var/run/docker.sock</code>) pour inspecter et recreer les
+conteneurs. C’est un acces puissant, partiellement mitige par
+<code>no-new-privileges:true</code>.</li>
+<li>Les arguments de <code>command</code> forment une <strong>liste
+blanche</strong> : seuls ces 5 conteneurs sont surveilles. Tout le reste
+(front, bases, monitoring) est ignore.</li>
+<li><code>WATCHTOWER_POLL_INTERVAL: "300"</code> : fenetre de mise a
+jour de 5 minutes maximum entre la publication GHCR et la recreation du
+conteneur.</li>
+<li><code>WATCHTOWER_CLEANUP: "true"</code> : l’ancienne image est
+supprimee apres la mise a jour, le disque ne gonfle pas au fil des
+deploiements.</li>
+<li><code>DOCKER_API_VERSION: "1.44"</code> : contournement d’un vrai
+probleme rencontre, le client Docker embarque dans l’image watchtower
+(API 1.25) est refuse par le daemon Docker 29 (“client version 1.25 is
+too old”). On fige une version d’API supportee (&gt;= 1.40).</li>
+</ul>
+<h3 id="validation-bdd-et-mongodb-tester-sans-code-applicatif">6.7
+Validation BDD et MongoDB : tester sans code applicatif</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Equivalent local de la CI BDD (plan-de-test.md)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> <span class="va">$(</span><span class="fu">ls</span> migrations/V<span class="pp">*</span>__<span class="pp">*</span>.sql <span class="kw">|</span> <span class="fu">sort</span> <span class="at">-V</span><span class="va">)</span><span class="kw">;</span> <span class="cf">do</span> <span class="ex">psql</span> <span class="at">-v</span> ON_ERROR_STOP=1 <span class="at">-f</span> <span class="st">&quot;</span><span class="va">$f</span><span class="st">&quot;</span><span class="kw">;</span> <span class="cf">done</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Equivalent local de la CI MongoDB (plan-de-test.md)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> init/<span class="pp">*</span>.js<span class="kw">;</span> <span class="cf">do</span> <span class="ex">node</span> <span class="at">--check</span> <span class="st">&quot;</span><span class="va">$f</span><span class="st">&quot;</span><span class="kw">;</span> <span class="cf">done</span>   <span class="co"># syntaxe</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose up <span class="at">-d</span>                              <span class="co"># applique l&#39;init au demarrage</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>sort -V</code> (tri “version”) garantit l’ordre
+<code>V1, V2, ... V10</code> ; un tri lexicographique classerait
+<code>V10</code> avant <code>V2</code>. Indispensable pour des
+migrations sequentielles.</li>
+<li><code>psql -v ON_ERROR_STOP=1</code> : par defaut psql continue
+apres une erreur SQL ; avec ce flag, la premiere erreur arrete tout et
+fait echouer le job. Sans lui, la CI pourrait etre verte avec des
+migrations cassees.</li>
+<li>La CI BDD execute cela contre un service
+<code>postgres:17-alpine</code> vierge : on prouve a chaque push que la
+chaine complete de migrations s’applique depuis zero.</li>
+<li>Cote MongoDB : <code>node --check</code> valide la syntaxe JS sans
+executer, puis le container <code>mongo:7-jammy</code> rejoue l’init
+reel et <code>mongosh</code> verifie les 3 collections et l’index
+<code>user_id_unique</code>. La validation porte sur le
+<strong>resultat</strong> (etat de la base), pas seulement sur
+l’execution.</li>
+</ul>
+<hr />
+<h2 id="tableau-recapitulatif">7. Tableau recapitulatif</h2>
+<h3 id="type-de-test-x-service">7.1 Type de test x service</h3>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 13%" />
+<col style="width: 17%" />
+<col style="width: 6%" />
+<col style="width: 18%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>Service</th>
+<th style="text-align: center;">Unitaire</th>
+<th style="text-align: center;">Integration</th>
+<th style="text-align: center;">E2E</th>
+<th style="text-align: center;">Lint / Types</th>
+<th style="text-align: center;">Validation</th>
+<th>Couverture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API</td>
+<td style="text-align: center;">JUnit (<code>mvnw test</code>)</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td>JaCoCo, <strong>80 %</strong> lignes + branches</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td style="text-align: center;"><code>bun test</code></td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td>mesuree, sans seuil</td>
+</tr>
+<tr>
+<td>AI-Nutrition</td>
+<td style="text-align: center;">pytest <code>-m "not slow"</code></td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">ruff</td>
+<td style="text-align: center;">-</td>
+<td>pytest-cov, cible 80 % (<strong>92 %</strong> mesure)</td>
+</tr>
+<tr>
+<td>Reco-Fitness</td>
+<td style="text-align: center;">pytest
+<code>-m "not slow and not integration"</code></td>
+<td style="text-align: center;">pytest <code>-m integration</code> (PG +
+Mongo, local)</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">ruff</td>
+<td style="text-align: center;">-</td>
+<td>pytest-cov, <strong>80 %</strong> (<strong>85 %</strong>
+mesure)</td>
+</tr>
+<tr>
+<td>ETL</td>
+<td style="text-align: center;">pytest
+<code>-m "not integration"</code></td>
+<td style="text-align: center;">pytest <code>-m integration</code>
+(PostgreSQL en CI)</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">ruff + format</td>
+<td style="text-align: center;">-</td>
+<td>mesuree, sans seuil</td>
+</tr>
+<tr>
+<td>Front</td>
+<td style="text-align: center;">Vitest</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">Cypress (6 specs)</td>
+<td style="text-align: center;">oxlint + eslint + vue-tsc</td>
+<td style="text-align: center;">-</td>
+<td>mesuree, sans seuil</td>
+</tr>
+<tr>
+<td>BDD</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">migrations SQL (psql)</td>
+<td>-</td>
+</tr>
+<tr>
+<td>MongoDB</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;"><code>node --check</code></td>
+<td style="text-align: center;">collections + index (mongosh)</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p>Legende : <code>-</code> = non applicable a ce service.</p>
+<h3 id="seuils-de-couverture">7.2 Seuils de couverture</h3>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 18%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr>
+<th>Service</th>
+<th>Outil</th>
+<th>Seuil</th>
+<th>Portee</th>
+<th>Enforcement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API</td>
+<td>JaCoCo</td>
+<td>80 %</td>
+<td>lignes + branches</td>
+<td>bloquant (<code>mvnw verify</code>, regle
+<code>jacoco-check</code>)</td>
+</tr>
+<tr>
+<td>Reco-Fitness</td>
+<td>pytest-cov</td>
+<td>80 %</td>
+<td>lignes (<code>app</code>)</td>
+<td>objectif, verifie sur le rapport</td>
+</tr>
+<tr>
+<td>AI-Nutrition</td>
+<td>pytest-cov</td>
+<td>80 % (cible)</td>
+<td>lignes (<code>app</code>)</td>
+<td>mesure, pas d’enforcement strict en CI</td>
+</tr>
+<tr>
+<td>Auth, ETL, Front</td>
+<td>bun test / pytest / Vitest</td>
+<td>-</td>
+<td>-</td>
+<td>mesure ou tests seuls, pas de seuil</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="questions-probables-du-jury">8. Questions probables du jury</h2>
+<h3 id="q1.-pourquoi-github-actions-plutot-que-jenkins-ou-gitlab-ci">Q1.
+Pourquoi GitHub Actions plutot que Jenkins ou GitLab CI ?</h3>
+<p>Trois arguments :</p>
+<ol type="1">
+<li><strong>Le code est deja sur GitHub</strong> (organisation
+<code>whitefoxxyt</code>, 8 depots). Actions est natif : zero
+infrastructure CI a heberger, securiser et maintenir. Jenkins demande un
+serveur, des agents, des plugins et leurs mises a jour ; GitLab CI
+demande une instance GitLab ou une migration des depots.</li>
+<li><strong>Integration GHCR sans friction</strong> : le
+<code>GITHUB_TOKEN</code> ephemere du run suffit pour pousser l’image
+(<code>packages: write</code>). Aucun secret de registre a provisionner
+ni a faire tourner.</li>
+<li><strong>Briques reutilisables</strong> : marketplace d’actions
+maintenues (<code>setup-java</code>, <code>setup-python</code>,
+<code>metadata-action</code>, <code>build-push-action</code>) et pattern
+<code>workflow_call</code> pour factoriser la publication.</li>
+</ol>
+<p>Tradeoff assume : couplage a GitHub. Acceptable ici, l’exigence du
+sujet porte sur la chaine (build, tests, analyse, deploiement), pas sur
+l’outil. Le besoin etant couvert par des runners manages gratuits au
+scope du projet, un Jenkins auto-heberge aurait ajoute de l’exploitation
+sans valeur.</p>
+<h3
+id="q2.-pourquoi-deployer-latest-quelles-limites-et-comment-revenir-en-arriere">Q2.
+Pourquoi deployer <code>:latest</code> ? Quelles limites, et comment
+revenir en arriere ?</h3>
+<p><code>latest</code> est produit <strong>uniquement</strong> depuis la
+branche par defaut (<code>enable={{is_default_branch}}</code>), donc
+apres lint + tests verts. C’est le contrat le plus simple pour un CD par
+poll : Watchtower suit un tag fixe, chaque merge sur la branche par
+defaut part en prod.</p>
+<p>Limites :</p>
+<ul>
+<li><code>latest</code> est un tag <strong>mouvant</strong> : “ce qui
+tourne” depend du moment du pull, pas d’un identifiant fige.</li>
+<li>Pas de promotion progressive : tout merge part en prod (discipline
+de branche requise, les PR sont testees avant fusion).</li>
+</ul>
+<p>Retour en arriere : chaque image porte aussi un tag <strong>SHA
+court</strong> (commit exact) et, sur les releases, des tags
+<strong>semver</strong> (<code>1.2.3</code>, <code>1.2</code>). Pour
+revenir en arriere : pointer le service du compose sur
+<code>ghcr.io/whitefoxxyt/mspr-&lt;service&gt;:&lt;sha&gt;</code> (ou
+une version), relancer <code>up -d</code>, et le sortir de la liste
+Watchtower le temps du gel. En production plus exigeante, on epinglerait
+des versions ou des digests et <code>latest</code> ne serait pas la
+cible de deploiement.</p>
+<h3 id="q3.-que-se-passe-t-il-quand-un-test-echoue">Q3. Que se
+passe-t-il quand un test echoue ?</h3>
+<p>Mecaniquement : le job <code>publish</code> a <code>needs</code> sur
+les jobs de lint / tests ; un job rouge = <code>publish</code> ne tourne
+pas = <strong>aucune image poussee sur GHCR</strong> = Watchtower ne
+voit rien = la prod reste sur la derniere image saine.</p>
+<p>Preuve vecue (a raconter) : la suite e2e Cypress du Front a ete en
+echec du 26/05 au 10/06/2026 (2 specs sur 6). Pendant 15 jours,
+<strong>aucune image front n’a ete publiee</strong>, conformement au
+comportement attendu. Les causes etaient deux derives de contrat dans
+les tests eux-memes : mock manquant de
+<code>GET /api/v1/me/macros</code> dans
+<code>meal-analysis.cy.ts</code>, et fixture <code>meal-plan.json</code>
+restee sur l’ancienne structure
+(<code>breakfast</code>/<code>lunch</code>/<code>dinner</code>) au lieu
+du contrat actuel <code>days[].meals[]</code>. Apres correction : 6
+specs, 10 tests, 0 echec (run 27270853990). Sur PR, meme logique sans
+publication : les tests conditionnent la fusion.</p>
+<h3 id="q4.-pourquoi-watchtower-plutot-quargocd-ou-flux">Q4. Pourquoi
+Watchtower plutot qu’ArgoCD ou Flux ?</h3>
+<p>ArgoCD et Flux sont des outils <strong>GitOps pour
+Kubernetes</strong> : ils reconcilient l’etat d’un cluster avec des
+manifestes Git, via CRD, controllers et un cluster a operer. Or la
+plateforme tourne en <strong>Docker Compose sur un hote unique</strong>
+: il n’y a pas de cluster, donc pas de place pour ces outils sans
+introduire Kubernetes uniquement pour le CD.</p>
+<p>Watchtower est le CD <strong>minimal adapte a Compose</strong> : un
+conteneur, un poll du registre toutes les 5 minutes, recreation du
+conteneur sur nouvelle image. Cout d’exploitation quasi nul,
+comprehensible en entier.</p>
+<p>Limites assumees en echange : pas de rollback automatique, pas de
+deploiement progressif (canary / blue-green), pas de reconciliation
+declarative depuis Git, et les limites de la Q11. A l’echelle d’un hote
+unique, le ratio simplicite / service rendu est en faveur de
+Watchtower.</p>
+<h3 id="q5.-comment-les-images-sont-elles-tracables">Q5. Comment les
+images sont-elles tracables ?</h3>
+<p>Par la regle <code>type=sha,prefix=,format=short</code> de
+<code>docker/metadata-action</code> : <strong>chaque
+publication</strong> produit un tag egal au SHA court du commit. Etant
+donne une image en prod, on retrouve le commit exact (et inversement :
+etant donne un commit, son image existe sur GHCR).
+<code>metadata-action</code> genere aussi les <strong>labels
+OCI</strong> standard apposes sur l’image. S’y ajoutent les tags de
+branche et les tags semver <code>{{version}}</code> /
+<code>{{major}}.{{minor}}</code> sur les tags Git <code>vX.Y.Z</code>
+pour identifier les releases. Cette tracabilite est ce qui rend le
+deploiement <code>:latest</code> acceptable : le tag mouvant est double
+d’identifiants figes.</p>
+<h3
+id="q6.-sonarcloud-automatic-analysis-vs-scanner-en-ci-avantages-et-limites">Q6.
+SonarCloud Automatic Analysis vs scanner en CI : avantages et limites
+?</h3>
+<p><strong>Automatic Analysis</strong> (retenu) : l’application GitHub
+SonarCloud installee sur l’organisation analyse chaque push,
+<strong>sans token ni etape CI</strong> dans les depots. Avantages :
+zero configuration par depot, zero secret a gerer, activation
+centralisee par un admin de l’organisation, et aucune minute de CI
+consommee.</p>
+<p>Limites :</p>
+<ul>
+<li>L’Automatic Analysis <strong>n’execute pas les tests</strong>, donc
+<strong>pas de couverture dans SonarCloud</strong>. La couverture fait
+foi en CI (JaCoCo, pytest-cov), c’est documente dans le rapport de
+tests.</li>
+<li>Pas de quality gate Sonar bloquant le pipeline dans ce mode : le
+blocage reste porte par la CI (tests, seuil JaCoCo).</li>
+</ul>
+<p><strong>Scanner en CI</strong> (alternative) : etape explicite avec
+<code>SONAR_TOKEN</code>, qui importerait <code>coverage.xml</code> /
+<code>jacoco.xml</code> et permettrait un gate bloquant. C’est
+l’evolution naturelle. L’API garde d’ailleurs un <strong>SonarQube
+local</strong> (<code>docker-compose.sonar.yml</code>,
+<code>mvn sonar:sonar</code> vers <code>localhost:9000</code>) ou la
+couverture JaCoCo est bien importee via
+<code>sonar.coverage.jacoco.xmlReportPaths</code>.</p>
+<h3 id="q7.-comment-fonctionne-le-job-e2e-du-front">Q7. Comment
+fonctionne le job e2e du front ?</h3>
+<p>Cinq etapes, dans l’ordre :</p>
+<ol type="1">
+<li><code>needs: [test]</code> : ne demarre que si les unitaires Vitest
+sont verts.</li>
+<li>Cache puis installation du <strong>binaire Cypress</strong>
+(<code>npx cypress install</code>), cle de cache sur le hash de
+<code>package-lock.json</code>.</li>
+<li><code>npm run build:test</code> : build de production en mode test
+(on teste l’artefact builde, pas le dev server).</li>
+<li><code>npx start-server-and-test 'vite preview --port 4173' http://localhost:4173 'cypress run'</code>
+: sert le build statique, <strong>attend</strong> que
+<code>http://localhost:4173</code> reponde, lance la suite Cypress, puis
+arrete le serveur. Pas de <code>sleep</code> arbitraire ni de course au
+demarrage.</li>
+<li>En cas d’echec, les <strong>screenshots</strong> Cypress sont
+publies en artefact (<code>if: failure()</code>), ce qui a permis de
+diagnostiquer l’incident du 26/05.</li>
+</ol>
+<p>Les appels API sont mockes (fixtures + intercepts Cypress) : l’e2e
+valide le front de bout en bout sans dependre des backends, c’est
+precisement ce qui a revele les derives de contrat des fixtures.</p>
+<h3 id="q8.-pourquoi-un-seuil-80-seulement-sur-lapi-et-reco-fitness">Q8.
+Pourquoi un seuil 80 % seulement sur l’API et Reco-Fitness ?</h3>
+<p>Le seuil a ete impose la ou il a le plus de valeur : les deux
+services qui concentrent la logique metier testable unitairement (CRUD /
+analytics cote API, scoring de recommandation cote Reco-Fitness). Sur
+l’API il est <strong>bloquant</strong> (JaCoCo
+<code>jacoco-check</code>, lignes et branches, phase
+<code>verify</code>) ; sur Reco-Fitness il est verifie sur le rapport
+(<code>pytest.ini</code> fixe <code>--cov-fail-under=0</code>, mesure
+reelle 85 %).</p>
+<p>Ailleurs : AI-Nutrition <strong>mesure</strong> sa couverture en CI
+avec une cible 80 % sans enforcement strict (mesure reelle 92 %, donc
+au-dessus de la cible) ; Auth, ETL et Front ont des tests sans seuil a
+ce stade. Imposer un chiffre uniforme des le depart pousse a ecrire des
+tests de remplissage pour atteindre le ratio ; on a prefere des seuils
+bloquants cibles, une mesure partout ou c’est pertinent, et la
+generalisation des seuils en reste a faire (Q12).</p>
+<h3
+id="q9.-que-valent-les-notes-sonarcloud-securite-e-et-que-faire-du-backlog">Q9.
+Que valent les notes SonarCloud (securite E) et que faire du backlog
+?</h3>
+<p>Les notes relevees le 10/06/2026 : <strong>maintenabilite A</strong>
+sur les deux projets analyses, <strong>fiabilite C</strong>,
+<strong>securite E</strong>. Point cle a expliquer : la note Sonar
+reflete la <strong>pire issue ouverte</strong>, pas une moyenne. La note
+E en securite est tiree par les vulnerabilites ouvertes (3 sur
+AI-Nutrition, 1 sur Reco-Fitness) ; il suffit de peu d’issues pour
+degrader la note, et leur traitement la fait remonter.</p>
+<p>Le backlog chiffre : AI-Nutrition 30 bugs, 3 vulnerabilites, 18
+hotspots, 102 code smells (duplication 0,7 %) ; Reco-Fitness 35 bugs, 1
+vulnerabilite, 8 hotspots, 19 smells (1,5 %). Priorisation :
+vulnerabilites d’abord (elles font la note E), puis revue des hotspots,
+puis bugs, puis smells. La maintenabilite A et la duplication faible
+indiquent une dette structurelle maitrisee. Posture devant le jury : le
+backlog est <strong>mesure, public et assume</strong>, c’est exactement
+le role d’indicateurs qualite en continu.</p>
+<h3 id="q10.-quelle-securite-sur-la-chaine-de-publication">Q10. Quelle
+securite sur la chaine de publication ?</h3>
+<ul>
+<li><strong><code>GITHUB_TOKEN</code> ephemere</strong> : genere par
+Actions pour chaque run, limite au depot, expire a la fin du run. Pas de
+PAT longue duree ni de mot de passe de registre stocke.</li>
+<li><strong>Permissions explicites par job</strong> :
+<code>contents: read</code> + <code>packages: write</code> uniquement
+sur les jobs de publication. Les jobs de test n’ont pas le droit
+d’ecrire sur GHCR.</li>
+<li><strong>Publication impossible depuis une PR</strong> :
+<code>if: github.event_name == 'push'</code>. Une PR (y compris externe)
+fait tourner les tests mais ne peut pas pousser d’image.</li>
+<li><strong><code>secrets: inherit</code></strong> ne transmet les
+secrets qu’au workflow reutilisable du meme depot
+(<code>uses: ./.github/...</code>), pas a du code tiers.</li>
+<li>Cote hote : Watchtower tourne avec
+<code>no-new-privileges:true</code>, mais monte
+<code>/var/run/docker.sock</code> : c’est un acces fort au daemon
+Docker, limite connue du CD par poll, compensee par la liste blanche de
+conteneurs et le fait que seules des images GHCR de l’organisation sont
+suivies.</li>
+</ul>
+<h3 id="q11.-quelles-sont-les-limites-du-cd-watchtower">Q11. Quelles
+sont les limites du CD Watchtower ?</h3>
+<p>A enumerer soi-meme, elles sont documentees dans l’overlay :</p>
+<ol type="1">
+<li><strong>Migrations one-shot non rejouees</strong> :
+<code>mspr-auth-migrate</code> est un conteneur one-shot, Watchtower ne
+le relance pas. Si une mise a jour backend embarque une migration, il
+faut relancer <code>docker compose ... up -d</code> pour declencher le
+conteneur de migration.</li>
+<li><strong>Front exclu</strong> : <code>mspr-front</code> est rebuilde
+localement avec les URLs publiques figees au build (build statique
+Vite), il n’a pas d’image GHCR a suivre ; son redeploiement reste
+manuel.</li>
+<li><strong>Fenetre de poll</strong> : jusqu’a 5 minutes entre
+publication et deploiement
+(<code>WATCHTOWER_POLL_INTERVAL=300</code>).</li>
+<li><strong>Pas de rollback automatique ni de sante
+post-deploiement</strong> : si la nouvelle image demarre mal, Watchtower
+ne revient pas en arriere ; ce sont les healthchecks et la supervision
+qui alertent (voir <a href="Observabilite.html">fiche
+Observabilite</a>).</li>
+<li><strong>Gotcha de compatibilite</strong> :
+<code>DOCKER_API_VERSION=1.44</code> impose, car le client Docker
+embarque de watchtower (API 1.25) est rejete par le daemon Docker
+29.</li>
+</ol>
+<h3 id="q12.-que-reste-t-il-a-faire-sur-la-qualite">Q12. Que reste-t-il
+a faire sur la qualite ?</h3>
+<ol type="1">
+<li><strong>Importer les 5 depots restants dans SonarCloud</strong>
+(API, Auth, ETL, Front, BDD) : import depuis l’interface par un admin de
+l’organisation, sans configuration cote depot. Et declencher la premiere
+analyse du projet MongoDB (importe mais jamais analyse).</li>
+<li><strong>Traiter le backlog securite</strong> : resoudre les 3 + 1
+vulnerabilites ouvertes pour faire remonter la note E, puis statuer sur
+les hotspots.</li>
+<li><strong>Durcir les seuils de couverture</strong> : activer
+<code>--cov-fail-under</code> sur AI-Nutrition (deja a 92 %) et
+Reco-Fitness, definir des seuils pour Auth / ETL / Front.</li>
+<li>A terme : passer d’Automatic Analysis a un scanner en CI avec import
+de couverture et quality gate bloquant, pour unifier “tests verts” et
+“qualite Sonar” dans le meme verdict de pipeline.</li>
+</ol>
+<p>Le reste de la mise en production (bootstrap, overlays, sauvegardes)
+est couvert par la <a href="Deploiement.html">fiche Deploiement</a> et la
+<a href="Configs-Resilience.html">fiche Configs et resilience</a>.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

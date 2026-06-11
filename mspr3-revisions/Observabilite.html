@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>Observabilité - Révisions MSPR3</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a href="#fiche-de-revision-observabilite-et-supervision"
+id="toc-fiche-de-revision-observabilite-et-supervision">Fiche de
+revision : Observabilite et supervision</a>
+<ul>
+<li><a href="#vocabulaire-a-connaitre-avant-de-lire"
+id="toc-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#tldr" id="toc-tldr">1. TL;DR</a></li>
+<li><a href="#architecture" id="toc-architecture">2.
+Architecture</a></li>
+<li><a href="#stack-technique" id="toc-stack-technique">3. Stack
+technique</a></li>
+<li><a href="#ce-qui-est-surveille" id="toc-ce-qui-est-surveille">4. Ce
+qui est surveille</a>
+<ul>
+<li><a href="#les-10-jobs-prometheus"
+id="toc-les-10-jobs-prometheus">4.1 Les 10 jobs Prometheus</a></li>
+<li><a
+href="#metriques-dinfrastructure-actives-des-le-lancement-de-loverlay"
+id="toc-metriques-dinfrastructure-actives-des-le-lancement-de-loverlay">4.2
+Metriques d’infrastructure (actives des le lancement de
+l’overlay)</a></li>
+<li><a href="#metriques-applicatives-instrumentees-au-sprint-a2"
+id="toc-metriques-applicatives-instrumentees-au-sprint-a2">4.3 Metriques
+applicatives (instrumentees au sprint A2)</a></li>
+<li><a href="#logs-centralises" id="toc-logs-centralises">4.4 Logs
+centralises</a></li>
+</ul></li>
+<li><a href="#points-techniques-importants"
+id="toc-points-techniques-importants">5. Points techniques
+importants</a>
+<ul>
+<li><a href="#un-overlay-qui-ne-modifie-pas-la-stack-applicative"
+id="toc-un-overlay-qui-ne-modifie-pas-la-stack-applicative">5.1 Un
+overlay qui ne modifie pas la stack applicative</a></li>
+<li><a href="#linstrumentation-vit-dans-le-code-source-des-4-services"
+id="toc-linstrumentation-vit-dans-le-code-source-des-4-services">5.2
+L’instrumentation vit dans le code source des 4 services</a></li>
+<li><a
+href="#gotcha-les-metriques-applicatives-exigent-un-rebuild-des-images"
+id="toc-gotcha-les-metriques-applicatives-exigent-un-rebuild-des-images">5.3
+Gotcha : les metriques applicatives exigent un rebuild des
+images</a></li>
+<li><a href="#les-3-alertes-volontairement-basiques-et-larges"
+id="toc-les-3-alertes-volontairement-basiques-et-larges">5.4 Les 3
+alertes : volontairement basiques et larges</a></li>
+<li><a href="#grafana-provisionne-de-bout-en-bout"
+id="toc-grafana-provisionne-de-bout-en-bout">5.5 Grafana provisionne de
+bout en bout</a></li>
+<li><a href="#le-runbook-docssupervision.md-section-5"
+id="toc-le-runbook-docssupervision.md-section-5">5.6 Le runbook
+(docs/supervision.md, section 5)</a></li>
+<li><a href="#retention-et-stockage" id="toc-retention-et-stockage">5.7
+Retention et stockage</a></li>
+</ul></li>
+<li><a href="#code-essentiel-a-savoir-expliquer-au-jury"
+id="toc-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</a>
+<ul>
+<li><a href="#le-service-prometheus-de-loverlay"
+id="toc-le-service-prometheus-de-loverlay">6.1 Le service Prometheus de
+l’overlay</a></li>
+<li><a href="#les-4-jobs-applicatifs-dans-prometheus.yml"
+id="toc-les-4-jobs-applicatifs-dans-prometheus.yml">6.2 Les 4 jobs
+applicatifs dans prometheus.yml</a></li>
+<li><a href="#les-3-regles-dalerte-alerts.yml"
+id="toc-les-3-regles-dalerte-alerts.yml">6.3 Les 3 regles d’alerte
+(alerts.yml)</a></li>
+<li><a href="#la-collecte-de-logs-promtail-config.yml"
+id="toc-la-collecte-de-logs-promtail-config.yml">6.4 La collecte de logs
+(promtail-config.yml)</a></li>
+<li><a href="#instrumentation-fastapi-ai-nutrition-et-reco-fitness"
+id="toc-instrumentation-fastapi-ai-nutrition-et-reco-fitness">6.5
+Instrumentation FastAPI (AI-Nutrition et Reco-Fitness)</a></li>
+<li><a href="#instrumentation-auth-hono-bun"
+id="toc-instrumentation-auth-hono-bun">6.6 Instrumentation AUTH (Hono /
+Bun)</a></li>
+<li><a href="#instrumentation-api-spring-boot-micrometer-actuator"
+id="toc-instrumentation-api-spring-boot-micrometer-actuator">6.7
+Instrumentation API Spring Boot (Micrometer + Actuator)</a></li>
+<li><a href="#provisioning-grafana-datasources-dashboards"
+id="toc-provisioning-grafana-datasources-dashboards">6.8 Provisioning
+Grafana (datasources + dashboards)</a></li>
+</ul></li>
+<li><a href="#tableau-recapitulatif" id="toc-tableau-recapitulatif">7.
+Tableau recapitulatif</a>
+<ul>
+<li><a href="#les-3-alertes" id="toc-les-3-alertes">Les 3
+alertes</a></li>
+<li><a href="#outils-urls-roles" id="toc-outils-urls-roles">Outils,
+URLs, roles</a></li>
+<li><a
+href="#chiffres-du-smoke-test-10062026-rapport-tests-qualite.md-section-4"
+id="toc-chiffres-du-smoke-test-10062026-rapport-tests-qualite.md-section-4">Chiffres
+du smoke test (10/06/2026, rapport-tests-qualite.md section 4)</a></li>
+</ul></li>
+<li><a href="#questions-probables-du-jury"
+id="toc-questions-probables-du-jury">8. Questions probables du jury</a>
+<ul>
+<li><a
+href="#q1.-pourquoi-prometheus-grafana-loki-plutot-que-la-stack-elk"
+id="toc-q1.-pourquoi-prometheus-grafana-loki-plutot-que-la-stack-elk">Q1.
+Pourquoi Prometheus + Grafana + Loki plutot que la stack ELK ?</a></li>
+<li><a href="#q2.-pull-vs-push-pourquoi-le-pull-pour-les-metriques"
+id="toc-q2.-pull-vs-push-pourquoi-le-pull-pour-les-metriques">Q2. Pull
+vs push : pourquoi le pull pour les metriques ?</a></li>
+<li><a href="#q3.-cest-quoi-le-modele-red"
+id="toc-q3.-cest-quoi-le-modele-red">Q3. C’est quoi le modele RED
+?</a></li>
+<li><a
+href="#q4.-pourquoi-un-overlay-separe-au-lieu-dintegrer-la-supervision-au-compose-principal"
+id="toc-q4.-pourquoi-un-overlay-separe-au-lieu-dintegrer-la-supervision-au-compose-principal">Q4.
+Pourquoi un overlay separe au lieu d’integrer la supervision au compose
+principal ?</a></li>
+<li><a href="#q5.-comment-ajoutez-vous-une-nouvelle-alerte"
+id="toc-q5.-comment-ajoutez-vous-une-nouvelle-alerte">Q5. Comment
+ajoutez-vous une nouvelle alerte ?</a></li>
+<li><a href="#q6.-pourquoi-ces-seuils-0.9-coeur-2-go"
+id="toc-q6.-pourquoi-ces-seuils-0.9-coeur-2-go">Q6. Pourquoi ces seuils
+(0.9 coeur, 2 Go) ?</a></li>
+<li><a
+href="#q7.-une-cible-est-down-dans-prometheus-quelle-demarche-de-diagnostic"
+id="toc-q7.-une-cible-est-down-dans-prometheus-quelle-demarche-de-diagnostic">Q7.
+Une cible est DOWN dans Prometheus : quelle demarche de diagnostic
+?</a></li>
+<li><a
+href="#q8.-comment-sont-geres-les-logs-et-pourquoi-loki-ne-sinterroge-que-via-grafana"
+id="toc-q8.-comment-sont-geres-les-logs-et-pourquoi-loki-ne-sinterroge-que-via-grafana">Q8.
+Comment sont geres les logs, et pourquoi Loki ne s’interroge que via
+Grafana ?</a></li>
+<li><a
+href="#q9.-les-endpoints-metrics-ne-sont-pas-authentifies-cest-un-probleme-de-securite"
+id="toc-q9.-les-endpoints-metrics-ne-sont-pas-authentifies-cest-un-probleme-de-securite">Q9.
+Les endpoints /metrics ne sont pas authentifies : c’est un probleme de
+securite ?</a></li>
+<li><a href="#q10.-que-voit-on-dans-le-dashboard-api-spring"
+id="toc-q10.-que-voit-on-dans-le-dashboard-api-spring">Q10. Que voit-on
+dans le dashboard API Spring ?</a></li>
+<li><a href="#q11.-pourquoi-une-retention-de-7-jours-quelle-volumetrie"
+id="toc-q11.-pourquoi-une-retention-de-7-jours-quelle-volumetrie">Q11.
+Pourquoi une retention de 7 jours ? Quelle volumetrie ?</a></li>
+<li><a href="#q12.-comment-verifiez-vous-que-la-supervision-fonctionne"
+id="toc-q12.-comment-verifiez-vous-que-la-supervision-fonctionne">Q12.
+Comment verifiez-vous que la supervision fonctionne ?</a></li>
+</ul></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1 id="fiche-de-revision-observabilite-et-supervision">Fiche de
+revision : Observabilite et supervision</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR3 (TPRE601). Objectif :
+comprendre l’overlay de supervision (Prometheus + Grafana + Loki), ce
+qui est surveille et comment, les 3 alertes, l’instrumentation des 4
+services applicatifs et la conduite a tenir quand une alerte se
+declenche.</p>
+</blockquote>
+<hr />
+<h2 id="vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<p>Les 10 termes qui reviennent partout dans cette fiche.</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Scraping</strong></td>
+<td>Collecte en mode <strong>pull</strong> : Prometheus appelle lui-meme
+l’endpoint HTTP <code>/metrics</code> de chaque cible a intervalle fixe
+(ici 15 s).</td>
+</tr>
+<tr>
+<td><strong>Exporter</strong></td>
+<td>Petit service qui traduit l’etat d’un systeme non instrumente
+(PostgreSQL, MongoDB, hote Linux, conteneurs) en metriques au format
+Prometheus.</td>
+</tr>
+<tr>
+<td><strong>Modele RED</strong></td>
+<td>Rate, Errors, Duration : les 3 signaux a suivre par service HTTP
+(debit de requetes, taux d’erreur, latence).</td>
+</tr>
+<tr>
+<td><strong>Cardinalite</strong></td>
+<td>Nombre de series temporelles distinctes generees par une metrique
+(une serie par combinaison de labels). A garder basse, sinon la base
+explose.</td>
+</tr>
+<tr>
+<td><strong>Label</strong></td>
+<td>Paire cle/valeur attachee a une metrique ou une ligne de log
+(<code>job</code>, <code>name</code>, <code>container</code>,
+<code>stream</code>). C’est la base du filtrage en PromQL/LogQL.</td>
+</tr>
+<tr>
+<td><strong>Retention</strong></td>
+<td>Duree de conservation des donnees avant purge automatique. Ici
+<strong>7 jours</strong> pour les metriques (Prometheus) comme pour les
+logs (Loki).</td>
+</tr>
+<tr>
+<td><strong>Overlay (Compose)</strong></td>
+<td>Fichier compose additionnel combine au compose de base via un second
+<code>-f</code>. Il <strong>ajoute</strong> des services sans modifier
+les existants.</td>
+</tr>
+<tr>
+<td><strong>Provisioning (Grafana)</strong></td>
+<td>Declaration des datasources et dashboards dans des fichiers
+YAML/JSON montes au demarrage : zero configuration manuelle a la
+souris.</td>
+</tr>
+<tr>
+<td><strong>Runbook</strong></td>
+<td>Procedure ecrite de conduite a tenir par alerte. Ici la section 5 de
+<code>docs/supervision.md</code>.</td>
+</tr>
+<tr>
+<td><strong>PromQL / LogQL</strong></td>
+<td>Langages de requete de Prometheus (metriques) et de Loki (logs).
+LogQL reprend la syntaxe des labels PromQL.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tldr">1. TL;DR</h2>
+<p>Le <strong>livrable 02 (observabilite et supervision)</strong> repond
+a l’exigence du sujet : metriques applicatives consultables via des
+interfaces web, logs centralises, tableau de bord de la stack complete,
+alertes basiques.</p>
+<ul>
+<li><strong>Forme</strong> : un overlay
+<code>docker-compose.monitoring.yml</code> dans MSPR-Deploy, combine au
+compose applicatif <strong>sans le modifier</strong> :
+<code>docker compose -f docker-compose.yml -f docker-compose.monitoring.yml up -d</code>.</li>
+<li><strong>10 composants</strong> (9 images distinctes, les 2
+postgres-exporter partagent la meme) : Prometheus v2.54.1, Alertmanager
+v0.27.0, Grafana 11.2.0, Loki 3.1.1, Promtail 3.1.1, cAdvisor v0.49.1,
+node-exporter v1.8.2, postgres-exporter v0.15.0 x2, mongodb-exporter
+percona 0.40.</li>
+<li><strong>Metriques</strong> : Prometheus scrape <strong>10
+jobs</strong> toutes les <strong>15 s</strong>, retention <strong>7
+jours</strong>. 5 jobs infra (cadvisor, node-exporter, 2 postgres,
+mongo), 4 jobs applicatifs (api, ai-nutrition, reco-fitness, auth), 1
+auto-scrape.</li>
+<li><strong>Logs</strong> : Promtail lit la sortie de <strong>tous les
+conteneurs</strong> via le socket Docker monte en lecture seule et
+pousse vers Loki (retention 168 h). Consultation uniquement via
+Grafana.</li>
+<li><strong>Dashboards</strong> : 4 dashboards
+<strong>provisionnes</strong> automatiquement dans le dossier Grafana
+“MSPR HealthAI” (Vue stack, API Spring Boot, Microservices FastAPI,
+Observabilite logs + metriques).</li>
+<li><strong>Alertes</strong> : 3 regles Prometheus
+(<code>CibleInjoignable</code>, <code>ConteneurCpuEleve</code>,
+<code>ConteneurMemoireElevee</code>), groupees dans Alertmanager.
+<strong>Pas de notification externe</strong> (pas d’email/Slack) :
+consultation dans l’UI, limite assumee en environnement de
+demonstration.</li>
+<li><strong>Instrumentation applicative (sprint A2)</strong> : vit dans
+le <strong>code source</strong> des 4 services. Micrometer + Actuator
+pour l’API Spring, <code>prometheus-fastapi-instrumentator</code> pour
+les 2 FastAPI, <code>@hono/prometheus</code> pour AUTH.</li>
+<li><strong>Verification reelle (smoke test du 10/06/2026)</strong> : 10
+cibles sur 10 UP, 3 regles chargees a l’etat inactif, logs recus de 23
+conteneurs, 4 dashboards provisionnes, stack stable en <strong>84
+s</strong>.</li>
+</ul>
+<p>URLs a citer de tete :</p>
+<table>
+<colgroup>
+<col style="width: 58%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>Outil</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Grafana</td>
+<td>http://localhost:3001 (admin / admin par defaut)</td>
+</tr>
+<tr>
+<td>Prometheus</td>
+<td>http://localhost:9090 (Status &gt; Targets)</td>
+</tr>
+<tr>
+<td>Alertmanager</td>
+<td>http://localhost:9093</td>
+</tr>
+<tr>
+<td>Loki</td>
+<td>http://localhost:3100 (interroge via Grafana, pas directement)</td>
+</tr>
+</tbody>
+</table>
+<p>Le lancement de l’overlay et les modes dev/prod sont detailles dans
+la <a href="Deploiement.html">fiche Deploiement</a>. La publication des
+images instrumentees par la CI est couverte dans la <a
+href="CICD-Qualite.html">fiche CI/CD et qualite</a>.</p>
+<hr />
+<h2 id="architecture">2. Architecture</h2>
+<pre class="mermaid"><code>flowchart LR
+    subgraph Infra[&quot;Exporters infra&quot;]
+        CAD[&quot;cadvisor:8080&quot;]
+        NE[&quot;node-exporter:9100&quot;]
+        PGM[&quot;postgres-exporter:9187&quot;]
+        PGA[&quot;postgres-exporter-auth:9187&quot;]
+        MGO[&quot;mongodb-exporter:9216&quot;]
+    end
+    subgraph Apps[&quot;Services instrumentes (sprint A2)&quot;]
+        API[&quot;mspr-api:8080&lt;br/&gt;/api/actuator/prometheus&quot;]
+        AIN[&quot;mspr-ai-nutrition:8001&lt;br/&gt;/metrics&quot;]
+        RECO[&quot;mspr-reco-fitness:8000&lt;br/&gt;/metrics&quot;]
+        AUTH[&quot;mspr-auth-service:3000&lt;br/&gt;/metrics&quot;]
+    end
+
+    PROM[&quot;Prometheus :9090&lt;br/&gt;scrape 15 s, retention 7 j&quot;]
+    AM[&quot;Alertmanager :9093&quot;]
+    GRAF[&quot;Grafana :3001&lt;br/&gt;4 dashboards provisionnes&quot;]
+    LOKI[&quot;Loki :3100&lt;br/&gt;retention 168 h&quot;]
+    PT[&quot;Promtail&quot;]
+    SOCK[&quot;Socket Docker (ro)&lt;br/&gt;logs de tous les conteneurs&quot;]
+
+    PROM --&gt;|&quot;pull HTTP&quot;| Infra
+    PROM --&gt;|&quot;pull HTTP&quot;| Apps
+    PROM --&gt;|&quot;alertes (alerts.yml)&quot;| AM
+    SOCK --&gt; PT
+    PT --&gt;|&quot;push /loki/api/v1/push&quot;| LOKI
+    GRAF --&gt;|&quot;PromQL&quot;| PROM
+    GRAF --&gt;|&quot;LogQL&quot;| LOKI</code></pre>
+<p>Deux flux independants :</p>
+<ol type="1">
+<li><strong>Metriques (pull)</strong> : Prometheus interroge chaque
+cible sur son endpoint HTTP, stocke en TSDB locale, evalue les regles
+d’alerte toutes les 15 s et pousse les alertes declenchees vers
+Alertmanager.</li>
+<li><strong>Logs (push)</strong> : Promtail decouvre les conteneurs via
+le socket Docker, lit leur stdout/stderr et pousse vers Loki. Grafana
+est le seul point de consultation des deux flux.</li>
+</ol>
+<p>Tout vit sur le meme reseau Docker <code>mspr_data_network</code> que
+la stack applicative : les cibles sont resolues par <strong>nom de
+conteneur</strong> (DNS interne), jamais par IP ou port publie sur
+l’hote.</p>
+<p>Arborescence des fichiers de configuration (repo MSPR-Deploy) :</p>
+<pre><code>MSPR-Deploy/
+├── docker-compose.monitoring.yml       # l&#39;overlay (10 services)
+├── docs/supervision.md                 # procedure d&#39;exploitation + runbook
+└── monitoring/
+    ├── README.md                       # doc technique + liste exhaustive des donnees
+    ├── prometheus/
+    │   ├── prometheus.yml              # 10 jobs de scrape
+    │   └── alerts.yml                  # 3 regles d&#39;alerte
+    ├── alertmanager/alertmanager.yml   # routage minimal, pas de receiver externe
+    ├── loki/loki-config.yml            # stockage filesystem, retention 168 h
+    ├── promtail/promtail-config.yml    # decouverte Docker + relabel
+    └── grafana/
+        ├── provisioning/
+        │   ├── datasources/datasources.yml
+        │   └── dashboards/dashboards.yml
+        └── dashboards/                 # 4 JSON : stack-overview, api-spring,
+                                        #   fastapi-services, observabilite</code></pre>
+<p>Lancement (voir <a href="Deploiement.html">fiche Deploiement</a> pour
+les deux modes) :</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mode prod (images GHCR)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yml <span class="at">-f</span> docker-compose.monitoring.yml up <span class="at">-d</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Mode dev (build local, necessaire pour voir les metriques applicatives a jour)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.dev.yml <span class="at">-f</span> docker-compose.monitoring.yml up <span class="at">-d</span> <span class="at">--build</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Arret de la supervision seule, sans toucher a l&#39;application</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.monitoring.yml down</span></code></pre></div>
+<hr />
+<h2 id="stack-technique">3. Stack technique</h2>
+<p>Les 10 composants de <code>docker-compose.monitoring.yml</code>,
+versions <strong>epinglees</strong> (pas de <code>latest</code>) :</p>
+<table>
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 35%" />
+<col style="width: 27%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr>
+<th>Service</th>
+<th>Image exacte</th>
+<th>Port hote</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>prometheus</code></td>
+<td><code>prom/prometheus:v2.54.1</code></td>
+<td>9090</td>
+<td>Scrape les 10 jobs, stocke 7 jours (TSDB), evalue les regles
+d’alerte</td>
+</tr>
+<tr>
+<td><code>alertmanager</code></td>
+<td><code>prom/alertmanager:v0.27.0</code></td>
+<td>9093</td>
+<td>Recoit, regroupe et expose les alertes declenchees</td>
+</tr>
+<tr>
+<td><code>grafana</code></td>
+<td><code>grafana/grafana:11.2.0</code></td>
+<td>3001</td>
+<td>Tableaux de bord metriques + logs, datasources provisionnees</td>
+</tr>
+<tr>
+<td><code>loki</code></td>
+<td><code>grafana/loki:3.1.1</code></td>
+<td>3100</td>
+<td>Stockage des logs (filesystem), retention 168 h</td>
+</tr>
+<tr>
+<td><code>promtail</code></td>
+<td><code>grafana/promtail:3.1.1</code></td>
+<td>(interne)</td>
+<td>Collecte les logs de tous les conteneurs via le socket Docker
+(ro)</td>
+</tr>
+<tr>
+<td><code>cadvisor</code></td>
+<td><code>gcr.io/cadvisor/cadvisor:v0.49.1</code></td>
+<td>8085</td>
+<td>Metriques par conteneur (CPU, RAM, reseau, IO)</td>
+</tr>
+<tr>
+<td><code>node-exporter</code></td>
+<td><code>prom/node-exporter:v1.8.2</code></td>
+<td>9100</td>
+<td>Metriques de l’hote (CPU, RAM, disque, charge)</td>
+</tr>
+<tr>
+<td><code>postgres-exporter</code></td>
+<td><code>prometheuscommunity/postgres-exporter:v0.15.0</code></td>
+<td>9187</td>
+<td>Metriques PostgreSQL metier (base <code>healthai</code>)</td>
+</tr>
+<tr>
+<td><code>postgres-exporter-auth</code></td>
+<td><code>prometheuscommunity/postgres-exporter:v0.15.0</code></td>
+<td>9188</td>
+<td>Metriques PostgreSQL auth (base <code>auth_db</code>)</td>
+</tr>
+<tr>
+<td><code>mongodb-exporter</code></td>
+<td><code>percona/mongodb_exporter:0.40</code></td>
+<td>9216</td>
+<td>Metriques MongoDB (<code>reco_fitness</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Details a connaitre par composant :</p>
+<ul>
+<li><strong>Prometheus</strong> : flags
+<code>--storage.tsdb.retention.time=7d</code> (purge auto) et
+<code>--web.enable-lifecycle</code> (rechargement de la config a chaud
+via <code>POST /-/reload</code>, sans redemarrer le conteneur). Les
+fichiers <code>prometheus.yml</code> et <code>alerts.yml</code> sont
+montes en lecture seule.</li>
+<li><strong>Grafana</strong> : <code>GF_SECURITY_ADMIN_USER</code> /
+<code>GF_SECURITY_ADMIN_PASSWORD</code> surchargeables via
+<code>.env</code> (<code>GRAFANA_ADMIN_PASSWORD</code>), defaut
+admin/admin. <code>GF_USERS_ALLOW_SIGN_UP: "false"</code> : pas de
+creation de compte sauvage. <code>depends_on</code> prometheus + loki.
+Port hote <strong>3001</strong> (3000 interne deja pris par AUTH).</li>
+<li><strong>cAdvisor</strong> : <code>privileged: true</code> + montages
+en lecture seule de <code>/:/rootfs</code>, <code>/var/run</code>,
+<code>/sys</code>, <code>/var/lib/docker</code>, <code>/dev/disk</code>.
+C’est le prix pour lire les cgroups de tous les conteneurs. Port hote
+<strong>8085</strong> (8080 interne deja pris par l’API).</li>
+<li><strong>postgres-exporter x2</strong> : meme image, seule la
+variable <code>DATA_SOURCE_NAME</code> change (URL de connexion vers
+<code>mspr-healthai-db:5432/healthai</code> ou
+<code>mspr-auth-db:5432/auth_db</code>). Le second publie 9188 sur
+l’hote mais ecoute toujours 9187 en interne (pas de conflit sur le
+reseau Docker).</li>
+<li><strong>mongodb-exporter</strong> :
+<code>--mongodb.uri=mongodb://mspr-mongo:27017</code> +
+<code>--collect-all</code> (active tous les collecteurs de
+metriques).</li>
+<li><strong>node-exporter</strong> : monte <code>/proc</code>,
+<code>/sys</code> et <code>/</code> de l’hote en lecture seule pour
+exposer les metriques machine.</li>
+<li><strong>4 volumes nommes</strong> : <code>prometheus_data</code>,
+<code>grafana_data</code>, <code>loki_data</code>,
+<code>promtail_positions</code> (la position de lecture des logs survit
+aux redemarrages, pas de re-ingestion).</li>
+</ul>
+<hr />
+<h2 id="ce-qui-est-surveille">4. Ce qui est surveille</h2>
+<h3 id="les-10-jobs-prometheus">4.1 Les 10 jobs Prometheus</h3>
+<p>Definis dans <code>monitoring/prometheus/prometheus.yml</code>,
+<code>scrape_interval: 15s</code> global.</p>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 45%" />
+<col style="width: 22%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Job</th>
+<th>Cible (DNS Docker)</th>
+<th>Endpoint</th>
+<th>Donnees</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>prometheus</code></td>
+<td><code>localhost:9090</code></td>
+<td><code>/metrics</code></td>
+<td>Auto-supervision de Prometheus</td>
+</tr>
+<tr>
+<td><code>cadvisor</code></td>
+<td><code>cadvisor:8080</code></td>
+<td><code>/metrics</code></td>
+<td>CPU, RAM, reseau, IO <strong>par conteneur</strong></td>
+</tr>
+<tr>
+<td><code>node-exporter</code></td>
+<td><code>node-exporter:9100</code></td>
+<td><code>/metrics</code></td>
+<td>CPU, RAM, disque, charge de l’<strong>hote</strong></td>
+</tr>
+<tr>
+<td><code>postgres-metier</code></td>
+<td><code>postgres-exporter:9187</code></td>
+<td><code>/metrics</code></td>
+<td>Connexions, commits/rollbacks, tailles (base
+<code>healthai</code>)</td>
+</tr>
+<tr>
+<td><code>postgres-auth</code></td>
+<td><code>postgres-exporter-auth:9187</code></td>
+<td><code>/metrics</code></td>
+<td>Idem pour la base <code>auth_db</code></td>
+</tr>
+<tr>
+<td><code>mongodb</code></td>
+<td><code>mongodb-exporter:9216</code></td>
+<td><code>/metrics</code></td>
+<td>Connexions, compteurs d’operations, tailles de collections</td>
+</tr>
+<tr>
+<td><code>api</code></td>
+<td><code>mspr-api:8080</code></td>
+<td><code>/api/actuator/prometheus</code></td>
+<td>HTTP + JVM + pool Hikari (context-path <code>/api</code>)</td>
+</tr>
+<tr>
+<td><code>ai-nutrition</code></td>
+<td><code>mspr-ai-nutrition:8001</code></td>
+<td><code>/metrics</code></td>
+<td>Requetes HTTP par route, latence, erreurs (RED)</td>
+</tr>
+<tr>
+<td><code>reco-fitness</code></td>
+<td><code>mspr-reco-fitness:8000</code></td>
+<td><code>/metrics</code></td>
+<td>Idem (<strong>port interne 8000</strong>, pas le 8002 publie sur
+l’hote)</td>
+</tr>
+<tr>
+<td><code>auth</code></td>
+<td><code>mspr-auth-service:3000</code></td>
+<td><code>/metrics</code></td>
+<td>Requetes HTTP, latence, compteurs (RED)</td>
+</tr>
+</tbody>
+</table>
+<h3
+id="metriques-dinfrastructure-actives-des-le-lancement-de-loverlay">4.2
+Metriques d’infrastructure (actives des le lancement de l’overlay)</h3>
+<p>Noms exacts a citer (liste documentee dans
+<code>monitoring/README.md</code>) :</p>
+<table>
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 40%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr>
+<th>Source</th>
+<th>Metriques</th>
+<th>Niveau</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cAdvisor</td>
+<td><code>container_cpu_usage_seconds_total</code>,
+<code>container_memory_usage_bytes</code>,
+<code>container_network_receive_bytes_total</code>,
+<code>container_fs_usage_bytes</code></td>
+<td>par conteneur</td>
+</tr>
+<tr>
+<td>node-exporter</td>
+<td><code>node_cpu_seconds_total</code>,
+<code>node_memory_MemAvailable_bytes</code>,
+<code>node_filesystem_avail_bytes</code>, <code>node_load1</code></td>
+<td>hote</td>
+</tr>
+<tr>
+<td>postgres-exporter (x2)</td>
+<td><code>pg_up</code>, <code>pg_stat_database_*</code> (connexions,
+commits, rollbacks), <code>pg_database_size_bytes</code></td>
+<td>bases metier + auth</td>
+</tr>
+<tr>
+<td>mongodb-exporter</td>
+<td><code>mongodb_up</code>, <code>mongodb_connections</code>,
+<code>mongodb_op_counters_total</code>, taille des collections</td>
+<td>MongoDB</td>
+</tr>
+<tr>
+<td>Prometheus</td>
+<td><code>up</code> (etat de chaque cible scrappee : 1 = joignable, 0 =
+injoignable)</td>
+<td>toutes cibles</td>
+</tr>
+</tbody>
+</table>
+<h3 id="metriques-applicatives-instrumentees-au-sprint-a2">4.3 Metriques
+applicatives (instrumentees au sprint A2)</h3>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 29%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr>
+<th>Service</th>
+<th>Bibliotheque</th>
+<th>Metriques principales</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API Spring Boot</td>
+<td>Actuator + Micrometer</td>
+<td><code>http_server_requests_seconds</code> (latence, debit, codes
+HTTP par route), JVM (heap, GC, threads), pool de connexions Hikari</td>
+</tr>
+<tr>
+<td>AI-Nutrition (FastAPI)</td>
+<td><code>prometheus-fastapi-instrumentator</code></td>
+<td><code>http_requests_total</code>,
+<code>http_request_duration_seconds</code> par handler et statut</td>
+</tr>
+<tr>
+<td>Reco-Fitness (FastAPI)</td>
+<td><code>prometheus-fastapi-instrumentator</code></td>
+<td>Idem</td>
+</tr>
+<tr>
+<td>AUTH (Hono / Bun)</td>
+<td><code>@hono/prometheus</code></td>
+<td>Requetes HTTP, latence, compteurs (RED)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="logs-centralises">4.4 Logs centralises</h3>
+<ul>
+<li>Promtail lit le <strong>stdout/stderr de tous les
+conteneurs</strong> (decouverte automatique via le socket Docker,
+refresh 15 s), pas seulement les conteneurs <code>mspr-*</code>.</li>
+<li>Chaque ligne est etiquetee par 3 labels : <code>container</code>
+(nom du conteneur), <code>stream</code> (<code>stdout</code> /
+<code>stderr</code>), <code>service</code> (nom du service
+docker-compose).</li>
+<li>Retention <strong>168 h</strong> (7 jours) cote Loki, avec rejet des
+echantillons plus vieux (<code>reject_old_samples</code>).</li>
+<li>Consultation <strong>uniquement via Grafana</strong> (Explore avec
+la datasource Loki, ou les panneaux logs des dashboards). Loki n’a pas
+d’interface propre.</li>
+</ul>
+<hr />
+<h2 id="points-techniques-importants">5. Points techniques
+importants</h2>
+<h3 id="un-overlay-qui-ne-modifie-pas-la-stack-applicative">5.1 Un
+overlay qui ne modifie pas la stack applicative</h3>
+<p>L’en-tete du fichier <code>docker-compose.monitoring.yml</code> le
+dit explicitement :</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A combiner avec le compose de base, il ne modifie aucun service applicatif :</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   Mode prod : docker compose -f docker-compose.yml     -f docker-compose.monitoring.yml up -d</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   Mode dev  : docker compose -f docker-compose.dev.yml -f docker-compose.monitoring.yml up -d</span></span></code></pre></div>
+<p>Consequences :</p>
+<ul>
+<li>La supervision est <strong>facultative</strong> : l’application
+fonctionne sans. On la lance des qu’on veut observer ou exploiter la
+plateforme.</li>
+<li>On peut arreter la supervision seule
+(<code>docker compose -f docker-compose.monitoring.yml down</code>) sans
+toucher aux services applicatifs.</li>
+<li>L’overlay rejoint le meme reseau <code>mspr_data_network</code>,
+d’ou la resolution DNS des cibles (<code>mspr-api</code>,
+<code>mspr-ai-nutrition</code>, …).</li>
+<li>Aucune ligne du compose applicatif n’a ete modifiee pour brancher la
+supervision : toute l’instrumentation est soit <strong>externe</strong>
+(exporters), soit <strong>dans le code source</strong> des services
+(sprint A2).</li>
+</ul>
+<h3 id="linstrumentation-vit-dans-le-code-source-des-4-services">5.2
+L’instrumentation vit dans le code source des 4 services</h3>
+<p>Le sprint A2 a instrumente chaque service dans son propre depot :</p>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 42%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr>
+<th>Service</th>
+<th>Fichier(s)</th>
+<th>Quoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MSPR-API</td>
+<td><code>pom.xml</code> + <code>SecurityConfig.java</code> +
+<code>application.properties</code></td>
+<td>Dependances <code>spring-boot-starter-actuator</code> +
+<code>micrometer-registry-prometheus</code>, exposition
+<code>management.endpoints.web.exposure.include=health,info,prometheus</code>,
+endpoint ouvert sans JWT</td>
+</tr>
+<tr>
+<td>MSPR-AI-Nutrition</td>
+<td><code>app/main.py</code></td>
+<td><code>Instrumentator().instrument(app).expose(app, ...)</code></td>
+</tr>
+<tr>
+<td>MSPR-Reco-Fitness</td>
+<td><code>app/main.py</code></td>
+<td>Idem (meme bibliotheque)</td>
+</tr>
+<tr>
+<td>MSPR-AUTH</td>
+<td><code>src/index.ts</code></td>
+<td>Middleware <code>registerMetrics</code> + route
+<code>GET /metrics</code></td>
+</tr>
+</tbody>
+</table>
+<p>C’est un choix structurant : les exporters couvrent l’infra
+<strong>sans toucher au code</strong>, mais les metriques metier HTTP
+(latence par route, codes de retour) ne peuvent venir que de l’interieur
+des applications.</p>
+<h3
+id="gotcha-les-metriques-applicatives-exigent-un-rebuild-des-images">5.3
+Gotcha : les metriques applicatives exigent un rebuild des images</h3>
+<p>Point a connaitre absolument (documente dans
+<code>monitoring/README.md</code> et <code>docs/supervision.md</code>)
+:</p>
+<blockquote>
+<p>Ces metriques ne sont visibles qu’apres reconstruction des images des
+services concernes (l’instrumentation vit dans le code source). Tant
+qu’une image n’est pas a jour, la cible reste vue comme injoignable par
+Prometheus, sans impact sur les autres.</p>
+</blockquote>
+<ul>
+<li>En mode dev :
+<code>docker compose -f docker-compose.dev.yml -f docker-compose.monitoring.yml up -d --build</code>.</li>
+<li>En mode prod : apres publication des nouvelles images GHCR par la CI
+(voir <a href="CICD-Qualite.html">fiche CI/CD et qualite</a>).</li>
+<li><strong>Cible DOWN != service KO</strong> : une image anterieure au
+sprint A2 fait tomber le job applicatif en DOWN alors que l’application
+fonctionne normalement. Seule la collecte manque. C’est un cas explicite
+du runbook (5.6).</li>
+</ul>
+<h3 id="les-3-alertes-volontairement-basiques-et-larges">5.4 Les 3
+alertes : volontairement basiques et larges</h3>
+<p>Definies dans <code>monitoring/prometheus/alerts.yml</code>, 2
+groupes (<code>disponibilite</code>, <code>ressources</code>) :</p>
+<table>
+<thead>
+<tr>
+<th>Alerte</th>
+<th>Condition</th>
+<th>Duree</th>
+<th>Severite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CibleInjoignable</code></td>
+<td><code>up == 0</code></td>
+<td>1 min</td>
+<td>critical</td>
+</tr>
+<tr>
+<td><code>ConteneurCpuEleve</code></td>
+<td>CPU &gt; 0.9 coeur (rate 5 min)</td>
+<td>5 min</td>
+<td>warning</td>
+</tr>
+<tr>
+<td><code>ConteneurMemoireElevee</code></td>
+<td>RAM &gt; 2 Go</td>
+<td>5 min</td>
+<td>warning</td>
+</tr>
+</tbody>
+</table>
+<p>Choix de conception a defendre :</p>
+<ul>
+<li>Les deux alertes de ressources ne ciblent que les conteneurs
+<code>name=~"mspr-.*"</code> : on ne veut pas alerter sur les conteneurs
+hors plateforme.</li>
+<li>Les <strong>seuils sont volontairement larges</strong>
+(demonstration), a ajuster selon le materiel. Objectif : eviter le
+bruit, demontrer le mecanisme.</li>
+<li>La clause <code>for</code> (1 min / 5 min) absorbe les pics
+transitoires : une alerte passe par l’etat <code>pending</code> avant
+<code>firing</code>.</li>
+<li><strong>Pas de notification externe</strong> (pas d’email ni de
+Slack) : le receiver Alertmanager <code>defaut</code> ne route vers
+rien, on consulte les alertes dans l’UI (:9093). Limite assumee en demo
+; en production on brancherait un receiver email/Slack dans
+<code>alertmanager.yml</code>.</li>
+</ul>
+<pre class="mermaid"><code>sequenceDiagram
+    participant P as Prometheus
+    participant A as Alertmanager
+    P-&gt;&gt;P: evalue alerts.yml toutes les 15 s
+    Note over P: condition vraie pendant &quot;for&quot;&lt;br/&gt;pending puis firing
+    P-&gt;&gt;A: alerte firing
+    A-&gt;&gt;A: groupement par alertname&lt;br/&gt;(group_wait 30 s, repeat 1 h)
+    Note over A: consultation dans l&#39;UI :9093&lt;br/&gt;pas de receiver externe</code></pre>
+<p>L’alerte disparait automatiquement une fois la condition revenue a la
+normale.</p>
+<h3 id="grafana-provisionne-de-bout-en-bout">5.5 Grafana provisionne de
+bout en bout</h3>
+<p>Rien n’est configure a la main dans Grafana : tout est versionne dans
+le repo.</p>
+<ul>
+<li><strong>Datasources</strong>
+(<code>monitoring/grafana/provisioning/datasources/datasources.yml</code>)
+: Prometheus (uid <code>prometheus</code>, defaut) et Loki (uid
+<code>loki</code>), toutes deux en mode <code>proxy</code> vers les URLs
+internes.</li>
+<li><strong>Dashboards</strong>
+(<code>monitoring/grafana/provisioning/dashboards/dashboards.yml</code>)
+: provider de type <code>file</code> qui charge les JSON de
+<code>/var/lib/grafana/dashboards</code> dans le dossier <strong>“MSPR
+HealthAI”</strong>, rescan toutes les 30 s, dashboards editables.</li>
+</ul>
+<p>Les 4 dashboards provisionnes :</p>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 28%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr>
+<th>Fichier</th>
+<th>Titre</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>stack-overview.json</code></td>
+<td>MSPR HealthAI - Vue stack</td>
+<td>Cibles UP, disponibilite par job, CPU et memoire par conteneur, flux
+de logs</td>
+</tr>
+<tr>
+<td><code>api-spring.json</code></td>
+<td>MSPR HealthAI - API Spring Boot</td>
+<td>Requetes/s (+ par statut), latence p95 par route, memoire JVM
+heap/nonheap, threads JVM, pool Hikari, CPU process</td>
+</tr>
+<tr>
+<td><code>fastapi-services.json</code></td>
+<td>MSPR HealthAI - Microservices FastAPI</td>
+<td>Template par job (<code>ai-nutrition</code> /
+<code>reco-fitness</code>) : requetes/s, erreurs 5xx/s, latence p95
+globale et par route, CPU et memoire process</td>
+</tr>
+<tr>
+<td><code>observabilite.json</code></td>
+<td>MSPR HealthAI - Observabilite (logs + metriques)</td>
+<td>Cibles UP/DOWN, debit et erreurs HTTP par service, latence p95,
+volume de logs et erreurs de logs par conteneur, panneau de recherche
+dans les logs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="le-runbook-docssupervision.md-section-5">5.6 Le runbook
+(docs/supervision.md, section 5)</h3>
+<p>Reflexe general : identifier le service concerne (label
+<code>name</code> ou <code>job</code> de l’alerte), puis trois
+etapes.</p>
+<ol type="1">
+<li><strong>Etat des conteneurs</strong> :
+<code>docker compose -f docker-compose.yml -f docker-compose.monitoring.yml ps</code>
+(colonne STATUS, mention healthy/unhealthy).</li>
+<li><strong>Logs</strong> :
+<code>docker compose logs --tail=100 &lt;service&gt;</code>, ou Grafana
+&gt; Explore &gt; datasource Loki avec filtre sur le label
+<code>container</code> (permet de correler plusieurs services sur la
+meme periode).</li>
+<li><strong>Grafana</strong> : dashboard “MSPR HealthAI - Vue stack”,
+courbes CPU/memoire du conteneur (pic ponctuel ou derive continue).</li>
+</ol>
+<p>Par alerte :</p>
+<ul>
+<li><strong>CibleInjoignable</strong> : conteneur arrete ou unhealthy
+-&gt; lire ses logs puis relancer. Conteneur qui tourne mais cible
+toujours DOWN -&gt; verifier que l’endpoint de metriques est expose :
+cas typique de l’<strong>image pas encore instrumentee</strong>
+(l’application fonctionne, seule la collecte manque).</li>
+<li><strong>ConteneurCpuEleve</strong> : verifier la charge reelle dans
+Grafana. Pic transitoire (ETL, inference IA) : non bloquant, l’alerte
+retombe seule. Derive durable : inspecter les logs, envisager une limite
+de ressources (configuration performance, voir <a
+href="Configs-Resilience.html">fiche Configs et resilience</a>).</li>
+<li><strong>ConteneurMemoireElevee</strong> : meme demarche, surveiller
+une fuite memoire (montee continue sans redescente) ; au besoin
+redemarrer le conteneur et suivre la tendance.</li>
+</ul>
+<h3 id="retention-et-stockage">5.7 Retention et stockage</h3>
+<ul>
+<li>Prometheus : <code>--storage.tsdb.retention.time=7d</code>, donnees
+dans le volume <code>prometheus_data</code>.</li>
+<li>Loki : <code>retention_period: 168h</code> +
+<code>reject_old_samples: true</code> (<code>max_age</code> 168 h),
+stockage <strong>filesystem</strong> (pas de S3 : un seul noeud,
+<code>replication_factor: 1</code>, ring en memoire), volume
+<code>loki_data</code>.</li>
+<li>Promtail : fichier de positions dans le volume
+<code>promtail_positions</code>. Apres un redemarrage, la lecture
+reprend ou elle s’etait arretee (pas de doublons, pas de trou).</li>
+<li>7 jours suffisent pour le besoin : observer la plateforme pendant
+une semaine d’exploitation et diagnostiquer un incident recent, avec un
+volume disque borne par la purge automatique.</li>
+</ul>
+<hr />
+<h2 id="code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</h2>
+<h3 id="le-service-prometheus-de-loverlay">6.1 Le service Prometheus de
+l’overlay</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">prometheus</span><span class="kw">:</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> prom/prometheus:v2.54.1</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> mspr-prometheus</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">restart</span><span class="kw">:</span><span class="at"> unless-stopped</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">command</span><span class="kw">:</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> --config.file=/etc/prometheus/prometheus.yml</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> --storage.tsdb.path=/prometheus</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> --storage.tsdb.retention.time=7d</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> --web.enable-lifecycle</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> prometheus_data:/prometheus</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;9090:9090&quot;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">networks</span><span class="kw">:</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mspr_data_network</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>--storage.tsdb.retention.time=7d</code> : purge automatique
+au-dela de 7 jours, volume disque borne.</li>
+<li><code>--web.enable-lifecycle</code> : active l’endpoint
+<code>POST /-/reload</code> pour recharger <code>prometheus.yml</code>
+et <code>alerts.yml</code> <strong>a chaud</strong>, sans redemarrer le
+conteneur. Utilise quand on ajoute une regle d’alerte.</li>
+<li>Les configs sont montees en <strong>lecture seule</strong>
+(<code>:ro</code>) : le conteneur ne peut pas modifier sa propre config,
+la verite est dans le repo.</li>
+<li><code>prometheus_data</code> est un volume nomme : les metriques
+survivent aux redemarrages.</li>
+</ul>
+<h3 id="les-4-jobs-applicatifs-dans-prometheus.yml">6.2 Les 4 jobs
+applicatifs dans prometheus.yml</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">  # ---------------------------------------------------------------------</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">  # Cibles applicatives (instrumentees au sprint A2).</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">  # API Spring Boot : /api/actuator/prometheus (context-path /api).</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">  # FastAPI (ai-nutrition, reco-fitness) et Auth (Hono) : /metrics.</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">  # ---------------------------------------------------------------------</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">job_name</span><span class="kw">:</span><span class="at"> api</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">metrics_path</span><span class="kw">:</span><span class="at"> /api/actuator/prometheus</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">static_configs</span><span class="kw">:</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">targets</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&#39;mspr-api:8080&#39;</span><span class="kw">]</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">job_name</span><span class="kw">:</span><span class="at"> ai-nutrition</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">metrics_path</span><span class="kw">:</span><span class="at"> /metrics</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">static_configs</span><span class="kw">:</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">targets</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&#39;mspr-ai-nutrition:8001&#39;</span><span class="kw">]</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">job_name</span><span class="kw">:</span><span class="at"> reco-fitness</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">metrics_path</span><span class="kw">:</span><span class="at"> /metrics</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">static_configs</span><span class="kw">:</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">targets</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&#39;mspr-reco-fitness:8000&#39;</span><span class="kw">]</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">job_name</span><span class="kw">:</span><span class="at"> auth</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">metrics_path</span><span class="kw">:</span><span class="at"> /metrics</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">static_configs</span><span class="kw">:</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">targets</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&#39;mspr-auth-service:3000&#39;</span><span class="kw">]</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Les cibles sont les <strong>noms de conteneurs</strong> resolus par
+le DNS du reseau <code>mspr_data_network</code>, sur les <strong>ports
+internes</strong>. Piege classique : <code>mspr-reco-fitness:8000</code>
+(port interne), pas 8002 (port publie sur l’hote).</li>
+<li>L’API a un <code>metrics_path</code> specifique :
+<code>/api/actuator/prometheus</code>, a cause du context-path
+<code>/api</code> de Spring Boot. Les trois autres exposent le
+<code>/metrics</code> conventionnel.</li>
+<li><code>static_configs</code> : la liste des cibles est statique,
+adaptee a un compose fixe. En Kubernetes on passerait en service
+discovery.</li>
+<li>Le <code>scrape_interval</code> global est de <strong>15 s</strong>
+(defini dans le bloc <code>global</code>), tout comme
+l’<code>evaluation_interval</code> des regles.</li>
+</ul>
+<h3 id="les-3-regles-dalerte-alerts.yml">6.3 Les 3 regles d’alerte
+(alerts.yml)</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">groups</span><span class="kw">:</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> disponibilite</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">rules</span><span class="kw">:</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">alert</span><span class="kw">:</span><span class="at"> CibleInjoignable</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> up == 0</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">for</span><span class="kw">:</span><span class="at"> 1m</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">labels</span><span class="kw">:</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">severity</span><span class="kw">:</span><span class="at"> critical</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> ressources</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">rules</span><span class="kw">:</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">alert</span><span class="kw">:</span><span class="at"> ConteneurCpuEleve</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> sum(rate(container_cpu_usage_seconds_total{name=~&quot;mspr-.*&quot;}[5m])) by (name) &gt; 0.9</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">for</span><span class="kw">:</span><span class="at"> 5m</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">labels</span><span class="kw">:</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">severity</span><span class="kw">:</span><span class="at"> warning</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">alert</span><span class="kw">:</span><span class="at"> ConteneurMemoireElevee</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">expr</span><span class="kw">:</span><span class="at"> container_memory_usage_bytes{name=~&quot;mspr-.*&quot;} / 1073741824 &gt; 2</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">for</span><span class="kw">:</span><span class="at"> 5m</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">labels</span><span class="kw">:</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">severity</span><span class="kw">:</span><span class="at"> warning</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>up == 0</code> : <code>up</code> est la metrique generee
+automatiquement par Prometheus pour chaque cible scrappee. C’est le
+benefice direct du modele pull : la detection de panne est
+gratuite.</li>
+<li><code>rate(container_cpu_usage_seconds_total[5m])</code> : ce
+compteur cAdvisor est en <strong>secondes CPU cumulees</strong> ; le
+<code>rate</code> sur 5 min donne des coeurs consommes (1.0 = un coeur
+plein). Le <code>sum ... by (name)</code> agrege les modes CPU par
+conteneur.</li>
+<li><code>1073741824</code> = 1024^3 : conversion octets vers Go. Lire :
+“le conteneur utilise plus de 2 Go”.</li>
+<li><code>name=~"mspr-.*"</code> : regex sur le label <code>name</code>
+de cAdvisor, on ne supervise que les conteneurs de la plateforme.</li>
+<li>Chaque regle a aussi des <code>annotations</code> (summary,
+description) avec templating <code>{{ $labels.job }}</code> /
+<code>{{ $labels.name }}</code> : le message d’alerte nomme directement
+le coupable.</li>
+</ul>
+<h3 id="la-collecte-de-logs-promtail-config.yml">6.4 La collecte de logs
+(promtail-config.yml)</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scrape_configs</span><span class="kw">:</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">  # Decouverte automatique des conteneurs via le socket Docker.</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">  # Les logs de chaque conteneur sont pousses vers Loki, etiquetes par</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">  # nom de conteneur, flux (stdout/stderr) et service docker-compose.</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">job_name</span><span class="kw">:</span><span class="at"> conteneurs</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">docker_sd_configs</span><span class="kw">:</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">host</span><span class="kw">:</span><span class="at"> unix:///var/run/docker.sock</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">refresh_interval</span><span class="kw">:</span><span class="at"> 15s</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">relabel_configs</span><span class="kw">:</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">source_labels</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&#39;__meta_docker_container_name&#39;</span><span class="kw">]</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">regex</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;/(.*)&#39;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">target_label</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;container&#39;</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">source_labels</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&#39;__meta_docker_container_log_stream&#39;</span><span class="kw">]</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">target_label</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;stream&#39;</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">source_labels</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&#39;__meta_docker_container_label_com_docker_compose_service&#39;</span><span class="kw">]</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">target_label</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;service&#39;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>docker_sd_configs</code> : decouverte
+<strong>automatique</strong> des conteneurs via le socket Docker (monte
+en lecture seule dans le conteneur Promtail). Un nouveau service
+apparait dans Loki sans toucher a la config.</li>
+<li>Les <code>relabel_configs</code> transforment les meta-labels Docker
+en 3 labels propres : <code>container</code>, <code>stream</code>,
+<code>service</code>. La regex <code>'/(.*)'</code> retire le
+<code>/</code> initial du nom de conteneur Docker.</li>
+<li>On n’etiquette <strong>que</strong> 3 labels a faible cardinalite :
+c’est la philosophie Loki (indexer les labels, pas le contenu des
+lignes).</li>
+<li>Le client pousse vers <code>http://loki:3100/loki/api/v1/push</code>
+: les logs sont en mode <strong>push</strong>, contrairement aux
+metriques.</li>
+</ul>
+<h3 id="instrumentation-fastapi-ai-nutrition-et-reco-fitness">6.5
+Instrumentation FastAPI (AI-Nutrition et Reco-Fitness)</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> prometheus_fastapi_instrumentator <span class="im">import</span> Instrumentator</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Instrumentation Prometheus : expose /metrics (exclu du schema OpenAPI).</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>Instrumentator().instrument(app).expose(app, endpoint<span class="op">=</span><span class="st">&quot;/metrics&quot;</span>, include_in_schema<span class="op">=</span><span class="va">False</span>)</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Une seule ligne en fin de <code>app/main.py</code> :
+<code>instrument(app)</code> pose un middleware qui mesure chaque
+requete, <code>expose(app)</code> ajoute la route
+<code>GET /metrics</code>.</li>
+<li><code>include_in_schema=False</code> : la route n’apparait
+<strong>pas</strong> dans le schema OpenAPI (<code>/docs</code>). C’est
+de l’outillage interne, pas un endpoint metier.</li>
+<li>Metriques produites : <code>http_requests_total</code> (compteur par
+handler et code) et <code>http_request_duration_seconds</code>
+(histogramme de latence). Exactement le modele
+<strong>RED</strong>.</li>
+<li>Le meme pattern est applique dans les deux microservices FastAPI ;
+le dashboard <code>fastapi-services.json</code> est d’ailleurs un
+template qui bascule entre les jobs <code>ai-nutrition</code> et
+<code>reco-fitness</code>.</li>
+</ul>
+<h3 id="instrumentation-auth-hono-bun">6.6 Instrumentation AUTH (Hono /
+Bun)</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { prometheus } <span class="im">from</span> <span class="st">&#39;@hono/prometheus&#39;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">// METRICS (Prometheus - RED: Request rate, Errors, Duration)</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> { printMetrics<span class="op">,</span> registerMetrics } <span class="op">=</span> <span class="fu">prometheus</span>()<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>app<span class="op">.</span><span class="fu">use</span>(<span class="st">&quot;*&quot;</span><span class="op">,</span> registerMetrics)<span class="op">;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">// ... plus bas dans le fichier</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>app<span class="op">.</span><span class="fu">get</span>(<span class="st">&quot;/metrics&quot;</span><span class="op">,</span> printMetrics)</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>prometheus()</code> retourne deux fonctions :
+<code>registerMetrics</code> est un <strong>middleware</strong> monte
+sur toutes les routes (<code>"*"</code>) qui compte et chronometre
+chaque requete ; <code>printMetrics</code> est le
+<strong>handler</strong> qui serialise le registre au format texte
+Prometheus sur <code>GET /metrics</code>.</li>
+<li>Le commentaire du code source annonce explicitement le modele
+RED.</li>
+<li>Demontre que l’instrumentation est homogene sur 3 stacks differentes
+(Java, Python, TypeScript) : meme format d’exposition, meme scrapeur,
+memes dashboards.</li>
+</ul>
+<h3 id="instrumentation-api-spring-boot-micrometer-actuator">6.7
+Instrumentation API Spring Boot (Micrometer + Actuator)</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">dependency</span>&gt;</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">artifactId</span>&gt;spring-boot-starter-actuator&lt;/<span class="kw">artifactId</span>&gt;</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">dependency</span>&gt;</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">dependency</span>&gt;</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">groupId</span>&gt;io.micrometer&lt;/<span class="kw">groupId</span>&gt;</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">artifactId</span>&gt;micrometer-registry-prometheus&lt;/<span class="kw">artifactId</span>&gt;</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">dependency</span>&gt;</span></code></pre></div>
+<pre class="properties"><code>management.endpoints.web.exposure.include=health,info,prometheus</code></pre>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Note : Spring Security 6+ retire le context-path (server.servlet.context-path=/api)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">// avant le matching. Les patterns ci-dessous doivent donc etre exprimes sans /api/.</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">requestMatchers</span><span class="op">(</span><span class="st">&quot;/actuator/health&quot;</span><span class="op">,</span> <span class="st">&quot;/actuator/info&quot;</span><span class="op">,</span> <span class="st">&quot;/actuator/prometheus&quot;</span><span class="op">).</span><span class="fu">permitAll</span><span class="op">()</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">anyRequest</span><span class="op">().</span><span class="fu">authenticated</span><span class="op">()</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Deux dependances suffisent : Actuator fournit les endpoints de
+management, <code>micrometer-registry-prometheus</code> ajoute le rendu
+au format Prometheus sur <code>/actuator/prometheus</code>.</li>
+<li><code>management.endpoints.web.exposure.include=health,info,prometheus</code>
+: on n’expose <strong>que</strong> ces 3 endpoints Actuator, pas la
+totalite (env, beans, etc. restent fermes).</li>
+<li>L’endpoint est en <code>permitAll()</code> dans
+<code>SecurityConfig</code> : Prometheus scrape en interne <strong>sans
+JWT</strong>. Subtilite a connaitre : Spring Security 6+ matche les
+patterns <strong>apres</strong> retrait du context-path, donc on ecrit
+<code>/actuator/prometheus</code> et pas
+<code>/api/actuator/prometheus</code> (alors que Prometheus, lui,
+appelle bien <code>/api/actuator/prometheus</code>).</li>
+<li>Metriques obtenues sans aucune ligne de code metier :
+<code>http_server_requests_seconds</code> par route et statut, JVM
+(heap, GC, threads), pool Hikari.</li>
+</ul>
+<h3 id="provisioning-grafana-datasources-dashboards">6.8 Provisioning
+Grafana (datasources + dashboards)</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># datasources.yml</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">datasources</span><span class="kw">:</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Prometheus</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> prometheus</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">uid</span><span class="kw">:</span><span class="at"> prometheus</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">access</span><span class="kw">:</span><span class="at"> proxy</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">url</span><span class="kw">:</span><span class="at"> http://prometheus:9090</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">isDefault</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Loki</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> loki</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">uid</span><span class="kw">:</span><span class="at"> loki</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">access</span><span class="kw">:</span><span class="at"> proxy</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">url</span><span class="kw">:</span><span class="at"> http://loki:3100</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dashboards.yml</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">providers</span><span class="kw">:</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> MSPR</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">orgId</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">folder</span><span class="kw">:</span><span class="at"> MSPR HealthAI</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">type</span><span class="kw">:</span><span class="at"> file</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">disableDeletion</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">editable</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">updateIntervalSeconds</span><span class="kw">:</span><span class="at"> </span><span class="dv">30</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">options</span><span class="kw">:</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">path</span><span class="kw">:</span><span class="at"> /var/lib/grafana/dashboards</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Au premier demarrage, Grafana est <strong>pret a l’emploi</strong> :
+2 datasources et 4 dashboards, zero clic de configuration. Tout est
+versionne dans le repo (infrastructure as code, meme logique que le
+reste du deploiement).</li>
+<li><code>access: proxy</code> : c’est le backend Grafana qui interroge
+Prometheus/Loki sur le reseau Docker ; le navigateur du jury n’a jamais
+besoin d’acceder a ces services directement.</li>
+<li>Les <code>uid</code> fixes (<code>prometheus</code>,
+<code>loki</code>) permettent aux JSON de dashboards de referencer les
+datasources de maniere stable d’une machine a l’autre.</li>
+<li>Le provider rescanne le dossier toutes les 30 s : modifier un JSON
+dans le repo et le re-monter suffit a mettre a jour le dashboard.</li>
+</ul>
+<hr />
+<h2 id="tableau-recapitulatif">7. Tableau recapitulatif</h2>
+<h3 id="les-3-alertes">Les 3 alertes</h3>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 30%" />
+<col style="width: 13%" />
+<col style="width: 14%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr>
+<th>Alerte</th>
+<th>Expression (resume)</th>
+<th>Pendant</th>
+<th>Severite</th>
+<th>Reaction (runbook)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CibleInjoignable</code></td>
+<td><code>up == 0</code></td>
+<td>1 min</td>
+<td>critical</td>
+<td><code>ps</code>, logs, restart ; si le conteneur tourne : image non
+instrumentee ?</td>
+</tr>
+<tr>
+<td><code>ConteneurCpuEleve</code></td>
+<td>CPU <code>mspr-*</code> &gt; 0.9 coeur</td>
+<td>5 min</td>
+<td>warning</td>
+<td>Grafana : pic transitoire (ETL, IA) ou derive ; limite de ressources
+si durable</td>
+</tr>
+<tr>
+<td><code>ConteneurMemoireElevee</code></td>
+<td>RAM <code>mspr-*</code> &gt; 2 Go</td>
+<td>5 min</td>
+<td>warning</td>
+<td>Idem ; surveiller une fuite (montee continue), restart au
+besoin</td>
+</tr>
+</tbody>
+</table>
+<h3 id="outils-urls-roles">Outils, URLs, roles</h3>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 15%" />
+<col style="width: 18%" />
+<col style="width: 43%" />
+</colgroup>
+<thead>
+<tr>
+<th>Outil</th>
+<th>URL</th>
+<th>Role</th>
+<th>Identifiants</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Grafana</td>
+<td>http://localhost:3001</td>
+<td>Point d’entree principal : dashboards metriques + logs</td>
+<td>admin / admin (surcharge <code>GRAFANA_ADMIN_PASSWORD</code>)</td>
+</tr>
+<tr>
+<td>Prometheus</td>
+<td>http://localhost:9090</td>
+<td>Etat des cibles (Status &gt; Targets), test PromQL, regles</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Alertmanager</td>
+<td>http://localhost:9093</td>
+<td>Alertes actuellement declenchees</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Loki</td>
+<td>http://localhost:3100</td>
+<td>Stockage logs, interroge via Grafana uniquement</td>
+<td>-</td>
+</tr>
+<tr>
+<td>cAdvisor</td>
+<td>http://localhost:8085</td>
+<td>UI brute des metriques conteneurs (debug)</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h3
+id="chiffres-du-smoke-test-10062026-rapport-tests-qualite.md-section-4">Chiffres
+du smoke test (10/06/2026, rapport-tests-qualite.md section 4)</h3>
+<ul>
+<li>Stack complete (application + supervision) stable en <strong>84
+secondes</strong>, pull des 9 images de supervision inclus (exigence du
+cahier des charges : &lt; 10 minutes).</li>
+<li><strong>10 cibles sur 10 UP</strong> dans Prometheus (4 services
+applicatifs instrumentes + exporters infra et BDD).</li>
+<li><strong>3 regles d’alerte chargees</strong>, a l’etat inactif
+(aucune condition remplie).</li>
+<li>Loki : logs centralises recus de <strong>23
+conteneurs</strong>.</li>
+<li>Grafana : <strong>4 dashboards provisionnes</strong> dans le dossier
+“MSPR HealthAI”.</li>
+<li>Captures en fonctionnement dans le livrable 02
+(<code>dashboard-vue-stack.png</code>,
+<code>dashboard-observabilite.png</code>,
+<code>dashboard-api-spring.png</code>).</li>
+</ul>
+<hr />
+<h2 id="questions-probables-du-jury">8. Questions probables du jury</h2>
+<h3
+id="q1.-pourquoi-prometheus-grafana-loki-plutot-que-la-stack-elk">Q1.
+Pourquoi Prometheus + Grafana + Loki plutot que la stack ELK ?</h3>
+<p>Le sujet recommandait l’une ou l’autre. Quatre arguments pour ce
+choix :</p>
+<ol type="1">
+<li><strong>Couverture du besoin</strong> : il faut des metriques ET des
+logs. ELK (Elasticsearch / Logstash / Kibana) est d’abord une stack de
+logs ; pour les metriques il faudrait y ajouter Metricbeat. Prometheus
+est l’outil standard des metriques conteneurisees, avec un ecosysteme
+d’exporters pret a l’emploi (postgres, mongodb, node, cadvisor).</li>
+<li><strong>Modele pull</strong> : Prometheus genere la metrique
+<code>up</code> pour chaque cible, ce qui donne la detection de panne
+gratuitement (c’est la base de l’alerte
+<code>CibleInjoignable</code>).</li>
+<li><strong>Empreinte memoire</strong> : Elasticsearch indexe le contenu
+complet des logs (JVM gourmande, plusieurs Go de RAM a lui seul).
+<strong>Loki n’indexe que les labels</strong> (<code>container</code>,
+<code>stream</code>, <code>service</code>) ; le contenu est stocke
+compresse et filtre a la requete. Adapte a un poste de demonstration qui
+fait deja tourner 20 conteneurs.</li>
+<li><strong>Integration unique</strong> : Grafana requete les deux
+datasources. Un seul outil de visualisation pour correler metriques et
+logs sur la meme periode, un seul login a montrer au jury.</li>
+</ol>
+<p>Tradeoff assume : la recherche plein texte de Loki est moins
+puissante que celle d’Elasticsearch. Acceptable car le besoin est le
+diagnostic d’incident (filtrer par conteneur, par periode), pas
+l’analyse forensique de gros volumes.</p>
+<h3 id="q2.-pull-vs-push-pourquoi-le-pull-pour-les-metriques">Q2. Pull
+vs push : pourquoi le pull pour les metriques ?</h3>
+<ul>
+<li><strong>Pull (Prometheus)</strong> : le serveur initie un
+<code>GET /metrics</code> vers chaque cible toutes les 15 s. Avantages :
+la liste des cibles est centralisee dans <code>prometheus.yml</code> (on
+sait exactement ce qui est surveille), une cible morte est detectee
+immediatement (<code>up == 0</code>), les applications restent passives
+(pas de logique de retry/buffer cote client), et on peut debugger a la
+main avec un simple <code>curl http://cible/metrics</code>.</li>
+<li><strong>Push</strong> : le client envoie ses donnees. Necessaire
+quand la source ne peut pas etre scrapee : jobs batch ephemeres
+(Pushgateway cote Prometheus) ou… les <strong>logs</strong>, qui sont
+des evenements et pas un etat : Promtail pousse vers Loki.</li>
+</ul>
+<p>Dans notre stack les deux coexistent donc : metriques en pull, logs
+en push. C’est le decoupage standard.</p>
+<h3 id="q3.-cest-quoi-le-modele-red">Q3. C’est quoi le modele RED ?</h3>
+<p><strong>Rate, Errors, Duration</strong> : pour chaque service HTTP,
+suivre le debit de requetes (req/s), le taux d’erreurs (5xx/s) et la
+distribution de latence (p95). Ces 3 signaux suffisent a dire si un
+service rend correctement son service.</p>
+<p>Concretement chez nous :</p>
+<ul>
+<li>FastAPI : <code>http_requests_total</code> (Rate + Errors via le
+label de statut) et <code>http_request_duration_seconds</code>
+(Duration, histogramme).</li>
+<li>API Spring : <code>http_server_requests_seconds</code> (timer
+Micrometer qui porte les trois a la fois : count, sum, labels
+uri/status).</li>
+<li>AUTH : le commentaire du code source l’annonce explicitement :
+<code>// METRICS (Prometheus - RED: Request rate, Errors, Duration)</code>.</li>
+</ul>
+<p>Modele complementaire : <strong>USE</strong> (Utilization,
+Saturation, Errors) pour les ressources, couvert chez nous par cAdvisor
+et node-exporter.</p>
+<h3
+id="q4.-pourquoi-un-overlay-separe-au-lieu-dintegrer-la-supervision-au-compose-principal">Q4.
+Pourquoi un overlay separe au lieu d’integrer la supervision au compose
+principal ?</h3>
+<ul>
+<li><strong>Non-intrusif</strong> : la consigne qu’on s’est donnee est
+de superviser la plateforme <strong>sans modifier</strong> la stack
+applicative validee en MSPR2. L’overlay ajoute 10 services, ne touche a
+aucun existant.</li>
+<li><strong>Cycle de vie independant</strong> :
+<code>docker compose -f docker-compose.monitoring.yml down</code> arrete
+la supervision sans toucher l’application, et inversement.</li>
+<li><strong>Compose-agnostique</strong> : le meme overlay se combine au
+compose prod (images GHCR) comme au compose dev (build local).</li>
+<li><strong>Facultatif</strong> : l’application fonctionne sans la
+supervision (utile sur un poste contraint) ; on la lance des qu’on
+exploite.</li>
+</ul>
+<p>Le mecanisme <code>-f -f</code> (fusion de fichiers compose) est
+detaille dans la <a href="Deploiement.html">fiche Deploiement</a>.</p>
+<h3 id="q5.-comment-ajoutez-vous-une-nouvelle-alerte">Q5. Comment
+ajoutez-vous une nouvelle alerte ?</h3>
+<ol type="1">
+<li>Editer <code>monitoring/prometheus/alerts.yml</code> : ajouter une
+regle dans un groupe existant ou un nouveau groupe (champs
+<code>alert</code>, <code>expr</code> en PromQL, <code>for</code>,
+<code>labels.severity</code>, <code>annotations</code>).</li>
+<li>Tester l’expression au prealable dans l’onglet Graph de Prometheus
+(http://localhost:9090) pour verifier qu’elle retourne bien les series
+attendues.</li>
+<li>Recharger <strong>a chaud</strong> :
+<code>curl -X POST http://localhost:9090/-/reload</code> (possible grace
+au flag <code>--web.enable-lifecycle</code>). Pas besoin de redemarrer
+le conteneur, le fichier est monte en volume.</li>
+<li>Verifier dans Status &gt; Rules que la regle est chargee, etat
+<code>inactive</code>.</li>
+</ol>
+<h3 id="q6.-pourquoi-ces-seuils-0.9-coeur-2-go">Q6. Pourquoi ces seuils
+(0.9 coeur, 2 Go) ?</h3>
+<p>Ce sont des seuils de <strong>demonstration</strong>, volontairement
+larges, documentes comme tels dans <code>docs/supervision.md</code> (“a
+ajuster selon le materiel”) :</p>
+<ul>
+<li><strong>0.9 coeur pendant 5 min</strong> : un conteneur qui sature
+quasiment un coeur en continu pendant 5 minutes n’est plus dans un pic
+normal (les pics legitimes, ETL ou inference IA, sont plus courts ou
+attendus).</li>
+<li><strong>2 Go pendant 5 min</strong> : au-dela de la consommation
+nominale attendue des conteneurs de la plateforme, meme les plus lourds
+(JVM de l’API, services IA).</li>
+<li>La clause <code>for: 5m</code> filtre les pics transitoires : on
+alerte sur une <strong>derive durable</strong>, pas sur un spike.</li>
+</ul>
+<p>L’objectif en demo est d’eviter les fausses alertes tout en prouvant
+que le mecanisme complet (expr -&gt; pending -&gt; firing -&gt;
+Alertmanager) fonctionne. En production, on calibrerait sur des mesures
+reelles de charge nominale.</p>
+<h3
+id="q7.-une-cible-est-down-dans-prometheus-quelle-demarche-de-diagnostic">Q7.
+Une cible est DOWN dans Prometheus : quelle demarche de diagnostic
+?</h3>
+<p>Suivre le runbook (section 5 de <code>docs/supervision.md</code>)
+:</p>
+<ol type="1">
+<li><code>docker compose ... ps</code> : le conteneur tourne-t-il ?
+Statut healthy ?</li>
+<li><strong>Conteneur arrete ou unhealthy</strong> :
+<code>docker compose logs --tail=100 &lt;service&gt;</code> pour la
+cause, puis <code>up -d &lt;service&gt;</code> ou
+<code>restart</code>.</li>
+<li><strong>Conteneur qui tourne mais cible toujours DOWN</strong> :
+verifier que l’endpoint de metriques repond (curl depuis le reseau
+Docker). Cas typique : <strong>image pas encore instrumentee</strong>
+(anterieure au sprint A2, voir 5.3). Dans ce cas l’application
+fonctionne normalement, seule la collecte manque ; la correction est un
+rebuild/republication de l’image, pas un redemarrage.</li>
+<li>Correler dans Grafana (Vue stack + logs Loki du conteneur sur la
+periode).</li>
+</ol>
+<p>Le point a montrer au jury : on distingue <strong>panne
+applicative</strong> et <strong>panne de collecte</strong>, et l’alerte
+<code>CibleInjoignable</code> couvre les deux avec deux remediations
+differentes.</p>
+<h3
+id="q8.-comment-sont-geres-les-logs-et-pourquoi-loki-ne-sinterroge-que-via-grafana">Q8.
+Comment sont geres les logs, et pourquoi Loki ne s’interroge que via
+Grafana ?</h3>
+<p>Chaine : conteneurs -&gt; socket Docker (ro) -&gt; Promtail
+(decouverte auto, refresh 15 s) -&gt; push HTTP vers
+<code>loki:3100/loki/api/v1/push</code> -&gt; Loki (stockage filesystem,
+retention 168 h) -&gt; Grafana (datasource provisionnee, Explore +
+panneaux logs).</p>
+<p>Chaque ligne porte 3 labels (<code>container</code>,
+<code>stream</code>, <code>service</code>), volontairement peu nombreux
+: Loki n’indexe <strong>que les labels</strong>, garder la cardinalite
+basse est la condition de sa legerete.</p>
+<p>Pourquoi via Grafana uniquement : Loki n’a <strong>pas d’interface
+graphique propre</strong>, c’est une API HTTP de stockage/requete
+(LogQL). Grafana est son front officiel. Avantage : metriques et logs se
+consultent au meme endroit, avec la meme selection de periode, ce qui
+est exactement le besoin en diagnostic d’incident.</p>
+<h3
+id="q9.-les-endpoints-metrics-ne-sont-pas-authentifies-cest-un-probleme-de-securite">Q9.
+Les endpoints /metrics ne sont pas authentifies : c’est un probleme de
+securite ?</h3>
+<p>Reponse en trois temps :</p>
+<ol type="1">
+<li><strong>Surface reelle</strong> : les metriques sont des compteurs
+agreges (req/s, latence, heap), pas de donnees personnelles ni de
+payloads. Le risque est de la fuite d’information technique, pas de
+donnees metier.</li>
+<li><strong>Perimetre reseau</strong> : le scraping se fait sur le
+reseau Docker interne <code>mspr_data_network</code>. Cote API,
+<code>/actuator/prometheus</code> est en <code>permitAll</code>
+precisement pour que Prometheus scrape sans JWT (Prometheus ne sait pas
+s’authentifier en better-auth) ; cote FastAPI, <code>/metrics</code> est
+exclu du schema OpenAPI. La doc (<code>monitoring/README.md</code>)
+assume : acceptable en environnement de demonstration.</li>
+<li><strong>Exposition publique</strong> : en deploiement expose, ces
+endpoints et les UIs de supervision ne sont pas ouverts au public ;
+l’acces est restreint au niveau du reverse proxy Traefik (ipallowlist),
+voir la <a href="Configs-Resilience.html">fiche Configs et
+resilience</a>.</li>
+</ol>
+<p>Amelioration possible en production : TLS + auth basique sur les
+exporters, ou un reseau de supervision dedie.</p>
+<h3 id="q10.-que-voit-on-dans-le-dashboard-api-spring">Q10. Que voit-on
+dans le dashboard API Spring ?</h3>
+<p>Le dashboard “MSPR HealthAI - API Spring Boot”
+(<code>api-spring.json</code>), alimente par Micrometer :</p>
+<ul>
+<li><strong>Trafic</strong> : requetes/s globales et par statut HTTP
+(reperer une montee de 4xx/5xx).</li>
+<li><strong>Latence</strong> : p95 par route (reperer LA route lente,
+pas une moyenne globale qui masque tout).</li>
+<li><strong>JVM</strong> : memoire heap/nonheap (fuite memoire = heap
+qui monte sans redescendre apres GC), threads.</li>
+<li><strong>Pool Hikari</strong> : connexions actives vers PostgreSQL
+(pool sature = requetes qui attendent une connexion, symptome typique
+avant les timeouts).</li>
+<li><strong>CPU process</strong>.</li>
+</ul>
+<p>C’est le dashboard de reponse a “l’API est lente” : on localise en
+quelques clics si c’est une route, la JVM ou la BDD.</p>
+<h3 id="q11.-pourquoi-une-retention-de-7-jours-quelle-volumetrie">Q11.
+Pourquoi une retention de 7 jours ? Quelle volumetrie ?</h3>
+<ul>
+<li>Valeur <strong>identique</strong> pour les metriques
+(<code>--storage.tsdb.retention.time=7d</code>) et les logs
+(<code>retention_period: 168h</code>) : coherence, une seule regle a
+retenir.</li>
+<li>7 jours couvrent le besoin reel : exploiter la plateforme sur une
+semaine et diagnostiquer un incident recent. Au-dela, les donnees de
+demo n’ont pas de valeur.</li>
+<li>La purge automatique <strong>borne le disque</strong> : pas de
+croissance infinie sur le poste de demonstration. Les donnees vivent
+dans des volumes nommes (<code>prometheus_data</code>,
+<code>loki_data</code>), donc survivent aux redemarrages mais partent
+avec un <code>down -v</code>.</li>
+<li>La volumetrie reste modeste par construction : 10 jobs scrapes
+toutes les 15 s cote metriques, et cote logs Loki ne stocke que 3 labels
+d’index + contenu compresse.</li>
+</ul>
+<h3 id="q12.-comment-verifiez-vous-que-la-supervision-fonctionne">Q12.
+Comment verifiez-vous que la supervision fonctionne ?</h3>
+<p>Verification a froid, reproductible (faite le 10/06/2026, documentee
+dans <code>rapport-tests-qualite.md</code> section 4) :</p>
+<ol type="1">
+<li><strong>Prometheus, Status &gt; Targets</strong> : 10 cibles sur 10
+a l’etat UP (le critere le plus parlant : si une cible applicative est
+UP, c’est que l’image instrumentee repond reellement).</li>
+<li><strong>Status &gt; Rules</strong> : les 3 regles chargees, etat
+inactif (aucune condition remplie).</li>
+<li><strong>Grafana</strong> : les 4 dashboards presents dans le dossier
+“MSPR HealthAI”, panneaux alimentes.</li>
+<li><strong>Loki</strong> : logs recus de 23 conteneurs (visibles dans
+Explore).</li>
+<li>Stack complete stable en 84 s, pour une exigence du cahier des
+charges a &lt; 10 minutes.</li>
+</ol>
+<p>Et en continu, c’est la supervision qui se surveille elle-meme : le
+job <code>prometheus</code> s’auto-scrape, et toute cible qui tombe
+declenche <code>CibleInjoignable</code> au bout d’une minute.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

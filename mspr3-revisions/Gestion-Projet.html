@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>Gestion de projet - Révisions MSPR3</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a href="#fiche-de-revision-gestion-de-projet-agile"
+id="toc-fiche-de-revision-gestion-de-projet-agile">Fiche de revision :
+Gestion de projet agile</a>
+<ul>
+<li><a href="#vocabulaire-a-connaitre-avant-de-lire"
+id="toc-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#tldr" id="toc-tldr">1. TL;DR</a></li>
+<li><a href="#vue-densemble" id="toc-vue-densemble">2. Vue
+d’ensemble</a>
+<ul>
+<li><a href="#les-4-sprints" id="toc-les-4-sprints">2.1 Les 4
+sprints</a></li>
+<li><a href="#contexte-equipe" id="toc-contexte-equipe">2.2 Contexte
+equipe</a></li>
+<li><a href="#place-dans-les-livrables"
+id="toc-place-dans-les-livrables">2.3 Place dans les livrables</a></li>
+</ul></li>
+<li><a href="#methodologie" id="toc-methodologie">3. Methodologie</a>
+<ul>
+<li><a href="#agile-et-iterative-adaptee"
+id="toc-agile-et-iterative-adaptee">3.1 Agile et iterative,
+adaptee</a></li>
+<li><a href="#pourquoi-pas-de-scrum-complet"
+id="toc-pourquoi-pas-de-scrum-complet">3.2 Pourquoi pas de Scrum
+complet</a></li>
+<li><a href="#sprints-thematiques-plutot-que-calendaires"
+id="toc-sprints-thematiques-plutot-que-calendaires">3.3 Sprints
+thematiques plutot que calendaires</a></li>
+<li><a href="#le-flux-dune-tache" id="toc-le-flux-dune-tache">3.4 Le
+flux d’une tache</a></li>
+</ul></li>
+<li><a href="#les-4-sprints-en-detail"
+id="toc-les-4-sprints-en-detail">4. Les 4 sprints en detail</a>
+<ul>
+<li><a href="#sprint-a-observabilite"
+id="toc-sprint-a-observabilite">4.1 Sprint A : Observabilite</a></li>
+<li><a href="#sprint-b-configurations-multi-environnement-et-resilience"
+id="toc-sprint-b-configurations-multi-environnement-et-resilience">4.2
+Sprint B : Configurations multi-environnement et resilience</a></li>
+<li><a href="#sprint-c-cicd-et-qualite"
+id="toc-sprint-c-cicd-et-qualite">4.3 Sprint C : CI/CD et
+qualite</a></li>
+<li><a href="#sprint-d-documentation-securite-et-gestion-de-projet"
+id="toc-sprint-d-documentation-securite-et-gestion-de-projet">4.4 Sprint
+D : Documentation, securite et gestion de projet</a></li>
+</ul></li>
+<li><a href="#ceremonies-et-outils" id="toc-ceremonies-et-outils">5.
+Ceremonies et outils</a>
+<ul>
+<li><a href="#ceremonies-allegees" id="toc-ceremonies-allegees">5.1
+Ceremonies allegees</a></li>
+<li><a href="#tableau-kanban" id="toc-tableau-kanban">5.2 Tableau
+Kanban</a></li>
+<li><a href="#outils" id="toc-outils">5.3 Outils</a></li>
+</ul></li>
+<li><a href="#gestion-des-risques" id="toc-gestion-des-risques">6.
+Gestion des risques</a></li>
+<li><a href="#elements-concrets-a-citer-au-jury"
+id="toc-elements-concrets-a-citer-au-jury">7. Elements concrets a citer
+au jury</a>
+<ul>
+<li><a href="#la-definition-du-fini" id="toc-la-definition-du-fini">7.1
+La definition du fini</a></li>
+<li><a href="#une-revue-de-sprint-type"
+id="toc-une-revue-de-sprint-type">7.2 Une revue de sprint type</a></li>
+<li><a href="#frictions-reelles-rencontrees"
+id="toc-frictions-reelles-rencontrees">7.3 Frictions reelles
+rencontrees</a></li>
+<li><a href="#lecture-du-kanban" id="toc-lecture-du-kanban">7.4 Lecture
+du Kanban</a></li>
+<li><a href="#la-ci-comme-indicateur-davancement"
+id="toc-la-ci-comme-indicateur-davancement">7.5 La CI comme indicateur
+d’avancement</a></li>
+<li><a href="#les-seuils-de-couverture-comme-garde-fous"
+id="toc-les-seuils-de-couverture-comme-garde-fous">7.6 Les seuils de
+couverture comme garde-fous</a></li>
+</ul></li>
+<li><a href="#questions-probables-du-jury"
+id="toc-questions-probables-du-jury">8. Questions probables du jury</a>
+<ul>
+<li><a
+href="#q1.-pourquoi-pas-de-daily-formel-et-comment-vous-synchronisiez-vous"
+id="toc-q1.-pourquoi-pas-de-daily-formel-et-comment-vous-synchronisiez-vous">Q1.
+Pourquoi pas de daily formel, et comment vous synchronisiez-vous
+?</a></li>
+<li><a
+href="#q2.-pourquoi-des-sprints-thematiques-abcd-plutot-que-des-iterations-calendaires-strictes"
+id="toc-q2.-pourquoi-des-sprints-thematiques-abcd-plutot-que-des-iterations-calendaires-strictes">Q2.
+Pourquoi des sprints thematiques (A/B/C/D) plutot que des iterations
+calendaires strictes ?</a></li>
+<li><a
+href="#q3.-comment-etait-definie-la-fin-dun-sprint-definition-du-fini"
+id="toc-q3.-comment-etait-definie-la-fin-dun-sprint-definition-du-fini">Q3.
+Comment etait definie la fin d’un sprint (definition du fini) ?</a></li>
+<li><a href="#q4.-comment-se-passait-une-revue-de-sprint-concretement"
+id="toc-q4.-comment-se-passait-une-revue-de-sprint-concretement">Q4.
+Comment se passait une revue de sprint concretement ?</a></li>
+<li><a
+href="#q5.-quels-ont-ete-les-principaux-points-de-friction-et-quavez-vous-ajuste"
+id="toc-q5.-quels-ont-ete-les-principaux-points-de-friction-et-quavez-vous-ajuste">Q5.
+Quels ont ete les principaux points de friction et qu’avez-vous ajuste
+?</a></li>
+<li><a
+href="#q6.-comment-mesuriez-vous-lavancement-sans-outil-de-velocite"
+id="toc-q6.-comment-mesuriez-vous-lavancement-sans-outil-de-velocite">Q6.
+Comment mesuriez-vous l’avancement sans outil de velocite ?</a></li>
+<li><a
+href="#q7.-comment-sarticulait-le-travail-de-lapplication-mobile-portee-par-un-autre-membre"
+id="toc-q7.-comment-sarticulait-le-travail-de-lapplication-mobile-portee-par-un-autre-membre">Q7.
+Comment s’articulait le travail de l’application mobile portee par un
+autre membre ?</a></li>
+<li><a href="#q8.-ou-est-le-tableau-kanban-et-comment-est-il-organise"
+id="toc-q8.-ou-est-le-tableau-kanban-et-comment-est-il-organise">Q8. Ou
+est le tableau Kanban et comment est-il organise ?</a></li>
+<li><a
+href="#q9.-quels-risques-aviez-vous-identifies-et-lesquels-se-sont-materialises"
+id="toc-q9.-quels-risques-aviez-vous-identifies-et-lesquels-se-sont-materialises">Q9.
+Quels risques aviez-vous identifies et lesquels se sont materialises
+?</a></li>
+<li><a href="#q10.-quauriez-vous-fait-differemment"
+id="toc-q10.-quauriez-vous-fait-differemment">Q10. Qu’auriez-vous fait
+differemment ?</a></li>
+<li><a href="#q11.-si-le-projet-continuait-quel-serait-le-sprint-e"
+id="toc-q11.-si-le-projet-continuait-quel-serait-le-sprint-e">Q11. Si le
+projet continuait, quel serait le sprint E ?</a></li>
+<li><a
+href="#q12.-en-quoi-github-seul-suffit-il-comme-outillage-projet-a-cette-echelle"
+id="toc-q12.-en-quoi-github-seul-suffit-il-comme-outillage-projet-a-cette-echelle">Q12.
+En quoi GitHub seul suffit-il comme outillage projet a cette echelle
+?</a></li>
+</ul></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1 id="fiche-de-revision-gestion-de-projet-agile">Fiche de revision :
+Gestion de projet agile</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR3 (TPRE601). Objectif :
+savoir presenter la demarche agile adaptee a l’equipe, le decoupage en 4
+sprints thematiques, les ceremonies allegees, le tableau Kanban GitHub
+et la gestion des risques (livrable 05).</p>
+</blockquote>
+<hr />
+<h2 id="vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<p>Les 8 termes qui reviennent partout dans cette fiche.</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sprint</strong></td>
+<td>Periode de travail bornee qui produit un increment demontrable. Ici
+: 4 sprints thematiques (A a D), tous termines.</td>
+</tr>
+<tr>
+<td><strong>Increment</strong></td>
+<td>Resultat concret livre a la fin d’un sprint, verifiable de bout en
+bout : la stack demarre, la nouveaute est demontrable.</td>
+</tr>
+<tr>
+<td><strong>Backlog</strong></td>
+<td>Liste ordonnee des taches restantes, materialisee ici par les issues
+GitHub (colonnes Backlog / Ready du tableau).</td>
+</tr>
+<tr>
+<td><strong>Kanban</strong></td>
+<td>Tableau visuel de suivi par colonnes. Ici : GitHub Project “MSPR” de
+l’organisation <code>whitefoxxyt</code>, commun a tous les depots.</td>
+</tr>
+<tr>
+<td><strong>Ceremonie</strong></td>
+<td>Reunion ritualisee d’une methode agile (planification, point
+d’avancement, revue, retrospective). Conservees dans leur intention mais
+allegees.</td>
+</tr>
+<tr>
+<td><strong>Retrospective</strong></td>
+<td>Bilan court de fin de sprint : ce qui a fonctionne, les points de
+friction, les ajustements pour le sprint suivant.</td>
+</tr>
+<tr>
+<td><strong>Definition du fini</strong></td>
+<td>Critere objectif qui declare un sprint termine. Ici : la stack
+demarre et le nouvel increment est demontrable.</td>
+</tr>
+<tr>
+<td><strong>Pull request (PR)</strong></td>
+<td>Proposition de fusion de code sur GitHub. Une PR par lot de travail,
+mergee apres tests verts ; sert de point de revue.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tldr">1. TL;DR</h2>
+<p>La MSPR3 (TPRE601) porte sur la <strong>mise en production</strong>
+de la plateforme HealthAI Coach construite lors des MSPR1 (backend
+metier) et MSPR2 (IA et frontend) : conteneurisation, orchestration
+locale Docker Compose, observabilite, CI/CD, securite, configurations
+multi-environnement et resilience.</p>
+<p>L’organisation du travail (livrable
+<code>05-gestion-de-projet/</code>) repose sur :</p>
+<ul>
+<li>Une approche <strong>agile et iterative</strong>, adaptee a la
+taille reelle de l’equipe et au perimetre. Principe : livrer par
+<strong>increments fonctionnels verifiables de bout en bout</strong>
+plutot que tout produire en une seule passe.</li>
+<li><strong>Pas de processus lourd</strong> : le pilotage se fait
+directement dans GitHub (issues, pull requests, Actions). Pas de daily
+formel, points d’avancement asynchrones.</li>
+<li><strong>4 sprints thematiques</strong>, tous termines : A
+Observabilite, B Configurations + resilience, C CI/CD et qualite, D
+Documentation, securite et gestion de projet.</li>
+<li>Un <strong>Kanban GitHub Project</strong> commun a tous les depots
+(projet “MSPR”, organisation <code>whitefoxxyt</code>), taches MSPR3
+prefixees <code>[MSPR3][Sprint A..D]</code>. Capture fournie dans les
+livrables (<code>kanban-github-project.png</code>).</li>
+<li>Une <strong>gestion des risques</strong> pragmatique : tableau
+risque / impact / parade, base sur les risques concrets rencontres.</li>
+<li>La <strong>cible de mise en production</strong> est un deploiement
+local orchestre par Docker Compose (<code>bootstrap.sh</code>) : c’est
+le point d’evaluation et de demonstration, et le decoupage en sprints
+est pense autour de cette cible.</li>
+</ul>
+<p>Preuve de pilotage par la qualite : au releve du 10/06/2026, les
+<strong>8 chaines CI</strong> GitHub Actions sont au vert et la
+publication d’image sur GHCR est conditionnee aux tests (source :
+<code>rapport-tests-qualite.md</code>).</p>
+<p>L’application mobile est prise en charge par un autre membre de
+l’equipe avec son propre rythme : les sprints decrits ici ne la
+concernent pas (voir <a href="Mobile.html">fiche Application
+mobile</a>).</p>
+<hr />
+<h2 id="vue-densemble">2. Vue d’ensemble</h2>
+<h3 id="les-4-sprints">2.1 Les 4 sprints</h3>
+<pre class="mermaid"><code>flowchart LR
+    A[&quot;Sprint A&lt;br/&gt;Observabilite&quot;] --&gt; B[&quot;Sprint B&lt;br/&gt;Configs multi-env&lt;br/&gt;+ resilience&quot;]
+    B --&gt; C[&quot;Sprint C&lt;br/&gt;CI/CD&lt;br/&gt;+ qualite&quot;]
+    C --&gt; D[&quot;Sprint D&lt;br/&gt;Doc, securite,&lt;br/&gt;gestion de projet&quot;]</code></pre>
+<p>Chaque sprint correspond a un increment demontrable, documente dans
+une fiche dediee :</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 18%" />
+<col style="width: 15%" />
+<col style="width: 44%" />
+</colgroup>
+<thead>
+<tr>
+<th>Sprint</th>
+<th>Theme</th>
+<th>Etat</th>
+<th>Fiche de sortie</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>Observabilite</td>
+<td>Termine</td>
+<td><a href="Observabilite.html">fiche Observabilite</a></td>
+</tr>
+<tr>
+<td>B</td>
+<td>Configurations multi-environnement + resilience</td>
+<td>Termine</td>
+<td><a href="Configs-Resilience.html">fiche Configs et resilience</a></td>
+</tr>
+<tr>
+<td>C</td>
+<td>CI/CD et qualite</td>
+<td>Termine</td>
+<td><a href="CICD-Qualite.html">fiche CI/CD et qualite</a></td>
+</tr>
+<tr>
+<td>D</td>
+<td>Documentation, securite et gestion de projet</td>
+<td>Termine</td>
+<td><a href="Securite.html">fiche Securite</a> et <a
+href="Deploiement.html">fiche Deploiement</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="contexte-equipe">2.2 Contexte equipe</h3>
+<ul>
+<li><strong>Equipe projet</strong> : Arthur Poncin, Theo Renard, Martin
+Ornh, Foidjou Daumard. Meme equipe que pour les MSPR1 et MSPR2
+(continuite sur la plateforme).</li>
+<li><strong>Cadre</strong> : EPSI, formation Concepteur Developpeur
+d’Applications, blocs E6.3 et E6.4, annee 2025-2026.</li>
+<li><strong>Application mobile</strong> : developpee par un autre membre
+de l’equipe, avec son propre rythme de travail. Elle est documentee a
+part (livrable <code>06-application-mobile/</code>, <a
+href="Mobile.html">fiche Application mobile</a>) et les sprints A a D ne
+la concernent pas.</li>
+<li><strong>Perimetre des sprints</strong> : industrialisation de la
+plateforme microservices (8 depots de services + le depot
+d’orchestration <code>MSPR-Deploy</code>, point d’entree
+<code>bootstrap.sh</code>).</li>
+</ul>
+<h3 id="place-dans-les-livrables">2.3 Place dans les livrables</h3>
+<p>Le decoupage en sprints recouvre directement l’arborescence des
+livrables MSPR3 :</p>
+<table>
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 21%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Dossier livrable</th>
+<th>Contenu</th>
+<th>Sprint source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>01-conteneurisation-orchestration/</code></td>
+<td>Guide de deploiement, compose + overlays, scripts de sauvegarde /
+restauration, <code>CONFIGS.pdf</code></td>
+<td>B (+ socle)</td>
+</tr>
+<tr>
+<td><code>02-observabilite-supervision/</code></td>
+<td>Procedure de supervision, doc monitoring, captures des
+dashboards</td>
+<td>A</td>
+</tr>
+<tr>
+<td><code>03-ci-cd-qualite/</code></td>
+<td>Chaine CI/CD, plan de test, rapport de tests et indicateurs
+qualite</td>
+<td>C</td>
+</tr>
+<tr>
+<td><code>04-securite/</code></td>
+<td>Analyse OWASP Top 10, RGPD, NIST CSF</td>
+<td>C + D</td>
+</tr>
+<tr>
+<td><code>05-gestion-de-projet/</code></td>
+<td>Demarche agile, decoupage en 4 sprints, capture Kanban, gestion des
+risques</td>
+<td>D (cette fiche)</td>
+</tr>
+<tr>
+<td><code>06-application-mobile/</code></td>
+<td>Application mobile (Expo / React Native)</td>
+<td>Hors sprints</td>
+</tr>
+</tbody>
+</table>
+<p>Les documents livres sont des PDF generes depuis les sources Markdown
+du depot <code>MSPR-Deploy</code> (source canonique).</p>
+<hr />
+<h2 id="methodologie">3. Methodologie</h2>
+<h3 id="agile-et-iterative-adaptee">3.1 Agile et iterative, adaptee</h3>
+<p>L’approche retenue est <strong>agile et iterative, adaptee a la
+taille reelle de l’equipe et au perimetre de la MSPR3</strong>. Le
+principe directeur :</p>
+<blockquote>
+<p>Livrer par increments fonctionnels, chacun verifiable de bout en bout
+(la stack demarre, les nouveaux elements sont demontrables), plutot que
+de tout produire en une seule passe.</p>
+</blockquote>
+<p>Trois elements de contexte expliquent les choix :</p>
+<ol type="1">
+<li><strong>Petite equipe</strong> : pas de processus lourd. Les
+ceremonies sont allegees et le pilotage se fait directement dans GitHub
+(issues, pull requests, Actions).</li>
+<li><strong>Application mobile a part</strong> : portee par un autre
+membre avec son propre rythme, hors des sprints decrits ici.</li>
+<li><strong>Cible claire</strong> : la mise en production est un
+deploiement local orchestre par Docker Compose
+(<code>bootstrap.sh</code>), qui sert de point d’evaluation et de
+demonstration. Le decoupage en sprints est pense autour de cette cible :
+chaque sprint enrichit la stack deployable.</li>
+</ol>
+<h3 id="pourquoi-pas-de-scrum-complet">3.2 Pourquoi pas de Scrum
+complet</h3>
+<p>Les ceremonies Scrum classiques sont <strong>conservees dans leur
+intention mais allegees</strong> :</p>
+<ul>
+<li>Un Scrum complet (daily quotidien formel, roles dedies, estimation
+en points, suivi de velocite) aurait un cout disproportionne pour une
+equipe de cette taille travaillant sur un perimetre
+d’industrialisation.</li>
+<li>L’outillage GitHub porte deja le suivi : l’etat des issues, des PR
+et des runs Actions rend visible l’avancement sans reunion
+supplementaire.</li>
+<li>Ce qui est conserve : la logique d’iteration (sprints), un objectif
+clair par sprint (le theme), une definition du fini verifiable, une
+revue par demonstration et une retrospective courte.</li>
+</ul>
+<h3 id="sprints-thematiques-plutot-que-calendaires">3.3 Sprints
+thematiques plutot que calendaires</h3>
+<p>Les 4 sprints sont definis par leur <strong>theme</strong>
+(observabilite, configurations, CI/CD, documentation et securite), pas
+par des dates fixes. Chaque sprint se termine quand sa definition du
+fini est atteinte : <strong>la stack demarre et le nouvel increment est
+demontrable</strong>. Les quatre sprints ont ete reellement suivis, dans
+l’ordre A puis B puis C puis D, et sont tous termines.</p>
+<h3 id="le-flux-dune-tache">3.4 Le flux d’une tache</h3>
+<p>Cycle de vie type d’un lot de travail, entierement porte par GitHub
+:</p>
+<ol type="1">
+<li><strong>Issue</strong> creee et prefixee
+<code>[MSPR3][Sprint X]</code>, placee dans Backlog / Ready du Kanban en
+planification.</li>
+<li><strong>In progress</strong> : developpement, la carte suit
+l’issue.</li>
+<li><strong>Pull request</strong> ouverte (une PR par lot) : la carte
+passe en In review, la chaine Actions tourne (lint, tests,
+couverture).</li>
+<li><strong>Merge apres tests verts</strong> : sur <code>push</code>, le
+workflow <code>docker-publish</code> (appele via
+<code>workflow_call</code>) publie l’image sur GHCR.</li>
+<li><strong>Done</strong> : la PR est mergee et l’increment est verifie
+sur la stack locale.</li>
+</ol>
+<hr />
+<h2 id="les-4-sprints-en-detail">4. Les 4 sprints en detail</h2>
+<h3 id="sprint-a-observabilite">4.1 Sprint A : Observabilite</h3>
+<p><strong>Objectif.</strong> Doter la plateforme d’un systeme de
+supervision : savoir si les services sont vivants, suivre leurs
+ressources, centraliser les logs, etre alerte en cas de probleme.</p>
+<p><strong>Principales taches.</strong></p>
+<ul>
+<li>Overlay <code>docker-compose.monitoring.yml</code> ajoutant la stack
+d’observabilite <strong>sans modifier la stack applicative</strong> :
+Prometheus, Grafana, Loki, Promtail, Alertmanager.</li>
+<li>Exporters d’infrastructure : cAdvisor (conteneurs), node-exporter
+(hote), postgres-exporter x2 (bases metier et auth),
+mongodb-exporter.</li>
+<li><strong>Instrumentation applicative des 4 services dans leur code
+source</strong> : API via Actuator / Micrometer
+(<code>/api/actuator/prometheus</code>), AI-Nutrition et Reco-Fitness
+via prometheus-fastapi-instrumentator (<code>/metrics</code>), Auth via
+<code>@hono/prometheus</code> (<code>/metrics</code>).</li>
+<li>Trois regles d’alerte Prometheus
+(<code>prometheus/alerts.yml</code>) : <code>CibleInjoignable</code>
+(<code>up == 0</code> pendant 1 min, critical),
+<code>ConteneurCpuEleve</code> (&gt; 0.9 coeur CPU pendant 5 min,
+warning), <code>ConteneurMemoireElevee</code> (&gt; 2 Go de RAM pendant
+5 min, warning).</li>
+<li>Dashboard Grafana “MSPR HealthAI - Vue stack” provisionne
+automatiquement (cibles UP, disponibilite par job, CPU / memoire par
+conteneur, flux de logs).</li>
+</ul>
+<p><strong>Livrables.</strong> Overlay monitoring fonctionnel,
+instrumentation des 4 services, alertes, dashboard provisionne,
+documentation <code>monitoring/README.md</code>. Detail technique : <a
+href="Observabilite.html">fiche Observabilite</a>.</p>
+<h3 id="sprint-b-configurations-multi-environnement-et-resilience">4.2
+Sprint B : Configurations multi-environnement et resilience</h3>
+<p><strong>Objectif.</strong> Rendre la stack adaptable a plusieurs
+contextes de demonstration et capable de sauvegarder / restaurer ses
+donnees.</p>
+<p><strong>Principales taches.</strong></p>
+<ul>
+<li>Trois configurations via overlays Compose, documentees dans
+<code>CONFIGS.md</code> :
+<ul>
+<li><strong>complete</strong> : tous les services + monitoring, IA
+generative active (<code>docker-compose.yml</code> +
+<code>docker-compose.monitoring.yml</code>) ;</li>
+<li><strong>offline</strong> : sans internet
+(<code>docker-compose.offline.yml</code>), LLM force sur Ollama local,
+Auth sans verification email (<code>AUTH_OFFLINE=true</code>, aucun
+appel Resend) ;</li>
+<li><strong>performance</strong> : limites CPU / RAM par service
+(<code>docker-compose.performance.yml</code>), IA generative lourde
+omise du demarrage par defaut (repli sur la matrice statique),
+monitoring reduit a l’essentiel.</li>
+</ul></li>
+<li>Scripts de resilience dans <code>scripts/</code>, operant sur les
+conteneurs en cours : <code>backup.sh</code> (dump horodate :
+<code>pg_dump</code> x2 + <code>mongodump</code>),
+<code>restore.sh</code> (<code>pg_dump --clean</code>,
+<code>mongorestore --drop</code>), <code>clean.sh</code> (remise a zero
+des volumes).</li>
+</ul>
+<p><strong>Livrables.</strong> Trois overlays operationnels,
+<code>CONFIGS.md</code>, trois scripts de sauvegarde / restauration /
+nettoyage, section dediee du <code>README.md</code>. Detail technique :
+<a href="Configs-Resilience.html">fiche Configs et resilience</a>.</p>
+<h3 id="sprint-c-cicd-et-qualite">4.3 Sprint C : CI/CD et qualite</h3>
+<p><strong>Objectif.</strong> Industrialiser : chaque depot construit,
+teste et publie automatiquement son image, avec des garde-fous de
+qualite.</p>
+<p><strong>Principales taches.</strong></p>
+<ul>
+<li><strong>8 chaines GitHub Actions</strong> (une par depot) : lint
+selon la techno, tests + couverture, build de l’image Docker,
+publication sur GHCR
+(<code>ghcr.io/whitefoxxyt/mspr-&lt;service&gt;</code>).</li>
+<li><strong>Publication conditionnee</strong> : uniquement sur
+<code>push</code> (pas sur les pull requests) et seulement si lint et
+tests passent. Les workflows <code>docker-publish</code> sont appeles
+via <code>workflow_call</code>.</li>
+<li><strong>Couverture imposee a 80 %</strong> cote API (JaCoCo) et
+Reco-Fitness (pytest-cov).</li>
+<li>Strategie de tags via <code>docker/metadata-action</code> : branche,
+semver sur tags <code>vX.Y.Z</code>, SHA court, <code>latest</code>
+depuis la branche par defaut.</li>
+<li>Analyse de code <strong>SonarCloud</strong> via l’application GitHub
+installee sur l’organisation <code>whitefoxxyt</code> (Automatic
+Analysis a chaque push, sans token dans les depots). L’API embarque
+aussi un environnement Sonar local
+(<code>docker-compose.sonar.yml</code>) pour une analyse manuelle.</li>
+<li><strong>Durcissement des conteneurs</strong> (volet securite
+operationnelle) : les 6 services applicatifs tournent en utilisateur
+non-root, <code>HEALTHCHECK</code> presents,
+<code>no-new-privileges</code>, rotation des logs json-file
+(<code>max-size: 10m</code>, <code>max-file: 3</code>), ports des bases
+(5433 / 5434 / 27018) bindes sur <code>127.0.0.1</code>.</li>
+</ul>
+<p><strong>Livrables.</strong> 8 pipelines CI/CD publiant sur GHCR,
+seuils de couverture configures, analyse SonarCloud,
+<code>docker-compose.yml</code> durci, <code>CICD.md</code>. Detail
+technique : <a href="CICD-Qualite.html">fiche CI/CD et qualite</a>.</p>
+<h3 id="sprint-d-documentation-securite-et-gestion-de-projet">4.4 Sprint
+D : Documentation, securite et gestion de projet</h3>
+<p><strong>Objectif.</strong> Finaliser les livrables redactionnels,
+consolider la gestion des secrets et formaliser le suivi projet.</p>
+<p><strong>Principales taches.</strong></p>
+<ul>
+<li>Documentation de deploiement : <code>README.md</code> (prerequis,
+demarrage en une commande, acces aux services, depannage),
+<code>CONFIGS.md</code>, <code>CICD.md</code>,
+<code>monitoring/README.md</code>.</li>
+<li><strong>Gestion des secrets</strong> : <code>bootstrap.sh</code>
+genere <code>BETTER_AUTH_SECRET</code> (<code>openssl rand</code>) et
+les mots de passe des bases (plus de defaut “password” en exploitation)
+; les cles API (Resend, Mistral) sont chiffrees dans
+<code>secrets/*.enc</code> (openssl aes-256-cbc, pbkdf2), dechiffrees a
+la volee ; <code>.env</code> hors versionnement.</li>
+<li>Rappel du <strong>socle RGPD herite</strong> des MSPR precedentes :
+datasets sources anonymises, table <code>users</code> supprimee
+(migration V7), pas d’identifiant commun ni de PII dans les donnees
+chargees.</li>
+<li>Redaction du document de gestion de projet.</li>
+</ul>
+<p><strong>Livrables.</strong> Jeu de documents
+<code>MSPR-Deploy/</code> a jour, mecanisme de secrets en place,
+document de gestion de projet. Detail technique : <a
+href="Securite.html">fiche Securite</a> et <a href="Deploiement.html">fiche
+Deploiement</a>.</p>
+<hr />
+<h2 id="ceremonies-et-outils">5. Ceremonies et outils</h2>
+<h3 id="ceremonies-allegees">5.1 Ceremonies allegees</h3>
+<table>
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 62%" />
+</colgroup>
+<thead>
+<tr>
+<th>Ceremonie</th>
+<th>Adaptation MSPR3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Planification de sprint</strong></td>
+<td>En debut de sprint : selection des issues GitHub du sprint,
+definition de l’objectif (le theme A / B / C / D) et du “fini” (la stack
+demarre et le nouvel increment est demontrable).</td>
+</tr>
+<tr>
+<td><strong>Point d’avancement</strong></td>
+<td>Informel et <strong>asynchrone</strong>, via les commentaires
+d’issues et l’etat des pull requests / runs Actions. Pas de daily formel
+vu la taille de l’equipe.</td>
+</tr>
+<tr>
+<td><strong>Revue de sprint</strong></td>
+<td>Demonstration de l’increment sur la stack locale : lancement de
+l’overlay concerne, verification (<code>docker compose ps</code>,
+endpoints de sante, dashboard Grafana, run CI vert).</td>
+</tr>
+<tr>
+<td><strong>Retrospective</strong></td>
+<td>Bilan court en fin de sprint : ce qui a fonctionne, points de
+friction (ex : duree de pull d’Ollama, instrumentation visible seulement
+apres rebuild des images), ajustements pour le sprint suivant.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tableau-kanban">5.2 Tableau Kanban</h3>
+<p>Le suivi des taches se fait sur un <strong>GitHub Project commun a
+tous les depots</strong> de la plateforme : projet “MSPR” de
+l’organisation <code>whitefoxxyt</code>. Une capture du tableau est
+fournie avec les livrables (<code>kanban-github-project.png</code>). Les
+taches de la MSPR3 y sont regroupees par sprint avec le prefixe
+<code>[MSPR3][Sprint A..D]</code>.</p>
+<p>Colonnes : <strong>Backlog / Ready / In progress / In review /
+Done</strong>. Lecture :</p>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 52%" />
+<col style="width: 12%" />
+</colgroup>
+<thead>
+<tr>
+<th>Backlog / Ready</th>
+<th>In progress / In review</th>
+<th>Done</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Issues planifiees du sprint, non demarrees</td>
+<td>Issue en cours de developpement, pull request ouverte</td>
+<td>Pull request mergee, increment verifie sur la stack</td>
+</tr>
+</tbody>
+</table>
+<h3 id="outils">5.3 Outils</h3>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr>
+<th>Outil</th>
+<th>Role dans le pilotage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GitHub Issues</strong></td>
+<td>Decoupage du travail, regroupement par sprint (theme A / B / C /
+D).</td>
+</tr>
+<tr>
+<td><strong>Pull requests</strong></td>
+<td>Une PR par lot de travail ; merge apres tests verts. Sert de point
+de revue.</td>
+</tr>
+<tr>
+<td><strong>GitHub Actions</strong></td>
+<td>CI/CD par depot (lint, tests, couverture, build, publication GHCR).
+L’etat des runs fait office d’<strong>indicateur de qualite
+continu</strong>.</td>
+</tr>
+<tr>
+<td><strong>GHCR</strong></td>
+<td>Registre d’images
+(<code>ghcr.io/whitefoxxyt/mspr-&lt;service&gt;</code>), source du mode
+prod.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="gestion-des-risques">6. Gestion des risques</h2>
+<p>Approche simple : identifier les <strong>risques concrets
+rencontres</strong> et la parade mise en place.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Risque</th>
+<th>Impact</th>
+<th>Parade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ollama (gemma3:4b) lourd en CPU / RAM</td>
+<td>Stack lente ou instable sur materiel modeste</td>
+<td>Configuration <strong>performance</strong> qui omet
+<code>ai-nutrition</code> + <code>ollama</code> par defaut (repli sur la
+matrice statique) et applique des limites CPU / RAM ; alerte
+<code>ConteneurCpuEleve</code>.</td>
+</tr>
+<tr>
+<td>Dependance a internet (pull d’images, modele Ollama, emails Resend,
+API Mistral)</td>
+<td>Demo impossible hors-ligne</td>
+<td>Configuration <strong>offline</strong> : Ollama local,
+<code>AUTH_OFFLINE=true</code> (sans Resend), prerequis telecharges une
+fois avec internet.</td>
+</tr>
+<tr>
+<td>Premier pull tres long (Ollama ~3 Go)</td>
+<td>Demarrage initial lent</td>
+<td>Documente dans le <code>README.md</code> (depannage), suivi via
+<code>docker compose logs -f ollama</code>.</td>
+</tr>
+<tr>
+<td>Gestion des secrets</td>
+<td>Fuite de cle / mot de passe par defaut</td>
+<td>Secrets generes par <code>bootstrap.sh</code>
+(<code>openssl rand</code>), cles API chiffrees dans
+<code>secrets/*.enc</code> (aes-256-cbc), <code>.env</code> hors
+versionnement, bases bindees sur <code>127.0.0.1</code>.</td>
+</tr>
+<tr>
+<td>Metriques applicatives invisibles</td>
+<td>Supervision incomplete</td>
+<td>Documente : l’instrumentation vit dans le code source, donc visible
+seulement apres rebuild (mode dev) ou republication des images GHCR
+(mode prod).</td>
+</tr>
+<tr>
+<td>Conflit de ports sur la machine hote</td>
+<td>Echec du <code>up</code></td>
+<td>Liste des ports requis dans le <code>README.md</code>, remappage de
+la partie hote possible dans le compose.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="elements-concrets-a-citer-au-jury">7. Elements concrets a citer
+au jury</h2>
+<h3 id="la-definition-du-fini">7.1 La definition du fini</h3>
+<p>Un sprint est termine quand <strong>la stack demarre et le nouvel
+increment est demontrable</strong>. C’est un critere binaire et
+verifiable, pas une estimation. Exemples : fin du sprint A, le dashboard
+Grafana provisionne s’affiche avec les cibles UP ; fin du sprint B, on
+demarre la stack en configuration offline sans internet ; fin du sprint
+C, les 8 chaines CI publient sur GHCR.</p>
+<h3 id="une-revue-de-sprint-type">7.2 Une revue de sprint type</h3>
+<p>Deroulement concret de la demonstration de l’increment :</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Lancer la stack avec l&#39;overlay du sprint (ou bootstrap.sh)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose up <span class="at">-d</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Verifier que tout est vivant</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose ps          <span class="co"># conteneurs Up, healthchecks au vert</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Verifier les endpoints de sante des services</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Ouvrir le dashboard Grafana &quot;MSPR HealthAI - Vue stack&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#    (cibles UP, CPU / memoire par conteneur)</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Montrer le dernier run GitHub Actions au vert sur le depot concerne</span></span></code></pre></div>
+<p>Chiffres du smoke test final (10/06/2026,
+<code>rapport-tests-qualite.md</code>) qui prouvent que la definition du
+fini tient : stack stable en <strong>84 secondes</strong> (exigence du
+cahier des charges : moins de 10 minutes), <strong>20 conteneurs
+actifs</strong>, <strong>10 cibles Prometheus sur 10 UP</strong>, 3
+regles d’alerte chargees, logs de 23 conteneurs dans Loki, 4 dashboards
+Grafana provisionnes.</p>
+<h3 id="frictions-reelles-rencontrees">7.3 Frictions reelles
+rencontrees</h3>
+<p>Deux exemples sortis des retrospectives, a citer tels quels :</p>
+<ul>
+<li><strong>Premier pull d’Ollama tres long (~3 Go)</strong> : demarrage
+initial lent. Ajustement : documentation dans le <code>README.md</code>
+(section depannage), suivi via
+<code>docker compose logs -f ollama</code>, et configuration offline qui
+suppose les prerequis telecharges une fois avec internet.</li>
+<li><strong>Metriques applicatives visibles seulement apres
+rebuild</strong> : l’instrumentation (Actuator, instrumentator FastAPI,
+<code>@hono/prometheus</code>) vit dans le code source des services,
+donc elle n’apparait qu’apres rebuild des images en dev ou republication
+sur GHCR en prod. Ajustement : limite documentee dans le tableau des
+risques.</li>
+</ul>
+<h3 id="lecture-du-kanban">7.4 Lecture du Kanban</h3>
+<p>Savoir decrire le tableau de la capture
+<code>kanban-github-project.png</code> : projet “MSPR” de l’organisation
+<code>whitefoxxyt</code>, commun a tous les depots, 5 colonnes (Backlog,
+Ready, In progress, In review, Done), taches MSPR3 prefixees
+<code>[MSPR3][Sprint A..D]</code>. Une carte passe en Done quand la PR
+est mergee <strong>et</strong> que l’increment est verifie sur la
+stack.</p>
+<h3 id="la-ci-comme-indicateur-davancement">7.5 La CI comme indicateur
+d’avancement</h3>
+<p>Au releve du 10/06/2026, les <strong>8 chaines sont au vert</strong>
+(source : <code>rapport-tests-qualite.md</code>) :</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Branche</th>
+<th>Dernier run</th>
+<th>Resultat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API</td>
+<td><code>main</code></td>
+<td>08/06/2026</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td><code>main</code></td>
+<td>08/06/2026</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>AI-Nutrition</td>
+<td><code>master</code></td>
+<td>09/06/2026</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>Reco-Fitness</td>
+<td><code>master</code></td>
+<td>08/06/2026</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>ETL</td>
+<td><code>master</code></td>
+<td>20/04/2026</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>Front</td>
+<td><code>main</code></td>
+<td>10/06/2026</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>BDD</td>
+<td><code>main</code></td>
+<td>26/05/2026</td>
+<td>Succes</td>
+</tr>
+<tr>
+<td>MongoDB</td>
+<td><code>master</code></td>
+<td>22/05/2026</td>
+<td>Succes</td>
+</tr>
+</tbody>
+</table>
+<p>La publication d’image est conditionnee aux tests, et ce garde-fou a
+ete <strong>verifie en pratique</strong> : la suite e2e Cypress du Front
+a ete en echec du 26/05 au 10/06/2026 (2 specs sur 6), ce qui a bloque
+la publication de l’image, conformement au comportement attendu du
+pipeline. Apres correction (mock manquant, fixture obsolete), la suite
+complete passe : 6 specs, 10 tests, 0 echec. Les services sans code
+applicatif (BDD, MongoDB) sont valides par execution reelle (migrations
+SQL sequentielles, init des collections et index) a chaque run.</p>
+<h3 id="les-seuils-de-couverture-comme-garde-fous">7.6 Les seuils de
+couverture comme garde-fous</h3>
+<p>Couverture imposee a 80 % cote API (regle <code>jacoco-check</code>
+bloquante a la phase <code>verify</code> : un build vert garantit le
+seuil) et cote Reco-Fitness (pytest-cov). Resultats mesures en CI :
+<strong>92 %</strong> sur AI-Nutrition (09/06/2026), <strong>85
+%</strong> sur Reco-Fitness (08/06/2026).</p>
+<hr />
+<h2 id="questions-probables-du-jury">8. Questions probables du jury</h2>
+<h3
+id="q1.-pourquoi-pas-de-daily-formel-et-comment-vous-synchronisiez-vous">Q1.
+Pourquoi pas de daily formel, et comment vous synchronisiez-vous ?</h3>
+<p>Vu la taille de l’equipe, un daily quotidien formel aurait coute plus
+qu’il n’apporte. La synchronisation est <strong>informelle et
+asynchrone</strong> : commentaires d’issues, etat des pull requests et
+des runs Actions. Chacun voit en permanence ou en sont les autres sans
+reunion : une PR ouverte = travail en cours, un run vert = lot pret a
+merger, une carte en Done = increment verifie. L’intention du daily
+(visibilite sur l’avancement et les blocages) est conservee, le rituel
+quotidien ne l’est pas.</p>
+<h3
+id="q2.-pourquoi-des-sprints-thematiques-abcd-plutot-que-des-iterations-calendaires-strictes">Q2.
+Pourquoi des sprints thematiques (A/B/C/D) plutot que des iterations
+calendaires strictes ?</h3>
+<p>Le perimetre MSPR3 se decoupe naturellement en blocs de capacites
+(observabilite, configurations, CI/CD, documentation et securite) qui
+correspondent d’ailleurs aux livrables attendus. Un sprint = un theme =
+un increment demontrable sur la cible de deploiement. Des iterations
+calendaires strictes auraient force a couper artificiellement ces blocs.
+La fin d’un sprint est definie par sa <strong>definition du
+fini</strong> (la stack demarre, l’increment est demontrable), pas par
+une date.</p>
+<h3
+id="q3.-comment-etait-definie-la-fin-dun-sprint-definition-du-fini">Q3.
+Comment etait definie la fin d’un sprint (definition du fini) ?</h3>
+<p>Deux criteres, fixes en planification de sprint : <strong>la stack
+demarre</strong> et <strong>le nouvel increment est
+demontrable</strong>. C’est verifiable objectivement (commande
+<code>docker compose ps</code>, demonstration en revue), donc pas de
+debat sur “fini ou pas fini”. Cette definition est orientee vers la
+cible du projet : un deploiement local orchestre par Docker Compose qui
+sert de point d’evaluation.</p>
+<h3 id="q4.-comment-se-passait-une-revue-de-sprint-concretement">Q4.
+Comment se passait une revue de sprint concretement ?</h3>
+<p>Demonstration de l’increment sur la stack locale : lancement de
+l’overlay concerne, <code>docker compose ps</code> (conteneurs Up et
+healthy), verification des endpoints de sante, dashboard Grafana, et run
+CI vert sur les depots touches. Exemple sprint A : on lance
+<code>docker-compose.monitoring.yml</code>, on montre Prometheus avec
+ses cibles UP et le dashboard “MSPR HealthAI - Vue stack” provisionne.
+Exemple sprint B : on demarre la configuration offline et on montre que
+l’authentification fonctionne sans Resend.</p>
+<h3
+id="q5.-quels-ont-ete-les-principaux-points-de-friction-et-quavez-vous-ajuste">Q5.
+Quels ont ete les principaux points de friction et qu’avez-vous ajuste
+?</h3>
+<p>Deux frictions documentees dans les retrospectives :</p>
+<ol type="1">
+<li><strong>Duree du premier pull d’Ollama (~3 Go)</strong> : demarrage
+initial lent. Ajustements : section depannage du <code>README.md</code>,
+suivi par <code>docker compose logs -f ollama</code>, configuration
+offline qui prepare les prerequis une fois pour toutes.</li>
+<li><strong>Instrumentation visible seulement apres rebuild des
+images</strong> : les metriques applicatives vivent dans le code source
+des services. Ajustement : limite documentee (rebuild en mode dev,
+republication GHCR en mode prod).</li>
+</ol>
+<p>S’y ajoute l’incident e2e du Front (specs Cypress en echec), qui a
+valide le garde-fou CI : image non publiee tant que les tests ne
+passaient pas.</p>
+<h3
+id="q6.-comment-mesuriez-vous-lavancement-sans-outil-de-velocite">Q6.
+Comment mesuriez-vous l’avancement sans outil de velocite ?</h3>
+<p>Trois indicateurs concrets remplacent les points de velocite :</p>
+<ol type="1">
+<li><strong>Le Kanban</strong> : la position des cartes
+<code>[MSPR3][Sprint X]</code> (Backlog a Done) donne l’avancement du
+sprint d’un coup d’oeil.</li>
+<li><strong>Les runs GitHub Actions</strong> : l’etat des 8 chaines fait
+office d’indicateur de qualite continu ; un run rouge = un lot non
+livrable.</li>
+<li><strong>Les increments demontrables</strong> : a tout moment, on
+peut demarrer la stack et constater ce qui fonctionne. L’avancement se
+mesure en capacites demontrables, pas en estimation.</li>
+</ol>
+<h3
+id="q7.-comment-sarticulait-le-travail-de-lapplication-mobile-portee-par-un-autre-membre">Q7.
+Comment s’articulait le travail de l’application mobile portee par un
+autre membre ?</h3>
+<p>L’application mobile est prise en charge par un autre membre de
+l’equipe, <strong>avec son propre rythme de travail</strong> : les
+sprints A a D ne la concernent pas. Elle est documentee a part (livrable
+<code>06-application-mobile/</code>, voir <a href="Mobile.html">fiche
+Application mobile</a>) et consomme les services de la plateforme tels
+qu’exposes. Ce decoupage evite de coupler le rythme d’industrialisation
+de la plateforme au rythme de developpement mobile.</p>
+<h3 id="q8.-ou-est-le-tableau-kanban-et-comment-est-il-organise">Q8. Ou
+est le tableau Kanban et comment est-il organise ?</h3>
+<p>C’est un <strong>GitHub Project commun a tous les depots</strong> de
+la plateforme : projet “MSPR” de l’organisation
+<code>whitefoxxyt</code>. Colonnes Backlog / Ready / In progress / In
+review / Done. Les taches de la MSPR3 y sont regroupees par sprint avec
+le prefixe <code>[MSPR3][Sprint A..D]</code>. Une capture du tableau est
+fournie dans les livrables (<code>kanban-github-project.png</code>). Le
+projet est commun aux depots parce que la plateforme est multi-repos :
+un tableau par depot aurait disperse le suivi.</p>
+<h3
+id="q9.-quels-risques-aviez-vous-identifies-et-lesquels-se-sont-materialises">Q9.
+Quels risques aviez-vous identifies et lesquels se sont materialises
+?</h3>
+<p>Six risques au tableau (voir section 6) : Ollama lourd en CPU / RAM,
+dependance a internet, premier pull tres long, gestion des secrets,
+metriques applicatives invisibles, conflits de ports. L’approche est
+volontairement concrete : ce sont des <strong>risques
+rencontres</strong>, chacun avec sa parade en place. Le pull Ollama et
+les metriques visibles seulement apres rebuild se sont materialises en
+cours de projet et ont ete traites par configuration (offline,
+performance) et documentation. Cote qualite, l’echec e2e du Front a
+montre que le garde-fou de publication conditionnee fonctionnait
+reellement.</p>
+<h3 id="q10.-quauriez-vous-fait-differemment">Q10. Qu’auriez-vous fait
+differemment ?</h3>
+<p>Trois pistes honnetes, tirees des limites constatees :</p>
+<ol type="1">
+<li><strong>Instrumenter les services plus tot</strong> : la friction
+“metriques visibles apres rebuild” vient du fait que l’instrumentation
+vit dans le code source ; la poser des le debut aurait lisse le sprint
+A.</li>
+<li><strong>Importer tous les depots dans SonarCloud des le sprint
+C</strong> : au releve du 10/06/2026, seuls AI-Nutrition, Reco-Fitness
+et MongoDB sont importes ; API, Auth, ETL, Front et BDD restent a
+importer (operation cote interface SonarCloud, sans configuration dans
+les depots).</li>
+<li><strong>Documenter les prerequis lourds en amont</strong> : le pull
+Ollama de ~3 Go a ete documente apres coup dans le depannage ;
+l’annoncer des le depart aurait evite des demarrages initiaux percus
+comme bloques.</li>
+</ol>
+<h3 id="q11.-si-le-projet-continuait-quel-serait-le-sprint-e">Q11. Si le
+projet continuait, quel serait le sprint E ?</h3>
+<p>Des pistes realistes dans la continuite des sprints existants :</p>
+<ul>
+<li><strong>Import SonarCloud des depots restants</strong> (API, Auth,
+ETL, Front, BDD) pour une couverture d’analyse statique complete de
+l’organisation.</li>
+<li><strong>Scan d’images de conteneurs</strong> dans les chaines CI, en
+complement du durcissement deja en place (non-root,
+<code>no-new-privileges</code>, healthchecks).</li>
+<li><strong>Notifications Alertmanager</strong> : les 3 regles d’alerte
+existent et sont chargees ; il reste a router les alertes vers un canal
+de notification.</li>
+<li><strong>Externalisation des sauvegardes</strong> :
+<code>backup.sh</code> produit des dumps horodates locaux ; les pousser
+vers un stockage externe completerait la resilience.</li>
+</ul>
+<h3
+id="q12.-en-quoi-github-seul-suffit-il-comme-outillage-projet-a-cette-echelle">Q12.
+En quoi GitHub seul suffit-il comme outillage projet a cette echelle
+?</h3>
+<p>Tout le cycle tient dans un seul outil, sans double saisie ni
+synchronisation entre un outil de ticketing et le code :</p>
+<ul>
+<li><strong>Issues</strong> = backlog, decoupage par sprint ;</li>
+<li><strong>Projects</strong> = Kanban commun multi-depots ;</li>
+<li><strong>Pull requests</strong> = revue de code et point de
+validation (merge apres tests verts) ;</li>
+<li><strong>Actions</strong> = CI/CD et indicateur de qualite continu
+;</li>
+<li><strong>GHCR</strong> = registre d’images, source du mode prod.</li>
+</ul>
+<p>A l’echelle d’une equipe de 4 sur une plateforme multi-depots, un
+outil de gestion de projet separe ajouterait de la friction sans gain :
+les artefacts de pilotage (cartes, PR, runs) sont deja la ou le travail
+se fait. Limite assumee : pas de gestion de capacite ni de velocite,
+acceptable car les increments sont courts et demontrables (voir Q6).</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

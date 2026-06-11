@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Révisions MSPR3 : HealthAI Coach</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="https://github.com/ArthurPoncin/MSPR3-livrables">Livrables MSPR3 →</a>
+  </header>
+  <main>
+    <h1>Fiches de révision : MSPR3 (TPRE601)</h1>
+    <p>Supports de révision pour la soutenance MSPR3 (blocs E6.3/E6.4 : « Mise en production d'une solution à partir des éléments de contextes fournis »). Une fiche par <strong>domaine de livrable</strong>, structurée comme les fiches des MSPR précédentes : vocabulaire, vue d'ensemble, détails techniques, exemples de code essentiels, questions possibles du jury.</p>
+    <p>Ces fiches <strong>complètent</strong> les <a href="../mspr-revisions/">fiches MSPR1</a> (ETL, DB, AUTH, API, FRONT) et les <a href="../mspr2-revisions/">fiches MSPR2</a> (AI-Nutrition, Reco-Fitness, MongoDB, modèle de données, front v2) sans les remplacer. Elles couvrent les 6 dossiers de livrables MSPR3 : conteneurisation et orchestration, observabilité, CI/CD et qualité, sécurité, gestion de projet, application mobile.</p>
+
+    <h2>Les 7 fiches</h2>
+    <ul class="fiches">
+      <li>
+        <a href="Deploiement.html">1. Déploiement et orchestration</a>
+        <span class="stack">Docker Compose · GHCR · bash</span>
+        <span class="desc">Démarrage en une commande (<code>bootstrap.sh</code>, 84 s mesurées pour &lt; 10 min exigées), 11 services, 2 réseaux, healthchecks, secrets générés et déchiffrés.</span>
+      </li>
+      <li>
+        <a href="Configs-Resilience.html">2. Configurations et résilience</a>
+        <span class="stack">Overlays Compose · Traefik · pg_dump</span>
+        <span class="desc">Les 3 configurations du sujet (complète, offline, performance), overlays traefik/vision/watchtower/gpu, sauvegarde et restauration des 3 bases.</span>
+      </li>
+      <li>
+        <a href="Observabilite.html">3. Observabilité et supervision</a>
+        <span class="stack">Prometheus · Grafana · Loki · Alertmanager</span>
+        <span class="desc">10 cibles scrapées, instrumentation des 4 services dans leur code source, 3 alertes, 4 dashboards provisionnés, logs centralisés, runbook.</span>
+      </li>
+      <li>
+        <a href="CICD-Qualite.html">4. CI/CD et qualité</a>
+        <span class="stack">GitHub Actions · GHCR · Watchtower · SonarCloud</span>
+        <span class="desc">8 chaînes CI, publication conditionnée aux tests, tags traçables (semver, SHA), CD Watchtower, couvertures 92 % / 85 %, indicateurs SonarCloud.</span>
+      </li>
+      <li>
+        <a href="Securite.html">5. Sécurité</a>
+        <span class="stack">OWASP Top 10 · RGPD · NIST CSF</span>
+        <span class="desc">Analyse par 3 référentiels, durcissement des conteneurs (non-root, no-new-privileges, 127.0.0.1), secrets chiffrés, limites assumées.</span>
+      </li>
+      <li>
+        <a href="Gestion-Projet.html">6. Gestion de projet agile</a>
+        <span class="stack">Agile · Kanban · GitHub Projects</span>
+        <span class="desc">4 sprints A-D, cérémonies allégées, kanban commun de l'organisation whitefoxxyt, gestion des risques, définition du fini.</span>
+      </li>
+      <li>
+        <a href="Mobile.html">7. Application mobile</a>
+        <span class="stack">Expo 54 · React Native 0.81 · TypeScript 5.9</span>
+        <span class="desc">Client mobile de la plateforme (développé par un autre membre de l'équipe), intégration JWT, conteneurisation du bundler, reste à faire.</span>
+      </li>
+    </ul>
+
+    <h2>Mapping besoins du sujet</h2>
+    <p>Le cahier des charges TPRE601 exprime 6 besoins (section III) plus une partie gestion de projet. Chaque fiche couvre un besoin :</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Besoin (cahier des charges)</th>
+          <th>Fiche</th>
+          <th>Livrable</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>III.1 Infrastructure et déploiement local</td><td><a href="Deploiement.html">Déploiement</a></td><td>01</td></tr>
+        <tr><td>III.2 Sécurité et configuration</td><td><a href="Securite.html">Sécurité</a></td><td>04</td></tr>
+        <tr><td>III.3 Monitoring et observabilité</td><td><a href="Observabilite.html">Observabilité</a></td><td>02</td></tr>
+        <tr><td>III.4 Configurations multi-environnement</td><td><a href="Configs-Resilience.html">Configs et résilience</a></td><td>01</td></tr>
+        <tr><td>III.5 Automatisation et reproductibilité</td><td><a href="Deploiement.html">Déploiement</a></td><td>01</td></tr>
+        <tr><td>III.6 Application mobile</td><td><a href="Mobile.html">Application mobile</a></td><td>06</td></tr>
+        <tr><td>Pipelines CI/CD, plan de test, indicateurs qualité (livrables IV.1)</td><td><a href="CICD-Qualite.html">CI/CD et qualité</a></td><td>03</td></tr>
+        <tr><td>Partie gestion de projet (livrables IV.2)</td><td><a href="Gestion-Projet.html">Gestion de projet</a></td><td>05</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Mapping compétences évaluées (E6.3 / E6.4)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Compétence (sujet EPSI)</th>
+          <th>Fiches couvrantes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Mettre en œuvre des plans de tests pour préparer le déploiement</td>
+          <td>CI/CD et qualité (plan de test, pyramide, seuils de couverture)</td>
+        </tr>
+        <tr>
+          <td>Superviser le fonctionnement à partir des outils de monitorage</td>
+          <td>Observabilité (Prometheus, Grafana, alertes, runbook)</td>
+        </tr>
+        <tr>
+          <td>Corriger les dysfonctionnements de son périmètre</td>
+          <td>CI/CD et qualité (incident e2e front résolu), Observabilité (conduite à tenir)</td>
+        </tr>
+        <tr>
+          <td>Réaliser les évolutions fonctionnelles</td>
+          <td>Configs et résilience (overlays vision, GPU)</td>
+        </tr>
+        <tr>
+          <td>Méthodologie adaptée, environnement agile, rendre compte</td>
+          <td>Gestion de projet (sprints, kanban, cérémonies, revues)</td>
+        </tr>
+        <tr>
+          <td>Auto-contrôler ses productions au regard du cahier des charges</td>
+          <td>Toutes (mappings besoins → livrables ci-dessus)</td>
+        </tr>
+        <tr>
+          <td>Veille technologique, réglementaire, sécurité</td>
+          <td>Sécurité (référentiels OWASP 2021, RGPD, NIST CSF)</td>
+        </tr>
+        <tr>
+          <td>Préparer et documenter le déploiement (CDA)</td>
+          <td>Déploiement (bootstrap, guide, architecture)</td>
+        </tr>
+        <tr>
+          <td>Contribuer à la mise en production dans une démarche devOps (CDA)</td>
+          <td>Déploiement, CI/CD et qualité (chaîne complète commit → prod)</td>
+        </tr>
+        <tr>
+          <td>Développer back-end / front-end</td>
+          <td>Couvert par les <a href="../mspr-revisions/">fiches MSPR1</a> et <a href="../mspr2-revisions/">fiches MSPR2</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Conseils de lecture</h2>
+    <ul>
+      <li><strong>Première lecture</strong> : parcourir la section <em>Vocabulaire</em> et la <em>TL;DR</em> de chaque fiche pour avoir la carte mentale complète MSPR3.</li>
+      <li><strong>Seconde lecture</strong> : focus sur les fiches du domaine qu'on est susceptible de présenter (Code essentiel + Questions jury).</li>
+      <li><strong>Veille de soutenance</strong> : relire la section <em>Questions probables du jury</em> de chaque fiche.</li>
+    </ul>
+
+    <h2>Structure commune</h2>
+    <p>Chaque fiche suit le même plan que les fiches MSPR1/MSPR2 :</p>
+    <ol>
+      <li><strong>Vocabulaire</strong> : 8 à 10 termes techniques non triviaux avec définition simple</li>
+      <li><strong>TL;DR</strong> : résumé en quelques lignes du domaine</li>
+      <li><strong>Architecture / Stack</strong> : technos utilisées et diagrammes</li>
+      <li><strong>Détails techniques</strong> : fonctionnement interne, patterns, choix d'implémentation</li>
+      <li><strong>Code essentiel à savoir expliquer au jury</strong> : 6 à 8 extraits commentés, copiés des dépôts réels</li>
+      <li><strong>Questions probables du jury</strong> : 10 à 12 questions avec réponses préparées</li>
+    </ol>
+    <p>La fiche Gestion de projet remplace les extraits de code par des « éléments concrets à citer au jury ».</p>
+
+    <h2>Hors scope</h2>
+    <p>Ces fiches couvrent <strong>uniquement la MSPR3</strong> (TPRE601). Les microservices et la documentation des MSPR précédentes sont traités dans les <a href="../mspr-revisions/">fiches MSPR1</a> et les <a href="../mspr2-revisions/">fiches MSPR2</a>.</p>
+  </main>
+</body>
+</html>

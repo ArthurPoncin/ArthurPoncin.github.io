@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>Application mobile - Révisions MSPR3</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a href="#fiche-de-revision-application-mobile"
+id="toc-fiche-de-revision-application-mobile">Fiche de revision :
+Application mobile</a>
+<ul>
+<li><a href="#vocabulaire-a-connaitre-avant-de-lire"
+id="toc-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#tldr" id="toc-tldr">1. TL;DR</a></li>
+<li><a href="#architecture" id="toc-architecture">2.
+Architecture</a></li>
+<li><a href="#stack-technique" id="toc-stack-technique">3. Stack
+technique</a></li>
+<li><a href="#integration-a-la-plateforme"
+id="toc-integration-a-la-plateforme">4. Integration a la plateforme</a>
+<ul>
+<li><a href="#les-4-services-consommes"
+id="toc-les-4-services-consommes">4.1 Les 4 services consommes</a></li>
+<li><a href="#flux-dauthentification"
+id="toc-flux-dauthentification">4.2 Flux d’authentification</a></li>
+<li><a href="#particularite-emulateur-android"
+id="toc-particularite-emulateur-android">4.3 Particularite emulateur
+Android</a></li>
+<li><a href="#point-de-vigilance-les-routes-dauthentification"
+id="toc-point-de-vigilance-les-routes-dauthentification">4.4 Point de
+vigilance : les routes d’authentification</a></li>
+</ul></li>
+<li><a href="#conteneurisation-execution-et-qualite"
+id="toc-conteneurisation-execution-et-qualite">5. Conteneurisation,
+execution et qualite</a>
+<ul>
+<li><a href="#lapplication-est-un-client-pas-un-service"
+id="toc-lapplication-est-un-client-pas-un-service">5.1 L’application est
+un client, pas un service</a></li>
+<li><a href="#commandes" id="toc-commandes">5.2 Commandes</a></li>
+<li><a href="#etat-des-verifications-au-11062026"
+id="toc-etat-des-verifications-au-11062026">5.3 Etat des verifications
+au 11/06/2026</a></li>
+</ul></li>
+<li><a href="#code-essentiel-a-savoir-expliquer-au-jury"
+id="toc-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</a>
+<ul>
+<li><a
+href="#les-urls-de-base-et-la-gestion-platform.os-servicesapiclient.ts"
+id="toc-les-urls-de-base-et-la-gestion-platform.os-servicesapiclient.ts">6.1
+Les URLs de base et la gestion <code>Platform.OS</code>
+(<code>services/apiClient.ts</code>)</a></li>
+<li><a href="#le-bloc-auth-session-puis-jwt-servicesapiclient.ts"
+id="toc-le-bloc-auth-session-puis-jwt-servicesapiclient.ts">6.2 Le bloc
+auth : session puis JWT (<code>services/apiClient.ts</code>)</a></li>
+<li><a href="#un-appel-metier-avec-le-jwt-servicesapiclient.ts"
+id="toc-un-appel-metier-avec-le-jwt-servicesapiclient.ts">6.3 Un appel
+metier avec le JWT (<code>services/apiClient.ts</code>)</a></li>
+<li><a href="#le-dockerfile-complet" id="toc-le-dockerfile-complet">6.4
+Le Dockerfile complet</a></li>
+<li><a href="#les-scripts-npm-package.json"
+id="toc-les-scripts-npm-package.json">6.5 Les scripts npm
+(<code>package.json</code>)</a></li>
+<li><a href="#la-persistance-asyncstorage-storeappcontext.tsx"
+id="toc-la-persistance-asyncstorage-storeappcontext.tsx">6.6 La
+persistance AsyncStorage (<code>store/AppContext.tsx</code>)</a></li>
+<li><a href="#le-hook-dorchestration-hooksusehealthai.ts"
+id="toc-le-hook-dorchestration-hooksusehealthai.ts">6.7 Le hook
+d’orchestration (<code>hooks/useHealthAI.ts</code>)</a></li>
+</ul></li>
+<li><a href="#reste-a-faire" id="toc-reste-a-faire">7. Reste a
+faire</a></li>
+<li><a href="#questions-probables-du-jury"
+id="toc-questions-probables-du-jury">8. Questions probables du jury</a>
+<ul>
+<li><a
+href="#q1.-pourquoi-expo-react-native-plutot-que-deux-applications-natives"
+id="toc-q1.-pourquoi-expo-react-native-plutot-que-deux-applications-natives">Q1.
+Pourquoi Expo / React Native plutot que deux applications natives
+?</a></li>
+<li><a
+href="#q2.-pourquoi-lapplication-nest-elle-pas-dans-le-docker-compose"
+id="toc-q2.-pourquoi-lapplication-nest-elle-pas-dans-le-docker-compose">Q2.
+Pourquoi l’application n’est-elle pas dans le docker-compose ?</a></li>
+<li><a href="#q3.-a-quoi-sert-alors-le-dockerfile-du-depot"
+id="toc-q3.-a-quoi-sert-alors-le-dockerfile-du-depot">Q3. A quoi sert
+alors le Dockerfile du depot ?</a></li>
+<li><a
+href="#q4.-comment-lapplication-sauthentifie-t-elle-aupres-de-la-plateforme"
+id="toc-q4.-comment-lapplication-sauthentifie-t-elle-aupres-de-la-plateforme">Q4.
+Comment l’application s’authentifie-t-elle aupres de la plateforme
+?</a></li>
+<li><a href="#q5.-comment-testez-vous-sur-un-emulateur-android-en-local"
+id="toc-q5.-comment-testez-vous-sur-un-emulateur-android-en-local">Q5.
+Comment testez-vous sur un emulateur Android en local ?</a></li>
+<li><a href="#q6.-quelles-differences-avec-le-front-web-vue-3"
+id="toc-q6.-quelles-differences-avec-le-front-web-vue-3">Q6. Quelles
+differences avec le front web Vue 3 ?</a></li>
+<li><a
+href="#q7.-comment-letat-persiste-t-il-entre-deux-lancements-de-lapplication"
+id="toc-q7.-comment-letat-persiste-t-il-entre-deux-lancements-de-lapplication">Q7.
+Comment l’etat persiste-t-il entre deux lancements de l’application
+?</a></li>
+<li><a href="#q8.-comment-les-urls-des-services-sont-elles-configurees"
+id="toc-q8.-comment-les-urls-des-services-sont-elles-configurees">Q8.
+Comment les URLs des services sont-elles configurees ?</a></li>
+<li><a
+href="#q9.-quel-est-letat-de-la-qualite-du-code-et-quel-est-le-plan"
+id="toc-q9.-quel-est-letat-de-la-qualite-du-code-et-quel-est-le-plan">Q9.
+Quel est l’etat de la qualite du code, et quel est le plan ?</a></li>
+<li><a
+href="#q10.-que-faut-il-aligner-sur-les-routes-dauthentification-et-pourquoi-ca-ne-marche-pas-encore-de-bout-en-bout"
+id="toc-q10.-que-faut-il-aligner-sur-les-routes-dauthentification-et-pourquoi-ca-ne-marche-pas-encore-de-bout-en-bout">Q10.
+Que faut-il aligner sur les routes d’authentification, et pourquoi ca ne
+marche pas encore de bout en bout ?</a></li>
+<li><a href="#q11.-ou-sont-les-maquettes-et-le-design-system"
+id="toc-q11.-ou-sont-les-maquettes-et-le-design-system">Q11. Ou sont les
+maquettes et le design system ?</a></li>
+<li><a href="#q12.-comment-sest-passee-la-collaboration-sur-ce-depot"
+id="toc-q12.-comment-sest-passee-la-collaboration-sur-ce-depot">Q12.
+Comment s’est passee la collaboration sur ce depot ?</a></li>
+</ul></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1 id="fiche-de-revision-application-mobile">Fiche de revision :
+Application mobile</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR3 (TPRE601). Objectif :
+comprendre le perimetre de l’application mobile, sa stack Expo / React
+Native, son integration aux 4 services de la plateforme, son mode
+d’execution (client, pas service de la stack) et le reste a faire.</p>
+</blockquote>
+<hr />
+<h2 id="vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<p>Les 10 termes qui reviennent partout dans cette fiche.</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Expo</strong></td>
+<td>Plateforme de developpement au-dessus de React Native : SDK, CLI,
+outillage de build et de test. Version 54 ici.</td>
+</tr>
+<tr>
+<td><strong>React Native</strong></td>
+<td>Framework qui rend des composants natifs Android / iOS depuis du
+code JavaScript / TypeScript. Version 0.81.</td>
+</tr>
+<tr>
+<td><strong>Nouvelle architecture RN</strong></td>
+<td>Refonte interne de React Native (rendu Fabric, modules natifs
+TurboModules, plus de pont JSON asynchrone). Activee dans le
+projet.</td>
+</tr>
+<tr>
+<td><strong>Expo Router</strong></td>
+<td>Routeur officiel Expo : chaque fichier de <code>app/</code> devient
+une route, avec routes typees. Version 6.</td>
+</tr>
+<tr>
+<td><strong>Routage par fichiers</strong></td>
+<td>Convention ou l’arborescence des fichiers definit la navigation ;
+les dossiers entre parentheses <code>(auth)</code>, <code>(tabs)</code>
+sont des groupes sans segment d’URL.</td>
+</tr>
+<tr>
+<td><strong>Bundler Metro</strong></td>
+<td>Bundler JavaScript de React Native : transpile le TypeScript (via
+Babel) et sert le bundle aux appareils. Ne verifie <strong>pas</strong>
+les types.</td>
+</tr>
+<tr>
+<td><strong>Expo Go</strong></td>
+<td>Application officielle Android / iOS qui charge le bundle JS depuis
+le bundler : test immediat sur telephone, sans build natif ni Android
+Studio / Xcode.</td>
+</tr>
+<tr>
+<td><strong>AsyncStorage</strong></td>
+<td>Stockage cle-valeur persistant sur l’appareil (equivalent du
+localStorage web). Conserve le profil et le JWT entre redemarrages.</td>
+</tr>
+<tr>
+<td><strong>JWT</strong></td>
+<td>Jeton signe emis par le service auth (<code>GET /api/jwt</code>),
+envoye en <code>Authorization: Bearer</code> a tous les services
+metier.</td>
+</tr>
+<tr>
+<td><strong>better-auth</strong></td>
+<td>Bibliotheque d’authentification du service auth : session par
+cookie, routes <code>/api/auth/sign-in/email</code>,
+<code>/sign-up/email</code>, <code>/sign-out</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tldr">1. TL;DR</h2>
+<p><strong>L’application mobile HealthAI Coach</strong> est le client
+Android / iOS de la plateforme, developpe par un <strong>autre membre de
+l’equipe</strong> dans le depot
+<strong><code>whitefoxxyt/MSPR-HealthAI-Coach-Mobile</code></strong>.</p>
+<p>Position dans l’architecture : c’est un <strong>client de la
+plateforme, pas un service de la stack</strong>. Les 8 services tournent
+en Docker Compose (<a href="Deploiement.html">fiche Deploiement</a>) ;
+l’application, elle, s’execute sur le terminal de l’utilisateur (Expo Go
+en developpement, build natif Android / iOS ensuite) et consomme les
+APIs depuis l’exterieur.</p>
+<ul>
+<li><strong>Stack</strong> : Expo 54 + React Native 0.81 (nouvelle
+architecture activee), TypeScript 5.9, Expo Router 6</li>
+<li><strong>Etat global</strong> : React Context
+(<code>store/AppContext.tsx</code>) + AsyncStorage (session et profil
+persistes)</li>
+<li><strong>Reseau</strong> : <code>fetch</code> centralise dans un
+client API unique (<code>services/apiClient.ts</code>), 4 services
+consommes (auth, api, ai-nutrition, reco-fitness)</li>
+<li><strong>Parcours couvert</strong> : creation de compte / connexion,
+onboarding en 5 etapes, tableau de bord quotidien (calories,
+macronutriments, seances), scan de repas par photo, plans nutritionnels
+et recommandations sportives, profil (poids sur 14 jours, IMC, panneau
+de parametres)</li>
+<li><strong>Conteneurisation</strong> : un Dockerfile
+<code>node:20-alpine</code> qui sert le bundler de developpement au
+reseau local (l’app n’apparait pas dans le compose)</li>
+<li><strong>Reste a faire (3 points)</strong> : alignement des routes
+d’authentification, correction typecheck / lint + mise en place d’une
+CI, nom d’affichage et photo de profil modifiables</li>
+</ul>
+<p>La reference d’integration cote plateforme est
+<code>MSPR-Deploy/docs/application-mobile.md</code> (version du depot au
+11/06/2026). Cette fiche couvre le <strong>comment</strong> : comment
+l’app est structuree, comment elle s’authentifie, comment elle
+s’execute, et ce qui reste a faire.</p>
+<hr />
+<h2 id="architecture">2. Architecture</h2>
+<p>Trois groupes d’ecrans, organises par le routage fichier d’Expo
+Router. Arborescence reelle de <code>app/</code> :</p>
+<pre><code>app/
+├── _layout.tsx           # layout racine
+├── index.tsx             # point d&#39;entree (redirection)
+├── modal.tsx
+├── (auth)/               # authentification
+│   ├── _layout.tsx
+│   ├── welcome.tsx
+│   ├── login.tsx
+│   └── register.tsx
+├── (onboarding)/         # configuration du profil en 5 etapes
+│   ├── _layout.tsx
+│   ├── goal.tsx          # objectif
+│   ├── physical.tsx      # profil physique
+│   ├── activity.tsx      # niveau d&#39;activite
+│   ├── diet.tsx          # preferences alimentaires
+│   └── sport-prefs.tsx   # preferences sportives
+└── (tabs)/               # application principale a onglets
+    ├── _layout.tsx
+    ├── index.tsx         # accueil (tableau de bord quotidien)
+    ├── scan.tsx          # scan de repas par photo
+    ├── nutrition.tsx     # plans nutritionnels
+    ├── sport.tsx         # recommandations sportives
+    └── profile.tsx       # profil, suivi du poids, parametres</code></pre>
+<p>Navigation entre les groupes :</p>
+<pre class="mermaid"><code>flowchart LR
+    W([Welcome]) --&gt; L[Connexion]
+    W --&gt; R[Inscription]
+    L --&gt; T[Application a onglets]
+    R --&gt; O[Onboarding 5 etapes]
+    O --&gt; T
+    T --- T1[Accueil]
+    T --- T2[Scan]
+    T --- T3[Nutrition]
+    T --- T4[Sport]
+    T --- T5[Profil]</code></pre>
+<p>Autour de <code>app/</code>, les dossiers de support :</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Dossier</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>components/ui/</code></td>
+<td>Composants reutilisables du design system</td>
+</tr>
+<tr>
+<td><code>constants/</code></td>
+<td><code>theme.ts</code> : tokens du design system sombre “Midnight
+Health”</td>
+</tr>
+<tr>
+<td><code>store/</code></td>
+<td><code>AppContext.tsx</code> : etat global (profil, progression,
+session)</td>
+</tr>
+<tr>
+<td><code>hooks/</code></td>
+<td><code>useApp.ts</code> (acces au contexte),
+<code>useHealthAI.ts</code> (appels aux services IA), hooks de
+theme</td>
+</tr>
+<tr>
+<td><code>services/</code></td>
+<td><code>apiClient.ts</code> : client API unique, seul point de sortie
+reseau</td>
+</tr>
+<tr>
+<td><code>utils/</code></td>
+<td><code>dataTransformers.ts</code> : conversion des reponses des APIs
+vers le format interne</td>
+</tr>
+<tr>
+<td><code>types/</code></td>
+<td><code>index.ts</code> : types TypeScript partages</td>
+</tr>
+<tr>
+<td><code>assets/design/</code></td>
+<td><code>wireframes.html</code> (24 ecrans de maquettes),
+<code>design-system.html</code></td>
+</tr>
+</tbody>
+</table>
+<p>Points de structure a retenir :</p>
+<ul>
+<li>L’etat global vit dans <code>AppContext</code> et est
+<strong>persiste dans AsyncStorage</strong> : la session survit au
+redemarrage de l’application.</li>
+<li>Le hook <code>useHealthAI</code> centralise les appels aux services
+IA (analyse de repas, generation de plan, recommandations) ainsi que les
+etats de chargement et d’erreur.</li>
+<li>Les maquettes (24 ecrans) et le design system sont
+<strong>versionnes dans le depot</strong>, pas dans un outil
+externe.</li>
+</ul>
+<hr />
+<h2 id="stack-technique">3. Stack technique</h2>
+<table>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 61%" />
+</colgroup>
+<thead>
+<tr>
+<th>Couche</th>
+<th>Technologie</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Framework</td>
+<td>Expo 54 + React Native 0.81 (nouvelle architecture activee)</td>
+</tr>
+<tr>
+<td>Langage</td>
+<td>TypeScript 5.9</td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>Expo Router 6 (routage par fichiers, routes typees)</td>
+</tr>
+<tr>
+<td>Etat global</td>
+<td>React Context (<code>store/AppContext.tsx</code>) + AsyncStorage
+(persistance de la session et du profil)</td>
+</tr>
+<tr>
+<td>Acces reseau</td>
+<td><code>fetch</code>, centralise dans un client API unique
+(<code>services/apiClient.ts</code>)</td>
+</tr>
+<tr>
+<td>Medias</td>
+<td>expo-image-picker (prise de photo pour l’analyse de repas)</td>
+</tr>
+<tr>
+<td>UI</td>
+<td>composants maison (<code>components/ui/</code>), design system
+sombre “Midnight Health”, animations Reanimated, graphiques React Native
+SVG</td>
+</tr>
+</tbody>
+</table>
+<p>Versions exactes du <code>package.json</code> :
+<code>expo ~54.0.33</code>, <code>react-native 0.81.5</code>,
+<code>react 19.1.0</code>, <code>typescript ~5.9.2</code>,
+<code>expo-router ~6.0.23</code>,
+<code>react-native-reanimated ~4.1.1</code>,
+<code>react-native-svg ^15.15.4</code>,
+<code>@react-native-async-storage/async-storage ^3.0.2</code>,
+<code>expo-image-picker ^55.0.19</code>.</p>
+<p>A noter : <strong>aucune librairie de requetage</strong> (pas
+d’axios, pas de TanStack Query). Le choix est volontairement minimal :
+<code>fetch</code> natif + un module client unique. Idem pour l’etat :
+pas de Redux / Zustand, un seul React Context suffit au scope de
+l’app.</p>
+<hr />
+<h2 id="integration-a-la-plateforme">4. Integration a la plateforme</h2>
+<p>L’application consomme les <strong>memes services que le front
+web</strong>, avec le <strong>meme modele d’authentification</strong>
+(better-auth + JWT). Les URLs des services sont configurables par
+variables d’environnement ; par defaut, l’application vise une stack
+locale (le deploiement decrit dans la <a href="Deploiement.html">fiche
+Deploiement</a>).</p>
+<h3 id="les-4-services-consommes">4.1 Les 4 services consommes</h3>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 34%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr>
+<th>Service</th>
+<th>URL par defaut</th>
+<th>Endpoints consommes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>auth (:3000)</td>
+<td><code>http://localhost:3000/api</code></td>
+<td>authentification, <code>/session</code>, <code>/jwt</code></td>
+</tr>
+<tr>
+<td>api (:8080)</td>
+<td><code>http://localhost:8080/api</code></td>
+<td><code>/users/me</code>, <code>/workouts</code>,
+<code>/nutrition</code></td>
+</tr>
+<tr>
+<td>ai-nutrition (:8001)</td>
+<td><code>http://localhost:8001/api/v1</code></td>
+<td><code>/analyze-meal</code>, <code>/generate-meal-plan</code>,
+<code>/nutrition-goals/me</code>, <code>/meal-analyses/me</code>,
+<code>/meal-plans/me</code></td>
+</tr>
+<tr>
+<td>reco-fitness (:8002)</td>
+<td><code>http://localhost:8002/api/v1</code></td>
+<td><code>/recommendations</code>, <code>/fitness-profile</code>,
+<code>/program-history</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="flux-dauthentification">4.2 Flux d’authentification</h3>
+<ol type="1">
+<li>connexion ou inscription aupres du service auth (cookies de session
+better-auth, requetes en <code>credentials: include</code>) ;</li>
+<li>recuperation d’un JWT via <code>GET /api/jwt</code> ;</li>
+<li>appels aux services metier avec
+<code>Authorization: Bearer &lt;jwt&gt;</code> ; le JWT est conserve
+dans AsyncStorage.</li>
+</ol>
+<pre class="mermaid"><code>sequenceDiagram
+    participant M as App mobile
+    participant A as auth (:3000)
+    participant S as Services metier
+
+    M-&gt;&gt;A: 1. connexion / inscription (credentials: include)
+    A--&gt;&gt;M: cookie de session better-auth
+    M-&gt;&gt;A: 2. GET /api/jwt (cookie de session)
+    A--&gt;&gt;M: JWT
+    Note over M: JWT conserve dans AsyncStorage
+    M-&gt;&gt;S: 3. Authorization: Bearer JWT
+    S--&gt;&gt;M: donnees metier</code></pre>
+<p>C’est exactement le modele du front web : la session par cookie sert
+uniquement aupres du service auth ; tous les autres services ne voient
+que le JWT.</p>
+<h3 id="particularite-emulateur-android">4.3 Particularite emulateur
+Android</h3>
+<p>L’emulateur Android ne voit pas le <code>localhost</code> de la
+machine hote : depuis l’emulateur, <code>localhost</code> designe
+l’emulateur lui-meme. L’alias <strong><code>10.0.2.2</code></strong>
+pointe vers la loopback de l’hote. Le client API gere ce cas
+automatiquement via <code>Platform.OS</code> (voir section 6.1). Sur iOS
+(simulateur), <code>localhost</code> fonctionne directement.</p>
+<h3 id="point-de-vigilance-les-routes-dauthentification">4.4 Point de
+vigilance : les routes d’authentification</h3>
+<p>Le client appelle des routes d’authentification qui ne correspondent
+pas a celles exposees par better-auth :</p>
+<table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 41%" />
+<col style="width: 38%" />
+<col style="width: 8%" />
+</colgroup>
+<thead>
+<tr>
+<th>Action</th>
+<th>Route appelee par le client</th>
+<th>Route better-auth exposee</th>
+<th>Etat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Connexion</td>
+<td><code>/api/auth/login</code></td>
+<td><code>/api/auth/sign-in/email</code></td>
+<td>a aligner</td>
+</tr>
+<tr>
+<td>Inscription</td>
+<td><code>/api/auth/signup</code></td>
+<td><code>/api/auth/sign-up/email</code></td>
+<td>a aligner</td>
+</tr>
+<tr>
+<td>Deconnexion</td>
+<td><code>/api/auth/logout</code></td>
+<td><code>/api/auth/sign-out</code></td>
+<td>a aligner</td>
+</tr>
+<tr>
+<td>Session</td>
+<td><code>/api/session</code></td>
+<td><code>/api/session</code></td>
+<td><strong>aligne</strong></td>
+</tr>
+<tr>
+<td>JWT</td>
+<td><code>/api/jwt</code></td>
+<td><code>/api/jwt</code></td>
+<td><strong>aligne</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Tant que les 3 premieres routes divergent, la connexion et
+l’inscription echouent contre le service auth reel. La correction est
+<strong>localisee</strong> : le bloc <code>auth</code> de
+<code>services/apiClient.ts</code>. Cet alignement fait partie du reste
+a faire (section 7).</p>
+<hr />
+<h2 id="conteneurisation-execution-et-qualite">5. Conteneurisation,
+execution et qualite</h2>
+<h3 id="lapplication-est-un-client-pas-un-service">5.1 L’application est
+un client, pas un service</h3>
+<p>A la difference des 8 services de la plateforme, l’application mobile
+<strong>n’apparait pas dans la stack Docker Compose</strong>. Elle
+s’execute sur le terminal de l’utilisateur :</p>
+<ul>
+<li>en developpement : via <strong>Expo Go</strong>, qui charge le
+bundle JS depuis le bundler Metro ;</li>
+<li>ensuite : via un <strong>build natif</strong> Android / iOS.</li>
+</ul>
+<p>Le depot fournit tout de meme un <code>Dockerfile</code>, pour un
+<strong>environnement de developpement reproductible</strong> : image
+<code>node:20-alpine</code>, installation des dependances, ports Expo
+<code>19000-19006</code> exposes, demarrage du serveur de developpement
+(<code>npx expo start --lan --minify</code>). Le conteneur <strong>sert
+le bundler aux appareils du reseau local</strong>, pour le developpement
+et la demonstration. Ce n’est pas une image de production.</p>
+<h3 id="commandes">5.2 Commandes</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> start            <span class="co"># serveur de developpement Expo</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> run android      <span class="co"># cible Android</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> run ios          <span class="co"># cible iOS</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> test             <span class="co"># eslint + tsc --noEmit</span></span></code></pre></div>
+<h3 id="etat-des-verifications-au-11062026">5.3 Etat des verifications
+au 11/06/2026</h3>
+<p><code>npm test</code> enchaine le lint et la verification de types
+:</p>
+<table>
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 20%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Verification</th>
+<th>Commande</th>
+<th>Resultat au 11/06/2026</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Types</td>
+<td><code>tsc --noEmit</code></td>
+<td><strong>9 erreurs</strong> dans 3 fichiers</td>
+</tr>
+<tr>
+<td>Lint</td>
+<td><code>expo lint</code> (eslint)</td>
+<td><strong>4 erreurs, 19 avertissements</strong></td>
+</tr>
+<tr>
+<td>Lancement</td>
+<td><code>npm start</code></td>
+<td>OK : le bundler ne bloque pas sur les types</td>
+</tr>
+<tr>
+<td>CI</td>
+<td>-</td>
+<td><strong>aucune chaine CI</strong> sur ce depot</td>
+</tr>
+</tbody>
+</table>
+<p>Les erreurs sont concentrees en particulier sur un composant de
+demonstration (<code>AIFeaturesDemo.tsx</code>). L’application se lance
+via Expo malgre les erreurs de types : Metro transpile le TypeScript via
+Babel <strong>sans verifier les types</strong> (le typecheck est un
+outil separe, <code>tsc --noEmit</code>).</p>
+<p>La correction de ces erreurs et la mise en place d’une chaine CI
+(lint, verification de types, build) sur le modele des 8 autres depots
+font partie du reste a faire, voir la <a href="CICD-Qualite.html">fiche
+CI/CD et qualite</a> pour le modele a appliquer.</p>
+<hr />
+<h2 id="code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</h2>
+<h3
+id="les-urls-de-base-et-la-gestion-platform.os-servicesapiclient.ts">6.1
+Les URLs de base et la gestion <code>Platform.OS</code>
+(<code>services/apiClient.ts</code>)</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { Platform } <span class="im">from</span> <span class="st">&#39;react-native&#39;</span><span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Base API configuration with environment variables support</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> getEnvVar <span class="op">=</span> (name<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> defaultValue<span class="op">:</span> <span class="dt">string</span>)<span class="op">:</span> <span class="dt">string</span> <span class="kw">=&gt;</span> {</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">// In a real app, you would use a proper env library like react-native-config</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// For now, we&#39;ll use a simple approach</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> defaultValue<span class="op">;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> getBaseUrl <span class="op">=</span> (service<span class="op">:</span> <span class="st">&#39;api&#39;</span> <span class="op">|</span> <span class="st">&#39;nutrition&#39;</span> <span class="op">|</span> <span class="st">&#39;fitness&#39;</span> <span class="op">|</span> <span class="st">&#39;auth&#39;</span>) <span class="kw">=&gt;</span> {</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> host <span class="op">=</span> Platform<span class="op">.</span><span class="at">OS</span> <span class="op">===</span> <span class="st">&#39;android&#39;</span> <span class="op">?</span> <span class="st">&#39;10.0.2.2&#39;</span> <span class="op">:</span> <span class="st">&#39;localhost&#39;</span><span class="op">;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">switch</span> (service) {</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="st">&#39;api&#39;</span><span class="op">:</span> <span class="cf">return</span> <span class="fu">getEnvVar</span>(<span class="st">&#39;API_SERVICE_URL&#39;</span><span class="op">,</span> <span class="vs">`http://</span><span class="sc">${</span>host<span class="sc">}</span><span class="vs">:8080/api`</span>)<span class="op">;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="st">&#39;nutrition&#39;</span><span class="op">:</span> <span class="cf">return</span> <span class="fu">getEnvVar</span>(<span class="st">&#39;AI_NUTRITION_URL&#39;</span><span class="op">,</span> <span class="vs">`http://</span><span class="sc">${</span>host<span class="sc">}</span><span class="vs">:8001/api/v1`</span>)<span class="op">;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="st">&#39;fitness&#39;</span><span class="op">:</span> <span class="cf">return</span> <span class="fu">getEnvVar</span>(<span class="st">&#39;RECO_FITNESS_URL&#39;</span><span class="op">,</span> <span class="vs">`http://</span><span class="sc">${</span>host<span class="sc">}</span><span class="vs">:8002/api/v1`</span>)<span class="op">;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="st">&#39;auth&#39;</span><span class="op">:</span> <span class="cf">return</span> <span class="fu">getEnvVar</span>(<span class="st">&#39;AUTH_SERVICE_URL&#39;</span><span class="op">,</span> <span class="vs">`http://</span><span class="sc">${</span>host<span class="sc">}</span><span class="vs">:3000/api`</span>)<span class="op">;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">default</span><span class="op">:</span> <span class="cf">return</span> <span class="fu">getEnvVar</span>(<span class="st">&#39;API_SERVICE_URL&#39;</span><span class="op">,</span> <span class="vs">`http://</span><span class="sc">${</span>host<span class="sc">}</span><span class="vs">:8080/api`</span>)<span class="op">;</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><strong>Un seul point de sortie reseau</strong> pour toute
+l’application : les 4 blocs du client (<code>auth</code>,
+<code>nutrition</code>, <code>fitness</code>, <code>main</code>) passent
+tous par <code>getBaseUrl</code>.</li>
+<li><code>Platform.OS === 'android' ? '10.0.2.2' : 'localhost'</code> :
+l’emulateur Android joint l’hote via <code>10.0.2.2</code> (alias de la
+loopback de la machine hote) ; <code>localhost</code> y designerait
+l’emulateur lui-meme.</li>
+<li>4 variables d’environnement sont prevues
+(<code>AUTH_SERVICE_URL</code>, <code>API_SERVICE_URL</code>,
+<code>AI_NUTRITION_URL</code>, <code>RECO_FITNESS_URL</code>), avec pour
+defauts les ports de la stack locale (3000, 8080, 8001, 8002).</li>
+<li>Dans l’etat actuel, <code>getEnvVar</code> retourne la valeur par
+defaut (le commentaire du code pointe <code>react-native-config</code>
+comme brique a brancher) : la configuration est centralisee en un seul
+endroit, pret a etre raccorde.</li>
+</ul>
+<h3 id="le-bloc-auth-session-puis-jwt-servicesapiclient.ts">6.2 Le bloc
+auth : session puis JWT (<code>services/apiClient.ts</code>)</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>login<span class="op">:</span> <span class="kw">async</span> (email<span class="op">:</span> <span class="dt">string</span><span class="op">,</span> password<span class="op">:</span> <span class="dt">string</span>) <span class="kw">=&gt;</span> {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span><span class="fu">getBaseUrl</span>(<span class="st">&#39;auth&#39;</span>)<span class="sc">}</span><span class="vs">/auth/login`</span><span class="op">,</span> {</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    method<span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    headers<span class="op">:</span> {</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">&#39;Content-Type&#39;</span><span class="op">:</span> <span class="st">&#39;application/json&#39;</span><span class="op">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    body<span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>({ email<span class="op">,</span> password })<span class="op">,</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    credentials<span class="op">:</span> <span class="st">&#39;include&#39;</span><span class="op">,</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>response<span class="op">.</span><span class="at">ok</span>) {</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> errorData <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">.</span><span class="fu">catch</span>(() <span class="kw">=&gt;</span> ({}))<span class="op">;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">Error</span>(errorData<span class="op">.</span><span class="at">message</span> <span class="op">||</span> <span class="st">&#39;Login failed&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>}<span class="op">,</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>getJwtToken<span class="op">:</span> <span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span><span class="fu">getBaseUrl</span>(<span class="st">&#39;auth&#39;</span>)<span class="sc">}</span><span class="vs">/jwt`</span><span class="op">,</span> {</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    credentials<span class="op">:</span> <span class="st">&#39;include&#39;</span><span class="op">,</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>response<span class="op">.</span><span class="at">ok</span>) {</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">Error</span>(<span class="st">&#39;Failed to get JWT token&#39;</span>)<span class="op">;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> data <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> data<span class="op">.</span><span class="at">token</span><span class="op">;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>}<span class="op">,</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>credentials: 'include'</code> : le cookie de session
+better-auth est envoye et recu par <code>fetch</code>. La session par
+cookie ne sert <strong>que</strong> pour le service auth.</li>
+<li><code>getJwtToken</code> appelle <code>GET /api/jwt</code>
+<strong>avec le cookie de session</strong> et recupere
+<code>data.token</code> : c’est ce JWT qui sera presente a tous les
+services metier.</li>
+<li>La route <code>/auth/login</code> de cet extrait est precisement
+celle a aligner sur <code>/auth/sign-in/email</code> (point de vigilance
+4.4). <code>/jwt</code> et <code>/session</code>, eux, sont deja
+alignes.</li>
+<li>La gestion d’erreur lit le corps JSON de l’erreur
+(<code>errorData.message</code>) avec un fallback
+(<code>.catch(() =&gt; ({}))</code>) si le corps n’est pas du JSON.</li>
+</ul>
+<h3 id="un-appel-metier-avec-le-jwt-servicesapiclient.ts">6.3 Un appel
+metier avec le JWT (<code>services/apiClient.ts</code>)</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>getNutritionGoals<span class="op">:</span> <span class="kw">async</span> (token<span class="op">:</span> <span class="dt">string</span>) <span class="kw">=&gt;</span> {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`</span><span class="sc">${</span><span class="fu">getBaseUrl</span>(<span class="st">&#39;nutrition&#39;</span>)<span class="sc">}</span><span class="vs">/nutrition-goals/me`</span><span class="op">,</span> {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    headers<span class="op">:</span> {</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">&#39;Authorization&#39;</span><span class="op">:</span> <span class="vs">`Bearer </span><span class="sc">${</span>token<span class="sc">}</span><span class="vs">`</span><span class="op">,</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>response<span class="op">.</span><span class="at">ok</span>) {</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">Error</span>(<span class="st">&#39;Failed to get nutrition goals&#39;</span>)<span class="op">;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>}<span class="op">,</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Tous les appels aux services metier portent le header
+<code>Authorization: Bearer &lt;jwt&gt;</code> : meme modele que le
+front web, le mot de passe ne circule jamais vers ces services.</li>
+<li>L’endpoint est en <code>/me</code> : le service identifie
+l’utilisateur <strong>a partir du JWT</strong>, l’application ne
+transmet jamais d’identifiant utilisateur dans l’URL.</li>
+<li>Le token est passe en parametre par l’appelant
+(<code>AppContext</code>), qui le detient et verifie sa presence avant
+chaque appel.</li>
+</ul>
+<h3 id="le-dockerfile-complet">6.4 Le Dockerfile complet</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dockerfile for HealthAi Coach Mobile App (Expo)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Use Node.js 20 LTS as base image (required for Expo compatibility)</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> node:20-alpine</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Install dependencies</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">apk</span> add <span class="at">--no-cache</span> <span class="dt">\</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    python3 <span class="dt">\</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    make <span class="dt">\</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    g++ <span class="dt">\</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    git <span class="dt">\</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    openssh-client <span class="dt">\</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    bash</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Set working directory</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="kw">WORKDIR</span> /app</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy package files first for better caching</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> package*.json ./</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Install npm dependencies</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">npm</span> install <span class="at">-g</span> expo-cli @expo/ngrok</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">npm</span> install</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy the rest of the application</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> . .</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the app (if needed)</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="co"># RUN npx expo prebuild</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Expo needs to run as non-root for development</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">addgroup</span> <span class="at">-S</span> expo <span class="kw">&amp;&amp;</span> <span class="ex">adduser</span> <span class="at">-S</span> expo <span class="at">-G</span> expo</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Fix permissions for Expo - create .expo dir and set permissions</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="fu">mkdir</span> <span class="at">-p</span> /app/.expo</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a><span class="co"># For development, we&#39;ll run as root to avoid permission issues with mounted volumes</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a><span class="co"># USER expo</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Expose Expo ports</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a><span class="kw">EXPOSE</span> 19000-19006</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Command to start Expo development server with minimal config</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a><span class="kw">CMD</span> [<span class="st">&quot;npx&quot;</span>, <span class="st">&quot;expo&quot;</span>, <span class="st">&quot;start&quot;</span>, <span class="st">&quot;--lan&quot;</span>, <span class="st">&quot;--minify&quot;</span>]</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>node:20-alpine</code> : Node 20 LTS, requis pour la
+compatibilite Expo ; variante alpine pour la legerete.</li>
+<li><code>apk add python3 make g++ git ...</code> : toolchain de
+compilation pour les dependances npm natives.</li>
+<li><code>COPY package*.json ./</code> puis <code>npm install</code>
+<strong>avant</strong> <code>COPY . .</code> : optimisation du cache de
+layers Docker, les dependances ne sont reinstallees que si le
+<code>package.json</code> change.</li>
+<li><code>EXPOSE 19000-19006</code> : la plage de ports du bundler et
+des outils Expo.</li>
+<li><code>CMD npx expo start --lan --minify</code> : le conteneur
+demarre le serveur de developpement en mode LAN ; un telephone avec Expo
+Go sur le meme reseau charge le bundle.</li>
+<li>Un utilisateur <code>expo</code> non-root est cree mais la directive
+<code>USER expo</code> est commentee : en developpement, l’execution en
+root evite les problemes de permissions sur les volumes montes (le
+commentaire du fichier l’explique).</li>
+<li>A bien cadrer pour le jury : <strong>ce conteneur ne fait pas
+tourner l’application</strong>, il sert le bundler de developpement.
+L’app, elle, tourne sur le telephone.</li>
+</ul>
+<h3 id="les-scripts-npm-package.json">6.5 Les scripts npm
+(<code>package.json</code>)</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="er">&quot;scripts&quot;:</span> <span class="fu">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="st">&quot;expo start&quot;</span><span class="fu">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;reset-project&quot;</span><span class="fu">:</span> <span class="st">&quot;node ./scripts/reset-project.js&quot;</span><span class="fu">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;android&quot;</span><span class="fu">:</span> <span class="st">&quot;expo start --android&quot;</span><span class="fu">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ios&quot;</span><span class="fu">:</span> <span class="st">&quot;expo start --ios&quot;</span><span class="fu">,</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;web&quot;</span><span class="fu">:</span> <span class="st">&quot;expo start --web&quot;</span><span class="fu">,</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;lint&quot;</span><span class="fu">:</span> <span class="st">&quot;expo lint&quot;</span><span class="fu">,</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;typecheck&quot;</span><span class="fu">:</span> <span class="st">&quot;tsc --noEmit&quot;</span><span class="fu">,</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;test&quot;</span><span class="fu">:</span> <span class="st">&quot;npm run lint &amp;&amp; npm run typecheck&quot;</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>npm test</code> = <code>lint</code> + <code>typecheck</code> :
+la cible “test” du depot est de la <strong>qualite statique</strong>
+(pas de tests unitaires a ce stade).</li>
+<li><code>typecheck</code> = <code>tsc --noEmit</code> : verification
+des types sans emission de JavaScript. C’est ce qui remonte les 9
+erreurs actuelles ; Metro, lui, transpile sans verifier, d’ou une app
+qui se lance malgre tout.</li>
+<li><code>start</code> / <code>android</code> / <code>ios</code> /
+<code>web</code> : variantes de <code>expo start</code> qui ciblent
+directement une plateforme.</li>
+<li>Ces scripts sont exactement ce que la future CI executera (lint,
+verification de types, build), sur le modele des 8 autres depots (<a
+href="CICD-Qualite.html">fiche CI/CD et qualite</a>).</li>
+</ul>
+<h3 id="la-persistance-asyncstorage-storeappcontext.tsx">6.6 La
+persistance AsyncStorage (<code>store/AppContext.tsx</code>)</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">loadData</span>() {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> {</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> stored <span class="op">=</span> <span class="cf">await</span> AsyncStorage<span class="op">.</span><span class="fu">getItem</span>(<span class="st">&#39;@vital_profile&#39;</span>)<span class="op">;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> token <span class="op">=</span> <span class="cf">await</span> AsyncStorage<span class="op">.</span><span class="fu">getItem</span>(<span class="st">&#39;@vital_jwt&#39;</span>)<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (stored <span class="op">&amp;&amp;</span> token) {</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> parsed <span class="op">=</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">parse</span>(stored)<span class="op">;</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">setProfile</span>(parsed)<span class="op">;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">setJwtToken</span>(token)<span class="op">;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>      <span class="co">// Verify session with BetterAuth</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>      <span class="cf">try</span> {</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> sessionData <span class="op">=</span> <span class="cf">await</span> apiClient<span class="op">.</span><span class="at">auth</span><span class="op">.</span><span class="fu">getSession</span>()<span class="op">;</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (sessionData<span class="op">?.</span><span class="at">user</span>) {</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>          <span class="fu">setIsAuthenticated</span>(<span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>          <span class="co">// Session expired, clear data</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>          <span class="cf">await</span> <span class="fu">logout</span>()<span class="op">;</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">catch</span> (error) {</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>        <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;Session verification failed, treating as expired&#39;</span>)<span class="op">;</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">await</span> <span class="fu">logout</span>()<span class="op">;</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">catch</span> {}</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Et a la connexion, le chemin inverse (fin de <code>login()</code>)
+:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setProfile</span>(updatedProfile)<span class="op">;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> AsyncStorage<span class="op">.</span><span class="fu">setItem</span>(<span class="st">&#39;@vital_profile&#39;</span><span class="op">,</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(updatedProfile))<span class="op">;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> AsyncStorage<span class="op">.</span><span class="fu">setItem</span>(<span class="st">&#39;@vital_jwt&#39;</span><span class="op">,</span> jwtToken)<span class="op">;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Deux cles AsyncStorage : <code>@vital_profile</code> (profil
+utilisateur serialise en JSON) et <code>@vital_jwt</code> (le jeton).
+Ecrites a la connexion / inscription, lues au demarrage, purgees a la
+deconnexion.</li>
+<li><code>loadData()</code> est appele au montage du provider
+(<code>useEffect</code>) : c’est ce qui fait que <strong>la session
+survit au redemarrage</strong> de l’application.</li>
+<li>Restaurer ne suffit pas : la session est
+<strong>re-verifiee</strong> aupres du service auth
+(<code>getSession()</code>). Si elle a expire, <code>logout()</code>
+remet l’etat a zero et supprime les deux cles. Pattern : restauration
+optimiste locale + verification serveur.</li>
+<li><code>login()</code> enchaine exactement le flux de la section 4.2 :
+authentification, lecture de session, <code>getJwtToken()</code>, puis
+persistance des deux cles.</li>
+</ul>
+<h3 id="le-hook-dorchestration-hooksusehealthai.ts">6.7 Le hook
+d’orchestration (<code>hooks/useHealthAI.ts</code>)</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> [isLoading<span class="op">,</span> setIsLoading] <span class="op">=</span> <span class="fu">useState</span>(<span class="kw">false</span>)<span class="op">;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> [error<span class="op">,</span> setError] <span class="op">=</span> <span class="fu">useState</span><span class="op">&lt;</span><span class="dt">string</span> <span class="op">|</span> <span class="dt">null</span><span class="op">&gt;</span>(<span class="kw">null</span>)<span class="op">;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Auto-fetch data when authenticated</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">useEffect</span>(() <span class="kw">=&gt;</span> {</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (jwtToken) {</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">refreshAllData</span>()<span class="op">;</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>}<span class="op">,</span> [jwtToken])<span class="op">;</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> refreshAllData <span class="op">=</span> <span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setIsLoading</span>(<span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setError</span>(<span class="kw">null</span>)<span class="op">;</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> {</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">fetchUserData</span>()<span class="op">;</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">loadWorkouts</span>()<span class="op">;</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">loadNutritionPlans</span>()<span class="op">;</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">loadFitnessPrograms</span>()<span class="op">;</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">catch</span> (err) {</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">setError</span>(<span class="st">&#39;Failed to load data&#39;</span>)<span class="op">;</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">error</span>(<span class="st">&#39;Refresh failed:&#39;</span><span class="op">,</span> err)<span class="op">;</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">finally</span> {</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">setIsLoading</span>(<span class="kw">false</span>)<span class="op">;</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>useHealthAI</code> est la <strong>facade applicative</strong>
+au-dessus du contexte : il centralise les appels aux services IA
+(analyse de repas, generation de plan, recommandations) et les etats
+<code>isLoading</code> / <code>error</code> consommes par les
+ecrans.</li>
+<li>Le <code>useEffect</code> sur <code>jwtToken</code> declenche le
+chargement <strong>des que l’utilisateur est authentifie</strong> :
+profil, seances, plans nutritionnels, programmes fitness.</li>
+<li>Les reponses brutes des services sont converties vers le format
+interne de l’app par <code>utils/dataTransformers.ts</code> (ex :
+<code>transformMealAnalysis</code>, <code>transformWorkout</code>,
+<code>transformNutritionPlan</code>).</li>
+<li>Separation nette : <code>apiClient.ts</code> parle HTTP,
+<code>AppContext.tsx</code> detient l’etat et le token,
+<code>useHealthAI.ts</code> orchestre et transforme pour l’UI.</li>
+</ul>
+<hr />
+<h2 id="reste-a-faire">7. Reste a faire</h2>
+<p>Trois points, identifies dans la documentation d’integration
+(<code>MSPR-Deploy/docs/application-mobile.md</code>, section 6). A
+presenter au jury comme un plan d’action court, localise et assume.</p>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 31%" />
+<col style="width: 36%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>Point</th>
+<th>Detail</th>
+<th>Ou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Alignement des routes d’authentification</strong></td>
+<td>Remplacer <code>/api/auth/login</code>,
+<code>/api/auth/signup</code>, <code>/api/auth/logout</code> par les
+routes better-auth <code>/api/auth/sign-in/email</code>,
+<code>/api/auth/sign-up/email</code>, <code>/api/auth/sign-out</code>.
+Les routes <code>/session</code> et <code>/jwt</code> sont deja
+alignees.</td>
+<td>bloc <code>auth</code> de <code>services/apiClient.ts</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Correction typecheck / lint + chaine CI</strong></td>
+<td>Corriger les 9 erreurs de types (3 fichiers) et les 4 erreurs + 19
+avertissements de lint (concentres sur <code>AIFeaturesDemo.tsx</code>),
+puis mettre en place une chaine CI (lint, verification de types, build)
+sur le modele des 8 autres depots.</td>
+<td>depot mobile, modele dans la <a href="CICD-Qualite.html">fiche CI/CD
+et qualite</a></td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Nom d’affichage et photo de profil modifiables</strong></td>
+<td>Le nom d’affichage (defini a l’inscription) et la photo de profil
+doivent devenir modifiables depuis le panneau de parametres.</td>
+<td>ecran <code>(tabs)/profile.tsx</code></td>
+</tr>
+</tbody>
+</table>
+<p>Arguments a derouler si le jury creuse :</p>
+<ul>
+<li>Le point 1 est une correction <strong>a perimetre tres
+reduit</strong> : 3 chemins d’URL dans un seul fichier, le reste du flux
+(session, JWT, Bearer) est deja correct.</li>
+<li>Le point 2 a deja sa cible definie : les scripts
+<code>npm run lint</code> et <code>npm run typecheck</code> existent, la
+CI consistera a les executer (plus un build) comme sur les 8 autres
+depots.</li>
+<li>Le point 3 est une evolution d’ecran, sans impact sur
+l’architecture.</li>
+</ul>
+<hr />
+<h2 id="questions-probables-du-jury">8. Questions probables du jury</h2>
+<h3
+id="q1.-pourquoi-expo-react-native-plutot-que-deux-applications-natives">Q1.
+Pourquoi Expo / React Native plutot que deux applications natives ?</h3>
+<p><strong>Une seule base de code TypeScript produit les cibles Android
+et iOS.</strong> Trois arguments :</p>
+<ol type="1">
+<li><strong>Effort</strong> : un seul code, deux plateformes ; pas de
+double developpement Kotlin + Swift.</li>
+<li><strong>Coherence d’equipe</strong> : TypeScript est deja le langage
+du front web et du service auth ; la montee en competence est
+immediate.</li>
+<li><strong>Outillage Expo</strong> : Expo Go permet de tester sur un
+vrai telephone sans toolchain native (pas d’Android Studio / Xcode pour
+developper), Expo Router apporte le routage par fichiers type, le
+bundler Metro sert le bundle a chaud.</li>
+</ol>
+<p>Le projet active la <strong>nouvelle architecture</strong> React
+Native (RN 0.81), le mode par defaut moderne du framework.</p>
+<h3
+id="q2.-pourquoi-lapplication-nest-elle-pas-dans-le-docker-compose">Q2.
+Pourquoi l’application n’est-elle pas dans le docker-compose ?</h3>
+<p>Parce que <strong>c’est un client, pas un service</strong>. Le
+compose deploie les 8 services de la plateforme ; l’application mobile
+s’execute <strong>sur le terminal de l’utilisateur</strong> (Expo Go en
+developpement, build natif Android / iOS ensuite) et consomme les APIs
+depuis l’exterieur du reseau Docker, comme n’importe quel client HTTP.
+Il n’y a rien a “servir” en continu cote stack pour qu’elle fonctionne :
+elle embarque son code et appelle les endpoints exposes.</p>
+<h3 id="q3.-a-quoi-sert-alors-le-dockerfile-du-depot">Q3. A quoi sert
+alors le Dockerfile du depot ?</h3>
+<p>A fournir un <strong>environnement de developpement
+reproductible</strong> : <code>node:20-alpine</code>, toolchain native
+(<code>python3</code>, <code>make</code>, <code>g++</code>),
+<code>npm install</code>, ports <code>19000-19006</code> exposes, et
+<code>CMD npx expo start --lan --minify</code>. Le conteneur
+<strong>sert le bundler Metro aux appareils du reseau local</strong> :
+un telephone avec Expo Go scanne et charge le bundle, pour le
+developpement et la demonstration. Ce n’est pas une image de production
+: en production, l’app est un build natif distribue sur l’appareil, plus
+aucun conteneur n’est implique.</p>
+<h3
+id="q4.-comment-lapplication-sauthentifie-t-elle-aupres-de-la-plateforme">Q4.
+Comment l’application s’authentifie-t-elle aupres de la plateforme
+?</h3>
+<p>Exactement comme le front web (<a href="Deploiement.html">fiche
+Deploiement</a>) :</p>
+<ol type="1">
+<li>connexion / inscription aupres du service auth, en
+<code>credentials: include</code> (cookie de session better-auth) ;</li>
+<li><code>GET /api/jwt</code> avec ce cookie pour obtenir un JWT ;</li>
+<li>appels aux services metier (api, ai-nutrition, reco-fitness) avec
+<code>Authorization: Bearer &lt;jwt&gt;</code>.</li>
+</ol>
+<p>Le JWT est conserve dans AsyncStorage. Au redemarrage, l’app restaure
+profil + jeton puis <strong>re-verifie la session</strong> via
+<code>/api/session</code> ; si la session a expire, tout est purge et
+l’utilisateur revient a l’ecran de connexion.</p>
+<h3 id="q5.-comment-testez-vous-sur-un-emulateur-android-en-local">Q5.
+Comment testez-vous sur un emulateur Android en local ?</h3>
+<p>Depuis l’emulateur Android, <code>localhost</code> designe
+l’emulateur lui-meme, pas la machine hote. L’alias
+<strong><code>10.0.2.2</code></strong> route vers la loopback de l’hote.
+Le client API gere ce cas automatiquement :</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> host <span class="op">=</span> Platform<span class="op">.</span><span class="at">OS</span> <span class="op">===</span> <span class="st">&#39;android&#39;</span> <span class="op">?</span> <span class="st">&#39;10.0.2.2&#39;</span> <span class="op">:</span> <span class="st">&#39;localhost&#39;</span><span class="op">;</span></span></code></pre></div>
+<p>Sur simulateur iOS, <code>localhost</code> fonctionne directement.
+Pour un telephone physique, le bundler est servi en <code>--lan</code>
+et les URLs de services se configurent par variables d’environnement
+vers l’IP de la machine qui heberge la stack.</p>
+<h3 id="q6.-quelles-differences-avec-le-front-web-vue-3">Q6. Quelles
+differences avec le front web Vue 3 ?</h3>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 37%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Front web (Vue 3)</th>
+<th>App mobile (Expo / RN)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Public</td>
+<td>admins / data scientists</td>
+<td>utilisateur final (coaching)</td>
+</tr>
+<tr>
+<td>Contenu</td>
+<td>dashboards, qualite de donnees, validation</td>
+<td>onboarding, scan de repas, plans, recommandations, profil</td>
+</tr>
+<tr>
+<td>Execution</td>
+<td>servi par la stack, dans le navigateur</td>
+<td>s’execute sur le terminal de l’utilisateur</td>
+</tr>
+<tr>
+<td>Place dans le compose</td>
+<td>service de la stack</td>
+<td>client externe, absent du compose</td>
+</tr>
+<tr>
+<td>Authentification</td>
+<td>better-auth + JWT</td>
+<td>identique (meme flux session puis JWT)</td>
+</tr>
+</tbody>
+</table>
+<p>Les deux consomment les memes APIs : la plateforme n’a pas eu a etre
+modifiee pour accueillir un deuxieme client, ce qui valide le decoupage
+en services.</p>
+<h3
+id="q7.-comment-letat-persiste-t-il-entre-deux-lancements-de-lapplication">Q7.
+Comment l’etat persiste-t-il entre deux lancements de l’application
+?</h3>
+<p>Via <strong>AppContext + AsyncStorage</strong>. Deux cles :
+<code>@vital_profile</code> (profil JSON) et <code>@vital_jwt</code>
+(jeton). Elles sont ecrites a la connexion / inscription, lues par
+<code>loadData()</code> au montage du provider, et supprimees a la
+deconnexion. La restauration est suivie d’une verification de session
+aupres du service auth : on ne fait pas confiance au seul contenu local,
+une session expiree declenche un <code>logout()</code> complet.</p>
+<h3 id="q8.-comment-les-urls-des-services-sont-elles-configurees">Q8.
+Comment les URLs des services sont-elles configurees ?</h3>
+<p>Quatre variables d’environnement sont prevues :
+<code>AUTH_SERVICE_URL</code>, <code>API_SERVICE_URL</code>,
+<code>AI_NUTRITION_URL</code>, <code>RECO_FITNESS_URL</code>. Les
+valeurs par defaut visent la stack locale du compose : ports 3000, 8080,
+8001, 8002, avec un hote <code>localhost</code> ou <code>10.0.2.2</code>
+selon la plateforme. Toute la resolution passe par une seule fonction
+(<code>getBaseUrl</code> dans <code>services/apiClient.ts</code>) :
+c’est l’unique endroit a brancher pour pointer un autre
+environnement.</p>
+<h3
+id="q9.-quel-est-letat-de-la-qualite-du-code-et-quel-est-le-plan">Q9.
+Quel est l’etat de la qualite du code, et quel est le plan ?</h3>
+<p>Au 11/06/2026, <code>npm test</code> (eslint +
+<code>tsc --noEmit</code>) remonte : <strong>9 erreurs de types dans 3
+fichiers</strong>, et <strong>4 erreurs + 19 avertissements de
+lint</strong>, concentres en particulier sur un composant de
+demonstration (<code>AIFeaturesDemo.tsx</code>). L’application se lance
+malgre tout : Metro transpile via Babel sans verifier les types.</p>
+<p>Le plan, assume comme reste a faire : corriger ces erreurs, puis
+mettre en place une <strong>chaine CI</strong> (lint, verification de
+types, build) sur le modele des 8 autres depots de la plateforme (<a
+href="CICD-Qualite.html">fiche CI/CD et qualite</a>). Les commandes a
+executer en CI existent deja dans le <code>package.json</code>.</p>
+<h3
+id="q10.-que-faut-il-aligner-sur-les-routes-dauthentification-et-pourquoi-ca-ne-marche-pas-encore-de-bout-en-bout">Q10.
+Que faut-il aligner sur les routes d’authentification, et pourquoi ca ne
+marche pas encore de bout en bout ?</h3>
+<p>Le client appelle <code>/api/auth/login</code>,
+<code>/api/auth/signup</code> et <code>/api/auth/logout</code>, alors
+que better-auth expose <code>/api/auth/sign-in/email</code>,
+<code>/api/auth/sign-up/email</code> et <code>/api/auth/sign-out</code>.
+Tant que ces 3 chemins divergent, la connexion et l’inscription echouent
+contre le service auth reel : pas de session, donc pas de JWT, donc pas
+d’appels metier.</p>
+<p>Le point important a montrer au jury : les routes
+<code>/session</code> et <code>/jwt</code> sont <strong>deja
+alignees</strong>, et tout le reste du flux (Bearer, AsyncStorage,
+re-verification de session) est correct. La correction se limite aux 3
+chemins du bloc <code>auth</code> de <code>services/apiClient.ts</code>.
+C’est le premier point du plan d’action.</p>
+<h3 id="q11.-ou-sont-les-maquettes-et-le-design-system">Q11. Ou sont les
+maquettes et le design system ?</h3>
+<p><strong>Versionnes dans le depot</strong> :
+<code>assets/design/wireframes.html</code> (24 ecrans de maquettes) et
+<code>assets/design/design-system.html</code> (design system sombre
+“Midnight Health”). Avantage : le design suit le meme cycle de vie que
+le code (commits, revues, historique), sans dependre d’un outil externe
+; n’importe quel membre de l’equipe ouvre les fichiers HTML dans un
+navigateur.</p>
+<h3 id="q12.-comment-sest-passee-la-collaboration-sur-ce-depot">Q12.
+Comment s’est passee la collaboration sur ce depot ?</h3>
+<p>L’application a ete developpee par un <strong>autre membre de
+l’equipe</strong>, dans son propre depot
+(<code>whitefoxxyt/MSPR-HealthAI-Coach-Mobile</code>) et a son propre
+rythme. L’integration est cadree par un contrat simple : l’application
+consomme les <strong>memes APIs publiques</strong> que le front web,
+avec le meme modele d’authentification ; aucun service de la plateforme
+n’a du etre modifie pour elle.</p>
+<p>Cote plateforme, l’integration est <strong>documentee</strong>
+(<code>MSPR-Deploy/docs/application-mobile.md</code>) : stack,
+architecture, services consommes, flux d’authentification,
+conteneurisation, et surtout les ecarts identifies (routes d’auth,
+typecheck / lint, CI) consignes comme un reste a faire explicite. C’est
+cette documentation qui sert de reference commune entre le developpeur
+mobile et le reste de l’equipe.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

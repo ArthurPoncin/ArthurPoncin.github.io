@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>Sécurité - Révisions MSPR3</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a href="#fiche-de-revision-securite"
+id="toc-fiche-de-revision-securite">Fiche de revision : Securite</a>
+<ul>
+<li><a href="#vocabulaire-a-connaitre-avant-de-lire"
+id="toc-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#tldr" id="toc-tldr">1. TL;DR</a></li>
+<li><a href="#architecture-les-perimetres-de-securite"
+id="toc-architecture-les-perimetres-de-securite">2. Architecture : les
+perimetres de securite</a></li>
+<li><a href="#les-3-referentiels-utilises"
+id="toc-les-3-referentiels-utilises">3. Les 3 referentiels
+utilises</a></li>
+<li><a href="#owasp-top-10-2021" id="toc-owasp-top-10-2021">4. OWASP Top
+10 (2021)</a>
+<ul>
+<li><a href="#tableau-des-10-categories"
+id="toc-tableau-des-10-categories">4.1 Tableau des 10
+categories</a></li>
+<li><a href="#a01-controle-dacces" id="toc-a01-controle-dacces">4.2 A01
+: controle d’acces</a></li>
+<li><a href="#a02-cryptographie-et-secrets"
+id="toc-a02-cryptographie-et-secrets">4.3 A02 : cryptographie et
+secrets</a></li>
+<li><a href="#a05-configuration" id="toc-a05-configuration">4.4 A05 :
+configuration</a></li>
+<li><a href="#a09-journalisation-et-supervision"
+id="toc-a09-journalisation-et-supervision">4.5 A09 : journalisation et
+supervision</a></li>
+<li><a href="#limites-assumees-owasp"
+id="toc-limites-assumees-owasp">4.6 Limites assumees (OWASP)</a></li>
+</ul></li>
+<li><a href="#rgpd-nist-csf-points-techniques-importants"
+id="toc-rgpd-nist-csf-points-techniques-importants">5. RGPD + NIST CSF +
+Points techniques importants</a>
+<ul>
+<li><a href="#rgpd" id="toc-rgpd">5.1 RGPD</a></li>
+<li><a href="#nist-csf-les-5-fonctions"
+id="toc-nist-csf-les-5-fonctions">5.2 NIST CSF : les 5
+fonctions</a></li>
+<li><a href="#points-techniques-de-durcissement-a-montrer"
+id="toc-points-techniques-de-durcissement-a-montrer">5.3 Points
+techniques de durcissement a montrer</a></li>
+</ul></li>
+<li><a href="#code-essentiel-a-savoir-expliquer-au-jury"
+id="toc-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</a>
+<ul>
+<li><a
+href="#lancre-x-hardening-du-compose-mspr-deploydocker-compose.yml"
+id="toc-lancre-x-hardening-du-compose-mspr-deploydocker-compose.yml">6.1
+L’ancre <code>x-hardening</code> du compose
+(MSPR-Deploy/docker-compose.yml)</a></li>
+<li><a
+href="#dockerfile-ai-nutrition-non-root-healthcheck-mspr-ai-nutritiondockerfile"
+id="toc-dockerfile-ai-nutrition-non-root-healthcheck-mspr-ai-nutritiondockerfile">6.2
+Dockerfile AI-Nutrition : non-root + HEALTHCHECK
+(MSPR-AI-Nutrition/Dockerfile)</a></li>
+<li><a
+href="#dockerfile-reco-fitness-meme-pattern-mspr-reco-fitnessreco-fitnessdockerfile"
+id="toc-dockerfile-reco-fitness-meme-pattern-mspr-reco-fitnessreco-fitnessdockerfile">6.3
+Dockerfile Reco-Fitness : meme pattern
+(MSPR-Reco-Fitness/reco-fitness/Dockerfile)</a></li>
+<li><a
+href="#generation-des-secrets-dans-bootstrap.sh-mspr-deploybootstrap.sh"
+id="toc-generation-des-secrets-dans-bootstrap.sh-mspr-deploybootstrap.sh">6.4
+Generation des secrets dans bootstrap.sh
+(MSPR-Deploy/bootstrap.sh)</a></li>
+<li><a
+href="#dechiffrement-des-cles-api-avec-validation-de-format-mspr-deploybootstrap.sh"
+id="toc-dechiffrement-des-cles-api-avec-validation-de-format-mspr-deploybootstrap.sh">6.5
+Dechiffrement des cles API avec validation de format
+(MSPR-Deploy/bootstrap.sh)</a></li>
+<li><a
+href="#gitignore-ce-qui-ne-part-jamais-dans-le-depot-mspr-deploy.gitignore"
+id="toc-gitignore-ce-qui-ne-part-jamais-dans-le-depot-mspr-deploy.gitignore">6.6
+.gitignore : ce qui ne part jamais dans le depot
+(MSPR-Deploy/.gitignore)</a></li>
+<li><a
+href="#blocage-public-des-metriques-via-traefik-mspr-deploydocker-compose.traefik.yml"
+id="toc-blocage-public-des-metriques-via-traefik-mspr-deploydocker-compose.traefik.yml">6.7
+Blocage public des metriques via Traefik
+(MSPR-Deploy/docker-compose.traefik.yml)</a></li>
+<li><a
+href="#la-migration-rgpd-v07-mspr-dbmigrationsv07__drop_users_table.sql"
+id="toc-la-migration-rgpd-v07-mspr-dbmigrationsv07__drop_users_table.sql">6.8
+La migration RGPD : V07
+(MSPR-DB/migrations/V07__drop_users_table.sql)</a></li>
+</ul></li>
+<li><a href="#tableau-recapitulatif" id="toc-tableau-recapitulatif">7.
+Tableau recapitulatif</a></li>
+<li><a href="#questions-probables-du-jury"
+id="toc-questions-probables-du-jury">8. Questions probables du jury</a>
+<ul>
+<li><a
+href="#q1.-pourquoi-hs512-symetrique-et-pas-rs256-asymetrique-pour-les-jwt"
+id="toc-q1.-pourquoi-hs512-symetrique-et-pas-rs256-asymetrique-pour-les-jwt">Q1.
+Pourquoi HS512 (symetrique) et pas RS256 (asymetrique) pour les JWT
+?</a></li>
+<li><a href="#q2.-ou-vivent-les-secrets-et-qui-les-genere"
+id="toc-q2.-ou-vivent-les-secrets-et-qui-les-genere">Q2. Ou vivent les
+secrets et qui les genere ?</a></li>
+<li><a
+href="#q3.-pourquoi-versionner-des-cles-chiffrees-dans-le-depot-plutot-que-de-tout-exclure"
+id="toc-q3.-pourquoi-versionner-des-cles-chiffrees-dans-le-depot-plutot-que-de-tout-exclure">Q3.
+Pourquoi versionner des cles chiffrees dans le depot plutot que de tout
+exclure ?</a></li>
+<li><a href="#q4.-cest-quoi-no-new-privileges-concretement"
+id="toc-q4.-cest-quoi-no-new-privileges-concretement">Q4. C’est quoi
+<code>no-new-privileges</code> concretement ?</a></li>
+<li><a href="#q5.-pourquoi-des-conteneurs-non-root"
+id="toc-q5.-pourquoi-des-conteneurs-non-root">Q5. Pourquoi des
+conteneurs non-root ?</a></li>
+<li><a
+href="#q6.-quelles-donnees-personnelles-subsistent-dans-la-plateforme-et-ou"
+id="toc-q6.-quelles-donnees-personnelles-subsistent-dans-la-plateforme-et-ou">Q6.
+Quelles donnees personnelles subsistent dans la plateforme, et ou
+?</a></li>
+<li><a
+href="#q7.-comment-le-rgpd-est-il-respecte-sur-des-donnees-de-sante"
+id="toc-q7.-comment-le-rgpd-est-il-respecte-sur-des-donnees-de-sante">Q7.
+Comment le RGPD est-il respecte sur des donnees de sante ?</a></li>
+<li><a
+href="#q8.-pas-de-scan-dimages-pourquoi-cest-une-limite-et-comment-la-lever"
+id="toc-q8.-pas-de-scan-dimages-pourquoi-cest-une-limite-et-comment-la-lever">Q8.
+Pas de scan d’images : pourquoi c’est une limite et comment la lever
+?</a></li>
+<li><a
+href="#q9.-pourquoi-pas-de-tls-en-local-et-comment-cest-gere-en-exposition-publique"
+id="toc-q9.-pourquoi-pas-de-tls-en-local-et-comment-cest-gere-en-exposition-publique">Q9.
+Pourquoi pas de TLS en local, et comment c’est gere en exposition
+publique ?</a></li>
+<li><a href="#q10.-grafana-en-adminadmin-quel-risque-quelle-mitigation"
+id="toc-q10.-grafana-en-adminadmin-quel-risque-quelle-mitigation">Q10.
+Grafana en admin/admin : quel risque, quelle mitigation ?</a></li>
+<li><a href="#q11.-a-quoi-sert-le-nist-csf-en-plus-dowasp"
+id="toc-q11.-a-quoi-sert-le-nist-csf-en-plus-dowasp">Q11. A quoi sert le
+NIST CSF en plus d’OWASP ?</a></li>
+<li><a
+href="#q12.-si-vous-aviez-un-mois-de-plus-que-feriez-vous-en-priorite"
+id="toc-q12.-si-vous-aviez-un-mois-de-plus-que-feriez-vous-en-priorite">Q12.
+Si vous aviez un mois de plus, que feriez-vous en priorite ?</a></li>
+</ul></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1 id="fiche-de-revision-securite">Fiche de revision : Securite</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR3 (TPRE601). Objectif :
+maitriser le livrable 04 (analyse de securite), savoir presenter la
+confrontation de la plateforme aux trois referentiels (OWASP Top 10,
+RGPD, NIST CSF), montrer le durcissement reellement en place et assumer
+les limites sans se faire pieger.</p>
+</blockquote>
+<hr />
+<h2 id="vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<p>Les 10 termes qui reviennent partout dans cette fiche.</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OWASP Top 10 (2021)</strong></td>
+<td>Classement des 10 categories de risques applicatifs les plus
+courants (controle d’acces, crypto, injection…). Referentiel orient
+code/config.</td>
+</tr>
+<tr>
+<td><strong>RGPD</strong></td>
+<td>Reglement general sur la protection des donnees. Cadre legal
+europeen sur les donnees personnelles, dont les donnees de sante
+(categorie sensible).</td>
+</tr>
+<tr>
+<td><strong>NIST CSF</strong></td>
+<td>NIST Cybersecurity Framework. Cadre de gestion du risque en 5
+fonctions : Identify, Protect, Detect, Respond, Recover. Vision
+exploitation, pas seulement code.</td>
+</tr>
+<tr>
+<td><strong>JWT HS512</strong></td>
+<td>JSON Web Token signe en HMAC-SHA-512 : algorithme
+<strong>symetrique</strong>, le meme secret sert a signer et a verifier
+la signature.</td>
+</tr>
+<tr>
+<td><strong><code>no-new-privileges</code></strong></td>
+<td>Option de securite Linux posee par Docker
+(<code>security_opt</code>) : aucun processus du conteneur ne peut
+acquerir plus de privileges que son parent (bloque l’escalade
+setuid/setgid).</td>
+</tr>
+<tr>
+<td><strong>PII</strong></td>
+<td>Personally Identifiable Information : toute donnee permettant
+d’identifier une personne (email, nom, identifiant nominatif).</td>
+</tr>
+<tr>
+<td><strong>Minimisation</strong></td>
+<td>Principe de l’article 5 du RGPD : ne collecter et conserver que les
+donnees strictement necessaires au traitement.</td>
+</tr>
+<tr>
+<td><strong>PBKDF2</strong></td>
+<td>Password-Based Key Derivation Function 2 : derive une cle de
+chiffrement depuis une passphrase en iterant un hash (ici 100000
+iterations), ce qui ralentit le bruteforce.</td>
+</tr>
+<tr>
+<td><strong>Hardening (durcissement)</strong></td>
+<td>Ensemble de reglages reduisant la surface d’attaque : non-root,
+<code>no-new-privileges</code>, ports restreints, rotation des logs,
+healthchecks.</td>
+</tr>
+<tr>
+<td><strong>Non-root</strong></td>
+<td>Le processus du conteneur tourne sous un utilisateur applicatif sans
+privileges (ici <code>appuser</code>), pas sous root : une compromission
+donne moins de droits.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tldr">1. TL;DR</h2>
+<p>Le livrable 04 est une <strong>analyse de securite factuelle</strong>
+de la plateforme HealthAI Coach mise en production via Docker Compose.
+Source : <code>MSPR-Deploy/docs/securite.md</code>. Le perimetre couvre
+les 8 services applicatifs, l’orchestration Compose, les scripts
+d’exploitation et la chaine CI/CD (l’app mobile, sans service cote
+serveur, est hors perimetre).</p>
+<p>Le parti pris du document : <strong>ne decrire que les controles
+reellement presents</strong> dans le depot et <strong>signaler
+explicitement ce qui n’est pas couvert</strong>. D’ou des etats
+“Partiel” assumes plutot que des cases cochees artificiellement.</p>
+<p>Ce qui est reellement en place :</p>
+<ul>
+<li><strong>Auth deleguee</strong> : better-auth emet des <strong>JWT
+HS512</strong>, les services metier les valident localement via le
+secret partage <code>BETTER_AUTH_SECRET</code>.</li>
+<li><strong>Secrets</strong> : <code>BETTER_AUTH_SECRET</code> genere
+par <code>openssl rand -base64 64</code>, mots de passe des bases
+generes par <code>bootstrap.sh</code>, cles API tierces (Resend,
+Mistral) <strong>chiffrees au repos</strong> dans
+<code>secrets/*.enc</code> (aes-256-cbc, sel, PBKDF2 100000 iterations),
+<code>.env</code> exclu du versionnement.</li>
+<li><strong>Durcissement homogene</strong> : ancre
+<code>x-hardening</code> appliquee a tous les services
+(<code>no-new-privileges:true</code> + rotation des logs json-file 10m
+x3), conteneurs applicatifs <strong>non-root</strong> avec
+<code>HEALTHCHECK</code>, ports des 3 bases bindes sur
+<code>127.0.0.1</code> (5433/5434/27018), Ollama isole sur le reseau
+<code>ai_internal</code>.</li>
+<li><strong>RGPD par minimisation</strong> : datasets sources
+anonymises, table <code>users</code> supprimee de la base metier
+(migration <code>V07__drop_users_table.sql</code>), comptes (emails,
+mots de passe hashes) isoles dans <code>auth_db</code>.</li>
+<li><strong>NIST CSF</strong> : Protect, Detect et Recover bien couverts
+; Identify et Respond partiels.</li>
+</ul>
+<p>Limites assumees (a annoncer avant que le jury ne les trouve) :
+<strong>pas de scan de vulnerabilite d’images</strong> (Trivy/Grype) et
+tag <code>:latest</code>, <strong>endpoints de metriques non
+authentifies</strong> sur le reseau Docker, <strong>Grafana
+admin/admin</strong> par defaut, <strong>pas de TLS</strong> en local,
+pas de workflow RGPD specifique, pas de plan de reponse a incident
+formalise.</p>
+<p>Liens : le durcissement s’appuie sur le compose et bootstrap (<a
+href="Deploiement.html">fiche Deploiement</a>), la detection sur la stack
+monitoring (<a href="Observabilite.html">fiche Observabilite</a>),
+l’integrite des images sur la CI (<a href="CICD-Qualite.html">fiche CI/CD
+et qualite</a>), la sauvegarde et le TLS public sur les scripts et
+Traefik (<a href="Configs-Resilience.html">fiche Configs et
+resilience</a>).</p>
+<hr />
+<h2 id="architecture-les-perimetres-de-securite">2. Architecture : les
+perimetres de securite</h2>
+<pre class="mermaid"><code>flowchart TB
+    subgraph Secrets[&quot;Perimetre secrets (hote, jamais versionne en clair)&quot;]
+        ENC[&quot;secrets/resend.enc + mistral.enc&lt;br/&gt;aes-256-cbc + PBKDF2 100000 iter&quot;]
+        BS[&quot;bootstrap.sh&lt;br/&gt;genere + dechiffre&quot;]
+        ENV[&quot;.env (gitignore)&quot;]
+        ENC --&gt; BS --&gt; ENV
+    end
+
+    subgraph Expose[&quot;Ports publies sur l&#39;hote&quot;]
+        FRONT[&quot;front :5173&quot;]
+        AUTH[&quot;auth :3000&lt;br/&gt;better-auth, emet les JWT&quot;]
+        API[&quot;api :8080&quot;]
+        AI[&quot;ai-nutrition :8001&quot;]
+        RECO[&quot;reco-fitness :8002&quot;]
+    end
+
+    subgraph Local[&quot;Bases : bindees 127.0.0.1 uniquement&quot;]
+        DB[(&quot;db :5434&quot;)]
+        ADB[(&quot;auth-db :5433&quot;)]
+        MG[(&quot;mongo :27018&quot;)]
+    end
+
+    subgraph AIN[&quot;Reseau ai_internal (isole)&quot;]
+        OL[&quot;ollama&lt;br/&gt;aucun port publie&quot;]
+    end
+
+    ENV -. &quot;variables d&#39;env (compose)&quot; .-&gt; Expose
+    AUTH -- &quot;JWT HS512, valides localement&lt;br/&gt;via BETTER_AUTH_SECRET partage&quot; --&gt; API
+    AI --- OL</code></pre>
+<p>Trois perimetres a savoir expliquer :</p>
+<ol type="1">
+<li><strong>Reseaux</strong> : un reseau applicatif
+<code>mspr_data_network</code> + un reseau <code>ai_internal</code>
+reserve a Ollama (seul <code>ai-nutrition</code> est sur les deux). Les
+bases ne publient leurs ports que sur <code>127.0.0.1</code> : elles
+sont joignables depuis l’hote pour le debug, mais pas depuis le reseau
+externe.</li>
+<li><strong>Secrets</strong> : rien de sensible en clair dans le depot.
+<code>bootstrap.sh</code> genere ce qui peut l’etre (secret JWT, mots de
+passe des bases) et dechiffre ce qui ne peut pas l’etre (cles API
+tierces) a partir d’une passphrase.</li>
+<li><strong>Auth deleguee</strong> : un seul emetteur de tokens
+(<code>mspr-auth</code>), des consommateurs (API Spring, AI-Nutrition,
+Reco-Fitness) qui valident la signature HS512
+<strong>localement</strong>, sans appel reseau au service Auth a chaque
+requete.</li>
+</ol>
+<hr />
+<h2 id="les-3-referentiels-utilises">3. Les 3 referentiels utilises</h2>
+<p>Pourquoi confronter la plateforme a trois referentiels et pas un seul
+: chacun couvre un angle different, et leurs angles morts respectifs se
+compensent.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 11%" />
+<col style="width: 33%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th>Referentiel</th>
+<th>Angle</th>
+<th>Ce qu’il couvre ici</th>
+<th>Ce qu’il ne voit pas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OWASP Top 10 (2021)</strong></td>
+<td>Vulnerabilites applicatives</td>
+<td>Controle d’acces, crypto, injection, configuration, supply chain,
+journalisation</td>
+<td>Rien sur les obligations legales ni sur la reponse a incident ou la
+sauvegarde</td>
+</tr>
+<tr>
+<td><strong>RGPD</strong></td>
+<td>Legal, donnees personnelles</td>
+<td>Minimisation, donnees de sante, isolement des comptes, droits des
+personnes</td>
+<td>Rien sur les vulnerabilites techniques ni l’exploitation</td>
+</tr>
+<tr>
+<td><strong>NIST CSF</strong></td>
+<td>Gestion du risque en exploitation</td>
+<td>Cycle complet : inventaire, protection, detection, reponse,
+restauration</td>
+<td>Moins granulaire sur les failles applicatives precises</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Ce qu’il faut savoir dire</strong> : OWASP repond a “mon code
+et ma config sont-ils vulnerables”, le RGPD repond a “ai-je le droit de
+traiter ces donnees ainsi”, le NIST CSF repond a “suis-je capable de
+detecter un incident et de m’en remettre”. Sur une plateforme de
+<strong>donnees de sante mise en production</strong>, les trois
+questions se posent simultanement. C’est aussi ce qui structure le
+livrable : un tableau par referentiel, etat honnete par categorie,
+limites explicites.</p>
+<hr />
+<h2 id="owasp-top-10-2021">4. OWASP Top 10 (2021)</h2>
+<h3 id="tableau-des-10-categories">4.1 Tableau des 10 categories</h3>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 16%" />
+<col style="width: 52%" />
+</colgroup>
+<thead>
+<tr>
+<th>Categorie</th>
+<th>Etat</th>
+<th>Elements en place</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A01</strong> Broken Access Control</td>
+<td>Partiel</td>
+<td>Auth deleguee a better-auth (email/mot de passe + JWT). Les services
+metier valident le JWT via <code>BETTER_AUTH_SECRET</code> partage.
+Endpoints proteges cote API.</td>
+</tr>
+<tr>
+<td><strong>A02</strong> Cryptographic Failures</td>
+<td>Partiel</td>
+<td>JWT HS512. Cles API chiffrees au repos (<code>secrets/*.enc</code>,
+aes-256-cbc + PBKDF2 100000 iterations). <code>.env</code> hors
+versionnement. Mots de passe des bases generes par
+<code>bootstrap.sh</code>.</td>
+</tr>
+<tr>
+<td><strong>A03</strong> Injection</td>
+<td>Partiel</td>
+<td>API Spring sur JPA/requetes parametrees. Validation des entrees cote
+services (Spring + FastAPI).</td>
+</tr>
+<tr>
+<td><strong>A04</strong> Insecure Design</td>
+<td>Partiel</td>
+<td>Segmentation reseau (Ollama isole sur <code>ai_internal</code>),
+separation des bases (metier / auth), auth deleguee a un service
+dedie.</td>
+</tr>
+<tr>
+<td><strong>A05</strong> Security Misconfiguration</td>
+<td>Partiel</td>
+<td>Conteneurs non-root, <code>no-new-privileges:true</code> partout,
+ports des bases bindes <code>127.0.0.1</code>, rotation des logs
+json-file. Plus de mot de passe <code>password</code> par defaut en
+exploitation.</td>
+</tr>
+<tr>
+<td><strong>A06</strong> Vulnerable and Outdated Components</td>
+<td>Partiel</td>
+<td>Images publiees par la CI, deploiement par tags GHCR. <strong>Aucun
+scan de vulnerabilite d’images</strong> (limite).</td>
+</tr>
+<tr>
+<td><strong>A07</strong> Identification and Authentication Failures</td>
+<td>Partiel</td>
+<td>Comptes, sessions et JWT geres par better-auth. Verification email
+via Resend (desactivable en mode offline).</td>
+</tr>
+<tr>
+<td><strong>A08</strong> Software and Data Integrity Failures</td>
+<td>Partiel</td>
+<td>Images tracables par SHA de commit (tag <code>type=sha</code>),
+publication uniquement si lint et tests passent.</td>
+</tr>
+<tr>
+<td><strong>A09</strong> Security Logging and Monitoring Failures</td>
+<td>Partiel</td>
+<td>Stack d’observabilite complete : Prometheus, Grafana, Loki,
+Promtail, Alertmanager + exporters. Logs centralises. 3 alertes
+Prometheus.</td>
+</tr>
+<tr>
+<td><strong>A10</strong> Server-Side Request Forgery</td>
+<td>Non evalue</td>
+<td>Pas de controle specifique identifie dans le depot.</td>
+</tr>
+</tbody>
+</table>
+<p>Aucune categorie n’est annoncee “Couvert” : c’est un choix de
+redaction. Le document liste ce qui existe, pas ce qu’on aimerait
+avoir.</p>
+<h3 id="a01-controle-dacces">4.2 A01 : controle d’acces</h3>
+<p>L’authentification est entierement deleguee au service
+<code>mspr-auth</code> (better-auth). Les services consommateurs
+partagent le secret HMAC <code>BETTER_AUTH_SECRET</code> (injecte par
+variable d’environnement) et valident la signature du JWT <strong>a
+chaque requete</strong>, localement.</p>
+<p><strong>Exception documentee</strong> : l’API expose
+<code>/api/actuator/prometheus</code> <strong>sans JWT</strong> pour
+permettre le scraping interne par Prometheus ; les endpoints
+<code>/metrics</code> des FastAPI et d’Auth sont egalement ouverts sur
+le reseau Docker. C’est documente et <strong>assume comme acceptable en
+environnement de demonstration</strong>. En exposition publique, ces
+chemins sont bloques par Traefik (cf. section 5.3 et extrait 6.7).</p>
+<h3 id="a02-cryptographie-et-secrets">4.3 A02 : cryptographie et
+secrets</h3>
+<ul>
+<li>JWT signes en <strong>HS512</strong>, secret de 64 octets minimum
+genere par <code>openssl rand -base64 64</code>.</li>
+<li>Les cles API tierces (Resend, Mistral) ne sont <strong>jamais en
+clair dans le depot</strong> : chiffrees dans
+<code>secrets/resend.enc</code> et <code>secrets/mistral.enc</code>
+(<code>aes-256-cbc</code>, sel + PBKDF2, 100000 iterations), dechiffrees
+au demarrage par <code>bootstrap.sh</code> a partir d’une
+passphrase.</li>
+<li><code>.env</code> exclu par <code>.gitignore</code>, de meme que
+<code>backups/</code> et <code>.passphrase.local</code>.</li>
+<li>Mots de passe des bases (<code>DB_PASSWORD</code>,
+<code>AUTH_DB_PASSWORD</code>) generes aleatoirement s’ils sont
+absents.</li>
+<li>Mots de passe utilisateurs : <strong>stockage hashe gere par
+better-auth (champ <code>account.password</code>)</strong>, dans la base
+auth separee.</li>
+</ul>
+<h3 id="a05-configuration">4.4 A05 : configuration</h3>
+<p>Le durcissement repose sur des reglages communs Compose (ancre
+<code>x-hardening</code>) appliques a <strong>tous</strong> les services
+:</p>
+<ul>
+<li><code>no-new-privileges:true</code> (escalade de privileges
+bloquee),</li>
+<li>rotation des logs (<code>max-size 10m</code>,
+<code>max-file 3</code>),</li>
+<li>les 6 services applicatifs tournent en <strong>utilisateur
+non-root</strong> (defini dans leurs Dockerfile) et exposent un
+<code>HEALTHCHECK</code>,</li>
+<li>ports des trois bases bindes sur <code>127.0.0.1</code> (db 5434,
+auth-db 5433, mongo 27018) : non exposes hors de l’hote,</li>
+<li>plus de defaut <code>password</code> en exploitation :
+<code>bootstrap.sh</code> genere les mots de passe absents.</li>
+</ul>
+<h3 id="a09-journalisation-et-supervision">4.5 A09 : journalisation et
+supervision</h3>
+<p>Promtail collecte stdout/stderr de <strong>tous</strong> les
+conteneurs vers Loki (retention 7 jours), interrogeable dans Grafana.
+Les exporters (cAdvisor, node-exporter, postgres-exporter x2,
+mongodb-exporter) et l’instrumentation applicative (Actuator/Micrometer
+cote API, prometheus-fastapi-instrumentator cote FastAPI, <span
+class="citation" data-cites="hono/prometheus">@hono/prometheus</span>
+cote Auth) alimentent Prometheus. Trois regles d’alerte :
+<code>CibleInjoignable</code> (<code>up == 0</code>),
+<code>ConteneurCpuEleve</code>, <code>ConteneurMemoireElevee</code>.
+Detail complet dans la <a href="Observabilite.html">fiche
+Observabilite</a>.</p>
+<h3 id="limites-assumees-owasp">4.6 Limites assumees (OWASP)</h3>
+<p>A connaitre par coeur, le jury ira les chercher :</p>
+<ul>
+<li><strong>Pas de scan de vulnerabilite d’images</strong> (type
+Trivy/Grype) ni d’analyse de dependances automatisee dediee a la
+securite. Tag <code>:latest</code> utilise pour le deploiement prod par
+defaut.</li>
+<li><strong>Endpoints de metriques non authentifies</strong> (Actuator
+de l’API, <code>/metrics</code> des FastAPI et d’Auth) : acceptable
+uniquement en demonstration locale.</li>
+<li><strong>Grafana en <code>admin/admin</code></strong> par defaut
+(surchargeable via <code>GRAFANA_ADMIN_PASSWORD</code>).</li>
+<li><strong>Pas de TLS</strong> sur les services exposes en local ; pas
+de WAF, pas de gestionnaire de secrets externe, pas de service
+mesh.</li>
+<li>A03 (injection) et A10 (SSRF) sans controles dedies explicites
+au-dela de JPA et de la validation d’entrees.</li>
+</ul>
+<hr />
+<h2 id="rgpd-nist-csf-points-techniques-importants">5. RGPD + NIST CSF +
+Points techniques importants</h2>
+<h3 id="rgpd">5.1 RGPD</h3>
+<p><strong>Minimisation (article 5).</strong> Les datasets sources
+charges par l’ETL dans la base metier <code>healthai</code> sont
+<strong>anonymises</strong> : ni donnee identifiante, ni identifiant
+commun permettant de relier un enregistrement a une personne. La table
+<code>users</code> a ete <strong>supprimee</strong> de la base metier
+(migration <code>V07__drop_users_table.sql</code>), avec retrait des
+cles etrangeres <code>user_id</code> dans
+<code>nutrition_entries</code>, <code>exercise_entries</code> et
+<code>biometric_entries</code>. <strong>La base metier ne stocke donc
+aucune PII.</strong> Seules les donnees necessaires aux traitements
+analytiques (exercices, nutrition, biometrie agregee, recommandations)
+sont conservees, sans rattachement nominatif.</p>
+<p><strong>Donnees de sante.</strong> Biometrie, nutrition,
+recommandations fitness relevent du domaine de la sante (categorie
+sensible au sens RGPD). Du fait de l’anonymisation, les enregistrements
+charges <strong>ne sont pas rattaches a des individus
+identifiables</strong> dans la base metier.</p>
+<p><strong>Comptes utilisateurs.</strong> Email, mot de passe, sessions
+sont geres exclusivement par <code>mspr-auth</code> (better-auth) dans
+une <strong>base separee</strong> (<code>auth_db</code>, port 5433 binde
+sur <code>127.0.0.1</code>). Cette separation isole les seules donnees
+personnelles (emails de comptes) du reste de la plateforme. Stockage
+hashe des mots de passe gere par better-auth (champ
+<code>account.password</code>).</p>
+<p><strong>Limites assumees (RGPD)</strong> :</p>
+<ul>
+<li>Le cycle de vie des comptes (suppression, export, droit a l’oubli)
+repose sur les fonctionnalites natives de better-auth : <strong>aucun
+workflow RGPD specifique</strong> (anonymisation a la demande, purge
+automatique) n’est implemente dans le depot.</li>
+<li><strong>Pas de chiffrement au repos</strong> des bases de donnees
+au-dela de l’isolement reseau.</li>
+</ul>
+<h3 id="nist-csf-les-5-fonctions">5.2 NIST CSF : les 5 fonctions</h3>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 29%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr>
+<th>Fonction</th>
+<th>Couverture</th>
+<th>Elements presents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Identify</strong></td>
+<td>Partiel</td>
+<td>Inventaire des 8 services et de leurs depots (README, CLAUDE.md).
+Cartographie reseau (<code>mspr_data_network</code>,
+<code>ai_internal</code>). Documentation des donnees collectees
+(monitoring/README.md).</td>
+</tr>
+<tr>
+<td><strong>Protect</strong></td>
+<td>Oui</td>
+<td>Auth/JWT (better-auth + secret partage), durcissement conteneurs
+(non-root, <code>no-new-privileges</code>, healthchecks), isolement
+reseau + binding <code>127.0.0.1</code>, secrets chiffres et generes,
+CORS configure, rate limiting (slowapi) sur les FastAPI, validation des
+entrees.</td>
+</tr>
+<tr>
+<td><strong>Detect</strong></td>
+<td>Oui</td>
+<td>Prometheus, Grafana, Loki, Promtail, Alertmanager + exporters.
+Metriques infra et applicatives. 3 alertes (cible injoignable, CPU
+eleve, memoire elevee).</td>
+</tr>
+<tr>
+<td><strong>Respond</strong></td>
+<td>Partiel</td>
+<td>Alertmanager recoit et regroupe les alertes. <strong>Pas de
+procedure de reponse formalisee ni de routage de
+notification.</strong></td>
+</tr>
+<tr>
+<td><strong>Recover</strong></td>
+<td>Oui</td>
+<td><code>scripts/backup.sh</code> (pg_dump base metier + base auth +
+mongodump), <code>scripts/restore.sh</code> (derniere sauvegarde ou une
+sauvegarde precise), <code>scripts/clean.sh</code> (remise a zero).
+<code>restart: unless-stopped</code> sur les services.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Protect</strong> est la fonction la mieux couverte : auth
+deleguee + durcissement homogene + segmentation reseau + gestion des
+secrets + controles applicatifs (CORS, rate limiting, validation).</p>
+<p><strong>Detect</strong> se limite a trois alertes basiques
+(disponibilite et ressources) : pas de detection d’intrusion ni
+d’analyse de comportement.</p>
+<p><strong>Recover</strong> : sauvegardes locales et horodatees
+(<code>backups/&lt;timestamp&gt;/</code>, non versionnees). Pas
+d’externalisation, pas de strategie de retention automatisee, pas de
+test de restauration automatise. Scripts detailles dans la <a
+href="Configs-Resilience.html">fiche Configs et resilience</a>.</p>
+<h3 id="points-techniques-de-durcissement-a-montrer">5.3 Points
+techniques de durcissement a montrer</h3>
+<p><strong>Binding 127.0.0.1 des bases.</strong>
+<code>"127.0.0.1:5434:5432"</code> (db),
+<code>"127.0.0.1:5433:5432"</code> (auth-db),
+<code>"127.0.0.1:27018:27017"</code> (mongo). Les bases restent
+accessibles pour le debug local (psql, mongosh) mais une machine du
+reseau ne peut pas s’y connecter. Les services, eux, passent par le DNS
+interne Docker (<code>mspr-healthai-db:5432</code>), jamais par le port
+hote.</p>
+<p><strong>Isolement d’Ollama.</strong> Le service <code>ollama</code>
+n’est que sur le reseau <code>ai_internal</code> et <strong>ne publie
+aucun port</strong>. Seul <code>ai-nutrition</code> (present sur
+<code>mspr_data_network</code> + <code>ai_internal</code>) peut le
+joindre via <code>OLLAMA_HOST: http://ollama:11434</code>. Un LLM local
+sans auth n’a rien a faire sur le reseau applicatif.</p>
+<p><strong>Blocage public des metriques (exposition Traefik).</strong>
+En deploiement public (<a href="Configs-Resilience.html">fiche Configs et
+resilience</a>), un middleware <code>ipallowlist</code>
+(<code>mspr-metrics-deny</code>, source <code>127.0.0.1/32</code>) est
+attache a des routeurs <strong>prioritaires</strong>
+(<code>priority=100</code>) qui matchent <code>/metrics</code> et
+<code>/api/actuator</code>. Prometheus scrape en interne via le reseau
+Docker, donc rien ne casse. <strong>Verifie en production : 403 au
+public sur les endpoints de metriques, 200 sur les routes applicatives
+normales.</strong></p>
+<p><strong>Generation plutot que defaut.</strong> Le compose garde des
+defauts de repli (<code>${DB_PASSWORD:-password}</code>) pour le confort
+en dev, mais <code>bootstrap.sh</code> remplit systematiquement
+<code>.env</code> avec des valeurs generees : en exploitation reelle, le
+defaut <code>password</code> ne sert jamais.</p>
+<hr />
+<h2 id="code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</h2>
+<h3 id="lancre-x-hardening-du-compose-mspr-deploydocker-compose.yml">6.1
+L’ancre <code>x-hardening</code> du compose
+(MSPR-Deploy/docker-compose.yml)</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reglages communs de durcissement (mise en production MSPR3) :</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># - no-new-privileges : empeche l&#39;elevation de privileges dans le conteneur</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># - rotation des logs json-file : evite la saturation disque en exploitation</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">x-logging</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;default-logging</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">driver</span><span class="kw">:</span><span class="at"> json-file</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">options</span><span class="kw">:</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">max-size</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;10m&quot;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">max-file</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;3&quot;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">x-hardening</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;hardening</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">security_opt</span><span class="kw">:</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> no-new-privileges:true</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">logging</span><span class="kw">:</span><span class="at"> </span><span class="ot">*default-logging</span></span></code></pre></div>
+<p>Application a chaque service via le merge YAML, exemple sur la base
+metier :</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">db</span><span class="kw">:</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*hardening</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> ghcr.io/whitefoxxyt/mspr-db:latest</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">    # ...</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;127.0.0.1:5434:5432&quot;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>x-hardening</code> est une <strong>extension field</strong>
+Compose (prefixe <code>x-</code> ignore par le moteur) combinee a une
+<strong>ancre YAML</strong> (<code>&amp;hardening</code>). Chaque
+service fait <code>&lt;&lt;: *hardening</code> : le durcissement est
+declare <strong>une fois</strong> et applique aux 8 services +
+monitoring, sans duplication.</li>
+<li><code>no-new-privileges:true</code> pose le flag noyau qui interdit
+a tout processus du conteneur de gagner des privileges (binaires
+setuid/setgid neutralises).</li>
+<li>La rotation <code>10m x 3</code> borne les logs json-file a ~30 Mo
+par conteneur : pas de saturation disque en exploitation longue
+duree.</li>
+<li>Le binding <code>127.0.0.1:5434</code> signifie : port joignable
+<strong>uniquement depuis l’hote</strong>. Sans ce prefixe, Docker
+publie sur <code>0.0.0.0</code> et ouvre la base au reseau.</li>
+</ul>
+<h3
+id="dockerfile-ai-nutrition-non-root-healthcheck-mspr-ai-nutritiondockerfile">6.2
+Dockerfile AI-Nutrition : non-root + HEALTHCHECK
+(MSPR-AI-Nutrition/Dockerfile)</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Durcissement (mise en production MSPR3) : execution en utilisateur non-root.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># HF_HOME pointe vers un cache inscriptible : le modele HuggingFace est telecharge au runtime.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> HF_HOME=/app/.cache/huggingface</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">useradd</span> <span class="at">--create-home</span> appuser <span class="dt">\</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&amp;&amp;</span> <span class="fu">mkdir</span> <span class="at">-p</span> <span class="st">&quot;</span><span class="va">$HF_HOME</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&amp;&amp;</span> <span class="fu">chown</span> <span class="at">-R</span> appuser:appuser /app</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">USER</span> appuser</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">HEALTHCHECK</span> <span class="op">--interval=30s</span> <span class="op">--timeout=10s</span> <span class="op">--start-period=40s</span> <span class="op">--retries=3</span> \</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CMD</span> <span class="ex">python</span> <span class="at">-c</span> <span class="st">&quot;import urllib.request,sys; sys.exit(0 if urllib.request.urlopen(&#39;http://localhost:8001/health&#39;, timeout=8).status==200 else 1)&quot;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>useradd --create-home appuser</code> cree un utilisateur
+applicatif sans privileges ; <code>USER appuser</code> bascule
+<strong>avant</strong> le <code>CMD</code> : uvicorn ne tourne jamais en
+root.</li>
+<li>Le piege classique du non-root : les chemins inscriptibles. Le
+modele HuggingFace est telecharge au runtime, donc <code>HF_HOME</code>
+pointe vers <code>/app/.cache/huggingface</code>, cree et
+<code>chown</code> a <code>appuser</code> au build. Sans ca, crash au
+premier telechargement.</li>
+<li>Le <code>HEALTHCHECK</code> appelle <code>/health</code> en Python
+pur (pas de curl dans l’image slim). <code>--start-period=40s</code>
+laisse le temps au demarrage (chargement modele) avant de compter les
+echecs.</li>
+<li>Le healthcheck alimente l’etat <code>healthy</code> Docker, utilise
+par les <code>depends_on: condition: service_healthy</code> du compose
+et visible dans le monitoring.</li>
+</ul>
+<h3
+id="dockerfile-reco-fitness-meme-pattern-mspr-reco-fitnessreco-fitnessdockerfile">6.3
+Dockerfile Reco-Fitness : meme pattern
+(MSPR-Reco-Fitness/reco-fitness/Dockerfile)</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Durcissement (mise en production MSPR3) : execution en utilisateur non-root.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># MPLCONFIGDIR inscriptible pour matplotlib (backend Agg, generation des PNG d&#39;eval).</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> MPLCONFIGDIR=/tmp/matplotlib</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">useradd</span> <span class="at">--create-home</span> appuser <span class="dt">\</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&amp;&amp;</span> <span class="fu">chown</span> <span class="at">-R</span> appuser:appuser /app</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">USER</span> appuser</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="kw">HEALTHCHECK</span> <span class="op">--interval=30s</span> <span class="op">--timeout=10s</span> <span class="op">--start-period=30s</span> <span class="op">--retries=3</span> \</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">CMD</span> <span class="ex">python</span> <span class="at">-c</span> <span class="st">&quot;import urllib.request,sys; sys.exit(0 if urllib.request.urlopen(&#39;http://localhost:8000/health&#39;, timeout=8).status==200 else 1)&quot;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Pattern volontairement <strong>identique</strong> entre les deux
+microservices FastAPI : <code>useradd appuser</code>,
+<code>chown</code>, <code>USER appuser</code>, <code>HEALTHCHECK</code>
+Python. L’homogeneite facilite l’audit (un seul pattern a
+verifier).</li>
+<li>La variable inscriptible change selon le besoin du service : ici
+<code>MPLCONFIGDIR</code> pour matplotlib (generation des PNG
+d’evaluation), la-bas <code>HF_HOME</code> pour HuggingFace. Meme cause
+(non-root ne peut plus ecrire n’importe ou), reponse adaptee.</li>
+<li>Si le jury demande “comment verifier ?” :
+<code>docker exec mspr-reco-fitness whoami</code> renvoie
+<code>appuser</code>, et <code>docker inspect</code> montre
+<code>no-new-privileges</code> dans <code>SecurityOpt</code>.</li>
+</ul>
+<h3
+id="generation-des-secrets-dans-bootstrap.sh-mspr-deploybootstrap.sh">6.4
+Generation des secrets dans bootstrap.sh (MSPR-Deploy/bootstrap.sh)</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mot de passe alphanumerique (URL-safe pour les chaines postgres://...).</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gen_password()</span> <span class="kw">{</span> <span class="ex">openssl</span> rand <span class="at">-base64</span> 32 <span class="kw">|</span> <span class="fu">tr</span> <span class="at">-dc</span> <span class="st">&#39;A-Za-z0-9&#39;</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-c</span> 24<span class="kw">;</span> <span class="kw">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="va">current_secret</span><span class="op">=</span><span class="va">$(</span><span class="fu">grep</span> <span class="at">-E</span> <span class="st">&#39;^BETTER_AUTH_SECRET=&#39;</span> <span class="st">&quot;</span><span class="va">$ENV_FILE</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-1</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span><span class="op">=</span> <span class="at">-f2-</span> <span class="kw">||</span> <span class="fu">true</span><span class="va">)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-z</span> <span class="st">&quot;</span><span class="va">$current_secret</span><span class="st">&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="va">new_secret</span><span class="op">=</span><span class="va">$(</span><span class="ex">openssl</span> rand <span class="at">-base64</span> 64 <span class="kw">|</span> <span class="fu">tr</span> <span class="at">-d</span> <span class="st">&#39;\n&#39;</span><span class="va">)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ... (ecriture dans .env via awk)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log</span> <span class="st">&quot;BETTER_AUTH_SECRET genere&quot;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Mots de passe des bases generes si absents (evite le defaut &#39;password&#39; en exploitation).</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Sur un volume deja initialise avec l&#39;ancien mot de passe, faire d&#39;abord un reset (down -v).</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="ex">ensure_env_value</span> DB_PASSWORD <span class="st">&quot;</span><span class="va">$(</span><span class="ex">gen_password</span><span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="ex">ensure_env_value</span> AUTH_DB_PASSWORD <span class="st">&quot;</span><span class="va">$(</span><span class="ex">gen_password</span><span class="va">)</span><span class="st">&quot;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>openssl rand -base64 64</code> produit le secret HMAC du JWT :
+<strong>64 octets d’aleatoire</strong>, bien au-dela de la taille du
+bloc de SHA-512. Genere une seule fois, reutilise ensuite (idempotence :
+on ne regenere que si absent ou vide).</li>
+<li><code>gen_password</code> : 24 caracteres alphanumeriques. Le
+<code>tr -dc 'A-Za-z0-9'</code> garantit l’absence de caracteres
+speciaux, donc un mot de passe <strong>injectable tel quel dans une
+URL</strong> <code>postgres://user:pass@host</code> sans encodage.</li>
+<li><code>ensure_env_value</code> n’ecrase jamais une valeur existante :
+on peut relancer <code>bootstrap.sh</code> sans casser une stack
+initialisee.</li>
+<li>Le commentaire sur le <code>down -v</code> est un vrai piege
+d’exploitation : PostgreSQL fixe le mot de passe <strong>au premier init
+du volume</strong>. Changer <code>.env</code> apres coup ne change pas
+le mot de passe de la base, il faut reinitialiser le volume.</li>
+</ul>
+<h3
+id="dechiffrement-des-cles-api-avec-validation-de-format-mspr-deploybootstrap.sh">6.5
+Dechiffrement des cles API avec validation de format
+(MSPR-Deploy/bootstrap.sh)</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-n</span> <span class="st">&quot;</span><span class="va">${MSPR_PASS</span><span class="op">:-</span><span class="va">}</span><span class="st">&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="va">pass</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$MSPR_PASS</span><span class="st">&quot;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&#39;\033[1;34m[bootstrap]\033[0m Passphrase pour dechiffrer les cles API (Resend + Mistral) : &#39;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="bu">read</span> <span class="at">-rs</span> <span class="va">pass</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="st">&quot;</span><span class="va">$need_resend</span><span class="st">&quot;</span> <span class="ot">-eq</span> 1 <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="va">decrypted</span><span class="op">=</span><span class="va">$(</span><span class="ex">openssl</span> enc <span class="at">-aes-256-cbc</span> <span class="at">-d</span> <span class="at">-pbkdf2</span> <span class="at">-iter</span> 100000 <span class="at">-salt</span> <span class="at">-pass</span> pass:<span class="st">&quot;</span><span class="va">$pass</span><span class="st">&quot;</span> <span class="at">-in</span> <span class="st">&quot;</span><span class="va">$RESEND_ENC</span><span class="st">&quot;</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null<span class="va">)</span> <span class="dt">\</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&amp;&amp;</span> <span class="kw">[[</span> <span class="st">&quot;</span><span class="va">$decrypted</span><span class="st">&quot;</span> <span class="ot">=~</span> <span class="pp">^</span><span class="ss">re_</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... (ecriture RESEND_API_KEY dans .env)</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="ex">log</span> <span class="st">&quot;RESEND_API_KEY dechiffree depuis secrets/resend.enc&quot;</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="ex">fail</span> <span class="st">&quot;Dechiffrement Resend echoue (passphrase incorrecte ?). Relancez ou renseignez RESEND_API_KEY a la main.&quot;</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">fi</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  <span class="bu">unset</span> <span class="va">decrypted</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Chiffrement symetrique <code>aes-256-cbc</code> avec
+<strong>sel</strong> et derivation <strong>PBKDF2 a 100000
+iterations</strong> : la passphrase n’est pas utilisee directement comme
+cle, et chaque tentative de bruteforce coute 100000 hashs.</li>
+<li><strong>Validation du format apres dechiffrement</strong> : une cle
+Resend commence par <code>re_</code>
+(<code>[[ "$decrypted" =~ ^re_ ]]</code>), une cle Mistral matche
+<code>^[A-Za-z0-9]{20,}$</code>. Pourquoi : avec une mauvaise
+passphrase, openssl peut sortir des octets aleatoires sans erreur ; le
+regex detecte ce cas et echoue proprement au lieu d’ecrire du bruit dans
+<code>.env</code>.</li>
+<li>La passphrase vient de <code>MSPR_PASS</code> (mode non interactif)
+ou d’un prompt <code>read -rs</code> (saisie masquee).
+<code>unset pass</code> et <code>unset decrypted</code> apres usage :
+pas de secret qui traine dans l’environnement du shell.</li>
+<li>Si les <code>.enc</code> sont absents : message explicite et
+fallback (Resend a renseigner a la main, Mistral vide donc bascule
+Ollama).</li>
+</ul>
+<h3
+id="gitignore-ce-qui-ne-part-jamais-dans-le-depot-mspr-deploy.gitignore">6.6
+.gitignore : ce qui ne part jamais dans le depot
+(MSPR-Deploy/.gitignore)</h3>
+<pre class="gitignore"><code>.env
+.env.local
+.env.*.local
+
+# Sources clonees par bootstrap-dev.sh
+sources/
+
+# Sauvegardes locales (backup.sh)
+backups/
+
+# Memo passphrase (jamais commit)
+.passphrase.local</code></pre>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>.env</code> contient <strong>tous</strong> les secrets en
+clair apres bootstrap (secret JWT, mots de passe, cles API dechiffrees)
+: il est exclu en premiere ligne.</li>
+<li><code>backups/</code> contient des dumps complets des bases (donc
+les emails de comptes) : exclu aussi.</li>
+<li><code>.passphrase.local</code> est un memo local de la passphrase de
+dechiffrement : exclu explicitement.</li>
+<li>Inversement, <code>secrets/*.enc</code> <strong>est
+versionne</strong> : c’est voulu, le contenu est chiffre (cf. question
+Q3).</li>
+</ul>
+<h3
+id="blocage-public-des-metriques-via-traefik-mspr-deploydocker-compose.traefik.yml">6.7
+Blocage public des metriques via Traefik
+(MSPR-Deploy/docker-compose.traefik.yml)</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">      # Blocage public des endpoints de metriques (middleware declare une seule fois ici)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.middlewares.mspr-metrics-deny.ipallowlist.sourcerange=127.0.0.1/32&quot;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api-metrics.rule=Host(`mspr-api.zespri.duckdns.org`) &amp;&amp; PathPrefix(`/api/actuator`)&quot;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api-metrics.entrypoints=websecure&quot;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api-metrics.tls.certresolver=duckdns&quot;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api-metrics.priority=100&quot;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api-metrics.middlewares=mspr-metrics-deny&quot;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;traefik.http.routers.mspr-api-metrics.service=mspr-api&quot;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Le middleware <code>mspr-metrics-deny</code> est une
+<strong>ipAllowList limitee a <code>127.0.0.1/32</code></strong> :
+aucune IP publique ne matche, donc 403 systematique. Declare une fois,
+reutilise par les routeurs metriques d’Auth, AI-Nutrition et
+Reco-Fitness (<code>Path(/metrics)</code>).</li>
+<li><code>priority=100</code> : ce routeur passe <strong>avant</strong>
+le routeur applicatif general du meme host. Sans priorite explicite,
+Traefik departage par longueur de regle et <code>/api/actuator</code>
+pourrait etre servi par la route ouverte.</li>
+<li>Prometheus n’est pas impacte : il scrape en interne via le reseau
+Docker (<code>mspr-api:8080</code>), sans passer par Traefik.</li>
+<li>Resultat verifie en production : <strong>403</strong> sur
+<code>/metrics</code> et <code>/api/actuator</code> depuis l’exterieur,
+<strong>200</strong> sur les routes applicatives normales.</li>
+</ul>
+<h3
+id="la-migration-rgpd-v07-mspr-dbmigrationsv07__drop_users_table.sql">6.8
+La migration RGPD : V07
+(MSPR-DB/migrations/V07__drop_users_table.sql)</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Suppression de la table users et des FK associees.</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">-- Les datasets sources (Kaggle) sont heterogenes et anonymises, sans</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- identifiant utilisateur commun.</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> nutrition_entries <span class="kw">DROP</span> <span class="kw">CONSTRAINT</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> nutrition_entries_user_id_fkey;</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> exercise_entries <span class="kw">DROP</span> <span class="kw">CONSTRAINT</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> exercise_entries_user_id_fkey;</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> biometric_entries <span class="kw">DROP</span> <span class="kw">CONSTRAINT</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> biometric_entries_user_id_fkey;</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> nutrition_entries <span class="kw">DROP</span> <span class="kw">COLUMN</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> user_id;</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> exercise_entries <span class="kw">DROP</span> <span class="kw">COLUMN</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> user_id;</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> biometric_entries <span class="kw">DROP</span> <span class="kw">COLUMN</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> user_id;</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> <span class="cf">IF</span> <span class="kw">EXISTS</span> users;</span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>C’est l’argument RGPD <strong>le plus concret</strong> du dossier :
+la base metier n’a structurellement <strong>plus de table de
+personnes</strong> ni de colonne <code>user_id</code> dans les tables de
+donnees de sante. La minimisation n’est pas une promesse, c’est un
+schema.</li>
+<li>Ordre des operations : d’abord les contraintes FK, puis les
+colonnes, puis la table. <code>IF EXISTS</code> partout : migration
+<strong>idempotente</strong>, rejouable sans erreur.</li>
+<li>Justification metier dans le commentaire : les datasets sources sont
+anonymises et sans identifiant commun, les lignes inserees avaient
+toutes <code>user_id NULL</code>. La table ne servait a rien et creait
+un risque.</li>
+<li>Les comptes reels vivent ailleurs : base <code>auth_db</code> du
+service Auth, separee physiquement et bindee sur
+<code>127.0.0.1:5433</code>.</li>
+</ul>
+<hr />
+<h2 id="tableau-recapitulatif">7. Tableau recapitulatif</h2>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 23%" />
+<col style="width: 30%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th>Domaine</th>
+<th>Points forts</th>
+<th>Limites assumees</th>
+<th>Pistes realistes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Auth / acces</strong></td>
+<td>Auth centralisee better-auth, JWT HS512 valides localement via
+secret partage, endpoints proteges</td>
+<td>Metriques (<code>/metrics</code>,
+<code>/api/actuator/prometheus</code>) sans JWT sur le reseau
+Docker</td>
+<td>Authentifier les endpoints de metriques ou les restreindre au reseau
+de supervision</td>
+</tr>
+<tr>
+<td><strong>Secrets / crypto</strong></td>
+<td>Secret JWT 64 octets genere, cles API chiffrees au repos
+(aes-256-cbc + PBKDF2 100000 iter), <code>.env</code> hors git, mots de
+passe generes</td>
+<td>Pas de gestionnaire de secrets externe, pas de rotation
+automatisee</td>
+<td>Gestionnaire de secrets (type Vault / SOPS) si la plateforme sort du
+cadre demo</td>
+</tr>
+<tr>
+<td><strong>Conteneurs / config</strong></td>
+<td><code>x-hardening</code> partout (<code>no-new-privileges</code>,
+rotation logs), non-root + HEALTHCHECK, bases sur
+<code>127.0.0.1</code></td>
+<td>Grafana <code>admin/admin</code> par defaut, pas de TLS en
+local</td>
+<td>Changer le mot de passe Grafana, TLS au-dela du poste local (fait
+via Traefik en expo publique)</td>
+</tr>
+<tr>
+<td><strong>Supply chain</strong></td>
+<td>Images CI tracables par SHA, publication conditionnee aux lint +
+tests</td>
+<td><strong>Pas de scan Trivy/Grype</strong>, tag <code>:latest</code>
+en deploiement</td>
+<td>Scan d’images en CI + figer le tag de deploiement (<a
+href="CICD-Qualite.html">fiche CI/CD et qualite</a>)</td>
+</tr>
+<tr>
+<td><strong>RGPD</strong></td>
+<td>Datasets anonymises, table <code>users</code> supprimee (V07), zero
+PII en base metier, comptes isoles dans <code>auth_db</code></td>
+<td>Pas de workflow export/suppression a la demande, pas de chiffrement
+au repos</td>
+<td>Workflow RGPD explicite cote comptes (export, suppression sur
+demande)</td>
+</tr>
+<tr>
+<td><strong>Detection</strong></td>
+<td>Prometheus + Grafana + Loki + Promtail + Alertmanager, 3
+alertes</td>
+<td>Detection limitee (dispo + ressources), pas d’IDS</td>
+<td>Etendre les regles d’alerte (<a href="Observabilite.html">fiche
+Observabilite</a>)</td>
+</tr>
+<tr>
+<td><strong>Reponse / reprise</strong></td>
+<td>Alertmanager en place, <code>backup.sh</code> /
+<code>restore.sh</code> / <code>clean.sh</code>,
+<code>restart: unless-stopped</code></td>
+<td>Aucun routage de notification, pas de plan de reponse formalise,
+sauvegardes locales sans test de restauration automatise</td>
+<td>Plan de reponse a incident + canal Alertmanager, externaliser les
+sauvegardes + test de restauration</td>
+</tr>
+</tbody>
+</table>
+<p>Message a faire passer au jury : la securite du livrable n’est pas
+“tout est verrouille”, c’est <strong>“voila ce qui est en place, voila
+ce qui manque, et voila dans quel ordre on le traiterait”</strong>.
+C’est exactement la posture attendue en exploitation.</p>
+<hr />
+<h2 id="questions-probables-du-jury">8. Questions probables du jury</h2>
+<h3
+id="q1.-pourquoi-hs512-symetrique-et-pas-rs256-asymetrique-pour-les-jwt">Q1.
+Pourquoi HS512 (symetrique) et pas RS256 (asymetrique) pour les JWT
+?</h3>
+<p><strong>HS512</strong> : HMAC-SHA-512, un <strong>seul secret
+partage</strong> sert a signer et a verifier. <strong>RS256</strong> :
+paire de cles RSA, la privee signe (emetteur seul), la publique verifie
+(distribuable a tous).</p>
+<p>Choix HS512 ici parce que le contexte s’y prete :</p>
+<ol type="1">
+<li><strong>Un seul emetteur</strong> (better-auth) et des consommateurs
+internes de confiance (API, AI-Nutrition, Reco-Fitness), tous operes par
+la meme equipe sur le meme reseau Docker.</li>
+<li><strong>Distribution triviale du secret</strong> : la meme variable
+<code>BETTER_AUTH_SECRET</code> injectee par le compose depuis le
+<code>.env</code> genere par bootstrap.</li>
+<li><strong>Validation locale sans appel reseau</strong> : chaque
+service verifie la signature lui-meme, pas de dependance runtime au
+service Auth, pas de point de contention.</li>
+</ol>
+<p>La limite a annoncer soi-meme : avec HS512, <strong>tout detenteur du
+secret peut aussi forger des tokens</strong>. Si un service consommateur
+est compromis, l’attaquant peut emettre des JWT valides. Avec RS256, les
+consommateurs n’ont que la cle publique : compromis, ils ne peuvent rien
+forger. Le jour ou des consommateurs externes apparaissent (partenaires,
+app mobile validant cote tiers), on bascule sur de l’asymetrique avec
+publication des cles publiques (le schema better-auth contient deja une
+table <code>jwks</code>, donc la voie est ouverte).</p>
+<h3 id="q2.-ou-vivent-les-secrets-et-qui-les-genere">Q2. Ou vivent les
+secrets et qui les genere ?</h3>
+<p>Trois familles, trois reponses :</p>
+<ol type="1">
+<li><strong>Generables</strong> : <code>BETTER_AUTH_SECRET</code>
+(<code>openssl rand -base64 64</code>), <code>DB_PASSWORD</code> et
+<code>AUTH_DB_PASSWORD</code> (<code>gen_password</code>, 24
+alphanumeriques). Generes par <code>bootstrap.sh</code> au premier
+lancement, ecrits dans <code>.env</code> (hors git), jamais regeneres si
+deja presents.</li>
+<li><strong>Non generables</strong> (cles de services tiers) :
+<code>RESEND_API_KEY</code> et <code>MISTRAL_API_KEY</code>. Stockees
+<strong>chiffrees</strong> dans le depot (<code>secrets/*.enc</code>),
+dechiffrees par bootstrap avec une passphrase (variable
+<code>MSPR_PASS</code> ou prompt masque), validees par regex de format,
+ecrites dans <code>.env</code>.</li>
+<li><strong>Distribution aux conteneurs</strong> :
+<code>docker compose --env-file .env</code> injecte tout en variables
+d’environnement. Pas de secret en dur dans les images ni dans les
+compose versionnes.</li>
+</ol>
+<p>Le point d’attention a citer : <code>.env</code> est le maillon
+sensible (tout en clair dedans), d’ou son exclusion git et le perimetre
+“poste d’exploitation local”.</p>
+<h3
+id="q3.-pourquoi-versionner-des-cles-chiffrees-dans-le-depot-plutot-que-de-tout-exclure">Q3.
+Pourquoi versionner des cles chiffrees dans le depot plutot que de tout
+exclure ?</h3>
+<p>Pour le <strong>demarrage en une commande</strong> : le jury (ou un
+nouvel exploitant) clone le depot, lance <code>./bootstrap.sh</code>,
+saisit <strong>une passphrase</strong>, et la stack monte avec emails de
+verification et LLM Mistral fonctionnels. Tout exclure obligerait a
+transmettre les cles par un canal separe (message, doc privee), ce qui
+est en pratique <strong>moins</strong> controle qu’un blob aes-256-cbc +
+PBKDF2 100000 iterations dans un depot.</p>
+<p>Garde-fous : le contenu des <code>.enc</code> est inutilisable sans
+la passphrase (jamais commitee, <code>.passphrase.local</code> est
+gitignore), et le dechiffrement valide le format de la cle obtenue avant
+de l’ecrire.</p>
+<p>Limites a assumer : pas de rotation automatique, revocation manuelle
+(regenerer la cle chez le fournisseur, rechiffrer), et la securite
+repose sur la qualite de la passphrase. En production reelle :
+gestionnaire de secrets dedie (Vault, SOPS/age, secrets manager
+cloud).</p>
+<h3 id="q4.-cest-quoi-no-new-privileges-concretement">Q4. C’est quoi
+<code>no-new-privileges</code> concretement ?</h3>
+<p>C’est une option Docker
+(<code>security_opt: - no-new-privileges:true</code>) qui pose le flag
+noyau Linux <code>no_new_privs</code> sur les processus du conteneur.
+Effet : <strong>aucun <code>execve</code> ne peut accorder plus de
+privileges que ceux du processus appelant</strong>. Concretement, les
+mecanismes d’escalade classiques sont neutralises :</p>
+<ul>
+<li>les binaires <strong>setuid/setgid</strong> (du type
+<code>sudo</code>, <code>su</code>, <code>passwd</code>) s’executent
+sans gagner les droits du proprietaire,</li>
+<li>les <strong>file capabilities</strong> ne sont plus accordees a
+l’exec.</li>
+</ul>
+<p>Scenario defendu : un attaquant obtient une execution de code dans le
+conteneur (faille applicative) et cherche a passer root via un binaire
+setuid present dans l’image. Avec <code>no_new_privs</code>, ce chemin
+est ferme. C’est applique a <strong>tous</strong> les services via
+l’ancre <code>x-hardening</code>, donc verifiable d’un coup d’oeil dans
+le compose.</p>
+<h3 id="q5.-pourquoi-des-conteneurs-non-root">Q5. Pourquoi des
+conteneurs non-root ?</h3>
+<p><strong>Reduction de l’impact d’une compromission.</strong> Si
+l’application est compromise, l’attaquant herite des droits du processus
+: <code>appuser</code> ne peut pas ecrire hors de ses dossiers, pas
+installer de paquets, pas toucher aux binaires systeme. Root dans le
+conteneur, c’est aussi un risque accru en cas d’evasion de conteneur
+(uid 0 cote noyau partage).</p>
+<p>C’est la <strong>defense en profondeur</strong> avec Q4 : non-root
+reduit les droits <strong>initiaux</strong>,
+<code>no-new-privileges</code> empeche d’en <strong>regagner</strong>.
+Les deux ensemble ferment l’escalade dans les deux sens.</p>
+<p>Le cout reel, visible dans les Dockerfile : il faut gerer les chemins
+inscriptibles. AI-Nutrition pointe <code>HF_HOME</code> vers un cache
+<code>chown appuser</code>, Reco-Fitness pointe
+<code>MPLCONFIGDIR</code> vers <code>/tmp/matplotlib</code>. C’est le
+signe que le non-root est reellement applique, pas juste declare.</p>
+<h3
+id="q6.-quelles-donnees-personnelles-subsistent-dans-la-plateforme-et-ou">Q6.
+Quelles donnees personnelles subsistent dans la plateforme, et ou ?</h3>
+<p>Reponse courte : <strong>les emails de comptes, dans
+<code>auth_db</code>, et rien d’autre</strong>.</p>
+<ul>
+<li>La <strong>base metier</strong> <code>healthai</code> ne contient
+aucune PII : datasets anonymises, table <code>users</code> supprimee
+(V07), aucune colonne <code>user_id</code> dans les tables de
+sante.</li>
+<li>La <strong>base auth</strong> <code>auth_db</code> (PostgreSQL
+separee, port <code>127.0.0.1:5433</code>) contient les comptes : email,
+mot de passe en <strong>stockage hashe gere par better-auth (champ
+<code>account.password</code>)</strong>, et les sessions associees.</li>
+<li>Cette separation physique est volontaire : le perimetre RGPD est
+reduit a une seule base, non exposee hors de l’hote, sauvegardee et
+restaurable par les scripts d’exploitation.</li>
+</ul>
+<h3
+id="q7.-comment-le-rgpd-est-il-respecte-sur-des-donnees-de-sante">Q7.
+Comment le RGPD est-il respecte sur des donnees de sante ?</h3>
+<p>Par <strong>anonymisation et minimisation</strong>, pas par
+accumulation de consentements :</p>
+<ol type="1">
+<li>Les datasets charges par l’ETL sont <strong>anonymises a la
+source</strong> : pas d’identifiant commun, pas de rattachement possible
+a une personne.</li>
+<li>La migration <strong>V07</strong> a supprime la table
+<code>users</code> et les FK <code>user_id</code> des tables
+<code>nutrition_entries</code>, <code>exercise_entries</code>,
+<code>biometric_entries</code> : le schema lui-meme interdit le
+rattachement nominatif.</li>
+<li>Resultat : les donnees de sante en base metier ne concernent
+<strong>pas des individus identifiables</strong>, ce qui les sort du
+perimetre des donnees personnelles ; et ce qui reste identifiant (emails
+de comptes) est isole dans <code>auth_db</code>.</li>
+</ol>
+<p>Limites a donner spontanement : pas de workflow d’export ou de
+suppression a la demande (on s’appuie sur les fonctions natives de
+better-auth), pas de chiffrement au repos des bases. C’est documente
+comme piste, pas cache.</p>
+<h3
+id="q8.-pas-de-scan-dimages-pourquoi-cest-une-limite-et-comment-la-lever">Q8.
+Pas de scan d’images : pourquoi c’est une limite et comment la lever
+?</h3>
+<p>Aujourd’hui la chaine garantit la <strong>tracabilite</strong>
+(images taggees par SHA de commit) et la <strong>qualite
+fonctionnelle</strong> (publication seulement si lint et tests passent),
+mais <strong>personne ne verifie les CVE</strong> : une faille connue
+dans <code>python:3.12-slim</code>, une dependance pip ou une lib
+systeme part en production sans signal. Et le deploiement par defaut
+tire <code>:latest</code>, donc on ne sait pas precisement quelle image
+tourne sans aller lire les digests.</p>
+<p>Pour lever la limite, deux actions concretes :</p>
+<ol type="1">
+<li>Un job <strong>Trivy</strong> (ou Grype) dans chaque CI apres le
+build :
+<code>trivy image --exit-code 1 --severity HIGH,CRITICAL &lt;image&gt;</code>,
+qui casse la publication si une vulnerabilite haute est presente, plus
+un scan periodique des images deja publiees (les CVE sortent apres la
+publication).</li>
+<li><strong>Figer le tag de deploiement</strong> sur le tag SHA deja
+produit par la CI au lieu de <code>:latest</code> : on sait exactement
+ce qui tourne et on peut revenir en arriere. Voir <a
+href="CICD-Qualite.html">fiche CI/CD et qualite</a>.</li>
+</ol>
+<h3
+id="q9.-pourquoi-pas-de-tls-en-local-et-comment-cest-gere-en-exposition-publique">Q9.
+Pourquoi pas de TLS en local, et comment c’est gere en exposition
+publique ?</h3>
+<p>En local, la plateforme tourne sur un poste unique : les flux ne
+quittent pas la machine (services en HTTP sur localhost, bases sur
+<code>127.0.0.1</code>). Ajouter du TLS local imposerait de generer et
+faire accepter des certificats auto-signes a chaque evaluateur pour un
+gain quasi nul : c’est assume comme hors scope demo.</p>
+<p>En exposition publique, l’overlay
+<code>docker-compose.traefik.yml</code> change la donne : <strong>tout
+passe par Traefik en <code>websecure</code></strong> avec des
+certificats obtenus via le certresolver <code>duckdns</code> (wildcard
+<code>*.zespri.duckdns.org</code>), les variables
+<code>BETTER_AUTH_URL</code> / <code>CORS_ORIGIN</code> basculent en
+<code>https://</code>, et les endpoints de metriques sont bloques par le
+middleware <code>mspr-metrics-deny</code>. Le TLS est donc
+<strong>termine au reverse proxy</strong>, les services restant en HTTP
+sur le reseau Docker interne. Detail dans la <a
+href="Configs-Resilience.html">fiche Configs et resilience</a>.</p>
+<h3 id="q10.-grafana-en-adminadmin-quel-risque-quelle-mitigation">Q10.
+Grafana en admin/admin : quel risque, quelle mitigation ?</h3>
+<p>Le compose monitoring definit
+<code>${GRAFANA_ADMIN_USER:-admin}</code> /
+<code>${GRAFANA_ADMIN_PASSWORD:-admin}</code> : si la variable n’est pas
+posee, le defaut est <code>admin/admin</code>.</p>
+<p><strong>Risque</strong> : quiconque atteint Grafana se connecte en
+admin et lit toute la telemetrie (metriques Prometheus, logs Loki de
+tous les conteneurs, qui peuvent contenir des informations sensibles),
+peut modifier dashboards et datasources. En local le port n’est
+atteignable que depuis le poste ; en exposition publique Grafana est
+derriere Traefik avec TLS, donc accessible du monde : le defaut devient
+critique.</p>
+<p><strong>Mitigation</strong> : poser
+<code>GRAFANA_ADMIN_PASSWORD</code> dans <code>.env</code> (la surcharge
+existe deja), c’est d’ailleurs liste dans les pistes d’amelioration de
+<code>securite.md</code>. Une suite logique serait de le generer dans
+<code>bootstrap.sh</code> comme les mots de passe de bases. A dire
+honnetement : c’est une limite connue et documentee, pas un oubli
+decouvert en seance.</p>
+<h3 id="q11.-a-quoi-sert-le-nist-csf-en-plus-dowasp">Q11. A quoi sert le
+NIST CSF en plus d’OWASP ?</h3>
+<p>Les deux ne repondent pas a la meme question. <strong>OWASP Top
+10</strong> est un catalogue de <strong>vulnerabilites
+applicatives</strong> : il audite le code et la configuration (acces,
+crypto, injection…). Il ne dit <strong>rien</strong> des sauvegardes, de
+la detection d’incident, de la reponse ou de la reprise. <strong>NIST
+CSF</strong> est un cadre de <strong>gestion du risque en
+exploitation</strong> : ses 5 fonctions couvrent le cycle complet, avant
+l’incident (Identify, Protect), pendant (Detect, Respond), apres
+(Recover).</p>
+<p>Sur ce projet, c’est le NIST qui fait apparaitre les vrais constats
+d’exploitation : Respond est partiel (Alertmanager regroupe mais ne
+route aucune notification, pas de plan de reponse) et Recover repose sur
+des sauvegardes locales non testees automatiquement. Aucune categorie
+OWASP n’aurait revele ca. Et le RGPD ajoute la dimension legale propre
+aux donnees de sante. Les trois referentiels donnent donc trois vues
+complementaires du meme systeme : applicative, operationnelle,
+legale.</p>
+<h3
+id="q12.-si-vous-aviez-un-mois-de-plus-que-feriez-vous-en-priorite">Q12.
+Si vous aviez un mois de plus, que feriez-vous en priorite ?</h3>
+<p>Derouler les pistes de <code>securite.md</code>, ordonnees par
+rapport effort/reduction de risque :</p>
+<ol type="1">
+<li><strong>Scan d’images Trivy/Grype en CI + tag de deploiement
+fige</strong> : automatisable en quelques jours, couvre le risque supply
+chain qui est aujourd’hui le plus aveugle.</li>
+<li><strong>Authentifier ou restreindre les endpoints de
+metriques</strong> partout (pas seulement au niveau Traefik) et
+<strong>changer le mot de passe Grafana</strong> : petites actions,
+exposition reduite immediatement.</li>
+<li><strong>Canal de notification Alertmanager + plan de reponse a
+incident</strong> : une alerte que personne ne recoit ne sert a rien ;
+ca fait passer Respond de partiel a couvert.</li>
+<li><strong>Externaliser les sauvegardes et automatiser un test de
+restauration</strong> : une sauvegarde non testee est une hypothese, pas
+une garantie.</li>
+<li><strong>Workflow RGPD explicite</strong> (export et suppression de
+compte a la demande) : complete la minimisation deja en place cote
+donnees.</li>
+</ol>
+<p>L’ordre est defendable devant le jury : d’abord ce qui reduit le
+risque le plus probable a moindre effort, ensuite ce qui demande de
+l’outillage ou du processus.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

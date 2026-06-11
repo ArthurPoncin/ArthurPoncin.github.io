@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <title>Déploiement - Révisions MSPR3</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<ul>
+<li><a href="#fiche-de-revision-deploiement-et-orchestration"
+id="toc-fiche-de-revision-deploiement-et-orchestration">Fiche de
+revision : Deploiement et orchestration</a>
+<ul>
+<li><a href="#vocabulaire-a-connaitre-avant-de-lire"
+id="toc-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</a></li>
+<li><a href="#tldr" id="toc-tldr">1. TL;DR</a></li>
+<li><a href="#architecture" id="toc-architecture">2. Architecture</a>
+<ul>
+<li><a href="#conteneurs-et-reseaux" id="toc-conteneurs-et-reseaux">2.1
+Conteneurs et reseaux</a></li>
+<li><a href="#arborescence-du-depot-mspr-deploy"
+id="toc-arborescence-du-depot-mspr-deploy">2.2 Arborescence du depot
+MSPR-Deploy</a></li>
+</ul></li>
+<li><a href="#stack-technique" id="toc-stack-technique">3. Stack
+technique</a></li>
+<li><a href="#bootstrap.sh-le-deploiement-en-une-commande"
+id="toc-bootstrap.sh-le-deploiement-en-une-commande">4. bootstrap.sh :
+le deploiement en une commande</a>
+<ul>
+<li><a href="#une-commande-deux-modes"
+id="toc-une-commande-deux-modes">4.1 Une commande, deux modes</a></li>
+<li><a href="#verification-des-prerequis"
+id="toc-verification-des-prerequis">4.2 Verification des
+prerequis</a></li>
+<li><a href="#preparation-idempotente-du-.env"
+id="toc-preparation-idempotente-du-.env">4.3 Preparation idempotente du
+.env</a></li>
+<li><a href="#generation-des-secrets"
+id="toc-generation-des-secrets">4.4 Generation des secrets</a></li>
+<li><a href="#dechiffrement-des-cles-api-chiffrees"
+id="toc-dechiffrement-des-cles-api-chiffrees">4.5 Dechiffrement des cles
+API chiffrees</a></li>
+<li><a href="#lancement-et-temps-de-demarrage"
+id="toc-lancement-et-temps-de-demarrage">4.6 Lancement et temps de
+demarrage</a></li>
+</ul></li>
+<li><a href="#points-techniques-importants"
+id="toc-points-techniques-importants">5. Points techniques
+importants</a>
+<ul>
+<li><a
+href="#ancres-yaml-durcissement-et-rotation-des-logs-sur-tous-les-services"
+id="toc-ancres-yaml-durcissement-et-rotation-des-logs-sur-tous-les-services">5.1
+Ancres YAML : durcissement et rotation des logs sur tous les
+services</a></li>
+<li><a href="#les-trois-conditions-depends_on"
+id="toc-les-trois-conditions-depends_on">5.2 Les trois conditions
+depends_on</a></li>
+<li><a href="#auth-migrate-les-migrations-en-conteneur-one-shot"
+id="toc-auth-migrate-les-migrations-en-conteneur-one-shot">5.3
+auth-migrate : les migrations en conteneur one-shot</a></li>
+<li><a href="#isolation-reseau-dollama"
+id="toc-isolation-reseau-dollama">5.4 Isolation reseau d’Ollama</a></li>
+<li><a href="#ports-des-bases-bindes-sur-127.0.0.1"
+id="toc-ports-des-bases-bindes-sur-127.0.0.1">5.5 Ports des bases bindes
+sur 127.0.0.1</a></li>
+<li><a
+href="#le-volume-etl_data-partage-producteur-consommateur-en-lecture-seule"
+id="toc-le-volume-etl_data-partage-producteur-consommateur-en-lecture-seule">5.6
+Le volume etl_data partage (producteur / consommateur en lecture
+seule)</a></li>
+<li><a
+href="#scoring_autotrain-le-modele-de-scoring-entraine-au-demarrage"
+id="toc-scoring_autotrain-le-modele-de-scoring-entraine-au-demarrage">5.7
+SCORING_AUTOTRAIN : le modele de scoring entraine au demarrage</a></li>
+<li><a href="#flux-dauthentification-jwt"
+id="toc-flux-dauthentification-jwt">5.8 Flux d’authentification
+JWT</a></li>
+<li><a href="#le-bonus-kubernetes-non-realise-choix-assume"
+id="toc-le-bonus-kubernetes-non-realise-choix-assume">5.9 Le bonus
+Kubernetes : non realise, choix assume</a></li>
+</ul></li>
+<li><a href="#code-essentiel-a-savoir-expliquer-au-jury"
+id="toc-code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</a>
+<ul>
+<li><a href="#les-ancres-de-durcissement-docker-compose.yml"
+id="toc-les-ancres-de-durcissement-docker-compose.yml">6.1 Les ancres de
+durcissement (docker-compose.yml)</a></li>
+<li><a href="#generation-des-mots-de-passe-bootstrap.sh"
+id="toc-generation-des-mots-de-passe-bootstrap.sh">6.2 Generation des
+mots de passe (bootstrap.sh)</a></li>
+<li><a href="#generation-du-better_auth_secret-bootstrap.sh"
+id="toc-generation-du-better_auth_secret-bootstrap.sh">6.3 Generation du
+BETTER_AUTH_SECRET (bootstrap.sh)</a></li>
+<li><a
+href="#dechiffrement-des-cles-api-avec-validation-de-format-bootstrap.sh"
+id="toc-dechiffrement-des-cles-api-avec-validation-de-format-bootstrap.sh">6.4
+Dechiffrement des cles API avec validation de format
+(bootstrap.sh)</a></li>
+<li><a
+href="#auth-migrate-et-auth-le-one-shot-et-ses-conditions-docker-compose.yml"
+id="toc-auth-migrate-et-auth-le-one-shot-et-ses-conditions-docker-compose.yml">6.5
+auth-migrate et auth : le one-shot et ses conditions
+(docker-compose.yml)</a></li>
+<li><a
+href="#ollama-isole-et-ai-nutrition-double-reseau-docker-compose.yml"
+id="toc-ollama-isole-et-ai-nutrition-double-reseau-docker-compose.yml">6.6
+Ollama isole et ai-nutrition double reseau (docker-compose.yml)</a></li>
+<li><a
+href="#healthcheck-et-bind-localhost-de-la-base-metier-docker-compose.yml"
+id="toc-healthcheck-et-bind-localhost-de-la-base-metier-docker-compose.yml">6.7
+Healthcheck et bind localhost de la base metier
+(docker-compose.yml)</a></li>
+<li><a href="#clone-des-sources-en-mode-dev-bootstrap.sh"
+id="toc-clone-des-sources-en-mode-dev-bootstrap.sh">6.8 Clone des
+sources en mode dev (bootstrap.sh)</a></li>
+</ul></li>
+<li><a href="#recapitulatifs-ports-exposes-et-mode-prod-vs-dev"
+id="toc-recapitulatifs-ports-exposes-et-mode-prod-vs-dev">7.
+Recapitulatifs : ports exposes et mode prod vs dev</a>
+<ul>
+<li><a href="#ports-exposes" id="toc-ports-exposes">7.1 Ports
+exposes</a></li>
+<li><a href="#mode-prod-vs-mode-dev" id="toc-mode-prod-vs-mode-dev">7.2
+Mode prod vs mode dev</a></li>
+</ul></li>
+<li><a href="#questions-probables-du-jury"
+id="toc-questions-probables-du-jury">8. Questions probables du jury</a>
+<ul>
+<li><a
+href="#q1.-pourquoi-docker-compose-plutot-que-kubernetes-le-sujet-proposait-un-bonus-k8s-mono-noeud."
+id="toc-q1.-pourquoi-docker-compose-plutot-que-kubernetes-le-sujet-proposait-un-bonus-k8s-mono-noeud.">Q1.
+Pourquoi Docker Compose plutot que Kubernetes ? Le sujet proposait un
+bonus K8s mono-noeud.</a></li>
+<li><a
+href="#q2.-comment-garantissez-vous-le-demarrage-en-moins-de-10-minutes"
+id="toc-q2.-comment-garantissez-vous-le-demarrage-en-moins-de-10-minutes">Q2.
+Comment garantissez-vous le demarrage en moins de 10 minutes ?</a></li>
+<li><a href="#q3.-pourquoi-deux-modes-prod-et-dev"
+id="toc-q3.-pourquoi-deux-modes-prod-et-dev">Q3. Pourquoi deux modes
+prod et dev ?</a></li>
+<li><a
+href="#q4.-a-quoi-sert-auth-migrate-et-pourquoi-un-conteneur-one-shot"
+id="toc-q4.-a-quoi-sert-auth-migrate-et-pourquoi-un-conteneur-one-shot">Q4.
+A quoi sert auth-migrate, et pourquoi un conteneur one-shot ?</a></li>
+<li><a
+href="#q5.-quelles-sont-les-trois-conditions-depends_on-utilisees-et-leurs-differences"
+id="toc-q5.-quelles-sont-les-trois-conditions-depends_on-utilisees-et-leurs-differences">Q5.
+Quelles sont les trois conditions depends_on utilisees, et leurs
+differences ?</a></li>
+<li><a href="#q6.-pourquoi-ollama-est-il-isole-sans-port-expose"
+id="toc-q6.-pourquoi-ollama-est-il-isole-sans-port-expose">Q6. Pourquoi
+Ollama est-il isole sans port expose ?</a></li>
+<li><a href="#q7.-comment-les-services-se-resolvent-ils-entre-eux"
+id="toc-q7.-comment-les-services-se-resolvent-ils-entre-eux">Q7. Comment
+les services se resolvent-ils entre eux ?</a></li>
+<li><a href="#q8.-que-fait-bootstrap.sh-si-.env-existe-deja"
+id="toc-q8.-que-fait-bootstrap.sh-si-.env-existe-deja">Q8. Que fait
+bootstrap.sh si .env existe deja ?</a></li>
+<li><a
+href="#q9.-pourquoi-generer-les-mots-de-passe-plutot-que-garder-un-defaut"
+id="toc-q9.-pourquoi-generer-les-mots-de-passe-plutot-que-garder-un-defaut">Q9.
+Pourquoi generer les mots de passe plutot que garder un defaut
+?</a></li>
+<li><a
+href="#q10.-image-ghcr-vs-build-local-quelle-difference-quand-utiliser-quoi"
+id="toc-q10.-image-ghcr-vs-build-local-quelle-difference-quand-utiliser-quoi">Q10.
+Image GHCR vs build local : quelle difference, quand utiliser quoi
+?</a></li>
+<li><a href="#q11.-comment-ajouter-un-nouveau-service-a-la-stack"
+id="toc-q11.-comment-ajouter-un-nouveau-service-a-la-stack">Q11. Comment
+ajouter un nouveau service a la stack ?</a></li>
+<li><a
+href="#q12.-pourquoi-les-ports-des-bases-sont-ils-bindes-sur-127.0.0.1"
+id="toc-q12.-pourquoi-les-ports-des-bases-sont-ils-bindes-sur-127.0.0.1">Q12.
+Pourquoi les ports des bases sont-ils bindes sur 127.0.0.1 ?</a></li>
+</ul></li>
+</ul></li>
+</ul>
+    </nav>
+    <article>
+<h1 id="fiche-de-revision-deploiement-et-orchestration">Fiche de
+revision : Deploiement et orchestration</h1>
+<blockquote>
+<p>Support de revision pour la soutenance MSPR3 (TPRE601). Objectif :
+savoir defendre la conteneurisation et l’orchestration de la plateforme
+HealthAI Coach : le depot MSPR-Deploy comme point d’entree unique, le
+script <code>bootstrap.sh</code>, les deux modes prod/dev, le compose de
+base (11 services), les reseaux, les dependances de demarrage et la
+gestion des secrets.</p>
+</blockquote>
+<hr />
+<h2 id="vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire a
+connaitre avant de lire</h2>
+<p>Les 10 termes qui reviennent partout dans cette fiche.</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr>
+<th>Terme</th>
+<th>Definition en une phrase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Orchestration</strong></td>
+<td>Coordination automatisee du cycle de vie d’un ensemble de conteneurs
+: ordre de demarrage, reseaux, volumes, politique de redemarrage.</td>
+</tr>
+<tr>
+<td><strong>Docker Compose</strong></td>
+<td>Outil d’orchestration declaratif mono-machine : toute la stack est
+decrite dans un fichier YAML versionne, lancee avec
+<code>docker compose up</code>.</td>
+</tr>
+<tr>
+<td><strong>GHCR</strong></td>
+<td>GitHub Container Registry. Les 8 images applicatives y sont publiees
+: <code>ghcr.io/whitefoxxyt/mspr-&lt;service&gt;:latest</code>.</td>
+</tr>
+<tr>
+<td><strong>Ancre YAML</strong></td>
+<td>Mecanisme natif YAML (<code>&amp;nom</code> definit,
+<code>*nom</code> reference, <code>&lt;&lt;:</code> fusionne) qui
+factorise un bloc de configuration commun a plusieurs services.</td>
+</tr>
+<tr>
+<td><strong>Healthcheck</strong></td>
+<td>Commande executee periodiquement par Docker dans le conteneur ; son
+code retour determine l’etat <code>healthy</code> /
+<code>unhealthy</code>.</td>
+</tr>
+<tr>
+<td><strong><code>depends_on</code> (condition)</strong></td>
+<td>Declaration d’ordre de demarrage entre services, avec 3 conditions
+possibles : <code>service_started</code>, <code>service_healthy</code>,
+<code>service_completed_successfully</code>.</td>
+</tr>
+<tr>
+<td><strong>Conteneur one-shot</strong></td>
+<td>Conteneur qui execute une tache puis se termine
+(<code>restart: "no"</code>). Ici : <code>auth-migrate</code>, qui
+applique les migrations Drizzle.</td>
+</tr>
+<tr>
+<td><strong>Reseau bridge</strong></td>
+<td>Reseau virtuel Docker avec DNS integre : les conteneurs se joignent
+par nom de service ou par <code>container_name</code>, jamais par
+IP.</td>
+</tr>
+<tr>
+<td><strong>Volume nomme</strong></td>
+<td>Espace de stockage persistant gere par Docker ; survit a la
+destruction des conteneurs (mais pas a
+<code>docker compose down -v</code>).</td>
+</tr>
+<tr>
+<td><strong>JWT HS512</strong></td>
+<td>Jeton signe en HMAC-SHA512 avec un secret symetrique partage
+(<code>BETTER_AUTH_SECRET</code>), validable localement par chaque
+service.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tldr">1. TL;DR</h2>
+<p><strong>MSPR-Deploy</strong> est le depot d’orchestration de la
+plateforme : le point d’entree unique exige par le sujet MSPR3 (mise en
+production entierement scriptee). Une seule commande,
+<code>./bootstrap.sh</code>, verifie les prerequis, prepare le
+<code>.env</code>, genere les secrets, dechiffre les cles API, puis
+lance les 11 conteneurs via Docker Compose.</p>
+<ul>
+<li><strong>Point d’entree</strong> : <code>./bootstrap.sh</code>. Mode
+<strong>prod</strong> par defaut (pull des images GHCR), mode
+<strong>dev</strong> avec <code>--dev</code> (clone des 8 depots sources
++ build local), option <code>--no-up</code> (preparation sans
+lancement).</li>
+<li><strong>11 services</strong> : db, auth-db, auth-migrate, auth, api,
+etl, ai-nutrition, ollama, mongo, reco-fitness, front.</li>
+<li><strong>2 reseaux bridge</strong> : <code>mspr_data_network</code>
+(principal, nomme) + <code>ai_internal</code> (isole, reserve a
+Ollama).</li>
+<li><strong>5 volumes nommes</strong> : <code>postgres_data</code>,
+<code>auth_db_data</code>, <code>etl_data</code> (partage etl/api),
+<code>ollama_data</code>, <code>mongo_data</code>.</li>
+<li><strong>Exigence du sujet</strong> : stack operationnelle en moins
+de 10 minutes. <strong>Mesure reelle : stack stable en 84
+secondes</strong> (10/06/2026, images et modele deja telecharges).
+Premier run : 5 a 10 min (pull des images + telechargement du modele
+Ollama <code>gemma3:4b</code>, ~3 Go).</li>
+<li><strong>Secrets</strong> : <code>BETTER_AUTH_SECRET</code> genere
+(<code>openssl rand -base64 64</code>), mots de passe BDD generes (24
+caracteres alphanumeriques, plus de defaut “password” en exploitation),
+cles API Resend/Mistral chiffrees en AES-256-CBC (PBKDF2, 100000
+iterations) et dechiffrees a la volee.</li>
+<li><strong>Durcissement</strong> : <code>no-new-privileges</code> +
+rotation des logs sur tous les services via ancres YAML, ports des bases
+bindes sur <code>127.0.0.1</code>, Ollama sans aucun port expose. Detail
+dans la <a href="Securite.html">fiche Securite</a>.</li>
+<li><strong>Bonus Kubernetes mono-noeud</strong> du sujet : non realise,
+choix assume (Docker Compose suffit pour la cible “poste local de
+demonstration”, orchestration locale autorisee par le sujet).</li>
+</ul>
+<p>Les overlays (monitoring, offline, performance, traefik, vision,
+watchtower, gpu) sont traites dans la <a
+href="Configs-Resilience.html">fiche Configs et resilience</a> et la <a
+href="Observabilite.html">fiche Observabilite</a>. La construction des
+images GHCR par les CI des depots sources est traitee dans la <a
+href="CICD-Qualite.html">fiche CI/CD et qualite</a>.</p>
+<hr />
+<h2 id="architecture">2. Architecture</h2>
+<h3 id="conteneurs-et-reseaux">2.1 Conteneurs et reseaux</h3>
+<pre class="mermaid"><code>graph TD
+    subgraph host[&quot;Hote (navigateur / jury)&quot;]
+        client[&quot;Client web&quot;]
+    end
+
+    subgraph data[&quot;Reseau mspr_data_network&quot;]
+        front[&quot;front (Vue 3) :5173&quot;]
+        auth[&quot;auth (Bun/Hono) :3000&quot;]
+        authmig[&quot;auth-migrate (one-shot)&quot;]
+        api[&quot;api (Spring Boot) :8080&quot;]
+        etl[&quot;etl (Python, cron)&quot;]
+        ain[&quot;ai-nutrition (FastAPI) :8001&quot;]
+        reco[&quot;reco-fitness (FastAPI) :8002&quot;]
+        db[(&quot;db PostgreSQL :5434&quot;)]
+        authdb[(&quot;auth-db PostgreSQL :5433&quot;)]
+        mongo[(&quot;mongo MongoDB :27018&quot;)]
+    end
+
+    subgraph ai[&quot;Reseau ai_internal (isole)&quot;]
+        ollama[&quot;ollama (gemma3:4b), aucun port&quot;]
+    end
+
+    client --&gt; front
+    client --&gt; auth
+    client --&gt; api
+
+    front --&gt; auth
+    front --&gt; api
+
+    auth --&gt; authdb
+    authmig --&gt; authdb
+
+    api --&gt; db
+    etl --&gt; db
+
+    ain --&gt; db
+    ain --&gt; ollama
+
+    reco --&gt; db
+    reco --&gt; mongo</code></pre>
+<p>Notes de lecture :</p>
+<ul>
+<li><code>ai-nutrition</code> est le <strong>seul service rattache aux
+deux reseaux</strong>. Ollama n’existe que sur <code>ai_internal</code>
+et n’expose aucun port sur l’hote.</li>
+<li><code>auth-migrate</code> est un <strong>one-shot</strong> : il
+applique les migrations Drizzle sur <code>auth-db</code> puis s’arrete.
+<code>auth</code> ne demarre qu’apres sa completion.</li>
+<li>Les bases (<code>db</code>, <code>auth-db</code>,
+<code>mongo</code>) ont un <strong>healthcheck</strong> ; les services
+qui en dependent attendent l’etat <code>healthy</code>.</li>
+<li>Le volume <code>etl_data</code> est <strong>partage</strong> :
+l’<code>etl</code> y ecrit (<code>/app/data</code>), l’<code>api</code>
+le lit en lecture seule (<code>/app/etl-data:ro</code>).</li>
+</ul>
+<h3 id="arborescence-du-depot-mspr-deploy">2.2 Arborescence du depot
+MSPR-Deploy</h3>
+<pre><code>MSPR-Deploy/
+├── bootstrap.sh                     # point d&#39;entree unique (prod / dev)
+├── docker-compose.yml               # base prod : images GHCR + durcissement
+├── docker-compose.dev.yml           # base dev : build local depuis sources/
+├── docker-compose.monitoring.yml    # overlay observabilite (fiche dediee)
+├── docker-compose.offline.yml       # config sans internet
+├── docker-compose.performance.yml   # limites CPU/RAM
+├── docker-compose.traefik.yml       # reverse proxy + TLS
+├── docker-compose.vision.yml        # ai-nutrition en backend vision
+├── docker-compose.watchtower.yml    # redeploiement continu (CD)
+├── docker-compose.gpu.yml           # Ollama accelere GPU NVIDIA
+├── .env.example                     # variables documentees (2 obligatoires)
+├── secrets/
+│   ├── resend.enc                   # cle Resend chiffree (AES-256-CBC)
+│   └── mistral.enc                  # cle Mistral chiffree
+├── scripts/
+│   ├── backup.sh                    # dump PG metier + PG auth + Mongo
+│   ├── restore.sh                   # restauration d&#39;une sauvegarde
+│   └── clean.sh                     # remise a zero (volumes)
+├── monitoring/                      # conf Prometheus, Grafana, Loki, alertes
+├── docs/                            # architecture, securite, supervision, tests
+├── README.md / CONFIGS.md / CICD.md
+└── sources/                         # cree par --dev : clones des 8 depots (non versionne)</code></pre>
+<p>Le <code>.env</code> (genere par bootstrap) et <code>backups/</code>
+ne sont pas versionnes. Les overlays et les scripts de sauvegarde sont
+detailles dans la <a href="Configs-Resilience.html">fiche Configs et
+resilience</a>.</p>
+<hr />
+<h2 id="stack-technique">3. Stack technique</h2>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 20%" />
+<col style="width: 13%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>Composant</th>
+<th>Version</th>
+<th>Role</th>
+<th>Pourquoi ce choix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docker Engine</td>
+<td>24+</td>
+<td>Runtime de conteneurs</td>
+<td>Standard de fait, disponible Linux/macOS/Windows, prerequis unique
+cote evaluateur</td>
+</tr>
+<tr>
+<td>Docker Compose</td>
+<td>v2 (plugin)</td>
+<td>Orchestration declarative mono-hote</td>
+<td>Suffisant pour la cible “poste local de demo”, inclus dans Docker
+Desktop, supporte ancres + conditions <code>depends_on</code></td>
+</tr>
+<tr>
+<td>Bash</td>
+<td>-</td>
+<td>Scriptage du bootstrap</td>
+<td>Present partout, <code>set -euo pipefail</code>, aucune dependance a
+installer</td>
+</tr>
+<tr>
+<td>OpenSSL</td>
+<td>-</td>
+<td>Generation des secrets + dechiffrement AES-256-CBC</td>
+<td>Primitives eprouvees, deja present sur tout poste Linux/macOS</td>
+</tr>
+<tr>
+<td>GHCR</td>
+<td>-</td>
+<td>Registre des 8 images applicatives</td>
+<td>Images publiees par les CI des depots publics
+<code>whitefoxxyt</code>, pull sans build local (<a
+href="CICD-Qualite.html">fiche CI/CD et qualite</a>)</td>
+</tr>
+<tr>
+<td>PostgreSQL</td>
+<td>17 (alpine)</td>
+<td>Bases <code>healthai</code> (metier) et <code>auth_db</code>
+(auth)</td>
+<td>Herite de MSPR1, deux instances pour isoler auth et metier</td>
+</tr>
+<tr>
+<td>MongoDB</td>
+<td>7-jammy (image <code>mspr-mongodb</code>)</td>
+<td>Base <code>reco_fitness</code></td>
+<td>Herite de MSPR2, init des collections embarque dans l’image
+(cf. fiche MongoDB de la MSPR2)</td>
+</tr>
+<tr>
+<td>Ollama + gemma3:4b</td>
+<td><code>ollama/ollama:latest</code></td>
+<td>LLM local pour ai-nutrition</td>
+<td>Fonctionne sans internet ni cle API (fallback de Mistral), modele ~3
+Go persiste en volume</td>
+</tr>
+</tbody>
+</table>
+<p>Prerequis cote machine (README) : Docker Engine 24+, Compose v2, ~10
+Go d’espace disque, ports libres <code>3000</code>, <code>5173</code>,
+<code>5433</code>, <code>5434</code>, <code>8001</code>,
+<code>8002</code>, <code>8080</code>, <code>27018</code>. Pour le mode
+dev : <code>git</code>, <code>bash</code>, <code>openssl</code>.</p>
+<hr />
+<h2 id="bootstrap.sh-le-deploiement-en-une-commande">4. bootstrap.sh :
+le deploiement en une commande</h2>
+<p>Exigence du sujet MSPR3 : un deploiement <strong>entierement
+scripte</strong>, stack operationnelle en <strong>moins de 10
+minutes</strong>. Reponse : un script Bash unique de ~220 lignes,
+idempotent, qui enchaine 5 etapes.</p>
+<h3 id="une-commande-deux-modes">4.1 Une commande, deux modes</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./bootstrap.sh</span>           <span class="co"># mode prod (defaut) : pull GHCR + up</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./bootstrap.sh</span> <span class="at">--dev</span>     <span class="co"># mode dev : clone des 8 depots + build local</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./bootstrap.sh</span> <span class="at">--no-up</span>   <span class="co"># prepare l&#39;environnement sans lancer la stack</span></span></code></pre></div>
+<ul>
+<li><strong>Mode prod</strong> : aucune source clonee, les images
+viennent de GHCR
+(<code>ghcr.io/whitefoxxyt/mspr-&lt;service&gt;:latest</code>). C’est le
+mode evaluation/demo : reproductible, l’image executee est exactement
+celle produite par la CI.</li>
+<li><strong>Mode dev</strong> : clone les 8 depots
+<code>whitefoxxyt</code> dans <code>sources/</code> sur leurs
+<strong>branches actives</strong> (<code>main</code>,
+<code>master</code> ou <code>dev</code> selon le depot), puis build
+local via <code>docker-compose.dev.yml</code>
+(<code>up -d --build</code>).</li>
+<li><code>--no-up</code> sert a inspecter ou modifier le
+<code>.env</code> avant le premier lancement.</li>
+</ul>
+<h3 id="verification-des-prerequis">4.2 Verification des prerequis</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cmd <span class="kw">in</span> docker openssl<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="bu">command</span> <span class="at">-v</span> <span class="st">&quot;</span><span class="va">$cmd</span><span class="st">&quot;</span> <span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="ex">fail</span> <span class="st">&quot;Commande requise absente : </span><span class="va">$cmd</span><span class="st">&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="ot">! </span><span class="ex">docker</span> compose version <span class="op">&gt;</span>/dev/null <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">fail</span> <span class="st">&quot;Docker Compose v2 introuvable. Mettre a jour Docker.&quot;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="ot">! </span><span class="ex">docker</span> info <span class="op">&gt;</span>/dev/null <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="ex">fail</span> <span class="st">&quot;Docker daemon non accessible. Verifier que Docker tourne.&quot;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
+<p>Quatre checks : binaire <code>docker</code>, binaire
+<code>openssl</code>, plugin Compose <strong>v2</strong> (la syntaxe
+<code>depends_on</code> avec conditions et les ancres utilisees
+l’exigent), et daemon Docker <strong>accessible</strong>
+(<code>docker info</code> echoue si le service est arrete ou si
+l’utilisateur n’a pas les droits). Echec = message explicite +
+<code>exit 1</code>, pas d’erreur cryptique a mi-parcours.</p>
+<h3 id="preparation-idempotente-du-.env">4.3 Preparation idempotente du
+.env</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="ot">!</span> <span class="ot">-f</span> <span class="st">&quot;</span><span class="va">$ENV_FILE</span><span class="st">&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cp</span> <span class="st">&quot;</span><span class="va">$ROOT_DIR</span><span class="st">/.env.example&quot;</span> <span class="st">&quot;</span><span class="va">$ENV_FILE</span><span class="st">&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log</span> <span class="st">&quot;.env cree depuis .env.example&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
+<p>Le <code>.env</code> n’est cree <strong>que s’il n’existe
+pas</strong>. Ensuite, chaque variable sensible n’est renseignee
+<strong>que si elle est absente ou vide</strong> (fonction
+<code>ensure_env_value</code>, voir section 6.2). Consequence : relancer
+<code>./bootstrap.sh</code> sur un environnement existant ne modifie
+rien, le script <strong>converge</strong> au lieu d’ecraser.</p>
+<h3 id="generation-des-secrets">4.4 Generation des secrets</h3>
+<p>Trois valeurs sont generees au premier lancement si absentes :</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 40%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Generation</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BETTER_AUTH_SECRET</code></td>
+<td><code>openssl rand -base64 64 \| tr -d '\n'</code></td>
+<td>64 octets aleatoires en base64 (minimum requis pour HS512)</td>
+</tr>
+<tr>
+<td><code>DB_PASSWORD</code></td>
+<td><code>gen_password</code></td>
+<td>24 caracteres alphanumeriques</td>
+</tr>
+<tr>
+<td><code>AUTH_DB_PASSWORD</code></td>
+<td><code>gen_password</code></td>
+<td>24 caracteres alphanumeriques</td>
+</tr>
+</tbody>
+</table>
+<p>Le format alphanumerique des mots de passe est volontaire : ils sont
+interpoles dans des chaines <code>postgres://user:pass@host</code>, un
+caractere special casserait l’URL (voir section 6.2). Il n’y a
+<strong>plus de defaut “password” en exploitation</strong> : la voie
+officielle de deploiement passe par bootstrap, qui garantit des valeurs
+fortes.</p>
+<h3 id="dechiffrement-des-cles-api-chiffrees">4.5 Dechiffrement des cles
+API chiffrees</h3>
+<p>Les cles tierces (Resend pour les emails, Mistral pour le LLM
+primaire) ne sont <strong>jamais versionnees en clair</strong>. Elles
+sont chiffrees dans <code>secrets/resend.enc</code> et
+<code>secrets/mistral.enc</code> (AES-256-CBC, sel, PBKDF2 100000
+iterations). Le script demande la passphrase en interactif
+(<code>read -rs</code>, rien ne s’affiche) ou la lit dans la variable
+<code>MSPR_PASS</code> :</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="va">MSPR_PASS</span><span class="op">=</span><span class="st">&quot;&lt;passphrase fournie par l&#39;equipe&gt;&quot;</span> <span class="ex">./bootstrap.sh</span></span></code></pre></div>
+<p>Le resultat du dechiffrement est <strong>valide par format</strong>
+(une cle Resend commence par <code>re_</code>) : une passphrase fausse
+produit du bruit, detecte immediatement au lieu d’echouer plus tard dans
+le service auth. Detail du chiffrement dans la <a
+href="Securite.html">fiche Securite</a>. Si les <code>.enc</code> sont
+absents, le script logue comment renseigner les cles a la main (et
+<code>ai-nutrition</code> retombe sur Ollama si
+<code>MISTRAL_API_KEY</code> reste vide).</p>
+<h3 id="lancement-et-temps-de-demarrage">4.6 Lancement et temps de
+demarrage</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="st">&quot;</span><span class="va">$MODE</span><span class="st">&quot;</span> <span class="ot">==</span> <span class="st">&quot;dev&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="va">COMPOSE_FILE</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$ROOT_DIR</span><span class="st">/docker-compose.dev.yml&quot;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="va">UP_FLAGS</span><span class="op">=</span><span class="va">(</span>-d --build<span class="va">)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="va">COMPOSE_FILE</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$ROOT_DIR</span><span class="st">/docker-compose.yml&quot;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="va">UP_FLAGS</span><span class="op">=</span><span class="va">(</span>-d<span class="va">)</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> <span class="st">&quot;</span><span class="va">$COMPOSE_FILE</span><span class="st">&quot;</span> <span class="at">--env-file</span> <span class="st">&quot;</span><span class="va">$ENV_FILE</span><span class="st">&quot;</span> up <span class="st">&quot;</span><span class="va">${UP_FLAGS</span><span class="op">[@]</span><span class="va">}</span><span class="st">&quot;</span></span></code></pre></div>
+<p>Chiffres a connaitre :</p>
+<ul>
+<li><strong>Premier run</strong> : 5 a 10 minutes (pull des 8 images +
+telechargement du modele Ollama <code>gemma3:4b</code>, ~3 Go). Le
+script previent : “Au premier run, comptez 5 a 10 min (pull/build +
+telechargement Ollama).”</li>
+<li><strong>Runs suivants</strong> : <strong>stack stable en 84
+secondes</strong> (mesure du 10/06/2026, images et modele deja en cache
+local). Tres en dessous de l’exigence “moins de 10 minutes” du
+sujet.</li>
+<li>Le modele Ollama est persiste dans le volume
+<code>ollama_data</code> : il n’est telecharge <strong>qu’une
+fois</strong>, les <code>down</code>/<code>up</code> suivants le
+retrouvent.</li>
+</ul>
+<p>En sortie, le script affiche les commandes de suivi (<code>ps</code>,
+<code>logs -f</code>) et les URLs d’acces (front
+<code>http://localhost:5173</code>, Swagger
+<code>http://localhost:8080/api/swagger-ui.html</code>).</p>
+<hr />
+<h2 id="points-techniques-importants">5. Points techniques
+importants</h2>
+<h3
+id="ancres-yaml-durcissement-et-rotation-des-logs-sur-tous-les-services">5.1
+Ancres YAML : durcissement et rotation des logs sur tous les
+services</h3>
+<p>Le compose de base ouvre sur deux ancres (<code>x-logging</code>,
+<code>x-hardening</code>) fusionnees dans <strong>chacun des 11
+services</strong> via <code>&lt;&lt;: *hardening</code> (code en section
+6.1). Effet :</p>
+<ul>
+<li><code>no-new-privileges:true</code> : un processus dans le conteneur
+ne peut pas elever ses privileges (setuid, sudo).</li>
+<li>Rotation des logs <code>json-file</code> : 10 Mo max par fichier, 3
+fichiers max, soit 30 Mo de logs par conteneur au maximum. Sans cela, un
+service verbeux peut <strong>saturer le disque</strong> en exploitation
+continue.</li>
+</ul>
+<p>Un seul endroit a modifier pour durcir toute la stack : c’est
+l’argument cle face au jury (factorisation = pas d’oubli possible sur un
+nouveau service). Complement dans la <a href="Securite.html">fiche
+Securite</a>.</p>
+<h3 id="les-trois-conditions-depends_on">5.2 Les trois conditions
+depends_on</h3>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 27%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>Condition</th>
+<th>Garantie</th>
+<th>Utilisee pour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>service_started</code></td>
+<td>Le conteneur est lance (aucune garantie de readiness)</td>
+<td><code>ollama</code> (pour ai-nutrition), <code>auth</code> (pour
+reco-fitness), <code>front</code> (syntaxe courte)</td>
+</tr>
+<tr>
+<td><code>service_healthy</code></td>
+<td>Le healthcheck passe</td>
+<td><code>db</code>, <code>auth-db</code>, <code>mongo</code> (pour tous
+leurs consommateurs)</td>
+</tr>
+<tr>
+<td><code>service_completed_successfully</code></td>
+<td>Le conteneur s’est termine avec exit 0</td>
+<td><code>auth-migrate</code> (pour auth)</td>
+</tr>
+</tbody>
+</table>
+<p>Pourquoi <code>ollama</code> n’est qu’en <code>service_started</code>
+: au premier run, son entrypoint telecharge un modele de ~3 Go ; un
+healthcheck “modele pret” bloquerait <code>ai-nutrition</code> (et la
+perception de la stack entiere) pendant plusieurs minutes.
+<code>ai-nutrition</code> <strong>tolere</strong> l’indisponibilite
+temporaire d’Ollama : Mistral est le LLM primaire, Ollama le
+fallback.</p>
+<p>Limite honnete : <code>depends_on</code> n’agit <strong>qu’au
+demarrage</strong>. Si une base tombe en cours de vie, c’est
+<code>restart: unless-stopped</code> et la logique de reconnexion
+applicative qui prennent le relais (cf. <a
+href="Configs-Resilience.html">fiche Configs et resilience</a>).</p>
+<h3 id="auth-migrate-les-migrations-en-conteneur-one-shot">5.3
+auth-migrate : les migrations en conteneur one-shot</h3>
+<p><code>auth-migrate</code> reutilise l’image de <code>auth</code> mais
+avec <code>command: sh -c "bun run db:migrate"</code> et
+<code>restart: "no"</code>. Il attend <code>auth-db</code> healthy,
+applique les migrations Drizzle, puis <strong>se termine</strong>.
+<code>auth</code> ne demarre que sur
+<code>service_completed_successfully</code>.</p>
+<p>Benefices : les migrations sont jouees <strong>exactement une
+fois</strong> par deploiement (pas de course si on scale
+<code>auth</code>), et un echec de migration est un <strong>echec
+visible du deploiement</strong> (auth ne demarre pas) plutot qu’un
+service qui boote sur un schema bancal.</p>
+<h3 id="isolation-reseau-dollama">5.4 Isolation reseau d’Ollama</h3>
+<p><code>ollama</code> est le seul service du reseau
+<code>ai_internal</code> (avec <code>ai-nutrition</code>, qui est
+rattache aux deux reseaux). Il n’a <strong>aucune section
+<code>ports</code></strong> : impossible de le joindre depuis l’hote ou
+depuis les autres conteneurs. L’API Ollama n’a pas d’authentification
+par defaut ; l’isolation reseau est la contre-mesure.
+<code>ai-nutrition</code> le joint via
+<code>OLLAMA_HOST: http://ollama:11434</code> (DNS Docker du reseau
+<code>ai_internal</code>).</p>
+<h3 id="ports-des-bases-bindes-sur-127.0.0.1">5.5 Ports des bases bindes
+sur 127.0.0.1</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;127.0.0.1:5434:5432&quot;</span><span class="co">   # db metier</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;127.0.0.1:5433:5432&quot;</span><span class="co">   # auth-db</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;127.0.0.1:27018:27017&quot;</span><span class="co"> # mongo</span></span></code></pre></div>
+<p>Les bases restent inspectables depuis l’hote (psql, mongosh) mais
+sont <strong>invisibles depuis le reseau</strong>. Important car Docker,
+par defaut, publie sur <code>0.0.0.0</code> et ses regles iptables
+court-circuitent les firewalls applicatifs type ufw. Les ports decales
+(5434, 5433, 27018) evitent les conflits avec des instances locales deja
+installees. Developpe en Q12.</p>
+<h3
+id="le-volume-etl_data-partage-producteur-consommateur-en-lecture-seule">5.6
+Le volume etl_data partage (producteur / consommateur en lecture
+seule)</h3>
+<p>L’<code>etl</code> ecrit ses sorties (rejets, samples, exports CSV)
+dans <code>etl_data:/app/data</code>. L’<code>api</code> monte le meme
+volume en <strong>lecture seule</strong> :
+<code>etl_data:/app/etl-data:ro</code>. Les endpoints de qualite de
+donnees et d’export de l’API lisent ces fichiers sans pouvoir les
+corrompre. Le <code>:ro</code> est une garantie d’architecture : le
+producteur est unique, le consommateur ne peut pas ecrire.</p>
+<h3
+id="scoring_autotrain-le-modele-de-scoring-entraine-au-demarrage">5.7
+SCORING_AUTOTRAIN : le modele de scoring entraine au demarrage</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">      # L&#39;image n&#39;embarque pas scoring_model.pkl (gitignore) : entrainement au</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">      # demarrage depuis le catalogue PG, requis pour le scoring hybride premium.</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">SCORING_AUTOTRAIN</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;1&quot;</span></span></code></pre></div>
+<p>L’image <code>mspr-reco-fitness</code> n’embarque pas le pickle du
+modele de scoring (gitignore : on ne versionne pas de binaire entraine).
+Au demarrage, le service reentraine le modele depuis le catalogue
+PostgreSQL. Tradeoff assume : quelques secondes de demarrage en plus
+contre une image reproductible sans artefact binaire.</p>
+<h3 id="flux-dauthentification-jwt">5.8 Flux d’authentification JWT</h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant C as Client (front)
+    participant A as auth (:3000)
+    participant S as Service metier (api / ai-nutrition / reco-fitness)
+
+    C-&gt;&gt;A: POST /api/auth/sign-in (email + mot de passe)
+    A--&gt;&gt;C: JWT signe HS512 (BETTER_AUTH_SECRET)
+    C-&gt;&gt;S: requete + Authorization: Bearer &lt;jwt&gt;
+    S-&gt;&gt;S: validation locale de la signature (meme secret)
+    S--&gt;&gt;C: 200 ou 401</code></pre>
+<ul>
+<li><code>auth</code> (better-auth) est le seul a gerer des comptes. Les
+services metier valident le JWT <strong>localement</strong> avec le
+<code>BETTER_AUTH_SECRET</code> partage (injecte par variable
+d’environnement dans <code>auth</code>, <code>api</code>,
+<code>ai-nutrition</code>, <code>reco-fitness</code>) : pas
+d’aller-retour reseau vers auth a chaque requete, pas de point de
+defaillance au moment de la validation.</li>
+<li>HS512 = HMAC symetrique : tout detenteur du secret peut
+<strong>emettre</strong> des jetons, d’ou un secret de 64 octets genere
+et jamais versionne. L’alternative asymetrique (RS256 + JWKS) est
+l’evolution naturelle si un service tiers devait valider sans pouvoir
+signer. Voir <a href="Securite.html">fiche Securite</a>.</li>
+<li><code>ai-nutrition</code> et <code>reco-fitness</code> connaissent
+aussi <code>AUTH_API_URL: http://mspr-auth-service:3000</code> pour les
+appels internes qui necessitent le service auth.</li>
+</ul>
+<h3 id="le-bonus-kubernetes-non-realise-choix-assume">5.9 Le bonus
+Kubernetes : non realise, choix assume</h3>
+<p>Le sujet proposait en bonus un deploiement Kubernetes mono-noeud.
+<strong>Non realise</strong>, et c’est un choix : la cible du livrable
+est un poste local de demonstration, l’orchestration locale est
+explicitement autorisee par le sujet, et Docker Compose couvre tout le
+besoin (dependances, healthchecks, reseaux, volumes, redemarrage). Le
+temps a ete investi sur le monitoring, la securite et la resilience
+(fiches dediees). La reponse complete pour le jury est en Q1.</p>
+<hr />
+<h2 id="code-essentiel-a-savoir-expliquer-au-jury">6. Code essentiel a
+savoir expliquer au jury</h2>
+<h3 id="les-ancres-de-durcissement-docker-compose.yml">6.1 Les ancres de
+durcissement (docker-compose.yml)</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reglages communs de durcissement (mise en production MSPR3) :</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># - no-new-privileges : empeche l&#39;elevation de privileges dans le conteneur</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># - rotation des logs json-file : evite la saturation disque en exploitation</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">x-logging</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;default-logging</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">driver</span><span class="kw">:</span><span class="at"> json-file</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">options</span><span class="kw">:</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">max-size</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;10m&quot;</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">max-file</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;3&quot;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">x-hardening</span><span class="kw">:</span><span class="at"> </span><span class="ot">&amp;hardening</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">security_opt</span><span class="kw">:</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> no-new-privileges:true</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">logging</span><span class="kw">:</span><span class="at"> </span><span class="ot">*default-logging</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">db</span><span class="kw">:</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*hardening</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> ghcr.io/whitefoxxyt/mspr-db:latest</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>x-</code> est le prefixe d’<strong>extension</strong> Compose
+: ces blocs ne sont pas des services, juste des fragments
+reutilisables.</li>
+<li><code>&amp;hardening</code> definit l’ancre,
+<code>&lt;&lt;: *hardening</code> la <strong>fusionne</strong> dans
+chaque service : une seule definition, 11 applications, aucun service
+oublie.</li>
+<li><code>no-new-privileges:true</code> bloque l’elevation de privileges
+(binaire setuid, escalade apres compromission d’un process).</li>
+<li>La rotation <code>10m x 3</code> borne les logs a 30 Mo par
+conteneur : exigence d’exploitation (la stack tourne en continu), pas de
+saturation disque silencieuse.</li>
+<li>L’ancre <code>*default-logging</code> est elle-meme referencee dans
+<code>x-hardening</code> : composition d’ancres.</li>
+</ul>
+<h3 id="generation-des-mots-de-passe-bootstrap.sh">6.2 Generation des
+mots de passe (bootstrap.sh)</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set-or-append d&#39;une variable dans .env, uniquement si elle est absente ou vide.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ensure_env_value()</span> <span class="kw">{</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">var</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span> <span class="va">value</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$2</span><span class="st">&quot;</span> <span class="va">current</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="va">current</span><span class="op">=</span><span class="va">$(</span><span class="fu">grep</span> <span class="at">-E</span> <span class="st">&quot;^</span><span class="va">${var}</span><span class="st">=&quot;</span> <span class="st">&quot;</span><span class="va">$ENV_FILE</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-1</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span><span class="op">=</span> <span class="at">-f2-</span> <span class="kw">||</span> <span class="fu">true</span><span class="va">)</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-z</span> <span class="st">&quot;</span><span class="va">$current</span><span class="st">&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... reecriture du .env via awk (remplace la ligne ou l&#39;ajoute en fin) ...</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="ex">log</span> <span class="st">&quot;</span><span class="va">$var</span><span class="st"> genere&quot;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">fi</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Mot de passe alphanumerique (URL-safe pour les chaines postgres://...).</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">gen_password()</span> <span class="kw">{</span> <span class="ex">openssl</span> rand <span class="at">-base64</span> 32 <span class="kw">|</span> <span class="fu">tr</span> <span class="at">-dc</span> <span class="st">&#39;A-Za-z0-9&#39;</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-c</span> 24<span class="kw">;</span> <span class="kw">}</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="ex">ensure_env_value</span> DB_PASSWORD <span class="st">&quot;</span><span class="va">$(</span><span class="ex">gen_password</span><span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="ex">ensure_env_value</span> AUTH_DB_PASSWORD <span class="st">&quot;</span><span class="va">$(</span><span class="ex">gen_password</span><span class="va">)</span><span class="st">&quot;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>gen_password</code> : 32 octets aleatoires (openssl), filtres
+en <strong>alphanumerique pur</strong>, tronques a <strong>24
+caracteres</strong>. Alphanumerique car le mot de passe est interpole
+dans <code>DATABASE_URL: postgres://user:pass@host</code> : un
+<code>/</code> ou un <code>@</code> casserait le parsing de l’URL.</li>
+<li><code>ensure_env_value</code> lit la valeur
+<strong>courante</strong> avant d’ecrire : si la variable est deja
+renseignee, no-op. C’est ce qui rend bootstrap relancable sans
+risque.</li>
+<li>Plus de defaut “password” en exploitation : avant MSPR3, les
+composes utilisaient le defaut <code>${DB_PASSWORD:-password}</code> tel
+quel. La voie officielle passe desormais par bootstrap, qui force une
+valeur generee.</li>
+<li>Limite a connaitre (commentee dans le script) : PostgreSQL
+n’applique le mot de passe qu’a l’<strong>initialisation du
+volume</strong>. Changer <code>DB_PASSWORD</code> sur un volume deja
+initialise impose un reset (<code>down -v</code>).</li>
+</ul>
+<h3 id="generation-du-better_auth_secret-bootstrap.sh">6.3 Generation du
+BETTER_AUTH_SECRET (bootstrap.sh)</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="va">current_secret</span><span class="op">=</span><span class="va">$(</span><span class="fu">grep</span> <span class="at">-E</span> <span class="st">&#39;^BETTER_AUTH_SECRET=&#39;</span> <span class="st">&quot;</span><span class="va">$ENV_FILE</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-1</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span><span class="op">=</span> <span class="at">-f2-</span> <span class="kw">||</span> <span class="fu">true</span><span class="va">)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-z</span> <span class="st">&quot;</span><span class="va">$current_secret</span><span class="st">&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="va">new_secret</span><span class="op">=</span><span class="va">$(</span><span class="ex">openssl</span> rand <span class="at">-base64</span> 64 <span class="kw">|</span> <span class="fu">tr</span> <span class="at">-d</span> <span class="st">&#39;\n&#39;</span><span class="va">)</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="va">tmp</span><span class="op">=</span><span class="va">$(</span><span class="fu">mktemp</span><span class="va">)</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">awk</span> <span class="at">-v</span> secret=<span class="st">&quot;</span><span class="va">$new_secret</span><span class="st">&quot;</span> <span class="st">&#39;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="st">    BEGIN { set = 0 }</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="st">    /^BETTER_AUTH_SECRET=/ { print &quot;BETTER_AUTH_SECRET=&quot; secret; set = 1; next }</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="st">    { print }</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="st">    END { if (!set) print &quot;BETTER_AUTH_SECRET=&quot; secret }</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="st">  &#39;</span> <span class="st">&quot;</span><span class="va">$ENV_FILE</span><span class="st">&quot;</span> <span class="op">&gt;</span> <span class="st">&quot;</span><span class="va">$tmp</span><span class="st">&quot;</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mv</span> <span class="st">&quot;</span><span class="va">$tmp</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$ENV_FILE</span><span class="st">&quot;</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log</span> <span class="st">&quot;BETTER_AUTH_SECRET genere&quot;</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>64 octets aleatoires : le minimum documente dans
+<code>.env.example</code> pour <strong>HS512</strong> (taille de sortie
+de SHA-512).</li>
+<li><code>tr -d '\n'</code> : openssl plie le base64 sur plusieurs
+lignes au-dela d’une certaine longueur ; le secret doit tenir sur une
+ligne du <code>.env</code>.</li>
+<li>Le pattern awk “set-or-append” : remplace la ligne si elle existe,
+l’ajoute en fin sinon. Ecrit dans un fichier temporaire puis
+<code>mv</code> : pas de <code>.env</code> a moitie ecrit en cas
+d’interruption.</li>
+<li>Genere <strong>uniquement si vide</strong> : un environnement
+existant garde son secret (sinon tous les JWT emis seraient invalides au
+redemarrage).</li>
+<li>Ce secret est ensuite injecte dans 4 services : <code>auth</code>
+(signature) et <code>api</code> / <code>ai-nutrition</code> /
+<code>reco-fitness</code> (validation).</li>
+</ul>
+<h3
+id="dechiffrement-des-cles-api-avec-validation-de-format-bootstrap.sh">6.4
+Dechiffrement des cles API avec validation de format (bootstrap.sh)</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-n</span> <span class="st">&quot;</span><span class="va">${MSPR_PASS</span><span class="op">:-</span><span class="va">}</span><span class="st">&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="va">pass</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$MSPR_PASS</span><span class="st">&quot;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&#39;\033[1;34m[bootstrap]\033[0m Passphrase pour dechiffrer les cles API (Resend + Mistral) : &#39;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="bu">read</span> <span class="at">-rs</span> <span class="va">pass</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">decrypted</span><span class="op">=</span><span class="va">$(</span><span class="ex">openssl</span> enc <span class="at">-aes-256-cbc</span> <span class="at">-d</span> <span class="at">-pbkdf2</span> <span class="at">-iter</span> 100000 <span class="at">-salt</span> <span class="at">-pass</span> pass:<span class="st">&quot;</span><span class="va">$pass</span><span class="st">&quot;</span> <span class="at">-in</span> <span class="st">&quot;</span><span class="va">$RESEND_ENC</span><span class="st">&quot;</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null<span class="va">)</span> <span class="dt">\</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&amp;&amp;</span> <span class="kw">[[</span> <span class="st">&quot;</span><span class="va">$decrypted</span><span class="st">&quot;</span> <span class="ot">=~</span> <span class="pp">^</span><span class="ss">re_</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ... injection de RESEND_API_KEY dans .env via awk ...</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log</span> <span class="st">&quot;RESEND_API_KEY dechiffree depuis secrets/resend.enc&quot;</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="ex">fail</span> <span class="st">&quot;Dechiffrement Resend echoue (passphrase incorrecte ?). Relancez ou renseignez RESEND_API_KEY a la main.&quot;</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="bu">unset</span> <span class="va">decrypted</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Les cles tierces sont <strong>chiffrees dans le depot</strong>
+(<code>secrets/*.enc</code>), jamais en clair : le depot peut etre
+public sans fuiter de secret.</li>
+<li><code>aes-256-cbc</code> + <code>-salt</code> +
+<code>-pbkdf2 -iter 100000</code> : la cle de chiffrement est derivee de
+la passphrase avec 100000 iterations PBKDF2, ce qui ralentit massivement
+le brute-force.</li>
+<li>La <strong>validation de format</strong> (<code>^re_</code> pour
+Resend, <code>^[A-Za-z0-9]{20,}$</code> pour Mistral) est cruciale :
+avec CBC, une mauvaise passphrase peut produire une sortie “valide” mais
+aleatoire. Sans ce check, l’erreur n’apparaitrait que bien plus tard
+dans le service auth.</li>
+<li><code>read -rs</code> ne fait pas echo de la passphrase ;
+<code>MSPR_PASS</code> permet le mode non-interactif (CI, demo) ;
+<code>unset pass</code> / <code>unset decrypted</code> limitent la duree
+de vie en memoire shell.</li>
+<li>Echec = <code>fail</code> avec consigne de repli (renseigner la cle
+a la main dans <code>.env</code>).</li>
+</ul>
+<h3
+id="auth-migrate-et-auth-le-one-shot-et-ses-conditions-docker-compose.yml">6.5
+auth-migrate et auth : le one-shot et ses conditions
+(docker-compose.yml)</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">auth-migrate</span><span class="kw">:</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*hardening</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> ghcr.io/whitefoxxyt/mspr-auth:latest</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> mspr-auth-migrate</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">command</span><span class="kw">:</span><span class="at"> sh -c &quot;bun run db:migrate&quot;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">depends_on</span><span class="kw">:</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">auth-db</span><span class="kw">:</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">condition</span><span class="kw">:</span><span class="at"> service_healthy</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">restart</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;no&quot;</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">auth</span><span class="kw">:</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*hardening</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> ghcr.io/whitefoxxyt/mspr-auth:latest</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">depends_on</span><span class="kw">:</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">auth-db</span><span class="kw">:</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">condition</span><span class="kw">:</span><span class="at"> service_healthy</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">auth-migrate</span><span class="kw">:</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">condition</span><span class="kw">:</span><span class="at"> service_completed_successfully</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><strong>Meme image</strong> que <code>auth</code>, seule la
+<code>command</code> change : aucune image supplementaire a construire
+ou maintenir, l’outillage Drizzle est deja dans l’image.</li>
+<li><code>restart: "no"</code> : le conteneur execute
+<code>bun run db:migrate</code> puis se termine. C’est la definition
+d’un <strong>one-shot</strong> ; les autres services sont en
+<code>unless-stopped</code>.</li>
+<li>La chaine de demarrage est : <code>auth-db</code> healthy, puis
+<code>auth-migrate</code> jusqu’a exit 0, puis <code>auth</code>. Le
+schema est <strong>garanti a jour avant</strong> que le service auth
+n’accepte une requete.</li>
+<li>Si la migration echoue (exit != 0), <code>auth</code> ne demarre pas
+: echec franc et visible dans <code>docker compose ps</code>, pas de
+service qui tourne sur un schema invalide.</li>
+</ul>
+<h3
+id="ollama-isole-et-ai-nutrition-double-reseau-docker-compose.yml">6.6
+Ollama isole et ai-nutrition double reseau (docker-compose.yml)</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ollama</span><span class="kw">:</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*hardening</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> ollama/ollama:latest</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> mspr-ollama</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ollama_data:/root/.ollama</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">entrypoint</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;/bin/sh&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;-c&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;ollama serve &amp; sleep 5 &amp;&amp; ollama pull gemma3:4b &amp;&amp; wait&quot;</span><span class="kw">]</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">networks</span><span class="kw">:</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ai_internal</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">ai-nutrition</span><span class="kw">:</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">OLLAMA_HOST</span><span class="kw">:</span><span class="at"> http://ollama:11434</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co">      # ...</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">networks</span><span class="kw">:</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> mspr_data_network</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ai_internal</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>L’entrypoint enchaine : <code>ollama serve &amp;</code> (serveur en
+arriere-plan), <code>sleep 5</code> (laisser l’API ecouter),
+<code>ollama pull gemma3:4b</code> (telechargement du modele, ~3 Go au
+premier run, no-op ensuite grace au volume <code>ollama_data</code>),
+<code>wait</code> (raccroche le processus serveur en avant-plan pour que
+le conteneur vive).</li>
+<li><strong>Aucune section <code>ports</code></strong> : Ollama n’est
+joignable ni depuis l’hote ni depuis le reseau local. Son API n’a pas
+d’authentification, l’isolation reseau est la protection.</li>
+<li><code>ai_internal</code> est un second reseau bridge : seul
+<code>ai-nutrition</code>, rattache <strong>aux deux reseaux</strong>,
+peut atteindre <code>http://ollama:11434</code> (resolution DNS du nom
+de service).</li>
+<li>Le volume <code>ollama_data</code> est la cle du demarrage rapide
+des runs suivants : le modele n’est telecharge qu’une fois.</li>
+</ul>
+<h3
+id="healthcheck-et-bind-localhost-de-la-base-metier-docker-compose.yml">6.7
+Healthcheck et bind localhost de la base metier
+(docker-compose.yml)</h3>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">db</span><span class="kw">:</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">&lt;&lt;</span><span class="kw">:</span><span class="at"> </span><span class="ot">*hardening</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> ghcr.io/whitefoxxyt/mspr-db:latest</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> mspr-healthai-db</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">healthcheck</span><span class="kw">:</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">test</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;CMD-SHELL&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;pg_isready -U healthai_user -d healthai&quot;</span><span class="kw">]</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">interval</span><span class="kw">:</span><span class="at"> 10s</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">timeout</span><span class="kw">:</span><span class="at"> 5s</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">retries</span><span class="kw">:</span><span class="at"> </span><span class="dv">5</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">&quot;127.0.0.1:5434:5432&quot;</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li><code>pg_isready</code> teste la <strong>readiness reelle</strong>
+(PostgreSQL accepte les connexions), pas juste “le process tourne”.
+Mongo a l’equivalent :
+<code>mongosh --eval "db.adminCommand('ping').ok"</code>.</li>
+<li>Cadence : test toutes les 10 s, timeout 5 s, 5 echecs avant
+<code>unhealthy</code>. C’est ce healthcheck que consomment les
+<code>depends_on: condition: service_healthy</code> de <code>api</code>,
+<code>etl</code>, <code>ai-nutrition</code> et
+<code>reco-fitness</code>.</li>
+<li><code>127.0.0.1:5434:5432</code> : publication <strong>sur la boucle
+locale uniquement</strong>. Depuis l’hote :
+<code>psql -h 127.0.0.1 -p 5434</code>. Depuis le reseau : rien.</li>
+<li>Le conteneur garde son
+<code>container_name: mspr-healthai-db</code>, utilise comme
+<code>DB_HOST</code> par tous les services consommateurs (DNS
+Docker).</li>
+</ul>
+<h3 id="clone-des-sources-en-mode-dev-bootstrap.sh">6.8 Clone des
+sources en mode dev (bootstrap.sh)</h3>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mapping : nom_local | repo_distant_whitefoxxyt | branche_active</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="va">REPOS</span><span class="op">=</span><span class="va">(</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;MSPR-DB|MSPR-HealthAI-Coach-BDD|main&quot;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;MSPR-AUTH|MSPR-HealthAI-Coach-Auth|main&quot;</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ... 6 autres depots (API, ETL, FRONT, AI-Nutrition, Reco-Fitness, MongoDB) ...</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="va">)</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-d</span> <span class="st">&quot;</span><span class="va">$target</span><span class="st">/.git&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log</span> <span class="st">&quot;</span><span class="va">$local_name</span><span class="st"> : fetch + checkout </span><span class="va">$branch</span><span class="st">&quot;</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">git</span> <span class="at">-C</span> <span class="st">&quot;</span><span class="va">$target</span><span class="st">&quot;</span> fetch <span class="at">--quiet</span> origin</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">git</span> <span class="at">-C</span> <span class="st">&quot;</span><span class="va">$target</span><span class="st">&quot;</span> checkout <span class="at">--quiet</span> <span class="st">&quot;</span><span class="va">$branch</span><span class="st">&quot;</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">git</span> <span class="at">-C</span> <span class="st">&quot;</span><span class="va">$target</span><span class="st">&quot;</span> pull <span class="at">--quiet</span> <span class="at">--ff-only</span> origin <span class="st">&quot;</span><span class="va">$branch</span><span class="st">&quot;</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="ex">log</span> <span class="st">&quot;</span><span class="va">$local_name</span><span class="st"> : clone (branche </span><span class="va">$branch</span><span class="st">)&quot;</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">git</span> clone <span class="at">--quiet</span> <span class="at">--branch</span> <span class="st">&quot;</span><span class="va">$branch</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$url</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$target</span><span class="st">&quot;</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
+<p><strong>Ce qu’il faut savoir dire</strong> :</p>
+<ul>
+<li>Le mapping <code>nom_local|repo_distant|branche</code> encode le
+fait que les depots n’ont <strong>pas tous la meme branche
+active</strong> (<code>main</code>, <code>master</code>,
+<code>dev</code> pour le front) : le script clone la bonne branche sans
+intervention.</li>
+<li>Logique <strong>clone-or-update</strong> : premier run = clone, runs
+suivants = fetch + checkout + <code>pull --ff-only</code> (le
+fast-forward only refuse d’ecraser un travail local divergent).</li>
+<li>Les sources atterrissent dans <code>sources/</code>, repertoire non
+versionne, consomme par les
+<code>build: context: ./sources/&lt;repo&gt;</code> de
+<code>docker-compose.dev.yml</code>.</li>
+<li>Ce sont les <strong>memes depots</strong> qui alimentent les images
+GHCR via leur CI : parite prod/dev par construction (<a
+href="CICD-Qualite.html">fiche CI/CD et qualite</a>).</li>
+</ul>
+<hr />
+<h2 id="recapitulatifs-ports-exposes-et-mode-prod-vs-dev">7.
+Recapitulatifs : ports exposes et mode prod vs dev</h2>
+<h3 id="ports-exposes">7.1 Ports exposes</h3>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 55%" />
+<col style="width: 12%" />
+<col style="width: 14%" />
+</colgroup>
+<thead>
+<tr>
+<th>Service</th>
+<th>Mapping hote -&gt; conteneur</th>
+<th>Bind</th>
+<th>Acces</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>front</td>
+<td><code>5173:5173</code></td>
+<td>toutes interfaces</td>
+<td>Dashboard Vue 3</td>
+</tr>
+<tr>
+<td>auth</td>
+<td><code>3000:3000</code></td>
+<td>toutes interfaces</td>
+<td>Endpoints better-auth</td>
+</tr>
+<tr>
+<td>api</td>
+<td><code>8080:8080</code></td>
+<td>toutes interfaces</td>
+<td>API REST + Swagger (<code>/api/swagger-ui.html</code>)</td>
+</tr>
+<tr>
+<td>ai-nutrition</td>
+<td><code>8001:8001</code></td>
+<td>toutes interfaces</td>
+<td>FastAPI (<code>/docs</code>)</td>
+</tr>
+<tr>
+<td>reco-fitness</td>
+<td><code>8002:8000</code></td>
+<td>toutes interfaces</td>
+<td>FastAPI (<code>/docs</code>), port interne 8000 remappe</td>
+</tr>
+<tr>
+<td>db (PostgreSQL metier)</td>
+<td><code>127.0.0.1:5434:5432</code></td>
+<td>localhost uniquement</td>
+<td>base <code>healthai</code></td>
+</tr>
+<tr>
+<td>auth-db (PostgreSQL auth)</td>
+<td><code>127.0.0.1:5433:5432</code></td>
+<td>localhost uniquement</td>
+<td>base <code>auth_db</code></td>
+</tr>
+<tr>
+<td>mongo (MongoDB)</td>
+<td><code>127.0.0.1:27018:27017</code></td>
+<td>localhost uniquement</td>
+<td>base <code>reco_fitness</code></td>
+</tr>
+<tr>
+<td>ollama</td>
+<td>aucun</td>
+<td>reseau <code>ai_internal</code></td>
+<td>non joignable depuis l’hote</td>
+</tr>
+<tr>
+<td>etl, auth-migrate</td>
+<td>aucun</td>
+<td>reseau interne</td>
+<td>pas de port</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mode-prod-vs-mode-dev">7.2 Mode prod vs mode dev</h3>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 41%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Mode prod (defaut)</th>
+<th>Mode dev (<code>--dev</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compose file</td>
+<td><code>docker-compose.yml</code></td>
+<td><code>docker-compose.dev.yml</code></td>
+</tr>
+<tr>
+<td>Images</td>
+<td>pull GHCR
+<code>ghcr.io/whitefoxxyt/mspr-&lt;service&gt;:latest</code></td>
+<td><code>build: context: ./sources/&lt;repo&gt;</code></td>
+</tr>
+<tr>
+<td>Sources</td>
+<td>aucune (zero clone)</td>
+<td>clone des 8 depots sur leurs branches actives</td>
+</tr>
+<tr>
+<td>Flags up</td>
+<td><code>-d</code></td>
+<td><code>-d --build</code></td>
+</tr>
+<tr>
+<td>Base metier</td>
+<td>image <code>mspr-db</code> (migrations embarquees)</td>
+<td><code>postgres:17-alpine</code> + migrations montees depuis
+<code>sources/MSPR-DB/migrations</code></td>
+</tr>
+<tr>
+<td>Durcissement (<code>x-hardening</code>)</td>
+<td>ancres appliquees aux 11 services</td>
+<td>non applique (durcissement porte par le compose de production)</td>
+</tr>
+<tr>
+<td>Ports des bases</td>
+<td>bindes sur <code>127.0.0.1</code></td>
+<td>publies sur toutes les interfaces (confort de debug)</td>
+</tr>
+<tr>
+<td>Donnees ETL</td>
+<td>volume nomme <code>etl_data</code> (api en <code>:ro</code>)</td>
+<td>bind mount <code>./sources/MSPR-ETL/data</code></td>
+</tr>
+<tr>
+<td>Front</td>
+<td>image prebuilt</td>
+<td>build local avec args <code>VITE_*</code> injectes</td>
+</tr>
+<tr>
+<td>Cas d’usage</td>
+<td>evaluation, demo, serveur</td>
+<td>developpement, test d’une modification non publiee</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="questions-probables-du-jury">8. Questions probables du jury</h2>
+<h3
+id="q1.-pourquoi-docker-compose-plutot-que-kubernetes-le-sujet-proposait-un-bonus-k8s-mono-noeud.">Q1.
+Pourquoi Docker Compose plutot que Kubernetes ? Le sujet proposait un
+bonus K8s mono-noeud.</h3>
+<p>Le bonus n’a pas ete realise, et c’est un <strong>choix
+assume</strong>. La cible du livrable est un poste local de
+demonstration ; le sujet autorise explicitement l’orchestration locale.
+Docker Compose couvre tout le besoin reel : ordre de demarrage
+(conditions <code>depends_on</code>), sante (<code>healthcheck</code>),
+isolation (2 reseaux), persistence (5 volumes), redemarrage
+(<code>unless-stopped</code>), durcissement (ancres). Kubernetes
+apporterait l’auto-healing multi-noeud, le scaling horizontal et les
+rolling updates natifs : surdimensionne pour un hote unique et un
+evaluateur. Un minikube ajouterait une VM, une registry locale et des
+manifests pour 11 services, sans gain fonctionnel pour la demo. Le temps
+a ete investi ailleurs : monitoring, securite, resilience. On sait
+neanmoins decrire la migration : chaque service devient un Deployment +
+Service, les volumes des PVC, le <code>.env</code> des
+Secrets/ConfigMaps, les healthchecks des liveness/readiness probes, et
+<code>depends_on</code> disparait (remplace par les probes et les
+retries applicatifs).</p>
+<h3
+id="q2.-comment-garantissez-vous-le-demarrage-en-moins-de-10-minutes">Q2.
+Comment garantissez-vous le demarrage en moins de 10 minutes ?</h3>
+<p>Par la mesure et par la conception. Mesure : le 10/06/2026, la stack
+complete est <strong>stable en 84 secondes</strong> (images et modele
+deja telecharges), tres en dessous de l’exigence. Le premier run, lui,
+prend 5 a 10 minutes : pull des 8 images GHCR + telechargement du modele
+<code>gemma3:4b</code> (~3 Go), et le script l’annonce. Conception :
+images prebuildees sur GHCR (aucun build local en mode prod), modele
+Ollama persiste dans <code>ollama_data</code> (telecharge une seule
+fois), healthchecks courts (interval 10 s) qui debloquent les
+dependances des que les bases sont pretes, et demarrage en parallele de
+tout ce qui ne depend pas des bases.</p>
+<h3 id="q3.-pourquoi-deux-modes-prod-et-dev">Q3. Pourquoi deux modes
+prod et dev ?</h3>
+<p>Deux usages distincts. <strong>Prod</strong> : evaluation et demo.
+Zero clone, pull GHCR : l’image executee est exactement celle produite
+par la CI du depot source, reproductible sur n’importe quel poste.
+<strong>Dev</strong> : developpement. Les 8 depots sont clones dans
+<code>sources/</code> sur leurs branches actives et buildes localement ;
+on peut modifier un service et tester immediatement
+(<code>docker compose -f docker-compose.dev.yml up -d --build api</code>).
+Un <strong>seul script</strong> gere les deux (selection du compose file
+et des flags), donc une seule procedure a documenter et a maintenir.</p>
+<h3
+id="q4.-a-quoi-sert-auth-migrate-et-pourquoi-un-conteneur-one-shot">Q4.
+A quoi sert auth-migrate, et pourquoi un conteneur one-shot ?</h3>
+<p>Il applique les migrations Drizzle sur <code>auth-db</code>
+(<code>bun run db:migrate</code>) avant le demarrage du service auth.
+One-shot (<code>restart: "no"</code>) pour trois raisons : les
+migrations doivent etre jouees <strong>une fois par
+deploiement</strong>, pas a chaque redemarrage du service ; si on
+scalait <code>auth</code> a plusieurs replicas, on eviterait que chaque
+replica rejoue les migrations en concurrence ; et un echec de migration
+devient un <strong>echec de deploiement visible</strong>
+(<code>auth</code> exige <code>service_completed_successfully</code>,
+donc ne demarre pas) au lieu d’un service qui tourne sur un schema
+invalide. Il reutilise l’image de <code>auth</code>, seule la commande
+change : rien de plus a maintenir.</p>
+<h3
+id="q5.-quelles-sont-les-trois-conditions-depends_on-utilisees-et-leurs-differences">Q5.
+Quelles sont les trois conditions depends_on utilisees, et leurs
+differences ?</h3>
+<ul>
+<li><code>service_started</code> : le conteneur est lance,
+<strong>aucune garantie</strong> qu’il soit pret. Utilise pour
+<code>ollama</code> et <code>auth</code> (cotes consommateurs), et
+implicitement par <code>front</code> (syntaxe courte en liste).</li>
+<li><code>service_healthy</code> : le healthcheck du service passe.
+Utilise pour les trois bases (<code>pg_isready</code>,
+<code>mongosh ping</code>) : <code>api</code>, <code>etl</code>,
+<code>ai-nutrition</code>, <code>reco-fitness</code> ne demarrent que
+sur des bases reellement pretes.</li>
+<li><code>service_completed_successfully</code> : le conteneur s’est
+<strong>termine avec exit 0</strong>. Utilise uniquement pour
+<code>auth-migrate</code> : c’est la condition adaptee a un
+one-shot.</li>
+</ul>
+<p>Nuance a donner spontanement : <code>ollama</code> n’est qu’en
+<code>service_started</code> car un healthcheck “modele charge”
+bloquerait la stack plusieurs minutes au premier run ;
+<code>ai-nutrition</code> tolere son indisponibilite (Mistral primaire,
+Ollama fallback). Et <code>depends_on</code> n’agit qu’au demarrage : en
+cours de vie, ce sont <code>restart: unless-stopped</code> et les
+reconnexions applicatives qui jouent.</p>
+<h3 id="q6.-pourquoi-ollama-est-il-isole-sans-port-expose">Q6. Pourquoi
+Ollama est-il isole sans port expose ?</h3>
+<p>Parce que son API n’a <strong>aucune authentification</strong> par
+defaut : quiconque la joint peut consommer du compute LLM, voire charger
+des modeles. Trois barrieres : aucune section <code>ports</code> (rien
+sur l’hote), un reseau dedie <code>ai_internal</code> (les autres
+conteneurs de <code>mspr_data_network</code> ne le voient pas), et un
+seul client legitime, <code>ai-nutrition</code>, qui est le seul service
+rattache aux deux reseaux. C’est du moindre privilege applique au reseau
+: le perimetre d’exposition d’un service correspond exactement a ses
+consommateurs. Detail dans la <a href="Securite.html">fiche
+Securite</a>.</p>
+<h3 id="q7.-comment-les-services-se-resolvent-ils-entre-eux">Q7. Comment
+les services se resolvent-ils entre eux ?</h3>
+<p>Par le <strong>DNS interne de Docker</strong> sur les reseaux bridge
+: chaque conteneur est resolvable par son <strong>nom de
+service</strong> compose et par son <strong>container_name</strong>.
+Exemples reels du compose : <code>DB_HOST: mspr-healthai-db</code>
+(container_name), <code>MONGO_URI: mongodb://mongo:27017</code> (nom de
+service), <code>AUTH_API_URL: http://mspr-auth-service:3000</code>,
+<code>OLLAMA_HOST: http://ollama:11434</code>. Toujours le <strong>port
+interne</strong> (5432, 27017, 11434), jamais le port publie sur l’hote.
+Et jamais <code>localhost</code> : dans un conteneur, localhost designe
+le conteneur lui-meme. Honnetement, les deux conventions (nom de service
+/ container_name) coexistent dans le compose, heritage des composes
+MSPR1 et MSPR2 ; les deux fonctionnent, une harmonisation serait
+cosmetique.</p>
+<h3 id="q8.-que-fait-bootstrap.sh-si-.env-existe-deja">Q8. Que fait
+bootstrap.sh si .env existe deja ?</h3>
+<p>Il <strong>converge sans rien casser</strong>. Le
+<code>cp .env.example .env</code> n’a lieu que si le fichier est absent.
+Chaque secret n’est genere que si la variable est <strong>vide</strong>
+: <code>BETTER_AUTH_SECRET</code> (sinon tous les JWT emis seraient
+invalides), <code>DB_PASSWORD</code>, <code>AUTH_DB_PASSWORD</code> (via
+<code>ensure_env_value</code>, qui lit la valeur courante avant
+d’ecrire). Les cles API ne sont dechiffrees que si la variable est vide
+<strong>et</strong> le <code>.enc</code> present ; sinon, simple message
+d’information. On peut donc relancer bootstrap a volonte : c’est de
+l’<strong>idempotence</strong>, indispensable pour un script de mise en
+production. Seule subtilite documentee dans le script : changer un mot
+de passe de base apres initialisation du volume PostgreSQL impose un
+<code>down -v</code> (PostgreSQL n’applique le mot de passe qu’a l’init
+du volume).</p>
+<h3
+id="q9.-pourquoi-generer-les-mots-de-passe-plutot-que-garder-un-defaut">Q9.
+Pourquoi generer les mots de passe plutot que garder un defaut ?</h3>
+<p>Parce que MSPR3 est une <strong>mise en production</strong> et que le
+depot est public : un defaut “password” versionne est un mot de passe
+connu de tous. <code>gen_password</code> produit 24 caracteres
+alphanumeriques tires de 32 octets d’aleatoire openssl. Le format
+alphanumerique est un choix d’ingenierie : le mot de passe est interpole
+dans <code>DATABASE_URL: postgres://user:pass@host</code>, un caractere
+special casserait le parsing de l’URL. Nuance honnete : le fallback
+<code>${DB_PASSWORD:-password}</code> existe encore dans le YAML (filet
+si quelqu’un lance compose sans bootstrap), mais la procedure
+officielle, documentee et scriptee, passe par bootstrap qui garantit une
+valeur forte avant le premier <code>up</code>.</p>
+<h3
+id="q10.-image-ghcr-vs-build-local-quelle-difference-quand-utiliser-quoi">Q10.
+Image GHCR vs build local : quelle difference, quand utiliser quoi
+?</h3>
+<p>L’image GHCR est <strong>produite par la CI</strong> du depot source
+(build + push sur <code>ghcr.io/whitefoxxyt/</code>, voir <a
+href="CICD-Qualite.html">fiche CI/CD et qualite</a>) : immuable, identique
+pour tous les postes, pull rapide. C’est le mode evaluation, demo et
+serveur ; l’overlay Watchtower s’appuie dessus pour le redeploiement
+automatique. Le build local reflete l’etat des <strong>sources
+clonees</strong> : indispensable pour tester une modification non
+publiee, au prix d’un build plus long et d’un resultat dependant du
+poste. Regle simple : on demontre en prod, on developpe en dev. Limite
+assumee : le tag <code>latest</code> (un versionnage semantique
+<code>v1.2.3</code> faciliterait les rollbacks ; acceptable au scope
+MSPR).</p>
+<h3 id="q11.-comment-ajouter-un-nouveau-service-a-la-stack">Q11. Comment
+ajouter un nouveau service a la stack ?</h3>
+<ol type="1">
+<li>Creer le depot avec son Dockerfile et une CI qui publie l’image sur
+GHCR.</li>
+<li><code>docker-compose.yml</code> : ajouter le bloc service avec
+<code>&lt;&lt;: *hardening</code> (durcissement et rotation des logs
+garantis d’office), <code>container_name</code>, l’image GHCR, les
+variables d’environnement, le ou les reseaux, les
+<code>depends_on</code> avec la bonne condition, un
+<code>healthcheck</code> si d’autres services en dependent, un volume
+nomme s’il a de l’etat.</li>
+<li><code>docker-compose.dev.yml</code> : meme bloc en
+<code>build: context: ./sources/&lt;repo&gt;</code>.</li>
+<li><code>bootstrap.sh</code> : une ligne dans <code>REPOS</code>
+(<code>"nom_local|repo_distant|branche"</code>).</li>
+<li><code>.env.example</code> : documenter les nouvelles variables ; si
+secret, l’ajouter aux <code>ensure_env_value</code> ou aux
+<code>.enc</code>.</li>
+<li>Monitoring : declarer la cible Prometheus (<a
+href="Observabilite.html">fiche Observabilite</a>).</li>
+</ol>
+<p>L’essentiel du travail est deja factorise par les ancres et par
+bootstrap : le cout marginal d’un service est faible.</p>
+<h3
+id="q12.-pourquoi-les-ports-des-bases-sont-ils-bindes-sur-127.0.0.1">Q12.
+Pourquoi les ports des bases sont-ils bindes sur 127.0.0.1 ?</h3>
+<p><code>"127.0.0.1:5434:5432"</code> publie le port <strong>uniquement
+sur la boucle locale</strong> de l’hote. Sans ce prefixe, Docker publie
+sur <code>0.0.0.0</code> et, piege classique, ses regles iptables
+<strong>court-circuitent</strong> les firewalls hote type ufw : une base
+PostgreSQL ou MongoDB exposee sur une machine reliee a un reseau serait
+joignable de l’exterieur. Les conteneurs, eux, n’utilisent pas ces ports
+publies : ils passent par le reseau Docker interne (5432, 27017). Le
+bind localhost ne sert qu’au <strong>confort d’administration</strong>
+(psql, mongosh, client graphique depuis l’hote pendant la demo). Les
+numeros decales (5434 metier, 5433 auth, 27018 mongo) evitent les
+conflits avec des instances locales existantes. En production stricte,
+on pourrait ne publier aucun port de base et passer par
+<code>docker exec</code> ; le compromis retenu privilegie
+l’inspectabilite pour la soutenance.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    document.querySelectorAll('pre.mermaid').forEach(pre => {
+      const code = pre.querySelector('code');
+      if (code) pre.textContent = code.textContent;
+    });
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>
