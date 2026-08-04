@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QCM de révision — CDA 2026</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+    <span class="header-right" id="compteur"></span>
+  </header>
+
+  <main>
+    <!-- ÉCRAN 1 : configuration -->
+    <section id="ecran-config">
+      <h1>QCM de révision</h1>
+      <p><strong id="total-q"></strong> questions sur le dossier de projet, les dépôts, et la culture technique attendue en fin de cursus CDA. Correction et explication après chaque réponse.</p>
+
+      <div class="admonition note">
+        <p class="admonition-title">Sur la construction de ce QCM</p>
+        <p>Les longueurs de proposition sont équilibrées et les rangs de bonne réponse répartis à parts égales : <strong>ni la longueur ni la position ne renseignent sur la bonne réponse</strong>. L'ordre des questions est mélangé à chaque partie, celui des propositions ne l'est pas (certaines explications s'y réfèrent). Vérifiable avec <code>audit_qcm.py</code>.</p>
+      </div>
+
+      <h2>Thèmes</h2>
+      <div id="themes" class="chips"></div>
+      <p class="chips-actions">
+        <button type="button" class="lien" data-tous>Tout sélectionner</button>
+        <button type="button" class="lien" data-aucun>Tout désélectionner</button>
+      </p>
+
+      <h2>Nombre de questions</h2>
+      <div id="volume" class="chips"></div>
+
+      <p class="lancer">
+        <button type="button" id="btn-demarrer" class="primaire">Commencer</button>
+      </p>
+    </section>
+
+    <!-- ÉCRAN 2 : question -->
+    <section id="ecran-quiz" hidden>
+      <div class="barre"><div class="barre-remplie" id="barre"></div></div>
+      <p class="meta" id="meta-question"></p>
+      <h2 id="enonce"></h2>
+      <ol class="propositions" id="propositions"></ol>
+      <div id="correction" hidden>
+        <div class="admonition" id="verdict">
+          <p class="admonition-title" id="verdict-titre"></p>
+          <p id="verdict-texte"></p>
+        </div>
+        <p class="lancer">
+          <button type="button" id="btn-suivant" class="primaire">Suivante</button>
+        </p>
+      </div>
+      <p class="aide">Raccourcis : <kbd>1</kbd>–<kbd>4</kbd> pour répondre, <kbd>Entrée</kbd> pour continuer.</p>
+    </section>
+
+    <!-- ÉCRAN 3 : résultats -->
+    <section id="ecran-fin" hidden>
+      <h1>Résultats</h1>
+      <p class="score" id="score-global"></p>
+      <h2>Par thème</h2>
+      <table id="score-themes"><tbody></tbody></table>
+      <h2 id="titre-erreurs" hidden>Questions manquées</h2>
+      <div id="liste-erreurs"></div>
+      <p class="lancer">
+        <button type="button" id="btn-rejouer" class="primaire">Nouvelle partie</button>
+        <button type="button" id="btn-erreurs" class="secondaire" hidden>Rejouer mes erreurs</button>
+      </p>
+    </section>
+  </main>
+
+<script>
+const DONNEES = /*__DONNEES__*/;
+
+const $ = (s) => document.querySelector(s);
+const themesActifs = new Set(Object.keys(DONNEES.themes));
+let volume = 20;
+let serie = [];        // questions de la partie en cours
+let index = 0;
+let repondu = false;
+let resultats = [];    // { q, choix, juste }
+let rejeu = null;      // sous-ensemble à rejouer
+
+$("#total-q").textContent = DONNEES.questions.length;
+
+/* ---------- Écran de configuration ---------- */
+
+function compteParTheme(cle) {
+  return DONNEES.questions.filter((q) => q.t === cle).length;
+}
+
+function rendreThemes() {
+  const hote = $("#themes");
+  hote.innerHTML = "";
+  for (const [cle, libelle] of Object.entries(DONNEES.themes)) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip" + (themesActifs.has(cle) ? " actif" : "");
+    b.innerHTML = `${libelle} <span class="chip-n">${compteParTheme(cle)}</span>`;
+    b.onclick = () => {
+      themesActifs.has(cle) ? themesActifs.delete(cle) : themesActifs.add(cle);
+      rendreThemes();
+      rendreVolume();
+    };
+    hote.appendChild(b);
+  }
+}
+
+function disponibles() {
+  return DONNEES.questions.filter((q) => themesActifs.has(q.t));
+}
+
+function rendreVolume() {
+  const max = disponibles().length;
+  const paliers = [10, 20, 40, max].filter((n, i, t) => n > 0 && n <= max && t.indexOf(n) === i);
+  const hote = $("#volume");
+  hote.innerHTML = "";
+  if (!paliers.includes(volume)) volume = paliers[paliers.length - 1] || 0;
+  for (const n of paliers) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip" + (n === volume ? " actif" : "");
+    b.textContent = n === max ? `Toutes (${max})` : n;
+    b.onclick = () => { volume = n; rendreVolume(); };
+    hote.appendChild(b);
+  }
+  $("#btn-demarrer").disabled = max === 0;
+  $("#btn-demarrer").textContent = max === 0 ? "Sélectionnez au moins un thème" : "Commencer";
+}
+
+$("[data-tous]").onclick = () => {
+  Object.keys(DONNEES.themes).forEach((c) => themesActifs.add(c));
+  rendreThemes(); rendreVolume();
+};
+$("[data-aucun]").onclick = () => {
+  themesActifs.clear(); rendreThemes(); rendreVolume();
+};
+
+/* ---------- Déroulement ---------- */
+
+function melanger(t) {
+  const a = t.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function demarrer(questions) {
+  // On mélange l'ORDRE DES QUESTIONS uniquement. Les propositions gardent leur
+  // ordre : plusieurs explications s'y réfèrent (« la 1re proposition décrit… »).
+  serie = questions;
+  index = 0;
+  resultats = [];
+  basculer("#ecran-quiz");
+  afficherQuestion();
+}
+
+function basculer(cible) {
+  for (const id of ["#ecran-config", "#ecran-quiz", "#ecran-fin"]) {
+    $(id).hidden = id !== cible;
+  }
+  window.scrollTo({ top: 0 });
+}
+
+function afficherQuestion() {
+  const q = serie[index];
+  repondu = false;
+  $("#compteur").textContent = `${index + 1} / ${serie.length}`;
+  $("#barre").style.width = `${(index / serie.length) * 100}%`;
+  $("#meta-question").textContent = DONNEES.themes[q.t];
+  $("#enonce").innerHTML = q.q;
+  $("#correction").hidden = true;
+
+  const hote = $("#propositions");
+  hote.innerHTML = "";
+  q.a.forEach((texte, i) => {
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "proposition";
+    b.innerHTML = `<span class="prop-rang">${i + 1}</span><span class="prop-texte">${texte}</span>`;
+    b.onclick = () => repondre(i);
+    li.appendChild(b);
+    hote.appendChild(li);
+  });
+}
+
+function repondre(choix) {
+  if (repondu) return;
+  repondu = true;
+  const q = serie[index];
+  const juste = choix === q.c;
+  resultats.push({ q, choix, juste });
+
+  document.querySelectorAll(".proposition").forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.c) b.classList.add("juste");
+    else if (i === choix) b.classList.add("faux");
+    else b.classList.add("neutre");
+  });
+
+  const verdict = $("#verdict");
+  verdict.className = "admonition " + (juste ? "jury" : "attention");
+  $("#verdict-titre").textContent = juste ? "Correct" : "Incorrect";
+  $("#verdict-texte").innerHTML = q.e;
+  $("#correction").hidden = false;
+  $("#btn-suivant").textContent = index + 1 === serie.length ? "Voir les résultats" : "Suivante";
+  $("#btn-suivant").focus();
+}
+
+$("#btn-suivant").onclick = () => {
+  index++;
+  if (index >= serie.length) terminer();
+  else afficherQuestion();
+};
+
+/* ---------- Résultats ---------- */
+
+function terminer() {
+  const bons = resultats.filter((r) => r.juste).length;
+  const pct = Math.round((bons / resultats.length) * 100);
+  $("#compteur").textContent = "";
+  $("#score-global").innerHTML =
+    `<strong>${bons} / ${resultats.length}</strong> &nbsp;·&nbsp; ${pct} %`;
+  $("#score-global").className = "score " + (pct >= 80 ? "bon" : pct >= 60 ? "moyen" : "faible");
+
+  const parTheme = {};
+  for (const r of resultats) {
+    const t = (parTheme[r.q.t] ||= { bons: 0, total: 0 });
+    t.total++;
+    if (r.juste) t.bons++;
+  }
+  const corps = $("#score-themes").querySelector("tbody");
+  corps.innerHTML = "";
+  Object.entries(parTheme)
+    .sort((a, b) => a[1].bons / a[1].total - b[1].bons / b[1].total)
+    .forEach(([cle, s]) => {
+      const p = Math.round((s.bons / s.total) * 100);
+      corps.insertAdjacentHTML("beforeend",
+        `<tr><td>${DONNEES.themes[cle]}</td><td>${s.bons} / ${s.total}</td>` +
+        `<td><span class="pastille ${p >= 80 ? "bon" : p >= 60 ? "moyen" : "faible"}">${p} %</span></td></tr>`);
+    });
+
+  const rates = resultats.filter((r) => !r.juste);
+  $("#titre-erreurs").hidden = rates.length === 0;
+  $("#btn-erreurs").hidden = rates.length === 0;
+  rejeu = rates.map((r) => r.q);
+  const liste = $("#liste-erreurs");
+  liste.innerHTML = "";
+  for (const r of rates) {
+    liste.insertAdjacentHTML("beforeend",
+      `<div class="erreur">
+         <p class="erreur-q">${r.q.q}</p>
+         <p class="erreur-l"><span class="etiq faux">Votre réponse</span> ${r.q.a[r.choix]}</p>
+         <p class="erreur-l"><span class="etiq juste">Bonne réponse</span> ${r.q.a[r.q.c]}</p>
+         <p class="erreur-e">${r.q.e}</p>
+       </div>`);
+  }
+  basculer("#ecran-fin");
+}
+
+$("#btn-rejouer").onclick = () => { basculer("#ecran-config"); $("#compteur").textContent = ""; };
+$("#btn-erreurs").onclick = () => demarrer(melanger(rejeu));
+$("#btn-demarrer").onclick = () => demarrer(melanger(disponibles()).slice(0, volume));
+
+/* ---------- Clavier ---------- */
+
+document.addEventListener("keydown", (e) => {
+  if ($("#ecran-quiz").hidden) return;
+  if (!repondu && ["1", "2", "3", "4"].includes(e.key)) {
+    const b = document.querySelectorAll(".proposition")[Number(e.key) - 1];
+    if (b) { e.preventDefault(); b.click(); }
+  } else if (repondu && e.key === "Enter") {
+    e.preventDefault();
+    $("#btn-suivant").click();
+  }
+});
+
+rendreThemes();
+rendreVolume();
+</script>
+</body>
+</html>
