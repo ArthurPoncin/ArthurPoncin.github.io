@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Révisions CDA 2026 — Arthur Poncin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../">arthurponcin.me</a>
+    <a href="./qcm.html" class="header-right">QCM →</a>
+  </header>
+  <main>
+    <h1>Fiches de révision : Titre CDA 2026</h1>
+    <p>Supports de révision pour la soutenance du <strong>Titre Professionnel Concepteur Développeur d'Applications</strong> (RNCP 37873, niveau 6), spécialisation DevOps — alternance chez <strong>Sixense Engineering</strong>, EPSI Nantes.</p>
+    <p>Onze fiches réparties en deux familles. Les <span class="tag transverse">transverses</span> couvrent la culture technique attendue en fin de cursus, illustrée systématiquement par du code des projets. Les <span class="tag projet">projets</span> décrivent chaque dépôt : architecture, choix, points sensibles. Chaque fiche suit le même plan : <em>vocabulaire</em>, <em>TL;DR</em>, <em>détails techniques</em>, <em>code essentiel</em>, <em>questions probables du jury</em>.</p>
+    <p>Un <a href="./qcm.html"><strong>QCM de 70 questions</strong></a> complète le dispositif, avec correction et explication immédiates.</p>
+
+    <h2>Fiches transversales</h2>
+    <ul class="fiches">
+      <li>
+        <span class="tag transverse">Transverse</span>
+        <a href="01-conception-uml.html">1. Conception, UML et modélisation</a>
+        <span class="stack">UML · Merise · MCD/MLD/MPD · ADR · PRD</span>
+        <span class="desc">Les diagrammes produits (cas d'utilisation, classes, séquence, déploiement), les règles de passage MCD → MLD, les formes normales, l'architecture N-tiers, et la documentation versionnée dans le dépôt.</span>
+      </li>
+      <li>
+        <span class="tag transverse">Transverse</span>
+        <a href="02-architecture-patterns.html">2. Architecture et design patterns</a>
+        <span class="stack">Strategy · Factory · SOLID · REST · monorepo</span>
+        <span class="desc">Le refactoring du moteur de rendu (cascade de conditions → Strategy + Factory), l'architecture feature-based du front (ADR-005), monolithe contre microservices, et les patterns réellement présents dans le code.</span>
+      </li>
+      <li>
+        <span class="tag transverse">Transverse</span>
+        <a href="03-securite-auth.html">3. Sécurité, authentification et RGPD</a>
+        <span class="stack">OIDC · OAuth2 · PKCE · JWT · OWASP · RGPD</span>
+        <span class="desc">Le flow OIDC complet tel qu'implémenté, state / nonce / PKCE, le modèle BFF, le pont machine-to-machine borné par allowlist, l'OWASP Top 10 appliqué au projet, et les limites assumées.</span>
+      </li>
+      <li>
+        <span class="tag transverse">Transverse</span>
+        <a href="04-tests-qualite.html">4. Tests, qualité et jeu d'essai</a>
+        <span class="stack">pytest · Vitest · Playwright · Ruff · ESLint</span>
+        <span class="desc">1 591 tests sur trois niveaux, PostgreSQL réel en CI plutôt que SQLite, les factories, le jeu d'essai attendu par le référentiel, et ce que je testerais différemment.</span>
+      </li>
+      <li>
+        <span class="tag transverse">Transverse</span>
+        <a href="05-devops-cicd.html">5. DevOps : Docker, CI/CD et Azure</a>
+        <span class="stack">Docker · GitHub Actions · ACR · Azure Web App</span>
+        <span class="desc">Build multi-stage, séparation dev/prod, isolation réseau, l'évolution du pipeline en cinq étapes, la stratégie de tags par SHA, la procédure de rollback et sa limite sur les migrations.</span>
+      </li>
+      <li>
+        <span class="tag transverse">Transverse</span>
+        <a href="06-bdd-sql-orm.html">6. Bases de données, SQL et ORM</a>
+        <span class="stack">PostgreSQL · ORM Django · migrations · JSONB</span>
+        <span class="desc">Le modèle de données, les stratégies <code>ON DELETE</code>, la dénormalisation assumée du contenu en JSON, le queryset paresseux, le N+1, les pièges des migrations en production et le SQL à savoir lire.</span>
+      </li>
+    </ul>
+
+    <h2>Fiches projet</h2>
+    <p>En cours de rédaction — cette section couvrira <code>boost-reports</code> (backend Django et frontend React), <code>boost-tools</code> (SXE-Hub), <code>boost-apps</code> et <code>shm-bridge-traffic-ml</code> (Pont Gaubourd).</p>
+
+    <h2>Conseils de lecture</h2>
+    <ul>
+      <li><strong>Première lecture</strong> : la section <em>Vocabulaire</em> et la <em>TL;DR</em> de chaque fiche, pour poser la carte mentale complète.</li>
+      <li><strong>Seconde lecture</strong> : les détails techniques et le <em>code essentiel</em>, fiche par fiche.</li>
+      <li><strong>Entraînement</strong> : le <a href="./qcm.html">QCM</a>, en mode aléatoire, jusqu'à ne plus se tromper sur les catégories faibles.</li>
+      <li><strong>Veille de soutenance</strong> : uniquement les sections <em>Questions probables du jury</em>, et les encadrés <em>Piège</em>.</li>
+    </ul>
+
+    <h2>Ce que les encadrés signifient</h2>
+    <div class="admonition jury">
+      <p class="admonition-title">Jury</p>
+      <p>Un angle d'attaque probable, ou la formulation à retenir pour répondre.</p>
+    </div>
+    <div class="admonition piege">
+      <p class="admonition-title">Piège</p>
+      <p>Une confusion courante, ou une question tendue attendant une réponse nuancée.</p>
+    </div>
+    <div class="admonition attention">
+      <p class="admonition-title">Attention</p>
+      <p>Une limite réelle du projet, à énoncer soi-même avant que le jury ne la trouve.</p>
+    </div>
+    <div class="admonition note">
+      <p class="admonition-title">Note</p>
+      <p>Une précision technique utile mais secondaire.</p>
+    </div>
+
+    <h2>Sources</h2>
+    <p>Ces fiches sont construites à partir du dossier de projet (98 pages), du support de soutenance, et de la lecture directe des dépôts <code>boost-reports</code>, <code>boost-tools</code>, <code>boost-apps</code> et <code>shm-bridge-traffic-ml</code>. Les extraits de code sont copiés des dépôts réels ; quand un extrait est reconstitué ou schématisé, c'est signalé en commentaire.</p>
+  </main>
+</body>
+</html>

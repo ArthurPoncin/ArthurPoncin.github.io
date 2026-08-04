@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tests, qualité et jeu d'essai — Révisions CDA 2026</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+    <a href="./qcm.html" class="header-right">QCM →</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<div class="toc">
+<ul>
+<li><a href="#0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</a></li>
+<li><a href="#1-tldr">1. TL;DR</a></li>
+<li><a href="#2-la-pyramide-en-pratique">2. La pyramide, en pratique</a></li>
+<li><a href="#3-les-factories">3. Les factories</a></li>
+<li><a href="#4-le-jeu-dessai-livrable-cda">4. Le jeu d'essai (livrable CDA)</a><ul>
+<li><a href="#41-la-structure-attendue">4.1 La structure attendue</a></li>
+<li><a href="#42-les-trois-categories-et-pourquoi-les-trois">4.2 Les trois catégories, et pourquoi les trois</a></li>
+</ul>
+</li>
+<li><a href="#5-les-linters-et-la-ci-qualite">5. Les linters et la CI qualité</a><ul>
+<li><a href="#51-ce-que-chaque-outil-verifie">5.1 Ce que chaque outil vérifie</a></li>
+<li><a href="#52-le-job-de-ci-reel">5.2 Le job de CI réel</a></li>
+<li><a href="#53-les-hooks-git">5.3 Les hooks Git</a></li>
+</ul>
+</li>
+<li><a href="#6-ce-que-je-testerais-differemment">6. Ce que je testerais différemment</a></li>
+<li><a href="#7-questions-probables-du-jury">7. Questions probables du jury</a><ul>
+<li><a href="#q1-pourquoi-une-vraie-base-postgresql-en-ci-plutot-que-sqlite">Q1. Pourquoi une vraie base PostgreSQL en CI plutôt que SQLite ?</a></li>
+<li><a href="#q2-1-591-tests-quel-est-votre-taux-de-couverture">Q2. 1 591 tests, quel est votre taux de couverture ?</a></li>
+<li><a href="#q3-faites-vous-du-tdd">Q3. Faites-vous du TDD ?</a></li>
+<li><a href="#q4-comment-gerez-vous-les-tests-e2e-connus-pour-etre-fragiles">Q4. Comment gérez-vous les tests E2E, connus pour être fragiles ?</a></li>
+<li><a href="#q5-votre-jeu-dessai-a-douze-cas-et-zero-ecart-ce-nest-pas-trop-beau">Q5. Votre jeu d'essai a douze cas et zéro écart. Ce n'est pas trop beau ?</a></li>
+<li><a href="#q6-un-bug-arrive-en-production-quelle-est-votre-demarche">Q6. Un bug arrive en production. Quelle est votre démarche ?</a></li>
+<li><a href="#q7-quelle-est-la-difference-entre-un-mock-et-un-stub">Q7. Quelle est la différence entre un mock et un stub ?</a></li>
+<li><a href="#q8-vos-linters-sont-bloquants-en-ci-ce-nest-pas-contre-productif">Q8. Vos linters sont bloquants en CI. Ce n'est pas contre-productif ?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+    </nav>
+    <article>
+<h1 id="tests-qualite-et-jeu-dessai">Tests, qualité et jeu d'essai</h1>
+<p class="meta"><em>Fiche transversale 4/6 — la stratégie de tests, les outils, et le jeu d'essai que le référentiel CDA exige explicitement.</em></p>
+<h2 id="0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</h2>
+<dl>
+<dt>Test unitaire</dt>
+<dd>Vérifie le comportement d'<strong>une unité isolée</strong> — une fonction, une méthode, une classe. Ses dépendances sont remplacées par des doublures. Rapide (millisecondes), nombreux, ils localisent précisément une régression.</dd>
+<dt>Test d'intégration</dt>
+<dd>Vérifie que <strong>plusieurs composants réels collaborent</strong> correctement. Chez moi : un appel HTTP qui traverse le routage, la sérialisation, les permissions, le queryset et la vraie base PostgreSQL.</dd>
+<dt>Test end-to-end (E2E)</dt>
+<dd>Vérifie un <strong>parcours utilisateur complet</strong> dans un vrai navigateur, sur l'application assemblée. Lent, fragile, coûteux à maintenir — donc peu nombreux et réservés aux flux critiques.</dd>
+<dt>Pyramide des tests</dt>
+<dd>Heuristique de répartition : beaucoup d'unitaires à la base, moins d'intégration au milieu, très peu d'E2E au sommet. L'anti-modèle est le « cornet de glace » : beaucoup d'E2E et peu d'unitaires — une suite lente qui échoue pour de mauvaises raisons.</dd>
+<dt>Doublure de test (test double)</dt>
+<dd>Terme générique. <strong>Dummy</strong> (passé mais inutilisé), <strong>stub</strong> (renvoie une réponse figée), <strong>spy</strong> (enregistre les appels), <strong>mock</strong> (stub + assertions sur les appels), <strong>fake</strong> (implémentation simplifiée mais fonctionnelle, ex. une base en mémoire).</dd>
+<dt>Fixture</dt>
+<dd>État connu et reproductible mis en place avant un test. En pytest, une fonction décorée <code>@pytest.fixture</code> injectée par nom de paramètre.</dd>
+<dt>Factory</dt>
+<dd>Générateur d'objets de test réalistes en une ligne, avec des valeurs par défaut cohérentes et surchargeables. <code>factory_boy</code> côté Python. Avantage sur les fixtures statiques : un test ne déclare que <strong>ce qui compte pour lui</strong>.</dd>
+<dt>Couverture de code (coverage)</dt>
+<dd>Pourcentage de lignes (ou branches) exécutées par la suite de tests. C'est un indicateur d'<strong>absence</strong> — une ligne non couverte n'est pas testée — jamais une preuve de qualité.</dd>
+<dt>TDD (Test-Driven Development)</dt>
+<dd>Cycle red-green-refactor : écrire un test qui échoue, écrire le minimum de code pour le faire passer, refactorer sous la protection du test.</dd>
+<dt>Linter / formateur</dt>
+<dd>Un <strong>linter</strong> détecte les erreurs de style, les mauvaises pratiques et certains bugs (Ruff, ESLint). Un <strong>formateur</strong> réécrit le code selon des règles typographiques fixes (<code>ruff format</code>, Prettier). Le second supprime les débats sur la mise en forme en revue.</dd>
+<dt>Jeu d'essai</dt>
+<dd>Livrable attendu par le référentiel CDA : un tableau de cas de test avec, pour chacun, les données d'entrée, le résultat <strong>attendu</strong>, le résultat <strong>obtenu</strong> et l'écart. Il couvre trois catégories : cas passants, cas limites, cas d'erreur.</dd>
+<dt>Flaky test</dt>
+<dd>Test qui échoue de façon intermittente sans changement de code. Cause fréquente : dépendance à l'horloge, à l'ordre d'exécution, ou attente insuffisante en E2E. Un test flaky est pire qu'un test absent : il apprend à l'équipe à ignorer le rouge.</dd>
+</dl>
+<hr />
+<h2 id="1-tldr">1. TL;DR</h2>
+<p><strong>1 591 tests automatisés</strong> : 1 062 côté back, 529 côté front, organisés en trois niveaux.</p>
+<table>
+<thead>
+<tr>
+<th>Niveau</th>
+<th>Outils</th>
+<th>Ce qui est vérifié</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Unitaire</strong></td>
+<td>pytest (back) · Vitest + Testing Library (front)</td>
+<td>Moteur de génération Word, Strategy Pattern, resolver de variables, traitement d'images, composants React isolés</td>
+</tr>
+<tr>
+<td><strong>Intégration</strong></td>
+<td>client DRF + <strong>PostgreSQL 17 réel</strong> en CI</td>
+<td>Un endpoint de bout en bout : routage, sérialisation, permissions, queryset, base</td>
+</tr>
+<tr>
+<td><strong>E2E</strong></td>
+<td>Playwright — <strong>30 scénarios</strong></td>
+<td>Navigation, création de document, import de photos</td>
+</tr>
+</tbody>
+</table>
+<p>Les données de test sont produites par <strong>7 factories <code>factory_boy</code></strong> (utilisateur, agence, rapport, template, section, annexe photo, photo).</p>
+<p>La qualité est contrôlée par des <strong>linters intégrés à la CI</strong> : Ruff (Python) et ESLint (TypeScript/React). Chaque push déclenche <strong>quatre jobs en parallèle</strong> — tests back, lint back, tests front, lint front. <strong>Si un seul échoue, le code ne va pas plus loin</strong> : le workflow de déploiement ne démarre que si la CI est verte sur <code>main</code>.</p>
+<div class="admonition jury">
+<p class="admonition-title">La décision de test la plus défendable du dossier</p>
+<p>La CI fait tourner les tests d'intégration sur une <strong>vraie instance PostgreSQL 17</strong>, pas sur une base SQLite de substitution. C'est plus lent à démarrer, mais c'est le seul moyen de tester ce qui n'existe qu'en PostgreSQL : les champs JSON, les contraintes de validation, les index partiels, les stratégies <code>ON DELETE</code>. Un test qui passe sur SQLite et casse en production ne teste rien.</p>
+</div>
+<hr />
+<h2 id="2-la-pyramide-en-pratique">2. La pyramide, en pratique</h2>
+<pre class="mermaid">flowchart TB
+    E["E2E — 30 scénarios Playwright&lt;br/&gt;lents · fragiles · flux critiques uniquement"]
+    I["Intégration — endpoints DRF sur PostgreSQL 17&lt;br/&gt;routage · sérialisation · permissions · queryset · DB"]
+    U["Unitaire — ~1 500 tests pytest + Vitest&lt;br/&gt;rapides · isolés · localisent précisément"]
+    U --&gt; I --&gt; E
+</pre>
+
+<p>Ce que chaque niveau attrape, et <strong>lui seul</strong> :</p>
+<ul>
+<li><strong>Unitaire</strong> — une erreur de logique dans une stratégie de rendu, un calcul de rotation d'image faux, un resolver de variable qui ne gère pas la valeur absente. Symptôme : un test échoue, on sait immédiatement quelle fonction.</li>
+<li><strong>Intégration</strong> — un sérialiseur qui expose un champ qu'il ne devrait pas, une permission qui laisse passer, un queryset qui oublie de filtrer par agence, une migration incohérente. Symptôme : la fonction est correcte mais l'assemblage fuit.</li>
+<li><strong>E2E</strong> — un bouton qui n'est pas branché, une route front cassée, un flux d'upload qui échoue au niveau du navigateur. Symptôme : chaque pièce marche, le parcours non.</li>
+</ul>
+<div class="admonition piege">
+<p class="admonition-title">L'erreur de raisonnement classique</p>
+<p>« J'ai 90 % de couverture donc mon application est fiable. » Non : la couverture mesure les lignes <strong>exécutées</strong>, pas les lignes <strong>vérifiées</strong>. Un test qui appelle une fonction sans aucune assertion couvre 100 % de ses lignes et ne teste rien. Et une couverture parfaite au niveau unitaire ne dit <strong>rien</strong> sur l'assemblage — c'est précisément le rôle des tests d'intégration.</p>
+</div>
+<hr />
+<h2 id="3-les-factories">3. Les factories</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Schéma d&#39;une factory factory_boy</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReportFactory</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">django</span><span class="o">.</span><span class="n">DjangoModelFactory</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Report</span>
+
+    <span class="n">title</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">Sequence</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Rapport de diagnostic </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">template</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">SubFactory</span><span class="p">(</span><span class="n">ReportTemplateFactory</span><span class="p">)</span>
+    <span class="n">agency</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">SubFactory</span><span class="p">(</span><span class="n">AgencyFactory</span><span class="p">)</span>
+    <span class="n">created_by</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">SubFactory</span><span class="p">(</span><span class="n">UserFactory</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+</code></pre></div>
+
+<p>Sept factories couvrent les entités principales. Le bénéfice est net dans les tests :</p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">test_un_utilisateur_ne_voit_pas_les_rapports_d_une_autre_agence</span><span class="p">():</span>
+    <span class="n">nantes</span><span class="p">,</span> <span class="n">lyon</span> <span class="o">=</span> <span class="n">AgencyFactory</span><span class="p">(),</span> <span class="n">AgencyFactory</span><span class="p">()</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">UserFactory</span><span class="p">(</span><span class="n">agency</span><span class="o">=</span><span class="n">nantes</span><span class="p">)</span>
+    <span class="n">ReportFactory</span><span class="p">(</span><span class="n">agency</span><span class="o">=</span><span class="n">lyon</span><span class="p">)</span>             <span class="c1"># ne doit pas être visible</span>
+
+    <span class="n">visible</span> <span class="o">=</span> <span class="n">filter_visible_queryset</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">Report</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+
+    <span class="k">assert</span> <span class="n">visible</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span>
+</code></pre></div>
+
+<p>Le test ne déclare que ce qui le concerne : <strong>deux agences et un rapport dans la mauvaise</strong>. Tout le reste — titre, template, dates, champs obligatoires — est produit par la factory avec des valeurs cohérentes. C'est ce qui rend le test lisible : on voit l'intention, pas la plomberie.</p>
+<div class="admonition note">
+<p class="admonition-title">Factory contre fixture</p>
+<p>Une fixture statique (un JSON de données de test) devient vite un point de couplage : tous les tests en dépendent, personne n'ose la modifier, et elle grossit indéfiniment. Une factory produit un objet <strong>frais et personnalisable</strong> à chaque appel. <code>SubFactory</code> construit récursivement les dépendances, <code>Sequence</code> garantit l'unicité des champs contraints.</p>
+</div>
+<hr />
+<h2 id="4-le-jeu-dessai-livrable-cda">4. Le jeu d'essai (livrable CDA)</h2>
+<p>Le référentiel attend un tableau formalisé. Celui du dossier couvre la fonctionnalité d'annexes photo, avec <strong>douze cas répartis sur trois catégories</strong>, et <strong>les douze passent sans écart entre attendu et obtenu</strong>.</p>
+<h3 id="41-la-structure-attendue">4.1 La structure attendue</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Catégorie</th>
+<th>Cas de test</th>
+<th>Données d'entrée</th>
+<th>Résultat attendu</th>
+<th>Obtenu</th>
+<th>Écart</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Passant</td>
+<td>Créer une annexe</td>
+<td>Projet valide, gabarit 2 colonnes</td>
+<td>201, annexe créée</td>
+<td>conforme</td>
+<td>aucun</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Passant</td>
+<td>Importer un lot de photos</td>
+<td>20 JPEG valides</td>
+<td>20 <code>PhotoItem</code> ordonnés</td>
+<td>conforme</td>
+<td>aucun</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Limite</td>
+<td>Import à la borne haute</td>
+<td>Exactement 20 fichiers</td>
+<td>Accepté</td>
+<td>conforme</td>
+<td>aucun</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Limite</td>
+<td>Import au-delà de la borne</td>
+<td>21 fichiers</td>
+<td>Refus explicite</td>
+<td>conforme</td>
+<td>aucun</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Erreur</td>
+<td>Fichier au type falsifié</td>
+<td><code>.exe</code> renommé <code>.jpg</code></td>
+<td>400, rejet via libmagic</td>
+<td>conforme</td>
+<td>aucun</td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-les-trois-categories-et-pourquoi-les-trois">4.2 Les trois catégories, et pourquoi les trois</h3>
+<ul>
+<li><strong>Cas passants</strong> — le comportement nominal. Ils prouvent que la fonctionnalité fait ce qu'on attend.</li>
+<li><strong>Cas limites</strong> — les bornes exactes : 0 photo, exactement 20, une légende vide, un nom de fichier à la longueur maximale. C'est <strong>là que se cachent les bugs</strong> : les erreurs off-by-one, les <code>&gt;</code> au lieu de <code>&gt;=</code>.</li>
+<li><strong>Cas d'erreur</strong> — les entrées invalides. Ils prouvent que le système <strong>refuse proprement</strong> au lieu de planter ou, pire, d'accepter silencieusement.</li>
+</ul>
+<div class="admonition jury">
+<p class="admonition-title">La question à anticiper</p>
+<p>« Vos douze cas passent tous. Vous avez donc écrit le jeu d'essai après le code ? » La réponse honnête : oui, ce jeu d'essai formalise a posteriori une fonctionnalité déjà couverte par les tests automatisés — c'est un <strong>livrable de documentation</strong>, il synthétise ce que la suite vérifie en continu. Ce serait un problème si c'était mon seul filet de sécurité ; ça n'en est pas un puisqu'il double 1 591 tests exécutés à chaque push.</p>
+</div>
+<hr />
+<h2 id="5-les-linters-et-la-ci-qualite">5. Les linters et la CI qualité</h2>
+<h3 id="51-ce-que-chaque-outil-verifie">5.1 Ce que chaque outil vérifie</h3>
+<table>
+<thead>
+<tr>
+<th>Outil</th>
+<th>Périmètre</th>
+<th>Exemples de règles</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ruff</strong> (<code>ruff check</code>)</td>
+<td>Python</td>
+<td>PEP 8, imports inutilisés ou mal ordonnés, syntaxe modernisable, bugs courants (mutable en argument par défaut, comparaison à <code>None</code> avec <code>==</code>)</td>
+</tr>
+<tr>
+<td><strong>Ruff</strong> (<code>ruff format --check</code>)</td>
+<td>Python</td>
+<td>Formatage — la CI <strong>échoue</strong> si le code n'est pas formaté</td>
+</tr>
+<tr>
+<td><strong>ESLint</strong></td>
+<td>TypeScript/React</td>
+<td>Règles des hooks (<code>react-hooks/rules-of-hooks</code>, dépendances d'effets), variables inutilisées, <code>any</code> implicites</td>
+</tr>
+<tr>
+<td><strong><code>tsc -b</code></strong></td>
+<td>TypeScript</td>
+<td>Vérification de types au build : une erreur de type casse la construction</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-le-job-de-ci-reel">5.2 Le job de CI réel</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># .github/workflows/ci.yml — extrait</span>
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">test-backend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">services</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:17</span><span class="w">          </span><span class="c1"># vraie base, pas SQLite</span>
+<span class="w">        </span><span class="nt">options</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+<span class="w">          </span><span class="no">--health-cmd pg_isready</span>
+<span class="w">          </span><span class="no">--health-interval 10s</span>
+<span class="w">          </span><span class="no">--health-retries 5</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run tests</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pytest</span>
+
+<span class="w">  </span><span class="nt">lint-backend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ruff check</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ruff check .</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ruff format check</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ruff format --check .</span>
+
+<span class="w">  </span><span class="nt">test-frontend</span><span class="p">:</span><span class="w">   </span><span class="c1"># bun run test  → Vitest</span>
+<span class="w">  </span><span class="nt">lint-frontend</span><span class="p">:</span><span class="w">   </span><span class="c1"># bun run lint  → ESLint</span>
+</code></pre></div>
+
+<p>Quatre jobs <strong>en parallèle</strong>, déclenchés sur chaque push et chaque pull request, <strong>sur n'importe quelle branche</strong>. Le workflow de déploiement est chaîné en aval et ne démarre que si la CI est verte <strong>et</strong> qu'on est sur la branche principale.</p>
+<div class="admonition jury">
+<p class="admonition-title">Le point de contrôle qui compte</p>
+<p>« Le déploiement ne se lance que si le pipeline passe. » C'est la phrase qui transforme une suite de tests en <strong>garde-fou</strong> plutôt qu'en documentation. Sans ce chaînage, une suite de tests est une suggestion.</p>
+</div>
+<h3 id="53-les-hooks-git">5.3 Les hooks Git</h3>
+<p>Un fichier <code>lefthook.yml</code> permet de faire tourner lint et formatage <strong>avant le commit</strong>, donc de ne pas découvrir le problème trois minutes plus tard dans la CI. C'est un raccourci de confort : le hook peut se contourner (<code>--no-verify</code>), la CI non. Le hook accélère la boucle de retour, la CI fait autorité.</p>
+<hr />
+<h2 id="6-ce-que-je-testerais-differemment">6. Ce que je testerais différemment</h2>
+<p>Une section qui vaut de l'or à l'oral, parce qu'elle montre du recul.</p>
+<ul>
+<li><strong>Pas de mutation testing.</strong> La couverture dit quelles lignes sont exécutées ; un outil comme <code>mutmut</code> dirait si mes assertions détectent réellement un changement de comportement. C'est le vrai test de la qualité d'une suite de tests.</li>
+<li><strong>Pas de tests de charge.</strong> Je sais que la génération est synchrone et j'ai posé un throttle, mais je n'ai pas mesuré à quel volume de rapport la Web App atteint son timeout. Le seuil est estimé, pas mesuré.</li>
+<li><strong>Pas de tests de contrat sur le pont hub → Boost-Report.</strong> Les deux côtés partagent des constantes (<code>issuer</code>, <code>audience</code>, <code>scope</code>) alignées <strong>par commentaire</strong> dans le code. Une divergence ne serait détectée qu'en production. Un test de contrat partagé, ou un schéma versionné, éviterait ça.</li>
+<li><strong>Trop peu de tests de non-régression sur le rendu documentaire.</strong> Je teste que la génération aboutit et que le contenu est présent ; je ne compare pas le rendu visuel. Un changement de style dans le template Word passerait au vert.</li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">L'écueil du volume</p>
+<p>1 591 tests, c'est un chiffre qui impressionne — et le jury peut le retourner : « combien de temps tourne votre suite ? », « avez-vous des tests flaky ? », « quelle est votre couverture de branches ? ». Mieux vaut annoncer le nombre <strong>avec</strong> ce qu'il ne prouve pas que le laisser passer pour une garantie.</p>
+</div>
+<hr />
+<h2 id="7-questions-probables-du-jury">7. Questions probables du jury</h2>
+<h3 id="q1-pourquoi-une-vraie-base-postgresql-en-ci-plutot-que-sqlite">Q1. Pourquoi une vraie base PostgreSQL en CI plutôt que SQLite ?</h3>
+<p>Parce que ce que je teste n'existe pas en SQLite. Boost-Report utilise des champs JSON avec les opérateurs PostgreSQL, des contraintes de validation métier, des index de performance et différentes stratégies <code>ON DELETE</code> (<code>CASCADE</code>, <code>PROTECT</code>). SQLite ignore ou émule une partie de ça : un test d'intégration qui y passe ne prouve rien sur la production. Le coût est de quelques secondes de démarrage de service dans la CI, avec un healthcheck <code>pg_isready</code> pour éviter les échecs de course. C'est un prix dérisoire pour que « vert en CI » veuille dire quelque chose.</p>
+<h3 id="q2-1-591-tests-quel-est-votre-taux-de-couverture">Q2. 1 591 tests, quel est votre taux de couverture ?</h3>
+<p>Je suis les couvertures via <code>pytest-cov</code> et <code>vitest --coverage</code>, mais je préfère ne pas mettre en avant un chiffre unique, parce qu'il se manipule trop facilement. Ce que je regarde, c'est <strong>ce qui est couvert</strong> : le moteur de génération, les stratégies de rendu, les règles de visibilité et les permissions le sont exhaustivement, parce que c'est là qu'un bug est coûteux — un rapport mal généré ou une donnée visible par la mauvaise personne. Le code de plomberie l'est moins. Une couverture uniforme à 85 % serait un moins bon signal qu'une couverture inégale mais concentrée sur le risque.</p>
+<h3 id="q3-faites-vous-du-tdd">Q3. Faites-vous du TDD ?</h3>
+<p>Pas systématiquement, et je préfère le dire franchement. J'ai appliqué le cycle red-green-refactor là où la spécification était claire avant l'implémentation : les règles de visibilité, le resolver de variables, les stratégies de rendu — des fonctions au contrat bien défini. Sur les parties exploratoires, en particulier l'interface et le pipeline de génération PDF où je ne savais pas encore quel serait le rendu attendu, j'ai écrit le code d'abord et les tests ensuite. Faire du TDD sur un comportement qu'on est en train de découvrir revient à figer une spécification qu'on n'a pas.</p>
+<h3 id="q4-comment-gerez-vous-les-tests-e2e-connus-pour-etre-fragiles">Q4. Comment gérez-vous les tests E2E, connus pour être fragiles ?</h3>
+<p>En les limitant volontairement à <strong>30 scénarios sur les flux critiques</strong> : navigation, création de document, import de photos. Je ne teste pas les cas limites en E2E — ils sont couverts en unitaire et en intégration, où l'échec est rapide et précis. Playwright aide beaucoup sur la fragilité grâce à son auto-waiting : il attend qu'un élément soit réellement actionnable plutôt que de dormir un temps arbitraire, ce qui élimine la principale source de flakiness. La règle que je m'applique : si un scénario E2E échoue de manière intermittente, je le supprime ou je le réécris — un test auquel on n'accorde pas confiance est nuisible, parce qu'il apprend à ignorer le rouge.</p>
+<h3 id="q5-votre-jeu-dessai-a-douze-cas-et-zero-ecart-ce-nest-pas-trop-beau">Q5. Votre jeu d'essai a douze cas et zéro écart. Ce n'est pas trop beau ?</h3>
+<p>C'est un jeu d'essai formalisé sur une fonctionnalité déjà stabilisée et en production, donc oui, il passe. Il documente un périmètre couvert en continu par la suite automatisée, il n'est pas mon filet de sécurité. Ce qui serait suspect, c'est de présenter douze cas verts <strong>comme preuve</strong> que la fonctionnalité est sans défaut. Elle a eu des défauts : la génération PDF initiale prenait 20 à 30 secondes via Gotenberg, et c'est un usage réel — pas un test — qui l'a révélé comme inacceptable. Les tests attrapent les régressions, ils n'attrapent pas les mauvaises décisions.</p>
+<h3 id="q6-un-bug-arrive-en-production-quelle-est-votre-demarche">Q6. Un bug arrive en production. Quelle est votre démarche ?</h3>
+<p>D'abord évaluer si la production est utilisable : si non, rollback immédiat en re-taggant l'image précédente identifiée par son SHA de commit, puis en redéclenchant le webhook — quelques minutes, sans modification de code. Ensuite, <strong>écrire un test qui reproduit le bug et qui échoue</strong>. Puis corriger jusqu'à ce qu'il passe. Ce test reste dans la suite définitivement, ce qui garantit que la même régression ne repassera pas. Corriger sans écrire le test, c'est accepter de refaire le travail dans six mois.</p>
+<h3 id="q7-quelle-est-la-difference-entre-un-mock-et-un-stub">Q7. Quelle est la différence entre un mock et un stub ?</h3>
+<p>Un <strong>stub</strong> fournit une réponse préprogrammée : il sert à mettre le système dans un état donné, et on n'assert rien sur lui. Un <strong>mock</strong> est un stub sur lequel on <strong>vérifie les interactions</strong> : qu'il a été appelé, combien de fois, avec quels arguments. La distinction pratique : le stub sert à l'<em>arrange</em>, le mock fait partie de l'<em>assert</em>. J'utilise principalement des stubs — pour Gotenberg et WeasyPrint, dont je ne veux pas dépendre en test unitaire — parce que vérifier les appels couple le test à l'implémentation. Un test qui assert « la méthode X a été appelée deux fois » casse au moindre refactoring qui ne change pourtant rien au comportement.</p>
+<h3 id="q8-vos-linters-sont-bloquants-en-ci-ce-nest-pas-contre-productif">Q8. Vos linters sont bloquants en CI. Ce n'est pas contre-productif ?</h3>
+<p>Non, c'est le seul mode qui fonctionne. Un linter non bloquant produit un avertissement que tout le monde apprend à ignorer, et la dette s'accumule silencieusement. En le rendant bloquant, le coût est payé au moment où il est le plus faible : à l'écriture. Ce que je rends bloquant est ce qui est <strong>objectif</strong> — formatage, imports inutilisés, règles des hooks React, erreurs de type — jamais des règles de style subjectives qui déclencheraient des débats. Et le formatage automatique (<code>ruff format</code>) supprime complètement la catégorie « discussion sur la mise en forme en revue de code », ce qui est un gain de temps net.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

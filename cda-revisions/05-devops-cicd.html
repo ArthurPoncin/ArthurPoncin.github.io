@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DevOps : Docker, CI/CD et déploiement Azure — Révisions CDA 2026</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+    <a href="./qcm.html" class="header-right">QCM →</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<div class="toc">
+<ul>
+<li><a href="#0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</a></li>
+<li><a href="#1-tldr">1. TL;DR</a></li>
+<li><a href="#2-docker-dev-et-prod-separes">2. Docker : dev et prod séparés</a><ul>
+<li><a href="#21-pourquoi-deux-jeux-dimages">2.1 Pourquoi deux jeux d'images</a></li>
+<li><a href="#22-le-build-multi-stage">2.2 Le build multi-stage</a></li>
+<li><a href="#23-lisolation-reseau-en-production">2.3 L'isolation réseau en production</a></li>
+<li><a href="#24-la-sequence-de-demarrage">2.4 La séquence de démarrage</a></li>
+</ul>
+</li>
+<li><a href="#3-le-pipeline-cicd">3. Le pipeline CI/CD</a><ul>
+<li><a href="#31-levolution-une-histoire-a-raconter">3.1 L'évolution — une histoire à raconter</a></li>
+<li><a href="#32-le-chainage-le-point-de-controle">3.2 Le chaînage — le point de contrôle</a></li>
+<li><a href="#33-la-strategie-de-tags">3.3 La stratégie de tags</a></li>
+<li><a href="#34-les-secrets">3.4 Les secrets</a></li>
+<li><a href="#35-les-workflows-manuels-de-mirroring">3.5 Les workflows manuels de mirroring</a></li>
+</ul>
+</li>
+<li><a href="#4-linfrastructure-azure">4. L'infrastructure Azure</a><ul>
+<li><a href="#41-les-services-et-leur-role">4.1 Les services et leur rôle</a></li>
+<li><a href="#42-les-deux-migrations-et-leur-motivation">4.2 Les deux migrations et leur motivation</a></li>
+<li><a href="#43-ce-que-je-gere">4.3 Ce que je gère</a></li>
+</ul>
+</li>
+<li><a href="#5-la-procedure-de-deploiement-et-le-rollback">5. La procédure de déploiement et le rollback</a><ul>
+<li><a href="#51-en-fonctionnement-normal">5.1 En fonctionnement normal</a></li>
+<li><a href="#52-en-cas-de-probleme">5.2 En cas de problème</a></li>
+</ul>
+</li>
+<li><a href="#6-ce-qui-manque-et-je-le-sais">6. Ce qui manque, et je le sais</a></li>
+<li><a href="#7-questions-probables-du-jury">7. Questions probables du jury</a><ul>
+<li><a href="#q1-pourquoi-docker-plutot-quun-deploiement-classique">Q1. Pourquoi Docker plutôt qu'un déploiement classique ?</a></li>
+<li><a href="#q2-pourquoi-docker-compose-et-pas-kubernetes">Q2. Pourquoi Docker Compose et pas Kubernetes ?</a></li>
+<li><a href="#q3-que-se-passe-t-il-si-vous-poussez-du-code-casse-sur-main">Q3. Que se passe-t-il si vous poussez du code cassé sur main ?</a></li>
+<li><a href="#q4-pourquoi-taguer-par-sha-de-commit-plutot-que-par-version-semantique">Q4. Pourquoi taguer par SHA de commit plutôt que par version sémantique ?</a></li>
+<li><a href="#q5-votre-ci-prend-combien-de-temps-cest-un-probleme">Q5. Votre CI prend combien de temps ? C'est un problème ?</a></li>
+<li><a href="#q6-comment-gerez-vous-les-secrets">Q6. Comment gérez-vous les secrets ?</a></li>
+<li><a href="#q7-le-deploiement-provoque-t-il-une-coupure">Q7. Le déploiement provoque-t-il une coupure ?</a></li>
+<li><a href="#q8-vous-parlez-dinfrastructure-as-code-en-faites-vous-vraiment">Q8. Vous parlez d'Infrastructure as Code. En faites-vous vraiment ?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+    </nav>
+    <article>
+<h1 id="devops-docker-cicd-et-deploiement-azure">DevOps : Docker, CI/CD et déploiement Azure</h1>
+<p class="meta"><em>Fiche transversale 5/6 — la spécialisation DevOps du titre. Conteneurisation, pipeline, infrastructure, rollback.</em></p>
+<h2 id="0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</h2>
+<dl>
+<dt>Image / conteneur</dt>
+<dd>Une <strong>image</strong> est un modèle immuable en lecture seule, composé de couches empilées. Un <strong>conteneur</strong> est une instance en cours d'exécution d'une image, avec une couche d'écriture par-dessus. Analogie : classe / objet.</dd>
+<dt>Dockerfile</dt>
+<dd>Recette de construction d'une image. Chaque instruction (<code>FROM</code>, <code>RUN</code>, <code>COPY</code>) crée une <strong>couche</strong> mise en cache : une instruction inchangée n'est pas rejouée. D'où la règle d'ordonnancement — ce qui change rarement en haut, le code en bas.</dd>
+<dt>Build multi-stage</dt>
+<dd>Un Dockerfile contenant plusieurs <code>FROM</code>. Un stage <em>builder</em> compile ou installe les dépendances ; le stage final ne <strong>copie que le résultat</strong>. L'image livrée ne contient donc ni compilateur, ni outils de build, ni sources intermédiaires.</dd>
+<dt>Docker Compose</dt>
+<dd>Outil de définition et d'orchestration <strong>multi-conteneurs sur un seul hôte</strong> : services, réseaux, volumes, variables. Ce n'est pas un orchestrateur de cluster — c'est le rôle de Kubernetes.</dd>
+<dt>Volume / bind mount</dt>
+<dd>Un <strong>volume</strong> est géré par Docker et persiste au-delà du conteneur. Un <strong>bind mount</strong> monte un dossier de l'hôte dans le conteneur — pratique en dev pour le rechargement à chaud, à proscrire en prod.</dd>
+<dt>Registry</dt>
+<dd>Dépôt d'images. Docker Hub (public), GitLab Container Registry, <strong>Azure Container Registry</strong> (le mien). Une image y est identifiée par <code>registry/repository:tag</code>.</dd>
+<dt>Tag</dt>
+<dd>Étiquette mobile pointant vers une image. <code>latest</code> est un <strong>alias mouvant</strong>, pas une version : c'est pourquoi je tague aussi par <strong>SHA de commit</strong>, qui est immuable et traçable.</dd>
+<dt>CI (Intégration Continue)</dt>
+<dd>Intégrer et <strong>vérifier automatiquement</strong> chaque changement : build, tests, lint, à chaque push. Objectif : détecter la régression en minutes plutôt qu'en semaines.</dd>
+<dt>CD (Livraison / Déploiement Continu)</dt>
+<dd><em>Continuous Delivery</em> = chaque commit validé est <strong>déployable</strong> (le déclenchement reste manuel). <em>Continuous Deployment</em> = il est <strong>déployé</strong> automatiquement. Chez moi le staging est en déploiement continu, la production en livraison continue déclenchée par une release.</dd>
+<dt>Pipeline</dt>
+<dd>Enchaînement de jobs automatisés. Des jobs <strong>parallèles</strong> vont plus vite ; des jobs <strong>chaînés</strong> (<code>needs</code>, <code>workflow_run</code>) garantissent un ordre.</dd>
+<dt>Webhook</dt>
+<dd>Requête HTTP envoyée par un système pour notifier un événement à un autre. Chez moi : GitHub Actions notifie Azure qu'une nouvelle image est disponible, Azure re-pull et redémarre.</dd>
+<dt>Healthcheck</dt>
+<dd>Commande périodique par laquelle le runtime détermine si un conteneur est réellement opérationnel — pas seulement démarré. Sans healthcheck, un service peut être « up » et ne répondre à rien.</dd>
+<dt>Rollback</dt>
+<dd>Retour à une version antérieure fonctionnelle. Sa qualité se mesure au <strong>temps de retour</strong> et à l'absence de modification de code nécessaire.</dd>
+<dt>IaC (Infrastructure as Code)</dt>
+<dd>Décrire l'infrastructure dans des fichiers versionnés plutôt que de la cliquer dans une console. Mon <code>docker-compose</code> en est une forme partielle ; l'infrastructure Azure elle-même est configurée manuellement — c'est une limite que j'assume.</dd>
+<dt>Utilisateur non-root</dt>
+<dd>Un conteneur tourne par défaut en <code>root</code>. Une évasion de conteneur donnerait alors des droits élevés sur l'hôte. Déclarer un utilisateur dédié limite ce risque.</dd>
+</dl>
+<hr />
+<h2 id="1-tldr">1. TL;DR</h2>
+<p>La démarche DevOps repose sur <strong>trois piliers</strong> : conteneurisation, intégration continue, déploiement automatisé.</p>
+<pre class="mermaid">flowchart LR
+    A["Push / PR&lt;br/&gt;GitHub"] --&gt; B["CI — 4 jobs parallèles&lt;br/&gt;tests back · lint back&lt;br/&gt;tests front · lint front"]
+    B --&gt;|"vert ET branche main"| C["Build images de prod&lt;br/&gt;docker compose build"]
+    C --&gt; D["Push vers Azure Container Registry&lt;br/&gt;tag = SHA commit + latest"]
+    D --&gt; E["Webhook Azure"]
+    E --&gt; F["Web App re-pull + restart&lt;br/&gt;entrypoint : migrations → statics → Gunicorn"]
+    B --&gt;|"rouge, ou branche de travail"| X["Stop — la prod n'est pas touchée"]
+</pre>
+
+<p>Chiffres à retenir : <strong>build + push ≈ 6 minutes</strong>, <strong>redéploiement ≈ quelques secondes</strong>. Rollback = re-tagger une image identifiée par son SHA en <code>latest</code>, redéclencher le webhook, <strong>sans modification de code</strong>.</p>
+<div class="admonition jury">
+<p class="admonition-title">La phrase qui résume la maturité du pipeline</p>
+<p>« Le déploiement est entièrement automatisé à partir du moment où le code est mergé sur <code>main</code>. » Et surtout : <em>un push sur une branche de travail ou une pull request ne déclenche jamais de mise en production.</em></p>
+</div>
+<hr />
+<h2 id="2-docker-dev-et-prod-separes">2. Docker : dev et prod séparés</h2>
+<h3 id="21-pourquoi-deux-jeux-dimages">2.1 Pourquoi deux jeux d'images</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Développement</th>
+<th>Production</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Outils</td>
+<td>TanStack DevTools, Django Debug Toolbar</td>
+<td>aucun</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>bind mount + rechargement à chaud</td>
+<td>copié dans l'image</td>
+</tr>
+<tr>
+<td>Front</td>
+<td>serveur Vite</td>
+<td>fichiers statiques compilés servis par Nginx</td>
+</tr>
+<tr>
+<td>Back</td>
+<td><code>runserver</code> Django</td>
+<td><strong>Gunicorn</strong></td>
+</tr>
+<tr>
+<td>Utilisateur</td>
+<td>root (confort)</td>
+<td><strong>non-root dédié</strong></td>
+</tr>
+<tr>
+<td>Taille</td>
+<td>grosse, peu importe</td>
+<td>allégée et optimisée</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition piege">
+<p class="admonition-title">Le piège du DEBUG</p>
+<p><code>DEBUG=True</code> en production expose la stack trace complète, les paramètres et une partie de la configuration à la moindre erreur 500. C'est la vulnérabilité de configuration la plus fréquente et la plus facile à exploiter. Elle est classée <strong>A05 – Security Misconfiguration</strong> dans l'OWASP Top 10.</p>
+</div>
+<h3 id="22-le-build-multi-stage">2.2 Le build multi-stage</h3>
+<div class="codehilite"><pre><span></span><code><span class="c"># API Django — schéma du Dockerfile de production</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">python:3.11-slim</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">builder</span>
+<span class="k">RUN</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>/opt/venv
+<span class="k">ENV</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/opt/venv/bin:</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
+<span class="k">COPY</span><span class="w"> </span>requirements.txt<span class="w"> </span>.
+<span class="k">RUN</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+
+<span class="k">FROM</span><span class="w"> </span><span class="s">python:3.11-slim</span>
+<span class="k">RUN</span><span class="w"> </span>useradd<span class="w"> </span>--create-home<span class="w"> </span>--shell<span class="w"> </span>/bin/bash<span class="w"> </span>appuser<span class="w">   </span>#<span class="w"> </span>moindre<span class="w"> </span>privilège
+<span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>builder<span class="w"> </span>/opt/venv<span class="w"> </span>/opt/venv<span class="w">               </span>#<span class="w"> </span>on<span class="w"> </span>ne<span class="w"> </span>copie<span class="w"> </span>QUE<span class="w"> </span>le<span class="w"> </span>venv
+<span class="k">ENV</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/opt/venv/bin:</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="k">COPY</span><span class="w"> </span>--chown<span class="o">=</span>appuser:appuser<span class="w"> </span>.<span class="w"> </span>.
+<span class="k">USER</span><span class="w"> </span><span class="s">appuser</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;gunicorn&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;config.wsgi:application&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--bind&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;0.0.0.0:8000&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c"># Front React — schéma</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">node:22-alpine</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">builder</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="k">COPY</span><span class="w"> </span>package*.json<span class="w"> </span>./
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>ci<span class="w">                    </span>#<span class="w"> </span>ci,<span class="w"> </span>pas<span class="w"> </span>install<span class="w"> </span>:<span class="w"> </span>respecte<span class="w"> </span>le<span class="w"> </span>lockfile
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>.
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>run<span class="w"> </span>build<span class="w">             </span>#<span class="w"> </span>→<span class="w"> </span>dist/
+
+<span class="k">FROM</span><span class="w"> </span><span class="s">nginx:alpine</span>
+<span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>builder<span class="w"> </span>/app/dist<span class="w"> </span>/usr/share/nginx/html
+<span class="k">COPY</span><span class="w"> </span>nginx/default.conf<span class="w"> </span>/etc/nginx/conf.d/
+</code></pre></div>
+
+<p>Trois bénéfices, à savoir énoncer dans cet ordre :</p>
+<ol>
+<li><strong>Taille</strong> — le compilateur TypeScript, <code>node_modules</code> et les outils de build ne sont pas dans l'image livrée. Un front React passe typiquement de plusieurs centaines de Mo à quelques dizaines.</li>
+<li><strong>Sécurité</strong> — moins de binaires dans l'image, moins de surface d'attaque et moins de CVE à suivre.</li>
+<li><strong>Vitesse</strong> — image plus légère = pull plus rapide au déploiement.</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title"><code>npm ci</code> contre <code>npm install</code></p>
+<p><code>npm ci</code> installe <strong>exactement</strong> ce que décrit le lockfile et échoue si <code>package.json</code> et le lockfile divergent. <code>npm install</code> peut résoudre des versions différentes et <strong>modifier</strong> le lockfile. En CI et en build d'image, seul <code>ci</code> garantit la reproductibilité.</p>
+</div>
+<h3 id="23-lisolation-reseau-en-production">2.3 L'isolation réseau en production</h3>
+<pre class="mermaid">flowchart LR
+    U["Internet"] --&gt;|HTTPS| N["Nginx&lt;br/&gt;(seul service exposé)"]
+    subgraph fnet["réseau frontend"]
+        N --&gt;|HTTP| API["API Django&lt;br/&gt;Gunicorn"]
+    end
+    subgraph bnet["réseau backend"]
+        API --&gt;|HTTP| GO["Gotenberg&lt;br/&gt;DOCX → PDF"]
+        API --&gt;|HTTP| WP["WeasyPrint&lt;br/&gt;HTML → PDF"]
+    end
+    API --&gt;|"TCP/SSL sslmode=require"| PG[("Azure Database&lt;br/&gt;for PostgreSQL")]
+    API --&gt;|HTTPS| BL[("Azure Blob Storage")]
+</pre>
+
+<p>Le principe : <strong>les moteurs PDF n'ont aucune raison d'être joignables depuis le front</strong>, donc ils vivent sur un réseau où le front n'est pas. Si Nginx est compromis, l'attaquant n'atteint pas directement Gotenberg. C'est de la défense en profondeur appliquée au réseau.</p>
+<p>La base de données n'appartient à aucun des deux réseaux : elle a été sortie des conteneurs vers une <strong>instance Azure managée</strong>.</p>
+<h3 id="24-la-sequence-de-demarrage">2.4 La séquence de démarrage</h3>
+<p>Au redémarrage, l'entrypoint de l'API enchaîne dans cet ordre précis :</p>
+<ol>
+<li><strong>migrations</strong> de base de données ;</li>
+<li><strong>collecte des assets statiques</strong> ;</li>
+<li><strong>synchronisation des templates Word</strong> ;</li>
+<li>lancement de <strong>Gunicorn</strong>.</li>
+</ol>
+<p>L'ordre n'est pas arbitraire : les migrations d'abord, parce qu'un code neuf sur un schéma ancien plante ; Gunicorn en dernier, parce qu'il ne doit pas accepter de trafic avant que tout soit prêt.</p>
+<hr />
+<h2 id="3-le-pipeline-cicd">3. Le pipeline CI/CD</h2>
+<h3 id="31-levolution-une-histoire-a-raconter">3.1 L'évolution — une histoire à raconter</h3>
+<p>C'est la partie la plus intéressante à l'oral, parce qu'elle montre une progression et pas une configuration tombée du ciel.</p>
+<table>
+<thead>
+<tr>
+<th>Étape</th>
+<th>État du pipeline</th>
+<th>Ce que ça a résolu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Départ</strong> (mars)</td>
+<td>Un workflow unique : build + push + deploy, sur <code>main</code> uniquement</td>
+<td>A permis la première mise en production. Mélangeait tout, ne validait rien sur les branches</td>
+</tr>
+<tr>
+<td><strong>2. Séparation</strong> (avril)</td>
+<td>Deux workflows : CI (toutes branches + PR) et Deploy (<code>main</code> uniquement, chaîné)</td>
+<td>Une régression est détectée <strong>avant</strong> le merge, plus après</td>
+</tr>
+<tr>
+<td><strong>3. Migration de registre</strong></td>
+<td>GitLab Registry → <strong>Azure Container Registry</strong></td>
+<td>Centralisation au même endroit que le déploiement</td>
+</tr>
+<tr>
+<td><strong>4. Allègement</strong></td>
+<td>4 images (db, auth, api, front) → <strong>2</strong> (api, front)</td>
+<td>Conséquence de la migration PostgreSQL managé + passage à l'OIDC du hub</td>
+</tr>
+<tr>
+<td><strong>5. Staging / prod</strong></td>
+<td><code>deploy.yml</code> (staging sur push <code>main</code>) + <code>deploy-prod.yml</code> (promotion à la publication d'une <strong>release</strong>)</td>
+<td>La prod n'est plus touchée par chaque merge ; les images du commit taggé sont <strong>promues sans rebuild</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition jury">
+<p class="admonition-title">Le point le plus fin de la chaîne</p>
+<p>En production, les images ne sont <strong>pas reconstruites</strong> : celles déjà validées en staging sont <strong>re-taguées</strong> <code>:prod</code>. Reconstruire produirait potentiellement un binaire différent (dépendances transitives, horodatages) — donc on ne déploierait pas ce qui a été testé. Promouvoir l'artefact plutôt que le rebuilder est un principe de base de la livraison continue.</p>
+</div>
+<h3 id="32-le-chainage-le-point-de-controle">3.2 Le chaînage — le point de contrôle</h3>
+<p>Deux mécanismes selon les dépôts :</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Chaînage par workflow réutilisable (boost-reports)</span>
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ci</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./.github/workflows/ci.yml</span><span class="w">    </span><span class="c1"># la CI devient un job du déploiement</span>
+<span class="w">  </span><span class="nt">deploy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ci</span><span class="w">                            </span><span class="c1"># ne démarre que si ci a réussi</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">staging</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c1"># Chaînage par workflow_run (variante)</span>
+<span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">workflow_run</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">workflows</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;CI&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">types</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">completed</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">main</span><span class="p p-Indicator">]</span>
+<span class="c1"># + condition : conclusion == &#39;success&#39;</span>
+</code></pre></div>
+
+<p>Les deux garantissent la même chose : <strong>pas de déploiement sans CI verte sur la branche principale</strong>.</p>
+<h3 id="33-la-strategie-de-tags">3.3 La stratégie de tags</h3>
+<div class="codehilite"><pre><span></span><code><span class="nv">TAG</span><span class="o">=</span><span class="k">$(</span>git<span class="w"> </span>rev-parse<span class="w"> </span>--short<span class="w"> </span>HEAD<span class="k">)</span>
+<span class="k">for</span><span class="w"> </span>IMG<span class="w"> </span><span class="k">in</span><span class="w"> </span>api-django<span class="w"> </span>frontend<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>docker<span class="w"> </span>push<span class="w"> </span><span class="nv">$REGISTRY</span>/<span class="nv">$IMG</span>:<span class="nv">$TAG</span><span class="w">          </span><span class="c1"># immuable, traçable</span>
+<span class="w">  </span>docker<span class="w"> </span>tag<span class="w">  </span><span class="nv">$REGISTRY</span>/<span class="nv">$IMG</span>:<span class="nv">$TAG</span><span class="w"> </span><span class="nv">$REGISTRY</span>/<span class="nv">$IMG</span>:latest
+<span class="w">  </span>docker<span class="w"> </span>push<span class="w"> </span><span class="nv">$REGISTRY</span>/<span class="nv">$IMG</span>:latest<span class="w">        </span><span class="c1"># alias mouvant, pullé par la Web App</span>
+<span class="k">done</span>
+</code></pre></div>
+
+<p>Deux tags, deux rôles :</p>
+<ul>
+<li><strong>SHA de commit</strong> — identité immuable. Permet de dire précisément <em>quelle version tourne</em> et sert de base au rollback.</li>
+<li><strong><code>latest</code></strong> — ce que la Web App tire par défaut. C'est un pointeur, pas une version.</li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">Ne jamais déployer par <code>latest</code> seul</p>
+<p>Sans le tag SHA, on ne peut ni identifier la version en production, ni y revenir. « Ça marchait hier » devient invérifiable. Le tag immuable est la condition d'un rollback fiable.</p>
+</div>
+<h3 id="34-les-secrets">3.4 Les secrets</h3>
+<p>Les identifiants de registre et l'URL du webhook vivent dans les <strong>secrets GitHub Actions</strong> : rien ne transite en clair dans le dépôt. Côté application, les variables d'environnement sensibles ne sont jamais écrites dans les fichiers de configuration — elles sont <strong>injectées par les paramètres Azure</strong>.</p>
+<h3 id="35-les-workflows-manuels-de-mirroring">3.5 Les workflows manuels de mirroring</h3>
+<p>Deux workflows déclenchés à la main répliquent les images officielles de <strong>Gotenberg</strong> et <strong>WeasyPrint</strong> vers l'ACR. Cela <strong>fige la version</strong> des services tiers utilisée en production et évite de dépendre de la disponibilité d'un registre public au moment du déploiement. C'est une réponse directe à la catégorie <strong>A08 – Software and Data Integrity Failures</strong> de l'OWASP.</p>
+<hr />
+<h2 id="4-linfrastructure-azure">4. L'infrastructure Azure</h2>
+<h3 id="41-les-services-et-leur-role">4.1 Les services et leur rôle</h3>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Rôle</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Azure Web App for Containers</strong></td>
+<td>Héberge les 4 conteneurs (Nginx, API, Gotenberg, WeasyPrint)</td>
+<td>Le service le plus adapté pour démarrer avec un budget faible — plan B2, sans staging séparé au départ</td>
+</tr>
+<tr>
+<td><strong>Azure Database for PostgreSQL Flexible Server</strong></td>
+<td>Base de données managée</td>
+<td>Sauvegardes, migrations et maintenance simplifiées ; centralise les bases de plusieurs applications</td>
+</tr>
+<tr>
+<td><strong>Azure Blob Storage</strong></td>
+<td>Photos et documents générés</td>
+<td>Mieux adapté au volume de photos que les volumes Docker, et moins cher</td>
+</tr>
+<tr>
+<td><strong>Azure Container Registry</strong></td>
+<td>Images de production</td>
+<td>Centralisé au même endroit que le déploiement</td>
+</tr>
+<tr>
+<td><strong>Azure Static Web Apps</strong></td>
+<td>Plateforme boost-apps</td>
+<td>Hébergement statique + authentification OIDC intégrée</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-les-deux-migrations-et-leur-motivation">4.2 Les deux migrations et leur motivation</h3>
+<p>Ce sont des décisions <strong>motivées par l'exploitation</strong>, pas par la mode :</p>
+<ol>
+<li><strong>PostgreSQL en conteneur → service managé.</strong> Le conteneur imposait de gérer les sauvegardes et la maintenance à la main, et redémarrait avec l'application. Le service managé apporte les sauvegardes automatiques et permet de <strong>mutualiser</strong> les bases de plusieurs applications.</li>
+<li><strong>Volumes Docker → Azure Blob Storage.</strong> Les annexes photo génèrent un volume important d'images. Un volume local sur une Web App est fragile (perdu à certains redémarrages) et ne scale pas. Le Blob est conçu pour ça et coûte moins cher.</li>
+</ol>
+<div class="admonition jury">
+<p class="admonition-title">L'état d'esprit à montrer</p>
+<p>« Sortir l'état des conteneurs. » Un conteneur doit être <strong>éphémère et remplaçable</strong> : tout ce qui doit survivre à son redémarrage — base de données, fichiers uploadés, sessions — doit vivre en dehors. Ces deux migrations, c'est l'application progressive de ce principe, apprise en exploitation.</p>
+</div>
+<h3 id="43-ce-que-je-gere">4.3 Ce que je gère</h3>
+<p>Configuration des services, déploiement, sécurisation, surveillance. L'environnement est un « bac à sable de production » mis à disposition par la DSI, que j'ai dû configurer <strong>de bout en bout</strong> pour qu'il soit conforme côté sécurité.</p>
+<hr />
+<h2 id="5-la-procedure-de-deploiement-et-le-rollback">5. La procédure de déploiement et le rollback</h2>
+<h3 id="51-en-fonctionnement-normal">5.1 En fonctionnement normal</h3>
+<p>Aucune action d'infrastructure n'est nécessaire :</p>
+<ol>
+<li>Push sur la branche principale via une <strong>pull request relue</strong> ;</li>
+<li>la CI valide, le déploiement s'enchaîne ;</li>
+<li>suivi de l'exécution dans l'onglet Actions de GitHub ;</li>
+<li>après le webhook, Azure re-pull et redémarre ; l'entrypoint rejoue migrations → statics → templates → Gunicorn ;</li>
+<li><strong>vérification manuelle en production</strong> : l'application répond, la connexion via le hub passe, une génération de document aboutit.</li>
+</ol>
+<p>Ce point 5 est ce qu'on appelle un <em>smoke test</em> : trois vérifications qui couvrent les trois dépendances critiques (l'application, l'IdP, la chaîne de génération).</p>
+<h3 id="52-en-cas-de-probleme">5.2 En cas de problème</h3>
+<table>
+<thead>
+<tr>
+<th>Moment de la défaillance</th>
+<th>Conséquence</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Avant le webhook</strong> (CI ou build échoue)</td>
+<td>La production <strong>n'est pas touchée</strong>, l'ancienne version continue de tourner</td>
+<td>Corriger et repousser</td>
+</tr>
+<tr>
+<td><strong>Après le déploiement</strong></td>
+<td>La nouvelle version est en ligne et défectueuse</td>
+<td>Re-tagger l'image précédente (identifiée par son SHA) en <code>latest</code>, redéclencher le webhook</td>
+</tr>
+</tbody>
+</table>
+<p>Le rollback ramène l'application à l'état antérieur <strong>en quelques minutes, sans modification de code</strong>. C'est exactement ce que le tag par SHA rend possible.</p>
+<div class="admonition attention">
+<p class="admonition-title">La limite du rollback : les migrations</p>
+<p>Re-taguer une image ne défait <strong>pas</strong> une migration de base déjà appliquée. Si le déploiement fautif a modifié le schéma, revenir au code précédent peut le laisser face à un schéma qu'il ne connaît pas. La parade est de rendre les migrations <strong>rétro-compatibles</strong> : ajouter une colonne nullable plutôt que renommer, déployer le code qui la lit avant celui qui l'exige, supprimer l'ancienne dans un second temps. C'est une limite connue de mon pipeline et un excellent sujet de question — savoir la nommer vaut mieux que de prétendre que le rollback est total.</p>
+</div>
+<hr />
+<h2 id="6-ce-qui-manque-et-je-le-sais">6. Ce qui manque, et je le sais</h2>
+<ul>
+<li><strong>Pas d'IaC pour Azure.</strong> Les services sont configurés à la main dans le portail. Un Bicep ou un Terraform rendrait l'environnement reproductible et versionné. Sur un environnement unique le coût dépassait le gain ; ça deviendrait bloquant dès qu'il faut un vrai staging isolé.</li>
+<li><strong>Pas de centralisation des logs ni d'alerting.</strong> Les logs sortent sur stdout et sont consultables depuis Azure, mais rien n'agrège ni n'alerte. Azure Monitor est identifié comme prochaine étape.</li>
+<li><strong>Pas de déploiement blue/green ou canary.</strong> Le redémarrage des conteneurs implique une courte indisponibilité. Sur un outil interne utilisé en journée c'est acceptable ; ça ne le serait pas sur un service public.</li>
+<li><strong>Pas de scan de vulnérabilité d'images en CI.</strong> Un <code>trivy</code> ou le scan intégré à l'ACR sur chaque build serait le complément naturel des alertes de dépendances GitHub, qui ne couvrent que les paquets applicatifs — pas les paquets système de l'image de base.</li>
+</ul>
+<hr />
+<h2 id="7-questions-probables-du-jury">7. Questions probables du jury</h2>
+<h3 id="q1-pourquoi-docker-plutot-quun-deploiement-classique">Q1. Pourquoi Docker plutôt qu'un déploiement classique ?</h3>
+<p>Pour la reproductibilité. L'image embarque le runtime, les dépendances système et le code : ce qui tourne sur mon poste tourne à l'identique sur le serveur. Sans conteneur, il faut aligner une version de Python, des bibliothèques système — WeasyPrint et python-docx en ont plusieurs — et une configuration serveur, à la main et sans garantie. Le second bénéfice est le <strong>déploiement atomique</strong> : je livre un artefact unique, immuable et identifié, plutôt qu'une séquence de commandes dont chacune peut échouer à mi-parcours.</p>
+<h3 id="q2-pourquoi-docker-compose-et-pas-kubernetes">Q2. Pourquoi Docker Compose et pas Kubernetes ?</h3>
+<p>Parce que je n'ai aucun des problèmes que Kubernetes résout. K8s apporte l'orchestration multi-nœuds, l'auto-scaling, le rolling update et l'auto-réparation — pour un coût opérationnel considérable : cluster à maintenir, manifests, RBAC, ingress, observabilité. J'ai quatre conteneurs sur un seul hôte, une charge modeste et prévisible, et je suis seul à maintenir tout ça. Compose répond exactement au besoin. Et la contrainte de fond du contexte est explicite : le projet doit être <strong>reprenable avec une maintenance réduite au minimum</strong> après mon départ — un cluster K8s irait à l'inverse.</p>
+<h3 id="q3-que-se-passe-t-il-si-vous-poussez-du-code-casse-sur-main">Q3. Que se passe-t-il si vous poussez du code cassé sur <code>main</code> ?</h3>
+<p>Rien n'arrive en production. Le déploiement est <strong>chaîné</strong> à la CI : il ne démarre que si les quatre jobs — tests back, lint back, tests front, lint front — sont verts, et uniquement sur la branche principale. Si un seul échoue, le workflow s'arrête avant le build d'images et l'ancienne version continue de tourner. Si malgré tout un bug passe les tests et atteint la production, le rollback consiste à re-tagger l'image précédente par son SHA de commit et à redéclencher le webhook : quelques minutes, sans toucher au code. La nuance à apporter est que ce rollback ne défait pas une migration de base déjà appliquée.</p>
+<h3 id="q4-pourquoi-taguer-par-sha-de-commit-plutot-que-par-version-semantique">Q4. Pourquoi taguer par SHA de commit plutôt que par version sémantique ?</h3>
+<p>Le SHA est <strong>automatique et sans ambiguïté</strong> : il lie l'image exactement au commit qui l'a produite, sans décision humaine ni risque d'oubli. Une version sémantique a du sens quand on publie un produit versionné pour des tiers, avec un changelog et un contrat de compatibilité — ce n'est pas le cas d'une application interne déployée en continu. Cela dit les deux coexistent : depuis l'introduction du workflow de production, une <strong>release</strong> GitHub marque les versions destinées à la prod, et ce sont les images du commit taggé qui sont promues. Le SHA reste l'identité technique, la release porte l'identité produit.</p>
+<h3 id="q5-votre-ci-prend-combien-de-temps-cest-un-probleme">Q5. Votre CI prend combien de temps ? C'est un problème ?</h3>
+<p>Le build et le push d'images prennent environ six minutes, le redéploiement lui-même quelques secondes. La CI seule est plus courte grâce aux <strong>quatre jobs en parallèle</strong> — la durée totale est celle du job le plus long, pas la somme. C'est acceptable pour une boucle merge → production. Sur la boucle de développement, ce qui compte c'est le retour local : les hooks Git (lefthook) font tourner lint et formatage avant le commit, donc je découvre la plupart des problèmes en secondes, pas en minutes.</p>
+<h3 id="q6-comment-gerez-vous-les-secrets">Q6. Comment gérez-vous les secrets ?</h3>
+<p>À trois niveaux, sans jamais de secret dans le dépôt. Les identifiants de registre et l'URL du webhook sont dans les <strong>secrets GitHub Actions</strong>, masqués dans les logs d'exécution. Les variables d'environnement d'exécution sont injectées par les <strong>paramètres de configuration Azure</strong>, jamais écrites dans les fichiers de configuration ni dans les images. Et l'application ne gère aucun mot de passe utilisateur, puisque l'authentification est déléguée à l'IdP. La faiblesse résiduelle est que les secrets Azure sont saisis à la main dans le portail : un Azure Key Vault avec identité managée serait plus propre, ça élimine complètement le secret partagé.</p>
+<h3 id="q7-le-deploiement-provoque-t-il-une-coupure">Q7. Le déploiement provoque-t-il une coupure ?</h3>
+<p>Oui, quelques secondes : Azure re-pull les images et redémarre les conteneurs, et l'entrypoint rejoue les migrations et la collecte des statics avant de lancer Gunicorn. Il n'y a ni blue/green ni rolling update. Sur un outil interne utilisé en journée par une population connue, c'est un compromis assumé — le coût d'un déploiement sans coupure sur ce plan d'hébergement dépasse largement le bénéfice. Sur un service public ou soumis à un SLA, ce serait un défaut à corriger, et la solution la plus simple serait les <em>deployment slots</em> d'Azure avec bascule après vérification.</p>
+<h3 id="q8-vous-parlez-dinfrastructure-as-code-en-faites-vous-vraiment">Q8. Vous parlez d'Infrastructure as Code. En faites-vous vraiment ?</h3>
+<p>Partiellement, et il faut être précis là-dessus. Ce qui est réellement en code et versionné, c'est la <strong>définition applicative</strong> : les Dockerfiles, les fichiers <code>docker-compose</code> pour le dev, la prod et Azure, les workflows GitHub Actions, la configuration Nginx. Ce qui <strong>ne l'est pas</strong>, c'est l'infrastructure Azure elle-même — Web App, base, storage, registry — configurée à la main dans le portail. Un Bicep ou un Terraform la rendrait reproductible et auditable. Je ne l'ai pas fait parce qu'il n'y a qu'un seul environnement à ce jour ; ça deviendrait bloquant dès qu'il faudrait recréer l'ensemble ou monter un staging isolé, et c'est le genre de dette qu'il vaut mieux payer avant d'en avoir besoin en urgence.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

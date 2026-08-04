@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conception, UML et modélisation — Révisions CDA 2026</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+    <a href="./qcm.html" class="header-right">QCM →</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<div class="toc">
+<ul>
+<li><a href="#0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</a></li>
+<li><a href="#1-tldr">1. TL;DR</a></li>
+<li><a href="#2-les-diagrammes-uml-que-jai-produits">2. Les diagrammes UML que j'ai produits</a><ul>
+<li><a href="#21-diagramme-de-cas-dutilisation">2.1 Diagramme de cas d'utilisation</a></li>
+<li><a href="#22-diagramme-de-classes">2.2 Diagramme de classes</a></li>
+<li><a href="#23-diagramme-de-sequence">2.3 Diagramme de séquence</a></li>
+<li><a href="#24-diagramme-de-deploiement">2.4 Diagramme de déploiement</a></li>
+</ul>
+</li>
+<li><a href="#3-merise-mcd-mld-mpd">3. Merise : MCD, MLD, MPD</a><ul>
+<li><a href="#31-les-trois-niveaux">3.1 Les trois niveaux</a></li>
+<li><a href="#32-les-regles-de-passage-mcd-mld">3.2 Les règles de passage MCD → MLD</a></li>
+<li><a href="#33-les-formes-normales">3.3 Les formes normales</a></li>
+</ul>
+</li>
+<li><a href="#4-architecture-applicative-la-vue-n-tiers">4. Architecture applicative : la vue N-tiers</a></li>
+<li><a href="#5-documenter-les-decisions-prd-et-adr">5. Documenter les décisions : PRD et ADR</a><ul>
+<li><a href="#51-le-cycle-documentaire-reel">5.1 Le cycle documentaire réel</a></li>
+<li><a href="#52-structure-dun-adr">5.2 Structure d'un ADR</a></li>
+</ul>
+</li>
+<li><a href="#6-maquettage-et-design">6. Maquettage et design</a></li>
+<li><a href="#7-questions-probables-du-jury">7. Questions probables du jury</a><ul>
+<li><a href="#q1-pourquoi-uml-et-merise-cest-redondant-non">Q1. Pourquoi UML et Merise, c'est redondant non ?</a></li>
+<li><a href="#q2-comment-vous-etes-vous-assure-que-les-diagrammes-correspondent-au-code-livre">Q2. Comment vous êtes-vous assuré que les diagrammes correspondent au code livré ?</a></li>
+<li><a href="#q3-difference-entre-agregation-et-composition">Q3. Différence entre agrégation et composition ?</a></li>
+<li><a href="#q4-votre-diagramme-de-sequence-montre-du-synchrone-cest-un-probleme">Q4. Votre diagramme de séquence montre du synchrone. C'est un problème ?</a></li>
+<li><a href="#q5-un-prd-ce-nest-pas-juste-un-cahier-des-charges">Q5. Un PRD, ce n'est pas juste un cahier des charges ?</a></li>
+<li><a href="#q6-comment-avez-vous-choisi-les-acteurs-de-votre-diagramme-de-cas-dutilisation">Q6. Comment avez-vous choisi les acteurs de votre diagramme de cas d'utilisation ?</a></li>
+<li><a href="#q7-vos-treize-tables-cest-peu-pour-une-application-en-production">Q7. Vos treize tables, c'est peu pour une application en production ?</a></li>
+<li><a href="#q8-quest-ce-qui-vous-a-manque-en-conception">Q8. Qu'est-ce qui vous a manqué en conception ?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+    </nav>
+    <article>
+<h1 id="conception-uml-et-modelisation">Conception, UML et modélisation</h1>
+<p class="meta"><em>Fiche transversale 1/6 — ce que le jury attend sur la partie « Concevoir » du référentiel CDA (AT1).</em></p>
+<h2 id="0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</h2>
+<dl>
+<dt>UML (Unified Modeling Language)</dt>
+<dd>Langage de <strong>modélisation</strong> graphique, pas un langage de programmation ni une méthode. 14 types de diagrammes en UML 2.x, dont 7 structurels (classes, composants, déploiement…) et 7 comportementaux (cas d'utilisation, séquence, activité…). Norme ISO/IEC 19505.</dd>
+<dt>Merise</dt>
+<dd>Méthode d'analyse <strong>française</strong>, orientée bases de données, organisée en trois niveaux d'abstraction : conceptuel (MCD), logique (MLD), physique (MPD). Vient avec le formalisme entité-association. Complémentaire d'UML, pas concurrent.</dd>
+<dt>MCD / MLD / MPD</dt>
+<dd>Modèle Conceptuel de Données (entités, associations, cardinalités — indépendant de toute techno) → Modèle Logique de Données (tables, clés primaires et étrangères — encore indépendant du SGBD) → Modèle Physique de Données (types SQL réels, index, contraintes — spécifique PostgreSQL, MySQL…).</dd>
+<dt>Cardinalité</dt>
+<dd>Nombre minimum et maximum d'occurrences d'une entité participant à une association. En Merise on la lit <strong>du côté de l'entité</strong> (0,n / 1,1) ; en UML on note la multiplicité <strong>du côté opposé</strong> (0..*, 1). C'est la principale source de confusion entre les deux notations.</dd>
+<dt>Association / Agrégation / Composition</dt>
+<dd>Trois forces de lien en UML. Association = simple lien. Agrégation (losange blanc) = « fait partie de », mais les parties survivent au tout. Composition (losange noir) = cycle de vie lié, si le tout disparaît les parties disparaissent.</dd>
+<dt>Acteur</dt>
+<dd>Rôle joué par une entité <strong>externe</strong> au système dans un diagramme de cas d'utilisation. Un acteur n'est pas une personne : une même personne peut endosser plusieurs rôles, et un système tiers (une API, un ordonnanceur) est un acteur.</dd>
+<dt>&lt;&lt;include&gt;&gt; / &lt;&lt;extend&gt;&gt;</dt>
+<dd>Deux relations entre cas d'utilisation. <code>include</code> = le cas inclus est <strong>obligatoire</strong> et toujours exécuté (flèche vers le cas inclus). <code>extend</code> = comportement <strong>optionnel</strong> qui vient s'ajouter dans certaines conditions (flèche vers le cas de base). Le sens des flèches est inversé entre les deux : c'est une question classique de jury.</dd>
+<dt>Ligne de vie / message</dt>
+<dd>Dans un diagramme de séquence, une ligne de vie est la représentation temporelle d'un participant (acteur, objet, service). Un message synchrone (flèche pleine) bloque l'appelant jusqu'à la réponse ; un message asynchrone (flèche ouverte) ne bloque pas.</dd>
+<dt>Nœud / artefact</dt>
+<dd>Dans un diagramme de déploiement, un <strong>nœud</strong> est une ressource d'exécution (serveur, service cloud, <code>&lt;&lt;device&gt;&gt;</code> ou <code>&lt;&lt;execution environment&gt;&gt;</code>) et un <strong>artefact</strong> est un livrable physique déployé dessus (un binaire, une image Docker, un <code>.war</code>).</dd>
+<dt>PRD (Product Requirements Document)</dt>
+<dd>Document qui fixe le <strong>périmètre fonctionnel</strong> d'une fonctionnalité avant développement : problème, utilisateurs, comportement attendu, critères d'acceptation, hors-scope. Il répond au « quoi » et au « pourquoi », jamais au « comment ».</dd>
+<dt>ADR (Architecture Decision Record)</dt>
+<dd>Note courte et <strong>versionnée dans le dépôt</strong> qui trace une décision d'architecture : contexte, décision, conséquences, alternatives écartées. Immuable une fois acceptée : on ne modifie pas un ADR, on en écrit un nouveau qui le remplace (statut <code>superseded</code>).</dd>
+</dl>
+<hr />
+<h2 id="1-tldr">1. TL;DR</h2>
+<p>La conception, c'est <strong>produire les documents qui rendent une décision explicable six mois plus tard</strong>. Le référentiel CDA attend trois familles de livrables :</p>
+<ol>
+<li><strong>Les besoins</strong> — cas d'utilisation, maquettes, PRD. Ce que le système doit faire, du point de vue de celui qui l'utilise.</li>
+<li><strong>La structure</strong> — diagramme de classes, MCD/MLD/MPD, architecture applicative (N-tiers). Comment le système est organisé.</li>
+<li><strong>Le comportement et le déploiement</strong> — diagramme de séquence, diagramme de déploiement. Ce qui se passe à l'exécution et où ça tourne.</li>
+</ol>
+<p>Sur mes projets, tous ces livrables vivent <strong>dans le dépôt Git</strong>, dans <code>docs/</code>, découpé en quatre répertoires (généraux, PRDs, architecture, rapports). Le principe est simple : la documentation suit le code, elle est revue dans la même Pull Request, donc elle ne dérive pas.</p>
+<div class="admonition jury">
+<p class="admonition-title">Le fil rouge à tenir</p>
+<p>Chaque diagramme répond à <strong>une</strong> question. Cas d'utilisation : <em>qui fait quoi ?</em> Classes : <em>quelles données et quels comportements ?</em> Séquence : <em>dans quel ordre, entre qui et qui ?</em> Déploiement : <em>où est-ce que ça tourne ?</em> Si on ne sait pas dire quelle question un diagramme résout, c'est qu'il ne sert à rien.</p>
+</div>
+<hr />
+<h2 id="2-les-diagrammes-uml-que-jai-produits">2. Les diagrammes UML que j'ai produits</h2>
+<h3 id="21-diagramme-de-cas-dutilisation">2.1 Diagramme de cas d'utilisation</h3>
+<p>Il délimite le <strong>périmètre du système</strong> : à l'intérieur du cadre, ce que le système fait ; à l'extérieur, les acteurs.</p>
+<p>Sur Boost-Report, trois acteurs :</p>
+<table>
+<thead>
+<tr>
+<th>Acteur</th>
+<th>Définition</th>
+<th>Cas propres</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Utilisateur</strong></td>
+<td>Collaborateur Sixense authentifié via le SSO</td>
+<td>Créer/éditer un rapport, gérer les annexes photo, générer Word/PDF</td>
+</tr>
+<tr>
+<td><strong>Relecteur</strong></td>
+<td>Utilisateur <em>assigné à un rapport donné</em> — hérite de tous les cas de l'Utilisateur (généralisation)</td>
+<td>Commenter une section, clôturer un commentaire</td>
+</tr>
+<tr>
+<td><strong>Administrateur</strong></td>
+<td>Gère le back-office</td>
+<td>Gérer droits, agences, templates ; consulter les analytics</td>
+</tr>
+</tbody>
+</table>
+<p>La relation <code>&lt;&lt;extend&gt;&gt;</code> entre « Annoter une photo » et « Gérer les photos » traduit que l'annotation est <strong>optionnelle</strong> lors de la gestion des photos.</p>
+<div class="admonition piege">
+<p class="admonition-title">Piège classique</p>
+<p>La flèche de généralisation entre acteurs pointe <strong>vers l'acteur le plus général</strong>. Relecteur → Utilisateur signifie « un relecteur est aussi un utilisateur », donc il hérite de ses cas. Beaucoup l'inversent.</p>
+</div>
+<h3 id="22-diagramme-de-classes">2.2 Diagramme de classes</h3>
+<p>Il décrit les <strong>entités du domaine métier</strong>, leurs attributs, leurs opérations et leurs relations — pas les tables SQL, pas les composants React.</p>
+<p>Sur Boost-Report, deux ensembles autour de deux racines :</p>
+<ul>
+<li><code>Report</code> — rattaché à un <code>ReportTemplate</code> (le fichier Word de mise en forme, sa version, son statut actif). Le rapport porte sa référence, son indice de révision, son statut, et un champ JSON pour le contenu saisi. Il expose quatre opérations sur ses blocs : <strong>ajouter, mettre à jour, supprimer, réordonner</strong>.</li>
+<li><code>PhotoAppendix</code> — regroupe des <code>PhotoItem</code> <strong>ordonnés</strong>. Chaque photo porte son URL source, sa légende, sa rotation et d'éventuelles annotations JSON.</li>
+</ul>
+<p><code>Agency</code> sert de <strong>pivot de visibilité</strong> : c'est elle qui détermine ce que chaque utilisateur voit. <code>UserProfile</code> étend <code>User</code> avec le niveau de visibilité, et <code>UserAgency</code> est la table de liaison permettant d'affecter un collaborateur à <strong>plusieurs</strong> agences (donc une relation n-n).</p>
+<div class="admonition note">
+<p class="admonition-title">Pourquoi une table de liaison ?</p>
+<p>Une relation <strong>many-to-many</strong> ne peut pas s'exprimer avec une simple clé étrangère : il faut une troisième table qui porte les deux clés. C'est exactement ce que fait <code>UserAgency</code>. En Django, <code>ManyToManyField</code> la crée implicitement, mais on la déclare explicitement dès qu'on veut y ajouter des attributs (date d'affectation, rôle dans l'agence…).</p>
+</div>
+<h3 id="23-diagramme-de-sequence">2.3 Diagramme de séquence</h3>
+<p>Il détaille <strong>un seul cas d'utilisation</strong> dans le temps. Sur Boost-Report, j'ai modélisé « Générer un rapport (Word/PDF) », le flux le plus complet :</p>
+<pre class="mermaid">sequenceDiagram
+    actor U as Utilisateur
+    participant F as Front React
+    participant A as API REST (DRF)
+    participant S as ReportPdfService
+    participant G as ReportGenerator
+    participant GO as Gotenberg
+    participant DB as PostgreSQL
+
+    U-&gt;&gt;F: Clic « Générer le PDF »
+    F-&gt;&gt;A: POST /api/reports/{id}/pdf/
+    A-&gt;&gt;S: generate(report)
+    S-&gt;&gt;S: empreinte SHA-256 (updated_at + template_id)
+    alt Empreinte identique et fichier présent
+        S--&gt;&gt;A: PDF en cache (aucune génération)
+    else Cache miss
+        S-&gt;&gt;G: render(report)
+        G-&gt;&gt;DB: charge rapport + template
+        G-&gt;&gt;G: itère les briques via le Strategy Pattern
+        G-&gt;&gt;G: rendu Jinja2 → DOCX sur disque
+        G--&gt;&gt;S: chemin du DOCX
+        S-&gt;&gt;GO: POST DOCX (LibreOffice headless)
+        GO--&gt;&gt;S: PDF
+        S-&gt;&gt;DB: met à jour empreinte + chemin
+    end
+    S--&gt;&gt;A: PDF
+    A--&gt;&gt;F: 200 + fichier
+    F--&gt;&gt;U: Affichage du document
+</pre>
+
+<p>Deux points à savoir défendre :</p>
+<ul>
+<li><strong>Le traitement est synchrone.</strong> L'utilisateur attend pendant toute la génération. C'est assumé pour les volumes actuels ; une évolution vers une file de tâches (Celery + Redis) est identifiée pour les rapports volumineux.</li>
+<li><strong>Un throttle limite à 10 requêtes/minute/utilisateur.</strong> La génération est coûteuse, on protège le service.</li>
+</ul>
+<h3 id="24-diagramme-de-deploiement">2.4 Diagramme de déploiement</h3>
+<p>Il répond à une question que l'architecture applicative ne traite pas : <strong>où est-ce que ça s'exécute ?</strong></p>
+<p>La notation distingue trois niveaux :</p>
+<ul>
+<li>les nœuds <code>&lt;&lt;device&gt;&gt;</code> : un par service Azure hébergeant ;</li>
+<li>l'<code>&lt;&lt;execution environment&gt;&gt;</code> : Docker Compose à l'intérieur de la Web App ;</li>
+<li>les <strong>artefacts</strong> : les conteneurs tels que déployés.</li>
+</ul>
+<p>Chaque lien de communication porte son <strong>protocole et son port</strong> : HTTPS côté utilisateur, HTTP interne entre conteneurs, TCP/SSL vers la base. La liaison en pointillés vers Azure Container Registry note une <strong>dépendance de déploiement</strong> (la Web App tire ses images à chaque redéploiement), pas un flux d'exécution.</p>
+<div class="admonition jury">
+<p class="admonition-title">Différence architecture applicative / diagramme de déploiement</p>
+<p>L'architecture applicative (N-tiers) montre les <strong>couches logiques</strong> et leurs responsabilités. Le diagramme de déploiement montre l'<strong>infrastructure physique</strong>. Le même diagramme N-tiers pourrait être déployé de dix façons différentes ; le diagramme de déploiement dit laquelle a été retenue.</p>
+</div>
+<hr />
+<h2 id="3-merise-mcd-mld-mpd">3. Merise : MCD, MLD, MPD</h2>
+<p>Le référentiel CDA attend explicitement le <strong>schéma de données</strong> et le <strong>script de création de la base</strong>. Merise reste la façon la plus lisible de le présenter.</p>
+<h3 id="31-les-trois-niveaux">3.1 Les trois niveaux</h3>
+<table>
+<thead>
+<tr>
+<th>Niveau</th>
+<th>Contenu</th>
+<th>Indépendant de…</th>
+<th>Exemple</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MCD</strong></td>
+<td>Entités, propriétés, associations, cardinalités</td>
+<td>tout choix technique</td>
+<td><code>RAPPORT</code> —(0,n)— <em>appartient à</em> —(1,1)— <code>AGENCE</code></td>
+</tr>
+<tr>
+<td><strong>MLD</strong></td>
+<td>Tables, clés primaires, clés étrangères</td>
+<td>du SGBD</td>
+<td><code>RAPPORT(id, titre, #agence_id)</code></td>
+</tr>
+<tr>
+<td><strong>MPD</strong></td>
+<td>Types SQL réels, index, contraintes, <code>ON DELETE</code></td>
+<td>rien — c'est du PostgreSQL</td>
+<td><code>agency_id integer NOT NULL REFERENCES core_agency(id) ON DELETE PROTECT</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-les-regles-de-passage-mcd-mld">3.2 Les règles de passage MCD → MLD</h3>
+<p>Il faut savoir les réciter, c'est du par-cœur qui tombe souvent :</p>
+<ul>
+<li>Association <strong>1,1 ↔ 0,n ou 1,n</strong> : la clé étrangère descend <strong>du côté 1,1</strong>. Un rapport appartient à une seule agence → <code>agence_id</code> est dans la table <code>rapport</code>.</li>
+<li>Association <strong>n,n</strong> : elle devient une <strong>table à part entière</strong> portant les deux clés étrangères, qui forment ensemble la clé primaire.</li>
+<li>Association <strong>porteuse de données</strong> : elle devient une table même si les cardinalités permettraient de l'éviter.</li>
+<li>Association <strong>1,1 ↔ 1,1</strong> : les deux entités fusionnent, ou la clé étrangère va du côté le plus contraint.</li>
+</ul>
+<h3 id="33-les-formes-normales">3.3 Les formes normales</h3>
+<p>Trois à connaître :</p>
+<ol>
+<li><strong>1NF</strong> — chaque attribut est atomique. Pas de « liste de légendes séparées par des virgules » dans une colonne.</li>
+<li><strong>2NF</strong> — 1NF + tout attribut non-clé dépend de la clé <strong>entière</strong> (ne concerne que les clés composites).</li>
+<li><strong>3NF</strong> — 2NF + aucun attribut non-clé ne dépend d'un autre attribut non-clé (pas de dépendance transitive). Si <code>rapport</code> stockait <code>agence_id</code> <strong>et</strong> <code>agence_ville</code>, on violerait la 3NF : la ville dépend de l'agence, pas du rapport.</li>
+</ol>
+<div class="admonition piege">
+<p class="admonition-title">La dénormalisation assumée</p>
+<p>Boost-Report stocke le contenu des rapports dans un <strong>champ JSON</strong> (<code>data</code>), ce qui n'est pas normalisé au sens strict. C'est un choix : le contenu est un arbre de blocs hétérogènes, lu et écrit en bloc, jamais requêté champ par champ. Vouloir le normaliser produirait une dizaine de tables pour aucun gain. Savoir défendre une dénormalisation vaut mieux que réciter les formes normales.</p>
+</div>
+<hr />
+<h2 id="4-architecture-applicative-la-vue-n-tiers">4. Architecture applicative : la vue N-tiers</h2>
+<p>Boost-Report suit une architecture <strong>N-tiers en trois couches</strong> :</p>
+<pre class="mermaid">flowchart TB
+    subgraph P["Couche présentation"]
+        R["Front React 19 + Vite&lt;br/&gt;UI, routing, état local, appels API"]
+    end
+    subgraph M["Couche métier"]
+        D["Django + DRF — 5 apps&lt;br/&gt;core · api · generator · analytics · admin_panel"]
+    end
+    subgraph Data["Couche données"]
+        PG[("PostgreSQL / Azure")]
+        BL[("Azure Blob Storage")]
+    end
+    R -- "HTTPS / JSON" --&gt; D
+    D -- "ORM Django" --&gt; PG
+    D -- "SDK Azure" --&gt; BL
+</pre>
+
+<p>Les règles qui font que c'est vraiment du N-tiers, et pas juste trois boîtes :</p>
+<ul>
+<li><strong>La présentation ne contient aucune logique métier</strong> et ne parle <strong>jamais</strong> directement à la base.</li>
+<li><strong>La couche métier est la seule à accéder aux données</strong>, systématiquement via l'ORM — aucun SQL écrit à la main.</li>
+<li>Chaque couche ne connaît que <strong>celle immédiatement en dessous</strong>.</li>
+</ul>
+<p>Les cinq applications Django ont des responsabilités disjointes :</p>
+<table>
+<thead>
+<tr>
+<th>App</th>
+<th>Responsabilité</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>core</code></td>
+<td>Domaine, modèles, logique d'accès, authentification, permissions</td>
+</tr>
+<tr>
+<td><code>api</code></td>
+<td>Couche de présentation serveur : endpoints REST, sérialisation</td>
+</tr>
+<tr>
+<td><code>generator</code></td>
+<td>Moteurs de génération de documents (Word et PDF)</td>
+</tr>
+<tr>
+<td><code>analytics</code></td>
+<td>Collecte et agrégation des données d'usage</td>
+</tr>
+<tr>
+<td><code>admin_panel</code></td>
+<td>Fonctions d'administration et journal d'audit</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-documenter-les-decisions-prd-et-adr">5. Documenter les décisions : PRD et ADR</h2>
+<h3 id="51-le-cycle-documentaire-reel">5.1 Le cycle documentaire réel</h3>
+<pre class="mermaid">flowchart LR
+    A["Réunion tuteur&lt;br/&gt;besoin métier"] --&gt; B["PRD&lt;br/&gt;périmètre + critères"]
+    B --&gt; C["Milestones"]
+    C --&gt; D["Tickets Kanban&lt;br/&gt;feat / refactor / chore"]
+    D --&gt; E["Développement + PR"]
+    E --&gt; F["Rapport de sprint&lt;br/&gt;écarts, points à surveiller"]
+    E -.-&gt;|décision structurante| G["ADR versionné"]
+</pre>
+
+<p>Le tuteur crée les <strong>issues métier dans GitLab</strong> (fonctionnalité vue de l'utilisateur, sans détail technique). Je les reprends en <strong>tâches techniques dans GitHub Projects</strong> avec une convention de nommage <code>feat</code> / <code>refactor</code> / <code>chore</code>. Cette organisation à deux niveaux sépare les responsabilités : le tuteur garde la vision métier, je garde la liberté d'organiser le découpage technique.</p>
+<h3 id="52-structure-dun-adr">5.2 Structure d'un ADR</h3>
+<div class="codehilite"><pre><span></span><code><span class="gh"># ADR-005 — Architecture frontend feature-based</span>
+
+<span class="gu">## Statut</span>
+Accepté — 2026-01-xx
+
+<span class="gu">## Contexte</span>
+La structure à plat (tous les composants dans <span class="sb">`components/`</span>) devient
+difficile à maintenir : 40+ fichiers sans regroupement, imports croisés,
+impossible d&#39;ajouter une feature sans lire tout le dossier.
+
+<span class="gu">## Décision</span>
+Réorganiser le front en <span class="sb">`features/&lt;domaine&gt;/`</span> — chaque feature porte ses
+composants, hooks, appels API et types. Pas d&#39;import direct entre features :
+uniquement via un point d&#39;entrée <span class="sb">`index.ts`</span> explicite.
+
+<span class="gu">## Conséquences</span>
++ Une feature s&#39;ajoute ou se retire sans toucher aux autres.
++ Le périmètre d&#39;un changement est visible dans le diff.
+− Coût de migration ponctuel, quelques duplications assumées.
+
+<span class="gu">## Alternatives écartées</span>
+<span class="k">-</span><span class="w"> </span>Découpage par type technique (<span class="sb">`hooks/`</span>, <span class="sb">`api/`</span>, <span class="sb">`components/`</span>) : le
+  problème d&#39;origine, on l&#39;aurait juste déplacé d&#39;un cran.
+<span class="k">-</span><span class="w"> </span>Monorepo multi-packages : sur-ingénierie pour un front de cette taille.
+</code></pre></div>
+
+<div class="admonition jury">
+<p class="admonition-title">Pourquoi un ADR plutôt qu'un commentaire de commit ?</p>
+<p>Parce qu'un ADR documente ce qui <strong>n'est pas dans le code</strong> : les alternatives écartées et leurs raisons. Le code montre ce qu'on a fait, l'ADR montre ce qu'on a décidé de ne pas faire — c'est ça qu'on oublie en six mois. Il sert aussi à anticiper les risques : forcer à écrire les conséquences fait remonter les problèmes avant l'implémentation, pas après.</p>
+</div>
+<hr />
+<h2 id="6-maquettage-et-design">6. Maquettage et design</h2>
+<ul>
+<li><strong>Figma</strong> pour les maquettes d'interface, réalisées en amont et affinées au fil des sprints.</li>
+<li><strong>Draw.io</strong> pour les schémas UML et diagrammes d'architecture.</li>
+<li>Un <strong>design system</strong> léger (shadcn/ui sur Radix + Tailwind) plutôt qu'une grosse librairie de composants imposée : les primitives Radix apportent l'accessibilité (navigation clavier, ARIA, focus trap), Tailwind laisse la main sur le rendu.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Wireframe / maquette / prototype</p>
+<p><strong>Wireframe</strong> = structure en fil de fer, pas de couleur, on valide l'agencement. <strong>Maquette</strong> = rendu fidèle statique, on valide le visuel. <strong>Prototype</strong> = maquette cliquable, on valide le parcours. Les trois répondent à des questions différentes et se font dans cet ordre.</p>
+</div>
+<hr />
+<h2 id="7-questions-probables-du-jury">7. Questions probables du jury</h2>
+<h3 id="q1-pourquoi-uml-et-merise-cest-redondant-non">Q1. Pourquoi UML <em>et</em> Merise, c'est redondant non ?</h3>
+<p>Non, ils ne couvrent pas la même chose. Merise est centré <strong>données</strong> et va jusqu'au physique : le MPD me donne directement les types SQL, les index et les stratégies de suppression. UML couvre tout le reste — le comportement (séquence), les acteurs (cas d'utilisation), l'infrastructure (déploiement). Le diagramme de classes UML et le MCD se recouvrent partiellement, mais le diagramme de classes porte en plus les <strong>opérations</strong> (<code>add_brick</code>, <code>reorder_bricks</code>), que le MCD ignore.</p>
+<h3 id="q2-comment-vous-etes-vous-assure-que-les-diagrammes-correspondent-au-code-livre">Q2. Comment vous êtes-vous assuré que les diagrammes correspondent au code livré ?</h3>
+<p>Ils vivent dans <code>docs/</code> <strong>dans le dépôt</strong>, donc ils passent dans la même Pull Request que le code. Cela dit, je ne prétends pas qu'ils sont synchronisés au commit près : les diagrammes du dossier documentent l'état de l'application en production au moment de la rédaction, et je le précise. Pour la partie données, la vérification est structurelle : le schéma réel est produit par les <strong>migrations Django</strong> générées depuis les modèles, donc le MPD est reconstitué à partir de la source de vérité, pas écrit à la main en parallèle.</p>
+<h3 id="q3-difference-entre-agregation-et-composition">Q3. Différence entre agrégation et composition ?</h3>
+<p>L'agrégation (losange <strong>blanc</strong>) exprime un « fait partie de » sans dépendance de cycle de vie : les parties existent indépendamment du tout. La composition (losange <strong>noir</strong>) lie les cycles de vie : détruire le tout détruit les parties. Concrètement dans mon modèle, <code>PhotoAppendix</code> → <code>PhotoItem</code> est une <strong>composition</strong> : supprimer une annexe supprime ses photos, ce qui se traduit en base par un <code>ON DELETE CASCADE</code>. À l'inverse <code>Report</code> → <code>ReportTemplate</code> est une simple <strong>association</strong> : supprimer un rapport ne doit pas toucher au template, et le template est protégé en suppression (<code>PROTECT</code>) parce que d'autres rapports en dépendent.</p>
+<h3 id="q4-votre-diagramme-de-sequence-montre-du-synchrone-cest-un-probleme">Q4. Votre diagramme de séquence montre du synchrone. C'est un problème ?</h3>
+<p>C'est un choix documenté, pas un oubli. Les rapports actuels se génèrent en quelques secondes, un traitement asynchrone imposerait une file (Celery), un broker (Redis), un système de polling ou de WebSocket côté front et une gestion d'état de tâche — pour un gain nul sur les volumes réels. J'ai en revanche mis un <strong>throttle à 10 req/min/utilisateur</strong> pour éviter qu'un usage abusif sature les workers Gunicorn, et l'évolution asynchrone est identifiée dans les perspectives. Le déclencheur serait des rapports assez volumineux pour approcher le timeout de la Web App.</p>
+<h3 id="q5-un-prd-ce-nest-pas-juste-un-cahier-des-charges">Q5. Un PRD, ce n'est pas juste un cahier des charges ?</h3>
+<p>C'est plus resserré. Un cahier des charges couvre un projet entier et est souvent contractuel. Un PRD couvre <strong>une fonctionnalité</strong> et vit à l'échelle d'un sprint : le problème, qui est concerné, le comportement attendu, les critères d'acceptation, et surtout un <strong>hors-scope explicite</strong>. C'est cette dernière partie qui a le plus de valeur en pratique : elle protège le périmètre du sprint quand un besoin annexe remonte en cours de route.</p>
+<h3 id="q6-comment-avez-vous-choisi-les-acteurs-de-votre-diagramme-de-cas-dutilisation">Q6. Comment avez-vous choisi les acteurs de votre diagramme de cas d'utilisation ?</h3>
+<p>En partant des <strong>rôles</strong>, pas des personnes. Chez Sixense la même personne est souvent à la fois rédactrice d'un rapport et relectrice d'un autre — ce sont deux rôles, pas deux personnes. J'ai retenu Utilisateur, Relecteur (spécialisation de l'Utilisateur, assignée au niveau d'un rapport donné) et Administrateur. Le SSO du hub n'est pas modélisé comme acteur parce qu'il n'initie aucun cas d'utilisation : il est sollicité par le système, il ne le sollicite pas.</p>
+<h3 id="q7-vos-treize-tables-cest-peu-pour-une-application-en-production">Q7. Vos treize tables, c'est peu pour une application en production ?</h3>
+<p>C'est proportionné au domaine. Le contenu des rapports est stocké en <strong>JSON</strong> plutôt qu'éclaté en tables : un rapport est un arbre de blocs hétérogènes, toujours lu et écrit intégralement, jamais requêté bloc par bloc. Le normaliser produirait une dizaine de tables et des jointures coûteuses pour aucun besoin réel. Ce que j'ai en revanche normalisé, c'est tout ce qui est <strong>requêté ou filtré</strong> : agences, profils de visibilité, affectations, commentaires, templates. La règle que j'applique : on normalise ce qu'on interroge, on sérialise ce qu'on transporte.</p>
+<h3 id="q8-quest-ce-qui-vous-a-manque-en-conception">Q8. Qu'est-ce qui vous a manqué en conception ?</h3>
+<p>La modélisation du <strong>workflow de rédaction</strong>. J'ai des statuts sur les rapports et des rôles éditeur/relecteur, mais je n'ai pas produit de diagramme d'états-transitions, et ça se sent : les règles de transition sont réparties entre les permissions et les vues plutôt que centralisées. Si je devais reprendre, je modéliserais explicitement la machine à états (brouillon → en relecture → validé → figé) avant de coder les permissions, plutôt que l'inverse.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

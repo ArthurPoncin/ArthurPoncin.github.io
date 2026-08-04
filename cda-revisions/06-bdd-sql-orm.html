@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bases de données, SQL et ORM — Révisions CDA 2026</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+    <a href="./qcm.html" class="header-right">QCM →</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<div class="toc">
+<ul>
+<li><a href="#0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</a></li>
+<li><a href="#1-tldr">1. TL;DR</a></li>
+<li><a href="#2-le-modele-de-donnees">2. Le modèle de données</a><ul>
+<li><a href="#21-vue-densemble">2.1 Vue d'ensemble</a></li>
+<li><a href="#22-les-trois-strategies-de-suppression-et-pourquoi">2.2 Les trois stratégies de suppression, et pourquoi</a></li>
+<li><a href="#23-la-denormalisation-assumee-le-champ-json">2.3 La dénormalisation assumée : le champ JSON</a></li>
+</ul>
+</li>
+<li><a href="#3-lorm-django">3. L'ORM Django</a><ul>
+<li><a href="#31-ce-quil-apporte">3.1 Ce qu'il apporte</a></li>
+<li><a href="#32-le-queryset-paresseux-en-pratique">3.2 Le queryset paresseux, en pratique</a></li>
+<li><a href="#33-le-probleme-n1">3.3 Le problème N+1</a></li>
+</ul>
+</li>
+<li><a href="#4-les-migrations">4. Les migrations</a><ul>
+<li><a href="#41-le-principe">4.1 Le principe</a></li>
+<li><a href="#42-les-pieges-des-migrations-en-production">4.2 Les pièges des migrations en production</a></li>
+<li><a href="#43-le-livrable-script-de-creation-de-la-base">4.3 Le livrable « script de création de la base »</a></li>
+</ul>
+</li>
+<li><a href="#5-le-sql-quil-faut-savoir-lire">5. Le SQL qu'il faut savoir lire</a><ul>
+<li><a href="#51-les-jointures">5.1 Les jointures</a></li>
+<li><a href="#52-agregation-et-filtrage">5.2 Agrégation et filtrage</a></li>
+<li><a href="#53-lordre-dexecution-logique">5.3 L'ordre d'exécution logique</a></li>
+<li><a href="#54-requeter-du-jsonb">5.4 Requêter du JSONB</a></li>
+</ul>
+</li>
+<li><a href="#6-performance-ce-qui-a-ete-fait-et-ce-qui-ne-la-pas-ete">6. Performance : ce qui a été fait et ce qui ne l'a pas été</a></li>
+<li><a href="#7-questions-probables-du-jury">7. Questions probables du jury</a><ul>
+<li><a href="#q1-vous-dites-ne-jamais-ecrire-de-sql-savez-vous-en-ecrire">Q1. Vous dites ne jamais écrire de SQL. Savez-vous en écrire ?</a></li>
+<li><a href="#q2-stocker-du-json-en-base-ce-nest-pas-contraire-a-la-normalisation">Q2. Stocker du JSON en base, ce n'est pas contraire à la normalisation ?</a></li>
+<li><a href="#q3-comment-gerez-vous-les-migrations-en-production">Q3. Comment gérez-vous les migrations en production ?</a></li>
+<li><a href="#q4-quest-ce-quune-requete-n1-et-en-avez-vous-eu">Q4. Qu'est-ce qu'une requête N+1 et en avez-vous eu ?</a></li>
+<li><a href="#q5-pourquoi-ne-pas-stocker-les-photos-en-base">Q5. Pourquoi ne pas stocker les photos en base ?</a></li>
+<li><a href="#q6-que-se-passe-t-il-si-deux-utilisateurs-modifient-le-meme-rapport-en-meme-temps">Q6. Que se passe-t-il si deux utilisateurs modifient le même rapport en même temps ?</a></li>
+<li><a href="#q7-quest-ce-quune-transaction-et-ou-en-utilisez-vous">Q7. Qu'est-ce qu'une transaction et où en utilisez-vous ?</a></li>
+<li><a href="#q8-treize-tables-comment-avez-vous-valide-que-le-modele-etait-correct">Q8. Treize tables, comment avez-vous validé que le modèle était correct ?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+    </nav>
+    <article>
+<h1 id="bases-de-donnees-sql-et-orm">Bases de données, SQL et ORM</h1>
+<p class="meta"><em>Fiche transversale 6/6 — PostgreSQL, l'ORM Django, les migrations, et le SQL qu'il faut savoir lire même quand on n'en écrit pas.</em></p>
+<h2 id="0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</h2>
+<dl>
+<dt>SGBD / SGBDR</dt>
+<dd>Système de Gestion de Base de Données. Le <strong>R</strong> ajoute « relationnel » : les données sont organisées en tables liées par des clés, et manipulées en SQL. PostgreSQL, MySQL, SQL Server, Oracle.</dd>
+<dt>Clé primaire / clé étrangère</dt>
+<dd>La <strong>clé primaire</strong> identifie de façon unique une ligne (non nulle, immuable). La <strong>clé étrangère</strong> est une colonne référençant la clé primaire d'une autre table — c'est elle qui matérialise une relation et garantit l'<strong>intégrité référentielle</strong>.</dd>
+<dt>Index</dt>
+<dd>Structure annexe (B-tree le plus souvent) qui accélère la recherche sur une ou plusieurs colonnes. Coût : espace disque et ralentissement des écritures, puisqu'il faut le maintenir à jour.</dd>
+<dt>ACID</dt>
+<dd>Les quatre garanties d'une transaction. <strong>Atomicité</strong> (tout ou rien), <strong>Cohérence</strong> (les contraintes restent respectées), <strong>Isolation</strong> (les transactions concurrentes ne se voient pas mutuellement à mi-parcours), <strong>Durabilité</strong> (une fois validée, elle survit à une panne).</dd>
+<dt>Transaction</dt>
+<dd>Groupe d'opérations traité comme une unité indivisible : <code>BEGIN</code> … <code>COMMIT</code> (validation) ou <code>ROLLBACK</code> (annulation).</dd>
+<dt>ORM (Object-Relational Mapping)</dt>
+<dd>Couche qui fait correspondre des classes à des tables et des objets à des lignes. Django ORM, SQLAlchemy, Hibernate, Drizzle. On manipule des objets Python, l'ORM produit le SQL.</dd>
+<dt>Migration</dt>
+<dd>Fichier versionné décrivant une <strong>modification de schéma</strong> (créer une table, ajouter une colonne, poser un index). Rejouable et ordonné, il permet de reconstruire ou de faire évoluer une base de façon déterministe.</dd>
+<dt>Requête N+1</dt>
+<dd>Anti-pattern majeur des ORM : une requête pour récupérer N objets, puis <strong>une requête par objet</strong> pour charger une relation. 100 rapports = 101 requêtes. Se corrige avec <code>select_related</code> (jointure) ou <code>prefetch_related</code> (seconde requête groupée).</dd>
+<dt>Lazy loading</dt>
+<dd>Chargement différé d'une relation, déclenché au premier accès. C'est pratique et c'est <strong>exactement la cause</strong> du N+1.</dd>
+<dt>Jointure</dt>
+<dd>Combinaison de lignes de plusieurs tables. <code>INNER</code> (uniquement les correspondances), <code>LEFT</code> (toutes celles de gauche, <code>NULL</code> à droite si absent), <code>RIGHT</code>, <code>FULL</code>.</dd>
+<dt><code>ON DELETE</code></dt>
+<dd>Comportement d'une clé étrangère quand la ligne référencée est supprimée. <code>CASCADE</code> (supprimer aussi), <code>PROTECT</code>/<code>RESTRICT</code> (interdire), <code>SET NULL</code>, <code>SET DEFAULT</code>, <code>DO NOTHING</code>.</dd>
+<dt>Pooling de connexions</dt>
+<dd>Réutilisation d'un jeu de connexions ouvertes plutôt que d'en ouvrir une par requête. Une connexion PostgreSQL est coûteuse (un processus côté serveur).</dd>
+<dt>JSONB</dt>
+<dd>Type PostgreSQL stockant du JSON sous forme binaire décomposée : requêtable, indexable (GIN), avec des opérateurs dédiés. À distinguer du type <code>json</code>, qui stocke le texte brut.</dd>
+</dl>
+<hr />
+<h2 id="1-tldr">1. TL;DR</h2>
+<ul>
+<li><strong>PostgreSQL</strong> partout, sur <strong>Azure Database for PostgreSQL Flexible Server</strong>, connexion chiffrée <code>sslmode=require</code>.</li>
+<li><strong>Treize tables</strong> réparties sur trois applications Django pour Boost-Report.</li>
+<li><strong>Aucun SQL écrit à la main</strong> : tout l'accès passe par l'ORM Django. Le SQL est produit par Django à partir des modèles Python.</li>
+<li>Le schéma est géré par le <strong>système de migrations</strong> : chaque modification du modèle génère un fichier versionné dans le dépôt.</li>
+<li>Les fichiers (photos, documents générés) <strong>ne sont pas en base</strong> : ils vivent sur Azure Blob Storage, la base ne stocke que les références.</li>
+</ul>
+<div class="admonition jury">
+<p class="admonition-title">Pourquoi PostgreSQL et pas MySQL ou SQLite ?</p>
+<p>Trois raisons, à donner dans cet ordre. C'est une <strong>référence solide</strong> en open source, mature sur les transactions et les contraintes. Il gère nativement le <strong>JSONB</strong>, indispensable puisque le contenu des rapports est stocké en JSON. Et il ouvre la porte à l'extension <strong>pgvector</strong> pour les fonctionnalités d'IA prévues sur le projet — c'était un critère explicite au moment du choix. SQLite a servi au tout début pour démarrer sans configurer de base, puis a été abandonné pour la mise en production.</p>
+</div>
+<hr />
+<h2 id="2-le-modele-de-donnees">2. Le modèle de données</h2>
+<h3 id="21-vue-densemble">2.1 Vue d'ensemble</h3>
+<pre class="mermaid">erDiagram
+    AGENCY ||--o{ REPORT : "porte"
+    AGENCY ||--o{ PHOTO_APPENDIX : "porte"
+    AGENCY ||--o{ USER_AGENCY : ""
+    USER   ||--o{ USER_AGENCY : ""
+    USER   ||--|| USER_PROFILE : "étend"
+    USER   ||--o{ REPORT : "rédige (editor)"
+    REPORT_TEMPLATE ||--o{ REPORT : "met en forme"
+    REPORT ||--o{ SECTION : "composé de"
+    REPORT ||--o{ COMMENT : "annoté par"
+    PHOTO_APPENDIX ||--o{ PHOTO_ITEM : "contient"
+</pre>
+
+<p>Les entités et leur rôle :</p>
+<table>
+<thead>
+<tr>
+<th>Entité</th>
+<th>Rôle</th>
+<th>Point notable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ReportTemplate</code></td>
+<td>Le fichier Word de mise en forme, sa version, son statut actif</td>
+<td>Référencé en <code>PROTECT</code> : on ne supprime pas un template utilisé</td>
+</tr>
+<tr>
+<td><code>Report</code></td>
+<td>Référence, indice de révision, statut, <strong>champ JSON</strong> de contenu</td>
+<td>Lié à un <code>editor</code> et à plusieurs <code>reviewers</code></td>
+</tr>
+<tr>
+<td><code>Section</code></td>
+<td>Partie ordonnée d'un rapport, typée <code>FORM</code> ou <code>FREE</code></td>
+<td>Contenu JSON propre + indicateur de progression</td>
+</tr>
+<tr>
+<td><code>PhotoAppendix</code></td>
+<td>Annexe photo</td>
+<td>Composition avec <code>PhotoItem</code> (<code>CASCADE</code>)</td>
+</tr>
+<tr>
+<td><code>PhotoItem</code></td>
+<td>URL source, légende, rotation, annotations JSON</td>
+<td>Ordonné dans l'annexe</td>
+</tr>
+<tr>
+<td><code>Agency</code></td>
+<td>Clé unique, nom, ville</td>
+<td><strong>Pivot de visibilité</strong> de toute l'application</td>
+</tr>
+<tr>
+<td><code>UserProfile</code></td>
+<td>Étend <code>User</code> avec le niveau de visibilité et le périmètre</td>
+<td>Relation 1-1</td>
+</tr>
+<tr>
+<td><code>UserAgency</code></td>
+<td>Table de liaison user ↔ agences</td>
+<td>Permet l'affectation <strong>multi-agences</strong> (n-n)</td>
+</tr>
+<tr>
+<td><code>Comment</code></td>
+<td>Fils de discussion sur les sections</td>
+<td>Relecture collaborative</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-les-trois-strategies-de-suppression-et-pourquoi">2.2 Les trois stratégies de suppression, et pourquoi</h3>
+<p>C'est un excellent sujet de question, parce que ça montre qu'on a réfléchi au cycle de vie.</p>
+<table>
+<thead>
+<tr>
+<th>Relation</th>
+<th>Stratégie</th>
+<th>Raison</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PhotoAppendix</code> → <code>PhotoItem</code></td>
+<td><strong>CASCADE</strong></td>
+<td>Composition : une photo n'a aucun sens sans son annexe</td>
+</tr>
+<tr>
+<td><code>Report</code> → <code>ReportTemplate</code></td>
+<td><strong>PROTECT</strong></td>
+<td>Supprimer un template casserait la régénération de tous les rapports qui s'en servent. On doit être empêché</td>
+</tr>
+<tr>
+<td><code>Report</code> → <code>User</code> (created_by)</td>
+<td><strong>SET_NULL</strong> ou conservation</td>
+<td>Le départ d'un collaborateur ne doit pas effacer ses livrables</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition piege">
+<p class="admonition-title">CASCADE est dangereux par défaut</p>
+<p><code>CASCADE</code> supprime en chaîne, potentiellement très loin. La question à se poser pour chaque clé étrangère : <em>« si je supprime le parent, l'enfant a-t-il encore un sens ? »</em> Si oui, jamais de CASCADE. Django oblige à déclarer <code>on_delete</code> explicitement depuis la version 2 — précisément parce que le défaut implicite causait des pertes de données.</p>
+</div>
+<h3 id="23-la-denormalisation-assumee-le-champ-json">2.3 La dénormalisation assumée : le champ JSON</h3>
+<p>Le contenu des rapports est stocké dans un <strong>champ JSON</strong> (<code>data</code>), et les sections ont chacune leur propre contenu JSON.</p>
+<p><strong>Pourquoi ce n'est pas une paresse :</strong></p>
+<ul>
+<li>Le contenu est un <strong>arbre de blocs hétérogènes</strong> (titres, paragraphes, listes, images, tableaux, encadrés, formules), chacun avec ses propres propriétés. Le normaliser demanderait une table par type, ou une table générique avec des colonnes nullables — deux mauvaises options.</li>
+<li>Il est <strong>toujours lu et écrit intégralement</strong>, jamais bloc par bloc. Aucune requête ne dit « trouve tous les rapports contenant un tableau de plus de 5 lignes ».</li>
+<li>Le format évolue avec l'éditeur (V1 par briques, V2 BlockNote). Une migration de schéma à chaque évolution du format de bloc serait ingérable.</li>
+</ul>
+<p><strong>Ce qui est normalisé, en revanche :</strong> tout ce qui est <strong>requêté, filtré ou agrégé</strong> — agences, profils de visibilité, affectations, commentaires, templates, statuts.</p>
+<div class="admonition jury">
+<p class="admonition-title">La règle à énoncer</p>
+<p>« On normalise ce qu'on interroge, on sérialise ce qu'on transporte. » Et la limite à reconnaître : le jour où il faudra chercher <strong>dans</strong> le contenu des rapports, il faudra soit indexer le JSONB en GIN, soit extraire les champs concernés dans des colonnes dédiées.</p>
+</div>
+<hr />
+<h2 id="3-lorm-django">3. L'ORM Django</h2>
+<h3 id="31-ce-quil-apporte">3.1 Ce qu'il apporte</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Ce que j&#39;écris</span>
+<span class="n">reports</span> <span class="o">=</span> <span class="n">Report</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">agency__in</span><span class="o">=</span><span class="n">agency_ids</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;template&quot;</span><span class="p">)</span>
+
+<span class="c1"># Ce que PostgreSQL reçoit (schématiquement)</span>
+<span class="n">SELECT</span> <span class="n">r</span><span class="o">.*</span><span class="p">,</span> <span class="n">t</span><span class="o">.*</span>
+<span class="n">FROM</span> <span class="n">core_report</span> <span class="n">r</span>
+<span class="n">INNER</span> <span class="n">JOIN</span> <span class="n">core_reporttemplate</span> <span class="n">t</span> <span class="n">ON</span> <span class="n">r</span><span class="o">.</span><span class="n">template_id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">id</span>
+<span class="n">WHERE</span> <span class="n">r</span><span class="o">.</span><span class="n">agency_id</span> <span class="n">IN</span> <span class="p">(</span><span class="o">%</span><span class="n">s</span><span class="p">,</span> <span class="o">%</span><span class="n">s</span><span class="p">);</span>
+</code></pre></div>
+
+<p>Quatre bénéfices :</p>
+<ol>
+<li><strong>Sécurité par construction</strong> — les requêtes sont <strong>paramétrées</strong> : la valeur est transmise séparément au driver, elle ne peut donc pas être interprétée comme du SQL. C'est la protection contre l'injection qui ne dépend pas de la vigilance à chaque ligne.</li>
+<li><strong>Portabilité</strong> — le même code fonctionne sur SQLite en local et PostgreSQL en prod. (À nuancer : c'est précisément pour ça que je teste sur PostgreSQL réel — voir la fiche Tests.)</li>
+<li><strong>Migrations automatiques</strong> — le schéma dérive des modèles, il n'est pas maintenu en parallèle.</li>
+<li><strong>Composabilité</strong> — les querysets sont <strong>paresseux</strong> : on les construit par étapes, ils ne s'exécutent qu'à l'itération. C'est ce qui rend possible <code>filter_visible_queryset(user, qs)</code>, une fonction qui reçoit un queryset, ajoute une clause et le rend, sans jamais toucher la base.</li>
+</ol>
+<h3 id="32-le-queryset-paresseux-en-pratique">3.2 Le queryset paresseux, en pratique</h3>
+<div class="codehilite"><pre><span></span><code><span class="n">qs</span> <span class="o">=</span> <span class="n">Report</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>          <span class="c1"># aucune requête</span>
+<span class="n">qs</span> <span class="o">=</span> <span class="n">qs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">agency</span><span class="o">=</span><span class="n">nantes</span><span class="p">)</span>      <span class="c1"># aucune requête</span>
+<span class="n">qs</span> <span class="o">=</span> <span class="n">qs</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s2">&quot;draft&quot;</span><span class="p">)</span>    <span class="c1"># aucune requête</span>
+<span class="n">qs</span> <span class="o">=</span> <span class="n">qs</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-created_at&quot;</span><span class="p">)</span>    <span class="c1"># aucune requête</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">qs</span><span class="p">)</span>                           <span class="c1"># ← ICI la requête part, une seule</span>
+</code></pre></div>
+
+<p>C'est exactement ce qui permet à ma logique de visibilité d'être <strong>composable</strong> :</p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">filter_visible_queryset</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">qs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Restreint `qs` aux ressources visibles par `user`.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="s2">&quot;is_authenticated&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">qs</span><span class="o">.</span><span class="n">none</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="s2">&quot;is_app_admin&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">qs</span>
+    <span class="o">...</span>
+    <span class="k">if</span> <span class="n">visibility</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">agency_ids</span> <span class="o">=</span> <span class="n">UserAgency</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;agency_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">base_q</span> <span class="o">=</span> <span class="n">Q</span><span class="p">(</span><span class="n">agency__in</span><span class="o">=</span><span class="n">agency_ids</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">base_q</span> <span class="o">=</span> <span class="n">Q</span><span class="p">(</span><span class="n">created_by</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">extra_q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">qs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">base_q</span> <span class="o">|</span> <span class="n">extra_q</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">qs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">base_q</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Les objets <code>Q</code> permettent de composer des conditions avec <code>|</code> (OU), <code>&amp;</code> (ET) et <code>~</code> (NON) avant de les appliquer. Le <code>.distinct()</code> est nécessaire parce que le OR sur une relation many-to-many (<code>reviewers</code>) produit des doublons de jointure.</p>
+<div class="admonition piege">
+<p class="admonition-title">Le <code>.distinct()</code> oublié</p>
+<p>Filtrer sur une relation n-n <strong>duplique</strong> les lignes : un rapport avec trois relecteurs apparaît trois fois. C'est un bug silencieux — la liste est juste, mais les compteurs et la pagination sont faux. Toute clause <code>Q</code> traversant un <code>ManyToManyField</code> doit finir par <code>.distinct()</code>.</p>
+</div>
+<h3 id="33-le-probleme-n1">3.3 Le problème N+1</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Mauvais : 1 + N requêtes</span>
+<span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">Report</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>      <span class="c1"># 1 requête</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>          <span class="c1"># 1 requête PAR rapport</span>
+
+<span class="c1"># Bon : 1 requête avec jointure</span>
+<span class="k">for</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">Report</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;template&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="c1"># Pour les relations n-n ou inverses : 2 requêtes au total</span>
+<span class="n">Report</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span><span class="s2">&quot;reviewers&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<table>
+<thead>
+<tr>
+<th>Méthode</th>
+<th>Type de relation</th>
+<th>SQL produit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>select_related</code></td>
+<td>ForeignKey, OneToOne (vers l'avant)</td>
+<td>Une requête avec <code>JOIN</code></td>
+</tr>
+<tr>
+<td><code>prefetch_related</code></td>
+<td>ManyToMany, relations inverses</td>
+<td>Deux requêtes, jointes en Python</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Comment le détecter</p>
+<p>Django Debug Toolbar (présent dans l'image de dev, absent en prod) affiche le nombre de requêtes par page et signale les requêtes similaires répétées. C'est l'outil qui rend le N+1 visible — sans lui, il ne se manifeste que par une lenteur inexpliquée qui grandit avec le volume de données.</p>
+</div>
+<hr />
+<h2 id="4-les-migrations">4. Les migrations</h2>
+<h3 id="41-le-principe">4.1 Le principe</h3>
+<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>makemigrations<span class="w">   </span><span class="c1"># génère le fichier depuis les modèles</span>
+python<span class="w"> </span>manage.py<span class="w"> </span>migrate<span class="w">          </span><span class="c1"># applique ce qui n&#39;est pas encore appliqué</span>
+</code></pre></div>
+
+<p>Chaque migration est un fichier Python <strong>versionné dans le dépôt</strong>, avec ses dépendances explicites (<code>dependencies = [...]</code>) qui garantissent l'ordre d'application. Django tient une table <code>django_migrations</code> recensant ce qui a déjà été joué sur cette base.</p>
+<p>En production, les migrations sont rejouées <strong>automatiquement au démarrage</strong> du conteneur, en première étape de l'entrypoint, avant la collecte des statics et le lancement de Gunicorn.</p>
+<h3 id="42-les-pieges-des-migrations-en-production">4.2 Les pièges des migrations en production</h3>
+<table>
+<thead>
+<tr>
+<th>Piège</th>
+<th>Conséquence</th>
+<th>Parade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ajouter une colonne <code>NOT NULL</code> sans défaut</td>
+<td>La migration échoue s'il y a des lignes</td>
+<td>Ajouter en <code>null=True</code>, remplir, puis contraindre</td>
+</tr>
+<tr>
+<td>Renommer une colonne</td>
+<td>Le code ancien casse pendant le déploiement</td>
+<td>Ajouter la nouvelle, écrire dans les deux, migrer les lectures, supprimer l'ancienne</td>
+</tr>
+<tr>
+<td>Migration lourde sur une grosse table</td>
+<td>Verrou long, indisponibilité</td>
+<td><code>CREATE INDEX CONCURRENTLY</code>, migration hors heures</td>
+</tr>
+<tr>
+<td>Rollback de code après migration appliquée</td>
+<td>Le code ancien face à un schéma neuf</td>
+<td>Rendre les migrations <strong>rétro-compatibles</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition attention">
+<p class="admonition-title">Le lien direct avec le rollback</p>
+<p>Re-tagger une image précédente ramène le <strong>code</strong>, pas le <strong>schéma</strong>. C'est la limite structurelle de ma procédure de rollback, et c'est pourquoi le principe « une migration ne doit jamais casser le code de la version précédente » n'est pas théorique : c'est ce qui rend le rollback réellement sûr.</p>
+</div>
+<h3 id="43-le-livrable-script-de-creation-de-la-base">4.3 Le livrable « script de création de la base »</h3>
+<p>Le référentiel CDA l'attend. Chez moi, le SQL n'est <strong>jamais écrit à la main</strong> : il est produit par Django à partir des modèles. Le script présenté en annexe est <strong>reconstitué</strong> pour les trois tables principales, et il faut savoir y lire :</p>
+<ul>
+<li>les <strong>clés étrangères</strong> avec leurs différentes stratégies de suppression ;</li>
+<li>les <strong>contraintes de validation métier</strong> (<code>CHECK</code>) ;</li>
+<li>les <strong>index de performance</strong>.</li>
+</ul>
+<p>On peut d'ailleurs obtenir le SQL exact d'une migration donnée :</p>
+<div class="codehilite"><pre><span></span><code>python<span class="w"> </span>manage.py<span class="w"> </span>sqlmigrate<span class="w"> </span>core<span class="w"> </span>0001_initial
+</code></pre></div>
+
+<hr />
+<h2 id="5-le-sql-quil-faut-savoir-lire">5. Le SQL qu'il faut savoir lire</h2>
+<p>Même sans en écrire, le jury peut demander de lire ou d'expliquer une requête.</p>
+<h3 id="51-les-jointures">5.1 Les jointures</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Les rapports avec le nom de leur agence (uniquement ceux qui en ont une)</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">reference</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">name</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">core_report</span><span class="w"> </span><span class="n">r</span>
+<span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">core_agency</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">agency_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">;</span>
+
+<span class="c1">-- Tous les rapports, avec le nom d&#39;agence si présent (NULL sinon)</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">reference</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">name</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">core_report</span><span class="w"> </span><span class="n">r</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">core_agency</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">agency_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="52-agregation-et-filtrage">5.2 Agrégation et filtrage</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Nombre de rapports par agence, uniquement les agences en ayant plus de 5</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">nb</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">core_agency</span><span class="w"> </span><span class="n">a</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">core_report</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">agency_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">id</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">name</span>
+<span class="k">HAVING</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">5</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">nb</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<div class="admonition piege">
+<p class="admonition-title"><code>WHERE</code> contre <code>HAVING</code></p>
+<p><code>WHERE</code> filtre les <strong>lignes avant</strong> le regroupement. <code>HAVING</code> filtre les <strong>groupes après</strong> agrégation. On ne peut pas utiliser <code>COUNT(...)</code> dans un <code>WHERE</code> : au moment où il s'applique, le groupe n'existe pas encore. C'est une question de jury très fréquente.</p>
+</div>
+<h3 id="53-lordre-dexecution-logique">5.3 L'ordre d'exécution logique</h3>
+<p>Ce n'est <strong>pas</strong> l'ordre d'écriture, et c'est ce qui explique le piège précédent :</p>
+<div class="codehilite"><pre><span></span><code>FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → LIMIT
+</code></pre></div>
+
+<p><code>SELECT</code> s'exécute tard : c'est pourquoi un alias défini dans le <code>SELECT</code> n'est pas utilisable dans le <code>WHERE</code>, mais l'est dans le <code>ORDER BY</code>.</p>
+<h3 id="54-requeter-du-jsonb">5.4 Requêter du JSONB</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Opérateurs PostgreSQL sur JSONB</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">data</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="s1">&#39;blocks&#39;</span><span class="w">  </span><span class="k">FROM</span><span class="w"> </span><span class="n">core_report</span><span class="p">;</span><span class="w">   </span><span class="c1">-- -&gt; renvoie du JSON</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">data</span><span class="w"> </span><span class="o">-&gt;&gt;</span><span class="w"> </span><span class="s1">&#39;title&#39;</span><span class="w">  </span><span class="k">FROM</span><span class="w"> </span><span class="n">core_report</span><span class="p">;</span><span class="w">   </span><span class="c1">-- -&gt;&gt; renvoie du texte</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">core_report</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">data</span><span class="w"> </span><span class="o">@&gt;</span><span class="w"> </span><span class="s1">&#39;{&quot;version&quot;: 2}&#39;</span><span class="p">;</span><span class="w">  </span><span class="c1">-- contient</span>
+</code></pre></div>
+
+<p>Équivalent Django :</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Report</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data__version</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Report</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">data__blocks__contains</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;table&quot;</span><span class="p">}])</span>
+</code></pre></div>
+
+<p>Un index <strong>GIN</strong> sur la colonne JSONB rendrait ces requêtes performantes — c'est la voie de sortie le jour où il faudra chercher dans le contenu.</p>
+<hr />
+<h2 id="6-performance-ce-qui-a-ete-fait-et-ce-qui-ne-la-pas-ete">6. Performance : ce qui a été fait et ce qui ne l'a pas été</h2>
+<table>
+<thead>
+<tr>
+<th>Levier</th>
+<th>État</th>
+<th>Détail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Index sur les colonnes de filtrage</td>
+<td>✅</td>
+<td>Index de performance présents dans le schéma</td>
+</tr>
+<tr>
+<td><code>select_related</code> / <code>prefetch_related</code></td>
+<td>✅</td>
+<td>Sur les listes de rapports et d'annexes</td>
+</tr>
+<tr>
+<td>Cache applicatif</td>
+<td>✅</td>
+<td>Empreinte <strong>SHA-256</strong> du rapport : si elle est inchangée et que le fichier existe, le PDF est renvoyé sans aucune génération</td>
+</tr>
+<tr>
+<td>Fichiers hors base</td>
+<td>✅</td>
+<td>Azure Blob Storage ; la base ne stocke que les références</td>
+</tr>
+<tr>
+<td>Pooling de connexions</td>
+<td>⚠️</td>
+<td><code>CONN_MAX_AGE</code> de Django ; pas de PgBouncer</td>
+</tr>
+<tr>
+<td>Réplicas de lecture</td>
+<td>❌</td>
+<td>Aucun besoin au volume actuel</td>
+</tr>
+<tr>
+<td>Index GIN sur le JSONB</td>
+<td>❌</td>
+<td>Pas nécessaire tant qu'on ne cherche pas dans le contenu</td>
+</tr>
+<tr>
+<td>Mesure de performance</td>
+<td>❌</td>
+<td><strong>Limite assumée</strong> : pas de tests de charge, les seuils sont estimés et non mesurés</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Le cache par empreinte, en détail</p>
+<p>Le <code>ReportPdfService</code> calcule un SHA-256 à partir de la <strong>date de dernière modification</strong> du rapport et de l'<strong>identifiant du template</strong>. Si cette empreinte correspond à celle stockée en base <strong>et</strong> que le fichier PDF existe sur disque, le PDF en cache est retourné directement. Sinon, cache miss : génération complète, puis mise à jour de l'empreinte et du chemin. C'est simple, ça tient en quelques lignes, et ça supprime la quasi-totalité des générations redondantes.</p>
+</div>
+<hr />
+<h2 id="7-questions-probables-du-jury">7. Questions probables du jury</h2>
+<h3 id="q1-vous-dites-ne-jamais-ecrire-de-sql-savez-vous-en-ecrire">Q1. Vous dites ne jamais écrire de SQL. Savez-vous en écrire ?</h3>
+<p>Oui, et c'est nécessaire ne serait-ce que pour lire ce que l'ORM produit et diagnostiquer une lenteur. Le choix de tout passer par l'ORM est délibéré : les requêtes sont paramétrées par construction, donc l'injection SQL n'est pas un risque qui dépend de ma vigilance ligne par ligne. Django permet de descendre en SQL brut avec <code>raw()</code> ou <code>connection.cursor()</code> si un besoin l'exige — une requête analytique complexe, par exemple. Je n'en ai pas eu besoin : l'agrégation dont j'avais besoin pour les analytics s'exprime avec <code>annotate</code> et <code>aggregate</code>, qui produisent le <code>GROUP BY</code> attendu.</p>
+<h3 id="q2-stocker-du-json-en-base-ce-nest-pas-contraire-a-la-normalisation">Q2. Stocker du JSON en base, ce n'est pas contraire à la normalisation ?</h3>
+<p>Si, au sens strict de la 1NF. C'est une <strong>dénormalisation assumée</strong>, justifiée par la nature de la donnée : le contenu d'un rapport est un arbre de blocs hétérogènes, toujours lu et écrit intégralement, jamais requêté bloc par bloc. Le normaliser demanderait soit une table par type de bloc, soit une table générique pleine de colonnes nullables — et une migration de schéma à chaque évolution du format d'éditeur. Ce que j'ai normalisé, c'est tout ce qui est filtré ou agrégé : agences, profils, affectations, commentaires, statuts. La limite est réelle : le jour où il faudra chercher dans le contenu, il faudra un index GIN sur le JSONB ou extraire les champs concernés en colonnes.</p>
+<h3 id="q3-comment-gerez-vous-les-migrations-en-production">Q3. Comment gérez-vous les migrations en production ?</h3>
+<p>Elles sont appliquées <strong>automatiquement au démarrage du conteneur</strong>, en première étape de l'entrypoint, avant la collecte des statics et le lancement de Gunicorn. C'est simple et ça garantit que le code ne démarre jamais sur un schéma périmé. Le risque connu est qu'une migration défaillante bloque le démarrage — je préfère ça à une application qui démarre sur un schéma incohérent. La vraie précaution est en amont : je fais en sorte que les migrations soient <strong>rétro-compatibles</strong>, parce que mon rollback re-tague une image ancienne sans défaire le schéma. Concrètement : ajouter une colonne nullable plutôt que renommer, et supprimer l'ancienne dans un déploiement ultérieur.</p>
+<h3 id="q4-quest-ce-quune-requete-n1-et-en-avez-vous-eu">Q4. Qu'est-ce qu'une requête N+1 et en avez-vous eu ?</h3>
+<p>C'est le cas où l'ORM émet une requête pour charger N objets puis une requête supplémentaire par objet pour accéder à une relation — 100 rapports affichés avec leur template produisent 101 requêtes. J'en ai eu sur les listes de rapports, détectées avec Django Debug Toolbar qui affiche le compte de requêtes par page. La correction est <code>select_related("template")</code> pour les clés étrangères, qui produit une jointure unique, et <code>prefetch_related("reviewers")</code> pour les relations many-to-many, qui produit deux requêtes jointes en Python. C'est le premier réflexe de performance à avoir avec un ORM, parce que le symptôme — une lenteur qui grandit avec le volume — n'apparaît qu'en production.</p>
+<h3 id="q5-pourquoi-ne-pas-stocker-les-photos-en-base">Q5. Pourquoi ne pas stocker les photos en base ?</h3>
+<p>Parce qu'une base de données n'est pas un système de fichiers. Stocker des binaires en <code>BYTEA</code> gonfle la base, ralentit les sauvegardes et les restaurations, sature le cache mémoire avec des données jamais requêtées, et impose de passer par le serveur applicatif pour chaque téléchargement. Les fichiers vivent donc sur <strong>Azure Blob Storage</strong>, la base ne conserve que les références. C'est d'ailleurs une migration que j'ai faite en cours de route : au départ les fichiers étaient sur des volumes Docker locaux, ce qui ne survivait pas proprement aux redémarrages de la Web App et ne passait pas à l'échelle avec le volume de photos des annexes.</p>
+<h3 id="q6-que-se-passe-t-il-si-deux-utilisateurs-modifient-le-meme-rapport-en-meme-temps">Q6. Que se passe-t-il si deux utilisateurs modifient le même rapport en même temps ?</h3>
+<p>Le dernier qui écrit gagne — je n'ai <strong>pas</strong> de verrouillage optimiste. C'est une limite réelle que j'assume, atténuée par le modèle métier : un rapport a un <strong>rédacteur actif</strong> unique, et <code>CanEditReport</code> verrouille les mutations à cet utilisateur via <code>ReportPermissionPolicy.can_edit</code>. Les relecteurs peuvent commenter mais pas éditer le contenu. Le conflit d'écriture simultanée est donc structurellement peu probable. Si le besoin d'édition réellement collaborative apparaissait, la réponse ne serait pas un verrou mais un CRDT ou de l'<em>operational transformation</em> — c'est ce que fait l'outil Docs de La Suite numérique dont je me suis inspiré pour l'éditeur V2.</p>
+<h3 id="q7-quest-ce-quune-transaction-et-ou-en-utilisez-vous">Q7. Qu'est-ce qu'une transaction et où en utilisez-vous ?</h3>
+<p>C'est un groupe d'opérations traité comme une unité indivisible : soit tout est validé, soit tout est annulé. Django enveloppe chaque requête HTTP dans une transaction si <code>ATOMIC_REQUESTS</code> est activé, et permet un contrôle fin avec <code>transaction.atomic()</code>. Le cas où ça compte chez moi est la <strong>création d'une annexe avec son lot de photos</strong> : créer l'annexe puis échouer à mi-parcours sur la dixième photo laisserait une annexe partielle en base. L'atomicité garantit qu'on revient à l'état d'avant. Le point d'attention est que les opérations sur le <strong>stockage Blob ne sont pas transactionnelles</strong> : un rollback SQL ne supprime pas les fichiers déjà uploadés, ce qui peut laisser des blobs orphelins. C'est une réconciliation à traiter séparément.</p>
+<h3 id="q8-treize-tables-comment-avez-vous-valide-que-le-modele-etait-correct">Q8. Treize tables, comment avez-vous validé que le modèle était correct ?</h3>
+<p>Par trois moyens complémentaires. D'abord la modélisation en amont — MCD puis diagramme de classes — qui force à expliciter les cardinalités avant de coder : c'est là qu'on découvre qu'un collaborateur peut appartenir à plusieurs agences, donc qu'il faut une table de liaison. Ensuite les <strong>contraintes en base</strong> : clés étrangères avec les bonnes stratégies de suppression, contraintes de validation métier, unicité. Une contrainte est une validation que le modèle ne peut pas contourner, contrairement à une vérification applicative qu'on peut oublier d'appeler. Enfin les <strong>tests d'intégration sur PostgreSQL réel</strong>, qui exercent ces contraintes : un test qui tente de supprimer un template utilisé doit échouer, et c'est vérifié.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>
