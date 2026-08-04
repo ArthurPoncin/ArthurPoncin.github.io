@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>boost-apps — la plateforme d'hébergement — Révisions CDA 2026</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+    <a href="./qcm.html" class="header-right">QCM →</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<div class="toc">
+<ul>
+<li><a href="#0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</a></li>
+<li><a href="#1-tldr">1. TL;DR</a></li>
+<li><a href="#2-le-contrat-de-depot">2. Le contrat de dépôt</a></li>
+<li><a href="#3-la-configuration-qui-rend-la-plateforme-privee">3. La configuration qui rend la plateforme privée</a></li>
+<li><a href="#4-le-linter-la-piece-maitresse">4. Le linter — la pièce maîtresse</a></li>
+<li><a href="#5-le-pipeline">5. Le pipeline</a><ul>
+<li><a href="#51-ci-ciyml">5.1 CI (ci.yml)</a></li>
+<li><a href="#52-les-autres-workflows">5.2 Les autres workflows</a></li>
+<li><a href="#53-lauto-merge-la-regle-qui-le-rend-sur">5.3 L'auto-merge — la règle qui le rend sûr</a></li>
+</ul>
+</li>
+<li><a href="#6-la-contrainte-de-fond-zero-maintenance">6. La contrainte de fond : zéro maintenance</a></li>
+<li><a href="#7-questions-probables-du-jury">7. Questions probables du jury</a><ul>
+<li><a href="#q1-laisser-des-non-developpeurs-deployer-du-code-ce-nest-pas-dangereux">Q1. Laisser des non-développeurs déployer du code, ce n'est pas dangereux ?</a></li>
+<li><a href="#q2-pourquoi-azure-static-web-apps-et-pas-un-simple-github-pages">Q2. Pourquoi Azure Static Web Apps et pas un simple GitHub Pages ?</a></li>
+<li><a href="#q3-votre-linter-fait-33-ko-ce-nest-pas-disproportionne-pour-valider-des-dossiers">Q3. Votre linter fait 33 Ko. Ce n'est pas disproportionné pour valider des dossiers ?</a></li>
+<li><a href="#q4-lauto-merge-comment-evitez-vous-quil-fusionne-quelque-chose-de-dangereux">Q4. L'auto-merge, comment évitez-vous qu'il fusionne quelque chose de dangereux ?</a></li>
+<li><a href="#q5-comment-un-outil-se-retrouve-t-il-dans-le-catalogue-du-hub">Q5. Comment un outil se retrouve-t-il dans le catalogue du hub ?</a></li>
+<li><a href="#q6-que-se-passe-t-il-si-un-outil-depose-est-de-mauvaise-qualite">Q6. Que se passe-t-il si un outil déposé est de mauvaise qualité ?</a></li>
+<li><a href="#q7-vous-parlez-de-maquettes-html-produites-avec-une-ia-cest-du-code-que-personne-ne-comprend">Q7. Vous parlez de « maquettes HTML produites avec une IA ». C'est du code que personne ne comprend ?</a></li>
+<li><a href="#q8-cette-plateforme-cest-du-devops-ou-du-developpement">Q8. Cette plateforme, c'est du DevOps ou du développement ?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+    </nav>
+    <article>
+<h1 id="boost-apps-la-plateforme-dhebergement">boost-apps — la plateforme d'hébergement</h1>
+<p class="meta"><em>Fiche projet 4/5 — dépôt <code>boost-apps</code>. Des ingénieurs non-développeurs publient leurs propres outils, derrière le SSO, sans intervention de ma part.</em></p>
+<h2 id="0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</h2>
+<dl>
+<dt>Azure Static Web Apps (SWA)</dt>
+<dd>Service Azure d'hébergement de sites statiques, avec CDN, certificat TLS, déploiement depuis GitHub et <strong>authentification intégrée</strong> — y compris via un provider OIDC personnalisé. C'est cette dernière capacité qui a déterminé le choix.</dd>
+<dt><code>staticwebapp.config.json</code></dt>
+<dd>Fichier de configuration de SWA : routes, rôles requis, providers d'identité, redirections, en-têtes. C'est <strong>lui</strong> qui rend la plateforme privée : le casser la rendrait publique.</dd>
+<dt>Front-only</dt>
+<dd>Une application sans backend et sans secret : uniquement HTML, CSS et JavaScript exécutés dans le navigateur. Contrainte structurelle ici, pas une limitation temporaire.</dd>
+<dt>Linter de convention</dt>
+<dd>Ici, un script Python qui vérifie qu'un dossier déposé respecte le contrat de la plateforme (nommage, structure, taille, sécurité). Il ne vérifie <strong>pas</strong> la qualité du code, mais le respect du contrat de dépôt.</dd>
+<dt>Liste blanche (allowlist)</dt>
+<dd>Liste de ce qui est <strong>autorisé</strong>, tout le reste étant refusé. Opposé d'une blocklist, qui liste l'interdit et laisse passer tout ce qu'on n'a pas anticipé.</dd>
+<dt>Auto-merge</dt>
+<dd>Fusion automatique d'une pull request quand des conditions objectives sont réunies. Ici, uniquement si le diff ne touche <strong>que</strong> des dossiers d'outils.</dd>
+<dt>JSON Schema</dt>
+<dd>Standard de description et de validation de structures JSON. <code>tool.schema.json</code> décrit les métadonnées d'un outil, ce qui permet la validation en CI <strong>et</strong> l'autocomplétion dans l'éditeur.</dd>
+<dt>Quota SWA</dt>
+<dd>Azure Static Web Apps limite le contenu publié (500 Mo sur ce plan). Le linter vérifie des plafonds avec marge, pour que la limite se manifeste en CI plutôt qu'au déploiement.</dd>
+<dt>kebab-case</dt>
+<dd>Convention de nommage en minuscules avec tirets (<code>cartographie-potentiel</code>). Ici, le nom du dossier <strong>devient la route URL</strong>.</dd>
+</dl>
+<hr />
+<h2 id="1-tldr">1. TL;DR</h2>
+<p>Le problème : les ingénieurs métier produisent des maquettes HTML — souvent générées avec une IA — et voudraient les mettre à disposition de leurs collègues. Sans plateforme, ces outils circulent par email ou finissent en production sauvage, sans authentification.</p>
+<p>La réponse : un dépôt GitHub où <strong>un dossier = un outil</strong>, servi par Azure Static Web Apps <strong>derrière le SSO du hub</strong>, avec une CI qui valide automatiquement le contrat de dépôt.</p>
+<pre class="mermaid">flowchart LR
+    I["Ingénieur métier&lt;br/&gt;(non-développeur)"] --&gt;|"Upload dossier&lt;br/&gt;via navigateur"| PR["Pull Request&lt;br/&gt;GitHub"]
+    PR --&gt; CI["CI — lint_tools.py&lt;br/&gt;~1 min"]
+    CI --&gt;|"rouge"| F["Message précis :&lt;br/&gt;dossier + règle en cause"]
+    CI --&gt;|"vert"| AM["Auto-merge si le diff&lt;br/&gt;ne touche que des outils"]
+    AM --&gt; SWA["Azure Static Web Apps"]
+    SWA --&gt; SSO["OIDC → SXE-Hub"]
+    SWA --&gt; URL["https://domaine/mon-outil/"]
+    CI -.-&gt;|"sync-hub"| HUB["Catalogue boost-tools"]
+</pre>
+
+<div class="admonition jury">
+<p class="admonition-title">L'objectif, en une phrase</p>
+<p>« Réduire la distance entre les besoins terrain et les solutions, cette fois en donnant aux équipes les moyens de faire leurs outils elles-mêmes. » C'est l'aboutissement logique de la démarche : Boost-Report résout un besoin identifié, le hub les rassemble, boost-apps supprime l'intermédiaire.</p>
+</div>
+<hr />
+<h2 id="2-le-contrat-de-depot">2. Le contrat de dépôt</h2>
+<div class="codehilite"><pre><span></span><code>boost-apps/
+├─ &lt;mon-outil&gt;/          → https://&lt;domaine&gt;/mon-outil/
+│   ├─ index.html        (obligatoire — structure)
+│   ├─ styles.css        (recommandé — mise en forme)
+│   ├─ app.js            (recommandé — comportement)
+│   ├─ tool.json         (métadonnées catalogue, optionnel)
+│   └─ assets/…
+├─ exemple/              ← gabarit à dupliquer
+├─ index.html            ← page d&#39;accueil (fiche « publier mon outil »)
+├─ tool.schema.json      ← schéma des métadonnées
+├─ staticwebapp.config.json
+└─ scripts/, docs/, tests/
+</code></pre></div>
+
+<p>Cinq règles fondatrices :</p>
+<ol>
+<li><strong>Un dossier = un outil</strong>, le nom en kebab-case devient la route URL.</li>
+<li><strong>Point d'entrée standardisé</strong> : <code>index.html</code> à la racine du dossier.</li>
+<li><strong>Structure, style et comportement séparés</strong> — un non-développeur peut éditer chaque aspect isolément.</li>
+<li><strong>Tout est derrière le login</strong> : aucun outil n'est accessible sans authentification.</li>
+<li><strong>Front-only, sans secret</strong> : ni clé d'API, ni backend.</li>
+</ol>
+<hr />
+<h2 id="3-la-configuration-qui-rend-la-plateforme-privee">3. La configuration qui rend la plateforme privée</h2>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;trailingSlash&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;auth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;identityProviders&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;customOpenIdConnectProviders&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;sso&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;registration&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;clientIdSettingName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OIDC_CLIENT_ID&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;clientCredential&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;clientSecretSettingName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OIDC_CLIENT_SECRET&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;openIdConnectConfiguration&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">              </span><span class="nt">&quot;wellKnownOpenIdConfiguration&quot;</span><span class="p">:</span>
+<span class="w">                </span><span class="s2">&quot;https://sxe-hub.azurewebsites.net/api/auth/sso/boost-apps/.well-known/openid-configuration&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">          </span><span class="p">},</span>
+<span class="w">          </span><span class="nt">&quot;login&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;nameClaimType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;scopes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;openid&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;profile&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;email&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;routes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nt">&quot;route&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/*&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;allowedRoles&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;authenticated&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}],</span>
+<span class="w">  </span><span class="nt">&quot;responseOverrides&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;401&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">302</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;redirect&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/.auth/login/sso?post_login_redirect_uri=.referrer&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Ce qu'il faut savoir expliquer ligne par ligne :</p>
+<ul>
+<li><code>"route": "/*"</code> avec <code>allowedRoles: ["authenticated"]</code> — <strong>tout</strong> est protégé, sans exception à maintenir. C'est un refus par défaut : un outil ajouté demain est protégé sans qu'on ait rien à faire.</li>
+<li>Le provider OIDC <strong>personnalisé</strong> pointe vers un endpoint de découverte <strong>dédié à boost-apps</strong> sur le hub. Chaque client a le sien, ce qui permet des politiques distinctes.</li>
+<li>Les identifiants sont référencés par <strong>nom de paramètre</strong> (<code>clientIdSettingName</code>), jamais en clair — les valeurs vivent dans la configuration Azure.</li>
+<li>L'override 401 → 302 transforme un refus en <strong>redirection vers le login</strong>, avec retour à la page demandée. Sans ça, un utilisateur non connecté verrait une erreur brute.</li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">Le fichier le plus critique du dépôt</p>
+<p>Casser ce fichier rendrait <strong>toute la plateforme publique</strong>. C'est exactement pour ça que le linter en vérifie le contenu à chaque PR : présent, JSON valide, règle <code>/*</code> → <code>authenticated</code>, provider OIDC <code>sso</code> déclaré, override 401 → redirection. Une régression de sécurité par erreur de copier-coller est un scénario réaliste quand les contributeurs ne sont pas développeurs — le protéger par un contrôle automatique, pas par la vigilance, est la seule réponse tenable.</p>
+</div>
+<hr />
+<h2 id="4-le-linter-la-piece-maitresse">4. Le linter — la pièce maîtresse</h2>
+<p><code>scripts/lint_tools.py</code> (~33 Ko) est ce qui rend l'autonomie possible sans supervision. Ses règles :</p>
+<table>
+<thead>
+<tr>
+<th>Règle</th>
+<th>Vérifie</th>
+<th>Bloquant</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[route]</code></td>
+<td>Nom de dossier en kebab-case</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>[réservé]</code></td>
+<td>Pas de collision avec les routes réservées par SWA (<code>api</code>)</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>[index]</code></td>
+<td><code>index.html</code> présent à la racine du dossier</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>[tool.json]</code></td>
+<td>Conforme à <code>tool.schema.json</code> s'il est présent</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>[liens]</code></td>
+<td>Aucun 404 interne sur les liens et ressources de l'<code>index.html</code></td>
+<td>✅</td>
+</tr>
+<tr>
+<td><code>[taille]</code></td>
+<td>Plafond unitaire et plafond global, <strong>avec marge sous le quota SWA de 500 Mo</strong></td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>R1</strong> <code>[découpage]</code></td>
+<td>Le JS/CSS <strong>en ligne</strong> d'un <code>.html</code> ne dépasse pas le budget d'amorçage</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>R2</strong> <code>[sécurité]</code></td>
+<td>Aucun fichier exécutable, binaire ou de code serveur — la plateforme reste front-only</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>R3</strong> <code>[externe]</code></td>
+<td>Les ressources <strong>exécutables</strong> distantes (<code>&lt;script src&gt;</code>, <code>&lt;link rel=stylesheet&gt;</code>, <code>&lt;iframe src&gt;</code>) pointent vers un domaine en <strong>liste blanche</strong></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>—</td>
+<td><code>staticwebapp.config.json</code> conforme au contrat de sécurité</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p>Et des <strong>avertissements non bloquants</strong>, qui orientent la revue sans casser la CI :</p>
+<ul>
+<li>un <code>index.html</code> trop long → suggestion de découpage en sous-pages ;</li>
+<li>un motif de code à risque (<code>eval(</code>, <code>document.write(</code>, <code>.innerHTML =</code>) → orienté revue, <strong>non bloquant car de faux positifs sont possibles</strong> (bibliothèques minifiées) ;</li>
+<li>une ressource distante <strong>non exécutable</strong> (image, média) ou un appel réseau JS (<code>fetch</code>, <code>WebSocket</code>) hors liste blanche → la revue tranche, d'autant qu'une URL construite dynamiquement échappe de toute façon à l'analyse statique ;</li>
+<li>un <code>pole</code> inconnu dans <code>tool.json</code>.</li>
+</ul>
+<div class="admonition jury">
+<p class="admonition-title">La distinction bloquant / avertissement, c'est le cœur du sujet</p>
+<p>Est <strong>bloquant</strong> ce qui est objectif et dont le faux positif est improbable : un <code>index.html</code> absent, un lien mort, un exécutable déposé, un script tiers hors liste blanche. Est <strong>avertissement</strong> ce qui est heuristique : un <code>.innerHTML =</code> peut être parfaitement légitime, et une bibliothèque minifiée en contient toujours. Rendre bloquant un contrôle à faux positifs, sur une plateforme destinée à des non-développeurs, produirait des blocages incompréhensibles — et le résultat serait qu'on viendrait me demander de débloquer, ce qui détruit exactement l'autonomie recherchée.</p>
+</div>
+<p>Et le linter <strong>a ses propres tests</strong> : <code>pytest tests/ -q</code> tourne en CI <strong>avant</strong> le lint. Un linter faux serait pire qu'aucun linter.</p>
+<hr />
+<h2 id="5-le-pipeline">5. Le pipeline</h2>
+<h3 id="51-ci-ciyml">5.1 CI (<code>ci.yml</code>)</h3>
+<ol>
+<li>Installe les dépendances Python ;</li>
+<li><strong>teste le linter</strong> (<code>pytest tests/</code>) ;</li>
+<li>lance le lint <strong>sans faire échouer l'étape immédiatement</strong> (<code>set +e</code>) — la sortie et le code de retour sont capturés ;</li>
+<li><strong>poste le rapport en commentaire de la PR</strong>, avec un marqueur HTML pour mettre à jour le même commentaire au lieu d'en empiler ;</li>
+<li><strong>puis</strong> fait échouer le job si le lint est rouge.</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lint des outils</span>
+<span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lint</span>
+<span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no"># On ne fait pas échouer l&#39;étape tout de suite : la sortie et le code du</span>
+<span class="w">    </span><span class="no"># lint sont capturés pour être postés en commentaire de la PR avant que</span>
+<span class="w">    </span><span class="no"># le job ne passe au rouge.</span>
+<span class="w">    </span><span class="no">set +e</span>
+<span class="w">    </span><span class="no">python scripts/lint_tools.py 2&gt;&amp;1 | tee lint_sortie.txt</span>
+<span class="w">    </span><span class="no">echo &quot;code=${PIPESTATUS[0]}&quot; &gt;&gt; &quot;$GITHUB_OUTPUT&quot;</span>
+</code></pre></div>
+
+<div class="admonition jury">
+<p class="admonition-title">Pourquoi cet ordre est une décision d'ergonomie</p>
+<p>Si le job échouait immédiatement, l'étape suivante ne s'exécuterait pas et le contributeur devrait aller fouiller les logs d'exécution GitHub Actions — ce qu'un ingénieur non-développeur ne fera pas. En reportant l'échec, le message d'erreur arrive <strong>là où il regarde</strong> : en commentaire sur sa pull request, indiquant le dossier et la règle en cause. C'est ce détail qui fait la différence entre une plateforme utilisable en autonomie et une plateforme où l'on vient me demander de traduire.</p>
+</div>
+<p>Le job est aussi un exemple de <strong>permissions minimales</strong> : <code>contents: read</code> sur tout le dépôt, <code>pull-requests: write</code> uniquement pour poster le commentaire.</p>
+<h3 id="52-les-autres-workflows">5.2 Les autres workflows</h3>
+<table>
+<thead>
+<tr>
+<th>Workflow</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auto-merge.yml</code></td>
+<td>Approuve et fusionne automatiquement <strong>si le diff ne touche que des dossiers d'outils</strong></td>
+</tr>
+<tr>
+<td><code>deploy.yml</code> / <code>deploy-prod.yml</code></td>
+<td>Déploiement vers Azure Static Web Apps</td>
+</tr>
+<tr>
+<td><code>sync-hub.yml</code></td>
+<td>Référence automatiquement les outils dans le catalogue de <code>boost-tools</code></td>
+</tr>
+<tr>
+<td><code>changelog.yml</code></td>
+<td>Tenue du changelog</td>
+</tr>
+</tbody>
+</table>
+<h3 id="53-lauto-merge-la-regle-qui-le-rend-sur">5.3 L'auto-merge — la règle qui le rend sûr</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># scripts/auto_merge_eligible.py</span>
+<span class="sd">&quot;&quot;&quot;Éligibilité d&#39;une PR à l&#39;auto-merge : le diff ne touche que des outils ?</span>
+
+<span class="sd">Sort en code 0 si tout le diff tient dans des dossiers d&#39;outils — la PR peut</span>
+<span class="sd">alors être approuvée et fusionnée automatiquement. Sort en code 1 sinon :</span>
+<span class="sd">toute PR touchant l&#39;infrastructure exige une revue humaine.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">est_hors_outils</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>                      <span class="c1"># fichier racine → infrastructure</span>
+    <span class="n">premier</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">premier</span> <span class="ow">in</span> <span class="n">EXCLUDED_DIRS</span> <span class="ow">or</span> <span class="n">premier</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>La logique est <strong>conservatrice par construction</strong> : tout ce qui n'est pas manifestement un dossier d'outil est considéré comme de l'infrastructure, donc exige une revue humaine. Un fichier à la racine (<code>staticwebapp.config.json</code>, <code>index.html</code>), un dossier commençant par un point (<code>.github/</code>), un dossier d'infrastructure — tous sortent de l'éligibilité.</p>
+<p>Et la définition d'« outil » est <strong>importée du linter</strong> (<code>from lint_tools import EXCLUDED_DIRS</code>), pas redéfinie. Deux définitions divergentes créeraient exactement la faille : un chemin que le linter ignore mais que l'auto-merge accepte.</p>
+<div class="admonition attention">
+<p class="admonition-title">Le scénario que cette règle empêche</p>
+<p>Une PR qui modifie <code>staticwebapp.config.json</code> — pour supprimer <code>allowedRoles: ["authenticated"]</code>, par exemple — ne peut <strong>jamais</strong> être auto-mergée. Sans cette règle, l'auto-merge deviendrait un vecteur pour ouvrir la plateforme au public sans qu'aucun humain n'ait rien vu.</p>
+</div>
+<hr />
+<h2 id="6-la-contrainte-de-fond-zero-maintenance">6. La contrainte de fond : zéro maintenance</h2>
+<p>Ce projet est construit autour d'une contrainte explicite : <strong>je pars en septembre 2026</strong>, et la plateforme doit continuer de fonctionner sans moi.</p>
+<p>Chaque choix en découle :</p>
+<table>
+<thead>
+<tr>
+<th>Choix</th>
+<th>Ce qu'il évite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Azure Static Web Apps</td>
+<td>Aucun serveur à maintenir, aucun conteneur à mettre à jour, TLS et CDN gérés</td>
+</tr>
+<tr>
+<td>Front-only, sans secret</td>
+<td>Aucune rotation de clé, aucune base à sauvegarder, aucune dépendance backend</td>
+</tr>
+<tr>
+<td>Convention validée par un linter</td>
+<td>Aucune revue technique de ma part pour publier un outil</td>
+</tr>
+<tr>
+<td>Auto-merge sur les outils</td>
+<td>Aucune intervention humaine sur le chemin nominal</td>
+</tr>
+<tr>
+<td>Publication par le navigateur</td>
+<td>Aucun prérequis Git ni installation côté contributeur</td>
+</tr>
+<tr>
+<td>Documentation dans le dépôt</td>
+<td>Le mode d'emploi vit avec ce qu'il décrit</td>
+</tr>
+</tbody>
+</table>
+<p>Le parcours de publication ne demande <strong>ni Git ni installation</strong> : préparer le dossier en dupliquant le gabarit <code>exemple/</code>, le déposer via « Add file → Upload files » de GitHub, choisir « Create a new branch » et « Propose changes », attendre la CI (~1 min), et l'outil est en ligne environ une minute après la fusion.</p>
+<div class="admonition jury">
+<p class="admonition-title">L'argument qui porte</p>
+<p>« Une plateforme qui a besoin de moi pour fonctionner n'a pas résolu le problème, elle l'a déplacé. » Tout l'effort technique — le linter de 33 Ko, ses propres tests, l'auto-merge conservateur, le rapport en commentaire de PR — sert à ce que la boucle publication → mise en ligne ne me traverse jamais.</p>
+</div>
+<hr />
+<h2 id="7-questions-probables-du-jury">7. Questions probables du jury</h2>
+<h3 id="q1-laisser-des-non-developpeurs-deployer-du-code-ce-nest-pas-dangereux">Q1. Laisser des non-développeurs déployer du code, ce n'est pas dangereux ?</h3>
+<p>Ce serait dangereux sans garde-fous, et c'est pour ça qu'ils sont la majeure partie du travail sur ce dépôt. Le périmètre est structurellement borné : <strong>front-only, sans secret</strong>, donc aucun outil ne peut accéder à une base, à une clé d'API ou à un système de fichiers. Le linter bloque les fichiers exécutables et le code serveur, et les ressources exécutables distantes doivent venir d'un domaine en liste blanche — un outil ne peut pas charger un script arbitraire. Tout est derrière le SSO, donc la surface d'exposition est interne. Le pire cas réaliste est un outil qui fonctionne mal, visible seulement des collaborateurs authentifiés — pas une compromission.</p>
+<h3 id="q2-pourquoi-azure-static-web-apps-et-pas-un-simple-github-pages">Q2. Pourquoi Azure Static Web Apps et pas un simple GitHub Pages ?</h3>
+<p>Pour l'authentification. GitHub Pages sert des fichiers statiques publiquement, sans aucun moyen d'imposer un login — et « tout est derrière le SSO » est la contrainte non négociable du projet. SWA intègre nativement un <strong>provider OpenID Connect personnalisé</strong> : je le pointe vers le hub, je déclare <code>"route": "/*"</code> avec <code>allowedRoles: ["authenticated"]</code>, et toute la plateforme est protégée sans une ligne de backend. Sans cette capacité, il aurait fallu un reverse proxy authentifiant devant l'hébergement statique — donc un serveur à maintenir, exactement ce que la contrainte de reprise interdit.</p>
+<h3 id="q3-votre-linter-fait-33-ko-ce-nest-pas-disproportionne-pour-valider-des-dossiers">Q3. Votre linter fait 33 Ko. Ce n'est pas disproportionné pour valider des dossiers ?</h3>
+<p>C'est le composant qui porte toute la valeur du projet, donc il est proportionné à ce qu'il remplace : ma revue manuelle de chaque contribution. Il ne fait pas que vérifier une structure — il parse le HTML pour détecter les liens internes morts, mesure le JS et le CSS en ligne, classe les ressources distantes en exécutables et non exécutables, valide <code>tool.json</code> contre un JSON Schema, calcule les tailles avec marge sous le quota Azure, et vérifie le contrat de sécurité de la configuration SWA. Chacune de ces règles répond à un problème réel que j'aurais dû attraper à la main. Et il a <strong>ses propres tests</strong> en CI, parce qu'un linter faux est pire qu'aucun linter : il donnerait une confiance injustifiée.</p>
+<h3 id="q4-lauto-merge-comment-evitez-vous-quil-fusionne-quelque-chose-de-dangereux">Q4. L'auto-merge, comment évitez-vous qu'il fusionne quelque chose de dangereux ?</h3>
+<p>Par une règle unique et conservatrice : le diff ne doit toucher <strong>que</strong> des dossiers d'outils. Tout fichier à la racine, tout dossier commençant par un point, tout dossier d'infrastructure sort de l'éligibilité et exige une revue humaine. Le scénario que ça empêche est précis : une PR modifiant <code>staticwebapp.config.json</code> pour retirer l'exigence d'authentification rendrait toute la plateforme publique — elle ne peut jamais être auto-mergée. Le détail qui compte est que la définition d'« outil » est <strong>importée du linter</strong> plutôt que redéfinie : deux définitions qui divergeraient créeraient exactement la faille, un chemin ignoré par l'un et accepté par l'autre.</p>
+<h3 id="q5-comment-un-outil-se-retrouve-t-il-dans-le-catalogue-du-hub">Q5. Comment un outil se retrouve-t-il dans le catalogue du hub ?</h3>
+<p>Par le workflow <code>sync-hub.yml</code>, qui référence automatiquement les outils dans le catalogue de <code>boost-tools</code>. Les métadonnées viennent du <code>tool.json</code> optionnel — et s'il est absent, elles sont dérivées du <code>&lt;title&gt;</code> et de la <code>&lt;meta name="description"&gt;</code> de l'<code>index.html</code>, ce qui permet de publier sans rien apprendre de plus. Les champs de <code>tool.json</code> sont volontairement <strong>alignés sur le modèle <code>Application</code> de boost-tools</strong>, ce qui rend le référencement direct. Deux plateformes, deux rôles complémentaires : <code>boost-apps</code> héberge, <code>boost-tools</code> catalogue.</p>
+<h3 id="q6-que-se-passe-t-il-si-un-outil-depose-est-de-mauvaise-qualite">Q6. Que se passe-t-il si un outil déposé est de mauvaise qualité ?</h3>
+<p>Le linter valide le <strong>contrat de dépôt</strong>, pas la qualité du code — et c'est délibéré. Juger la qualité d'un outil métier demanderait une expertise que le linter n'a pas, et surtout ce n'est pas le bon niveau de contrôle : un outil mal fait mais utile à son auteur a plus de valeur qu'un outil parfait qui n'existe pas. Ce que le linter garantit, c'est que l'outil ne peut pas <strong>nuire</strong> : pas de code serveur, pas de script tiers non maîtrisé, pas de dépassement de quota, pas de brèche dans l'authentification. La qualité fonctionnelle relève de l'usage et de la fusion, où un responsable approuve — étape qui est d'ailleurs prévue pour devenir automatique.</p>
+<h3 id="q7-vous-parlez-de-maquettes-html-produites-avec-une-ia-cest-du-code-que-personne-ne-comprend">Q7. Vous parlez de « maquettes HTML produites avec une IA ». C'est du code que personne ne comprend ?</h3>
+<p>C'est le contexte réel et je préfère le nommer : le métier pousse des maquettes générées par IA, parfois directement en production sauvage avant que cette plateforme existe. Mon rôle n'a pas été de l'interdire — ça n'aurait pas marché et ça n'aurait pas eu d'intérêt — mais de <strong>canaliser</strong>. La plateforme donne un cadre où ce code ne peut faire aucun dégât : front-only, sans secret, derrière le SSO, validé par une CI. Le dépôt embarque même des skills Claude Code qui automatisent la mise en conformité et la publication en s'appuyant sur le <strong>vrai linter</strong> du dépôt. C'est un choix pragmatique : le besoin existait déjà et s'exprimait de façon risquée, autant lui donner un chemin sûr.</p>
+<h3 id="q8-cette-plateforme-cest-du-devops-ou-du-developpement">Q8. Cette plateforme, c'est du DevOps ou du développement ?</h3>
+<p>Les deux, et c'est précisément ce que je trouve intéressant. Il n'y a presque pas de code applicatif — l'essentiel est de la <strong>plateforme</strong> : un contrat de dépôt, un linter qui le fait respecter, un pipeline qui l'applique, une configuration d'hébergement qui garantit la sécurité, une documentation qui rend le tout utilisable par des non-développeurs. C'est de l'ingénierie de plateforme au sens propre : construire l'outillage qui permet à d'autres de livrer en autonomie. Et c'est probablement le projet où la contrainte « zéro maintenance après mon départ » a le plus dicté les choix techniques — chaque décision se justifie par ce qu'elle évite d'avoir à maintenir.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

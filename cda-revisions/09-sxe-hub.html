@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SXE-Hub — le portail applicatif — Révisions CDA 2026</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+    <a href="./qcm.html" class="header-right">QCM →</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<div class="toc">
+<ul>
+<li><a href="#0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</a></li>
+<li><a href="#1-tldr">1. TL;DR</a></li>
+<li><a href="#2-les-trois-composants">2. Les trois composants</a><ul>
+<li><a href="#21-auth-service-lidp">2.1 auth-service — l'IdP</a></li>
+<li><a href="#22-backend-lapi-fastapi">2.2 backend — l'API FastAPI</a></li>
+<li><a href="#23-la-spa">2.3 La SPA</a></li>
+</ul>
+</li>
+<li><a href="#3-le-modele-de-visibilite-du-catalogue">3. Le modèle de visibilité du catalogue</a></li>
+<li><a href="#4-le-temps-reel-sse-et-le-bus-devenements">4. Le temps réel : SSE et le bus d'événements</a><ul>
+<li><a href="#41-le-contrat-et-ses-deux-implementations">4.1 Le contrat et ses deux implémentations</a></li>
+<li><a href="#42-le-garde-fou-de-demarrage">4.2 Le garde-fou de démarrage</a></li>
+<li><a href="#43-la-presence-anti-fantome">4.3 La présence anti-fantôme</a></li>
+</ul>
+</li>
+<li><a href="#5-lintegration-avec-boost-report">5. L'intégration avec Boost-Report</a></li>
+<li><a href="#6-les-particularites-operationnelles">6. Les particularités opérationnelles</a></li>
+<li><a href="#7-questions-probables-du-jury">7. Questions probables du jury</a><ul>
+<li><a href="#q1-pourquoi-fastapi-ici-alors-que-django-sur-boost-report">Q1. Pourquoi FastAPI ici alors que Django sur Boost-Report ?</a></li>
+<li><a href="#q2-faire-du-hub-un-fournisseur-didentite-ce-nest-pas-risque-pour-un-developpeur-seul">Q2. Faire du hub un fournisseur d'identité, ce n'est pas risqué pour un développeur seul ?</a></li>
+<li><a href="#q3-pourquoi-sse-plutot-que-websocket">Q3. Pourquoi SSE plutôt que WebSocket ?</a></li>
+<li><a href="#q4-vous-avez-un-bus-en-memoire-et-un-bus-redis-pourquoi-les-deux">Q4. Vous avez un bus en mémoire et un bus Redis. Pourquoi les deux ?</a></li>
+<li><a href="#q5-comment-gerez-vous-les-migrations-avec-deux-services-qui-touchent-la-meme-base">Q5. Comment gérez-vous les migrations avec deux services qui touchent la même base ?</a></li>
+<li><a href="#q6-ligne-dans-linterface-et-category-dans-le-code-ce-nest-pas-deroutant">Q6. « Ligne » dans l'interface et category dans le code, ce n'est pas déroutant ?</a></li>
+<li><a href="#q7-le-hub-decide-qui-voit-quoi-dans-le-catalogue-cest-votre-controle-dacces">Q7. Le hub décide qui voit quoi dans le catalogue. C'est votre contrôle d'accès ?</a></li>
+<li><a href="#q8-quest-ce-qui-vous-inquiete-le-plus-sur-ce-projet">Q8. Qu'est-ce qui vous inquiète le plus sur ce projet ?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+    </nav>
+    <article>
+<h1 id="sxe-hub-le-portail-applicatif">SXE-Hub — le portail applicatif</h1>
+<p class="meta"><em>Fiche projet 3/5 — dépôt <code>boost-tools</code>. Le hub qui catalogue les outils métier et sert de fournisseur d'identité à toute la suite.</em></p>
+<h2 id="0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</h2>
+<dl>
+<dt>Fournisseur d'identité (IdP / OP)</dt>
+<dd>Le service qui <strong>authentifie</strong> l'utilisateur et émet les jetons d'identité. En terminologie OIDC : <em>OpenID Provider</em>. Les applications qui le consomment sont des <em>Relying Parties</em>. SXE-Hub joue ce rôle pour Boost-Report et boost-apps.</dd>
+<dt>SSO (Single Sign-On)</dt>
+<dd>L'utilisateur s'authentifie <strong>une fois</strong> et accède à l'ensemble des applications de la suite sans se ré-identifier.</dd>
+<dt>FastAPI</dt>
+<dd>Framework Python asynchrone pour API, basé sur les annotations de type. Validation par <strong>Pydantic</strong>, documentation OpenAPI générée automatiquement, injection de dépendances native.</dd>
+<dt>SQLAlchemy</dt>
+<dd>ORM Python. Contrairement à Django, ce n'est <strong>pas</strong> un framework complet : il ne fournit que la couche données. Style « déclaratif » : des classes annotées correspondant aux tables.</dd>
+<dt>Alembic</dt>
+<dd>Outil de migration de schéma pour SQLAlchemy. Équivalent des migrations Django, mais <strong>explicite</strong> : la migration est générée par comparaison entre les modèles et la base (<code>autogenerate</code>), puis relue à la main.</dd>
+<dt>Bun</dt>
+<dd>Runtime JavaScript alternatif à Node.js — plus rapide au démarrage, avec gestionnaire de paquets, exécuteur de tests et bundler intégrés.</dd>
+<dt>Hono</dt>
+<dd>Framework web minimaliste pour Bun / Deno / Node / Workers. Rôle équivalent à Express, mais typé et beaucoup plus léger.</dd>
+<dt>Better-Auth</dt>
+<dd>Bibliothèque d'authentification TypeScript. Gère sessions, comptes, providers sociaux — et, via un plugin, expose un <strong>provider OIDC</strong> complet : c'est ce qui fait du hub un IdP.</dd>
+<dt>Drizzle</dt>
+<dd>ORM TypeScript typé, proche du SQL. <code>drizzle-kit</code> génère les migrations, Drizzle Studio permet d'inspecter les données.</dd>
+<dt>SSE (Server-Sent Events)</dt>
+<dd>Canal HTTP <strong>unidirectionnel</strong> serveur → client, sur une connexion longue. Plus simple que les WebSockets quand le client n'a rien à envoyer. Reconnexion automatique gérée par le navigateur.</dd>
+<dt>Pub/Sub</dt>
+<dd>Modèle de diffusion où des émetteurs publient sur un canal et des abonnés reçoivent, sans se connaître. Ici : Redis pub/sub pour partager les événements entre plusieurs workers.</dd>
+<dt>Schéma PostgreSQL</dt>
+<dd>Espace de noms <strong>à l'intérieur</strong> d'une base, regroupant des tables. Le hub utilise le schéma <code>portal</code>, ce qui permet de cohabiter avec d'autres applications dans la même base Azure.</dd>
+<dt>Fail-fast</dt>
+<dd>Refuser de démarrer plutôt que de tourner dans une configuration silencieusement incorrecte. Deux occurrences dans ce dépôt, détaillées plus bas.</dd>
+</dl>
+<hr />
+<h2 id="1-tldr">1. TL;DR</h2>
+<p>SXE-Hub est un <strong>portail</strong> : catalogue d'applications métier, identité centralisée, lanceur, et suivi des affaires.</p>
+<pre class="mermaid">flowchart TB
+    U["Collaborateur"] --&gt; SPA["SPA React 19 + Vite&lt;br/&gt;catalogue · affaires · admin"]
+    SPA --&gt; NG["Nginx"]
+    NG --&gt; AUTH["&lt;b&gt;auth-service&lt;/b&gt;&lt;br/&gt;Bun + Hono + Better-Auth + Drizzle&lt;br/&gt;→ provider OIDC"]
+    NG --&gt; API["&lt;b&gt;backend&lt;/b&gt;&lt;br/&gt;FastAPI + SQLAlchemy + Alembic"]
+    AUTH --&gt; PG[("PostgreSQL — schéma portal")]
+    API --&gt; PG
+    API -.-&gt;|"SSE"| SPA
+    AUTH -.-&gt;|"OIDC"| BR["Boost-Report"]
+    AUTH -.-&gt;|"OIDC"| BA["boost-apps&lt;br/&gt;(Azure Static Web Apps)"]
+    API -.-&gt;|"pont HS256"| BR
+</pre>
+
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SPA</td>
+<td>React 19 · Vite · TypeScript</td>
+</tr>
+<tr>
+<td>IdP</td>
+<td><strong>Bun + Hono + Better-Auth + Drizzle</strong> — expose le provider OIDC</td>
+</tr>
+<tr>
+<td>API</td>
+<td><strong>FastAPI + SQLAlchemy + Alembic</strong></td>
+</tr>
+<tr>
+<td>Base</td>
+<td>PostgreSQL, schéma <code>portal</code></td>
+</tr>
+<tr>
+<td>Temps réel</td>
+<td><strong>SSE</strong>, bus en mémoire ou <strong>Redis</strong> selon la configuration</td>
+</tr>
+<tr>
+<td>Déploiement</td>
+<td>Azure App Service multi-conteneurs, images sur <code>sxehubcr.azurecr.io</code></td>
+</tr>
+<tr>
+<td>CI/CD</td>
+<td><code>ci.yml</code> (lint + build + tests des 3 composants sur PR) · <code>deploy.yml</code> (build + push ACR + webhook au merge)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition jury">
+<p class="admonition-title">Le changement d'échelle, à raconter</p>
+<p>Le hub n'était pas prévu. Il est né d'un <strong>séminaire en comité restreint avec le directeur de l'innovation</strong> : le travail sur Boost-Report a montré qu'un outil interne pouvait répondre aux besoins des équipes, et l'idée est devenue de mutualiser des applications métier sur un portail unique. Je suis responsable de la partie technique et développement. Boost-Report en est devenu la <strong>première application intégrée</strong>.</p>
+</div>
+<hr />
+<h2 id="2-les-trois-composants">2. Les trois composants</h2>
+<h3 id="21-auth-service-lidp">2.1 <code>auth-service</code> — l'IdP</h3>
+<p>Bun + Hono + Better-Auth + Drizzle. C'est l'héritier direct du service d'authentification initial de Boost-Report : la même stack, <strong>promue</strong> au rang de fournisseur d'identité de toute la suite au lieu de servir une seule application.</p>
+<p>Ce qu'il expose :</p>
+<ul>
+<li>l'authentification des collaborateurs (Better-Auth) ;</li>
+<li>un <strong>provider OIDC</strong> complet : discovery, autorisation, token, JWKS, endsession — c'est ce qui permet à Boost-Report et boost-apps d'être de simples clients OIDC ;</li>
+<li>un pont de <strong>notification</strong> (<code>/api/notifications/email</code>), utilisé par Boost-Report pour envoyer des emails via le portail.</li>
+</ul>
+<p>Deux décisions de sécurité visibles dès l'entrée :</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// auth-service/src/index.ts</span>
+<span class="c1">// Fail-fast au boot : signer des JWT avec un fallback hardcodé (&quot;password&quot;)</span>
+<span class="c1">// reviendrait à accepter n&#39;importe quel token forgé. On refuse de démarrer.</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">BETTER_AUTH_SECRET</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">requireEnv</span><span class="p">(</span><span class="s2">&quot;BETTER_AUTH_SECRET&quot;</span><span class="p">);</span>
+<span class="c1">// CLIENT_URL = origine du SPA hub, requise par la CORS ET par trustedOrigins</span>
+<span class="c1">// Better-Auth. Un fallback &quot;&quot; rendait la stack silencieusement inaccessible.</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">CLIENT_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">requireEnv</span><span class="p">(</span><span class="s2">&quot;CLIENT_URL&quot;</span><span class="p">);</span>
+
+<span class="c1">// Secret partagé HS256 DÉDIÉ au pont de notification. Vide = pont éteint</span>
+<span class="c1">// (l&#39;endpoint répond 503). Pas de fail-fast : la notification est best-effort,</span>
+<span class="c1">// l&#39;auth doit démarrer sans.</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">NOTIFY_SERVICE_SECRET</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NOTIFY_SERVICE_SECRET</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">;</span>
+</code></pre></div>
+
+<div class="admonition jury">
+<p class="admonition-title">Le raisonnement à expliquer sur ces trois lignes</p>
+<p>Le secret de signature et l'origine cliente sont en <strong>fail-fast</strong> : sans eux le service est soit dangereux, soit inutilisable, donc il refuse de démarrer. Le secret du pont de notification est en <strong>dégradation gracieuse</strong> : sans lui l'endpoint répond 503 et l'authentification continue de fonctionner. C'est la question à se poser pour chaque configuration : <em>cette absence rend-elle le service dangereux, ou seulement diminué ?</em> Un fail-fast partout rendrait le service fragile ; une valeur par défaut sur un secret de signature serait une faille béante.</p>
+</div>
+<p>Le seeding des administrateurs (<code>SEED_ADMIN_EMAIL</code>) est <strong>non bloquant</strong> : un échec de seed ne doit pas empêcher le service de démarrer, et il est gardé sous <code>import.meta.main</code> pour qu'un import du module en test ne le déclenche pas.</p>
+<h3 id="22-backend-lapi-fastapi">2.2 <code>backend</code> — l'API FastAPI</h3>
+<p>Structure : <code>routes/</code> (admin, hub), <code>models/</code>, <code>schemas/</code>, <code>services/</code>, <code>integrations/</code>, plus les modules transverses <code>auth.py</code>, <code>config.py</code>, <code>db.py</code>, <code>storage.py</code>, <code>realtime.py</code>, <code>middleware.py</code>, <code>logging_config.py</code>, <code>migration_lock.py</code>, <code>seed.py</code>.</p>
+<p>Les entités du domaine :</p>
+<table>
+<thead>
+<tr>
+<th>Modèle</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Pole</code> / <code>Category</code></td>
+<td>Organisation du catalogue par pôle et par <strong>ligne</strong> métier</td>
+</tr>
+<tr>
+<td><code>Application</code></td>
+<td>Une application du catalogue : nom, description, url, statut actif, <code>is_public</code>, ordre</td>
+</tr>
+<tr>
+<td><code>ApplicationChangelog</code></td>
+<td>Historique des versions d'une application</td>
+</tr>
+<tr>
+<td><code>ApplicationPreview</code></td>
+<td>Images d'aperçu (upload admin vers Azure Blob + SAS)</td>
+</tr>
+<tr>
+<td><code>Affaire</code> / <code>AffaireMember</code> / <code>AffaireOutil</code></td>
+<td>Les affaires, leurs membres et les outils qui y sont rattachés</td>
+</tr>
+<tr>
+<td><code>ToolSession</code></td>
+<td>Une session de travail sur un outil dans une affaire</td>
+</tr>
+<tr>
+<td><code>UserApplicationAccess</code></td>
+<td>Whitelist d'accès explicite à une application</td>
+</tr>
+<tr>
+<td><code>UserProfile</code> / <code>Agence</code></td>
+<td>Profil et agence de rattachement</td>
+</tr>
+<tr>
+<td><code>BetterAuthUser</code></td>
+<td>Vue sur la table <code>user</code> gérée par Better-Auth</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-la-spa">2.3 La SPA</h3>
+<p>React 19 + Vite. Organisation : <code>features/</code> (admin, bibliothèque, projets), <code>routes/</code>, <code>shell/</code>, <code>shared/</code>, <code>components/</code>, <code>context/</code>, <code>styles/</code>.</p>
+<p>Vocabulaire d'interface à connaître : <strong>« Ligne »</strong> dans l'interface correspond à <strong><code>category</code></strong> dans le code et en base. Même entité, deux noms — l'interface a été unifiée sur « Ligne », le code a gardé <code>category</code>.</p>
+<hr />
+<h2 id="3-le-modele-de-visibilite-du-catalogue">3. Le modèle de visibilité du catalogue</h2>
+<p>C'est la partie la plus intéressante du backend, parce qu'elle a évolué en trois temps et que le code documente cette évolution.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># backend/app/apps_registry.py</span>
+<span class="sd">&quot;&quot;&quot;Accès en lecture au catalogue d&#39;applications (schéma `portal`).</span>
+
+<span class="sd">Phase 3 : `/api/apps` lit la table `portal.application`. Le launcher était</span>
+<span class="sd">permissif (toute personne authentifiée voyait toutes les apps actives).</span>
+
+<span class="sd">Phase 6 : whitelist via `portal.user_application_access`. Un user ne voit que</span>
+<span class="sd">les apps qui lui sont explicitement assignées. L&#39;admin (`role=admin` dans le</span>
+<span class="sd">JWT) voit tout le catalogue actif (vision opérationnelle). Le contrôle d&#39;accès</span>
+<span class="sd">réel à Boost-Report reste appliqué par boost-report lui-même.</span>
+
+<span class="sd">Phase 6+ (« app publique ») : une app marquée ``is_public=true`` est visible</span>
+<span class="sd">par tous les users authentifiés sans grant explicite. La whitelist reste</span>
+<span class="sd">utilisée pour les apps restreintes (is_public=false).&quot;&quot;&quot;</span>
+</code></pre></div>
+
+<p>La règle finale combine trois conditions :</p>
+<ol>
+<li>l'application est <strong>active</strong> ;</li>
+<li>elle a une <strong><code>url</code></strong> — « un outil n'est publié que s'il a un lien », pour éviter un catalogue aspirationnel listant des outils inexistants ; cette règle vaut <strong>aussi pour l'admin</strong> ;</li>
+<li>elle est <strong>publique</strong> (<code>is_public</code>) <strong>ou</strong> l'utilisateur a un <strong>grant explicite</strong> — sauf s'il est admin, qui voit tout le catalogue actif.</li>
+</ol>
+<div class="admonition jury">
+<p class="admonition-title">Le point de défense en profondeur</p>
+<p>« Le contrôle d'accès réel à Boost-Report reste appliqué par Boost-Report lui-même. » Le hub décide de la <strong>visibilité dans le catalogue</strong> — de l'ergonomie. Il ne décide <strong>pas</strong> du droit d'accès à l'application cible. Si le hub se trompait et affichait une application à quelqu'un qui n'y a pas droit, cette personne se ferait refuser l'entrée par l'application elle-même. Ne jamais faire dépendre une autorisation d'un service dont le rôle est de présenter une liste.</p>
+</div>
+<hr />
+<h2 id="4-le-temps-reel-sse-et-le-bus-devenements">4. Le temps réel : SSE et le bus d'événements</h2>
+<p>Le hub pousse aux clients qui regardent une affaire les changements la concernant — sessions créées ou validées, outils rattachés ou détachés, patch d'affaire — via <strong>Server-Sent Events</strong> sur <code>/api/affaires/{ref}/stream</code>.</p>
+<p><strong>Pourquoi SSE plutôt que du polling</strong> : une seule connexion longue par client, le serveur n'émet <strong>que sur événement réel</strong>. Le polling ferait re-fetcher chaque client en boucle, la plupart du temps pour rien.</p>
+<p><strong>Pourquoi SSE plutôt que WebSocket</strong> : le flux est <strong>unidirectionnel</strong> (serveur → client). Le client n'a rien à envoyer sur ce canal, il utilise l'API REST pour ses actions. SSE passe sur HTTP standard, traverse les proxys sans configuration particulière, et le navigateur gère la reconnexion automatiquement.</p>
+<h3 id="41-le-contrat-et-ses-deux-implementations">4.1 Le contrat et ses deux implémentations</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># backend/app/realtime.py — principe</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EventBusInterface</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">publish</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">subscribe</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">presence_heartbeat</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="c1"># InMemoryEventBus : présence et events en mémoire.</span>
+<span class="c1">#   → correct uniquement en un seul worker / une seule instance</span>
+<span class="c1"># RedisEventBus   : PUBLISH + boucle abonnée de fond + présence en HINCRBY</span>
+<span class="c1">#   → sélectionné par make_bus() dès que redis_url est renseignée</span>
+</code></pre></div>
+
+<p>Les appelants ne dépendent que de l'<strong>interface</strong> : ils importent le singleton <code>bus</code> typé <code>EventBusInterface</code>. C'est de l'inversion de dépendance appliquée — passer de la mémoire à Redis ne modifie aucun appelant.</p>
+<h3 id="42-le-garde-fou-de-demarrage">4.2 Le garde-fou de démarrage</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Fail-fast : plusieurs workers sans Redis fragmenteraient le bus en mémoire</span>
+<span class="c1"># (présence + events). Le multi-worker n&#39;est cohérent qu&#39;adossé à Redis.</span>
+<span class="n">assert_realtime_scaling_safe</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</code></pre></div>
+
+<p>C'est le second fail-fast du projet, et le plus subtil. Avec plusieurs workers uvicorn et un bus en mémoire, un événement publié par le worker 1 ne parviendrait <strong>jamais</strong> aux clients connectés au worker 2. La panne serait intermittente, dépendante du worker touché, et pratiquement impossible à diagnostiquer. Le service <strong>refuse de démarrer</strong> dans cette configuration.</p>
+<div class="admonition jury">
+<p class="admonition-title">L'exemple parfait de garde-fou</p>
+<p>C'est le meilleur exemple de « fail-fast » à donner à l'oral, parce que le mode de défaillance qu'il empêche est <strong>silencieux et non déterministe</strong> — la pire catégorie de bug. Le coût est une ligne de vérification au démarrage ; le bénéfice est de ne jamais passer une journée à chercher pourquoi « parfois les notifications n'arrivent pas ».</p>
+</div>
+<h3 id="43-la-presence-anti-fantome">4.3 La présence anti-fantôme</h3>
+<p>Chaque champ de présence Redis porte un <strong>TTL</strong>, rafraîchi périodiquement par tout flux SSE vivant (<code>presence_heartbeat</code>). Si un process meurt, son flux cesse de rafraîchir et l'entrée expire d'elle-même : pas de fantôme. Une déconnexion propre retire la présence immédiatement sans attendre le TTL.</p>
+<p>C'est le pattern <strong>heartbeat + TTL</strong>, et il faut savoir dire pourquoi le nettoyage à la déconnexion ne suffit pas : un process tué net (OOM, redéploiement, panne) n'exécute aucun code de nettoyage. Le TTL est le filet qui ne dépend d'aucune exécution.</p>
+<hr />
+<h2 id="5-lintegration-avec-boost-report">5. L'intégration avec Boost-Report</h2>
+<p>Deux ponts, dans les deux sens :</p>
+<table>
+<thead>
+<tr>
+<th>Sens</th>
+<th>Mécanisme</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hub → Boost-Report</td>
+<td><strong>OIDC</strong> (le hub est l'OP)</td>
+<td>SSO : l'utilisateur se logue une fois sur le hub</td>
+</tr>
+<tr>
+<td>Hub → Boost-Report</td>
+<td><strong>JWT HS256</strong> court, secret partagé</td>
+<td>Le hub crée des annexes photo directement dans Boost-Report</td>
+</tr>
+<tr>
+<td>Boost-Report → Hub</td>
+<td><strong>JWT HS256</strong>, <code>NOTIFY_SERVICE_SECRET</code></td>
+<td>Boost-Report demande au portail d'envoyer un email</td>
+</tr>
+</tbody>
+</table>
+<p>Côté Boost-Report, les constantes du pont (<code>issuer</code>, <code>audience</code>, <code>scope</code>) sont <strong>alignées par commentaire</strong> avec l'émetteur côté hub (<code>app/integrations/boost_report.py</code>). C'est la fragilité que j'identifie : une divergence ne serait détectée qu'en production.</p>
+<hr />
+<h2 id="6-les-particularites-operationnelles">6. Les particularités opérationnelles</h2>
+<table>
+<thead>
+<tr>
+<th>Sujet</th>
+<th>Détail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Schéma <code>portal</code></strong></td>
+<td>Le hub vit dans un schéma dédié de la base Azure, ce qui permet de mutualiser une instance PostgreSQL entre plusieurs applications</td>
+</tr>
+<tr>
+<td><strong>Migrations</strong></td>
+<td>Alembic, avec un <code>migration_lock.py</code> pour éviter que deux instances appliquent les migrations en parallèle au démarrage</td>
+</tr>
+<tr>
+<td><strong>Seed</strong></td>
+<td><code>python -m app.seed</code>, lancé <strong>manuellement</strong> — pas d'auto-seed au démarrage</td>
+</tr>
+<tr>
+<td><strong>Registre</strong></td>
+<td><code>sxehubcr.azurecr.io</code> — Azure Container Registry, pas le registre GitLab</td>
+</tr>
+<tr>
+<td><strong>Stockage</strong></td>
+<td><code>storage.py</code> gère l'upload vers Azure Blob avec <strong>SAS</strong>, et expose <code>StorageUnavailableError</code> avec un <code>Retry-After</code></td>
+</tr>
+<tr>
+<td><strong>Observabilité</strong></td>
+<td><code>RequestIDMiddleware</code> — un identifiant de corrélation par requête dans les logs</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Pourquoi le seed est manuel</p>
+<p>Un seed automatique au démarrage s'exécuterait à <strong>chaque redéploiement</strong>, avec un risque d'écrasement de données modifiées en production. Le rendre manuel force à décider explicitement quand on le lance. C'est le même raisonnement que pour les migrations, avec une différence : une migration est <strong>idempotente et versionnée</strong> (Alembic sait ce qui a déjà été appliqué), un seed ne l'est pas nécessairement.</p>
+</div>
+<hr />
+<h2 id="7-questions-probables-du-jury">7. Questions probables du jury</h2>
+<h3 id="q1-pourquoi-fastapi-ici-alors-que-django-sur-boost-report">Q1. Pourquoi FastAPI ici alors que Django sur Boost-Report ?</h3>
+<p>Les besoins ne sont pas les mêmes. Boost-Report est très <strong>CRUD et documentaire</strong> : Django apporte l'ORM, les migrations, l'admin générée et l'authentification en standard, ce qui couvre l'essentiel du travail. Le hub a besoin d'<strong>asynchrone</strong> — des flux SSE maintenus ouverts en permanence pour le temps réel — et Django, historiquement synchrone, s'y prête moins naturellement. FastAPI est asynchrone par construction, apporte la validation Pydantic et l'OpenAPI généré, et je n'avais pas besoin d'une admin générée puisque j'ai construit un back-office sur mesure dans la SPA. Utiliser deux frameworks a un coût de contexte réel, mais chacun est aligné avec son problème.</p>
+<h3 id="q2-faire-du-hub-un-fournisseur-didentite-ce-nest-pas-risque-pour-un-developpeur-seul">Q2. Faire du hub un fournisseur d'identité, ce n'est pas risqué pour un développeur seul ?</h3>
+<p>Si, et c'est pour ça que je ne l'ai <strong>pas</strong> écrit moi-même. Le provider OIDC vient de <strong>Better-Auth</strong>, une bibliothèque dédiée : je n'implémente ni la cryptographie, ni la gestion des sessions, ni le flow. Mon travail est la configuration et l'intégration. Et surtout, le choix d'un <strong>standard OIDC</strong> dès le départ est ce qui rend la suite possible : la prochaine étape identifiée est le passage à <strong>Keycloak</strong>, une instance gérée par Sixense Digital. Les clients — Boost-Report, boost-apps — changeront d'issuer et de configuration, pas de protocole. L'enjeu est de rester souverain sur la sécurité tout en la déléguant à un outil spécialisé, plus solide qu'une gestion maison.</p>
+<h3 id="q3-pourquoi-sse-plutot-que-websocket">Q3. Pourquoi SSE plutôt que WebSocket ?</h3>
+<p>Parce que le flux est unidirectionnel. Le serveur pousse des changements d'affaire aux clients qui regardent son détail ; le client n'a rien à envoyer sur ce canal, il passe par l'API REST pour ses actions. WebSocket apporterait un canal bidirectionnel dont je n'ai pas l'usage, avec un protocole de handshake, une gestion de reconnexion à écrire, et des proxys parfois à configurer. SSE est du HTTP standard : il traverse l'infrastructure sans réglage particulier et le navigateur gère la reconnexion automatiquement. La règle que j'applique : prendre le mécanisme le plus simple qui couvre le besoin, pas le plus capable.</p>
+<h3 id="q4-vous-avez-un-bus-en-memoire-et-un-bus-redis-pourquoi-les-deux">Q4. Vous avez un bus en mémoire et un bus Redis. Pourquoi les deux ?</h3>
+<p>Pour ne pas imposer Redis en développement. Le bus en mémoire suffit en local et en configuration mono-worker, ce qui allège l'environnement de développement — pas de service supplémentaire à lancer pour travailler sur une fonctionnalité qui n'a rien à voir avec le temps réel. Le bus Redis est nécessaire dès qu'on passe en multi-worker, parce qu'un état en mémoire serait fragmenté entre les process. Les deux implémentent la même interface <code>EventBusInterface</code>, donc aucun appelant ne change, et <code>make_bus()</code> sélectionne l'un ou l'autre selon que <code>redis_url</code> est renseignée. Le point critique est le garde-fou : le service <strong>refuse de démarrer</strong> en multi-worker sans Redis, parce que la panne serait sinon silencieuse et intermittente.</p>
+<h3 id="q5-comment-gerez-vous-les-migrations-avec-deux-services-qui-touchent-la-meme-base">Q5. Comment gérez-vous les migrations avec deux services qui touchent la même base ?</h3>
+<p>Par séparation des périmètres. Better-Auth gère ses propres tables via <strong>Drizzle</strong>, le backend FastAPI gère les siennes via <strong>Alembic</strong>, et chacun n'applique de migration que sur son domaine. Le backend accède à la table <code>user</code> de Better-Auth en <strong>lecture seule</strong>, via un modèle <code>BetterAuthUser</code> qui la mappe sans jamais la migrer. Le point d'attention supplémentaire est le multi-instance : <code>migration_lock.py</code> empêche deux instances d'appliquer les migrations en parallèle au démarrage, ce qui produirait au mieux une erreur, au pire un schéma incohérent. C'est une contrainte réelle du déploiement conteneurisé, où plusieurs instances peuvent démarrer simultanément.</p>
+<h3 id="q6-ligne-dans-linterface-et-category-dans-le-code-ce-nest-pas-deroutant">Q6. « Ligne » dans l'interface et <code>category</code> dans le code, ce n'est pas déroutant ?</h3>
+<p>Si, et c'est une dette de nommage que j'assume. Le vocabulaire métier s'est stabilisé sur « Ligne » après que le code ait été écrit avec <code>category</code> ; l'interface a été unifiée, le code non. Renommer proprement impliquerait une migration de schéma, la mise à jour des routes API, des types front et des tests — un chantier sans aucun bénéfice fonctionnel. La règle que je m'impose est que le décalage soit <strong>documenté</strong> et que le vocabulaire soit cohérent <strong>à l'intérieur de chaque couche</strong> : jamais « Catégorie » dans l'interface, jamais « ligne » dans le code. Le pire cas serait un mélange des deux dans la même couche.</p>
+<h3 id="q7-le-hub-decide-qui-voit-quoi-dans-le-catalogue-cest-votre-controle-dacces">Q7. Le hub décide qui voit quoi dans le catalogue. C'est votre contrôle d'accès ?</h3>
+<p>Non, et la distinction est importante. Le hub gère la <strong>visibilité dans le catalogue</strong> : une application publique est visible de tous les authentifiés, une application restreinte demande un grant explicite dans <code>user_application_access</code>, un admin voit tout le catalogue actif. Mais c'est de l'<strong>ergonomie</strong> — ne pas présenter des outils inaccessibles. Le contrôle d'accès réel reste appliqué par l'application cible : Boost-Report vérifie lui-même le profil Django de l'utilisateur. Si le hub se trompait et affichait une application à quelqu'un qui n'y a pas droit, cette personne se ferait refuser à l'entrée. Faire porter l'autorisation par un service dont le rôle est d'afficher une liste serait une erreur d'architecture.</p>
+<h3 id="q8-quest-ce-qui-vous-inquiete-le-plus-sur-ce-projet">Q8. Qu'est-ce qui vous inquiète le plus sur ce projet ?</h3>
+<p>La <strong>reprise</strong>. Je pars en septembre 2026 et le hub est devenu le point d'entrée de la suite : s'il tombe, plus personne ne se connecte nulle part. Deux réponses en cours. La documentation de passation, écrite sur chaque projet, avec une contrainte explicite de maintenance réduite au minimum. Et la collaboration avec le directeur technique de Sixense Digital, qui intervient sur les questions de sécurité et d'intégration et assurera la reprise. Le passage à Keycloak s'inscrit exactement là-dedans : sortir la brique la plus critique de mon périmètre pour la confier à une instance gérée par une équipe qui restera. La question à se poser sur ce genre de projet n'est pas « est-ce que ça marche », c'est « est-ce que ça marchera sans moi ».</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

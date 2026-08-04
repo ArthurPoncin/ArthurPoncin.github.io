@@ -58,7 +58,38 @@
     </ul>
 
     <h2>Fiches projet</h2>
-    <p>En cours de rédaction — cette section couvrira <code>boost-reports</code> (backend Django et frontend React), <code>boost-tools</code> (SXE-Hub), <code>boost-apps</code> et <code>shm-bridge-traffic-ml</code> (Pont Gaubourd).</p>
+    <ul class="fiches">
+      <li>
+        <span class="tag projet">boost-reports</span>
+        <a href="07-boost-report-backend.html">7. Boost-Report — Backend Django</a>
+        <span class="stack">Django · DRF · docxtpl · fpdf2 · WeasyPrint</span>
+        <span class="desc">Les cinq applications Django et leurs responsabilités, les trois pipelines de génération documentaire coexistants, le cache par empreinte, le client OIDC écrit à la main, et l'écart entre le dossier et l'état actuel du dépôt.</span>
+      </li>
+      <li>
+        <span class="tag projet">boost-reports</span>
+        <a href="08-boost-report-frontend.html">8. Boost-Report — Frontend React</a>
+        <span class="stack">React 19 · TanStack · BlockNote · Playwright</span>
+        <span class="desc">L'organisation feature-based, le passage de l'éditeur maison à BlockNote et pourquoi les deux coexistent, la chaîne de traitement d'une photo, l'optimistic UI et l'onboarding versionné.</span>
+      </li>
+      <li>
+        <span class="tag projet">boost-tools</span>
+        <a href="09-sxe-hub.html">9. SXE-Hub — le portail applicatif</a>
+        <span class="stack">FastAPI · Bun/Hono · Better-Auth · SSE · Redis</span>
+        <span class="desc">Le hub comme fournisseur d'identité de la suite, les trois composants, le modèle de visibilité du catalogue en trois phases, le bus d'événements et ses deux fail-fast.</span>
+      </li>
+      <li>
+        <span class="tag projet">boost-apps</span>
+        <a href="10-boost-apps.html">10. boost-apps — la plateforme d'hébergement</a>
+        <span class="stack">Azure SWA · OIDC · linter Python · auto-merge</span>
+        <span class="desc">Comment des ingénieurs non-développeurs publient leurs outils derrière le SSO sans intervention : le contrat de dépôt, le linter et sa distinction bloquant/avertissement, l'auto-merge conservateur, la contrainte « zéro maintenance ».</span>
+      </li>
+      <li>
+        <span class="tag projet">shm-bridge-traffic-ml</span>
+        <a href="11-pont-gaubourd-ml.html">11. Pont Gaubourd — signal et Random Forest</a>
+        <span class="stack">pandas · SciPy · scikit-learn · Tkinter</span>
+        <span class="desc">Du fichier brut de capteur au rapport client : prétraitement, détection par seuil, les 18 features, les trois invariances, le Random Forest et la lecture honnête de ses scores.</span>
+      </li>
+    </ul>
 
     <h2>Conseils de lecture</h2>
     <ul>

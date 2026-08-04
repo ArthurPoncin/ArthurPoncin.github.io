@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boost-Report — Backend Django — Révisions CDA 2026</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+    <a href="./qcm.html" class="header-right">QCM →</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<div class="toc">
+<ul>
+<li><a href="#0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</a></li>
+<li><a href="#1-tldr">1. TL;DR</a></li>
+<li><a href="#2-les-cinq-applications">2. Les cinq applications</a><ul>
+<li><a href="#21-core-le-domaine">2.1 core — le domaine</a></li>
+<li><a href="#22-api-la-couche-de-presentation">2.2 api — la couche de présentation</a></li>
+<li><a href="#23-generator-la-production-documentaire">2.3 generator — la production documentaire</a></li>
+<li><a href="#24-analytics-le-suivi-dadoption">2.4 analytics — le suivi d'adoption</a></li>
+<li><a href="#25-admin_panel-et-admin_audit">2.5 admin_panel et admin_audit</a></li>
+</ul>
+</li>
+<li><a href="#3-la-chaine-de-generation-word">3. La chaîne de génération Word</a><ul>
+<li><a href="#31-le-mecanisme-complet">3.1 Le mécanisme complet</a></li>
+<li><a href="#32-le-styleresolver-ladapter-a-ne-pas-oublier">3.2 Le StyleResolver — l'Adapter à ne pas oublier</a></li>
+<li><a href="#33-le-cache-par-empreinte">3.3 Le cache par empreinte</a></li>
+<li><a href="#34-la-migration-du-moteur-pdf-la-meilleure-histoire-technique-du-dossier">3.4 La migration du moteur PDF — la meilleure histoire technique du dossier</a></li>
+</ul>
+</li>
+<li><a href="#4-lauthentification-cote-serveur">4. L'authentification, côté serveur</a></li>
+<li><a href="#5-ce-qui-a-change-depuis-la-redaction-du-dossier">5. Ce qui a changé depuis la rédaction du dossier</a></li>
+<li><a href="#6-code-essentiel-a-savoir-expliquer">6. Code essentiel à savoir expliquer</a><ul>
+<li><a href="#61-la-regle-de-visibilite-source-unique">6.1 La règle de visibilité — source unique</a></li>
+<li><a href="#62-le-verrouillage-des-mutations">6.2 Le verrouillage des mutations</a></li>
+<li><a href="#63-linterface-des-strategies-de-rendu">6.3 L'interface des stratégies de rendu</a></li>
+<li><a href="#64-le-runner-qui-ne-connait-aucun-type-de-bloc">6.4 Le runner, qui ne connaît aucun type de bloc</a></li>
+</ul>
+</li>
+<li><a href="#7-questions-probables-du-jury">7. Questions probables du jury</a><ul>
+<li><a href="#q1-pourquoi-django-plutot-que-fastapi-ou-flask">Q1. Pourquoi Django plutôt que FastAPI ou Flask ?</a></li>
+<li><a href="#q2-cinq-applications-django-ce-nest-pas-de-la-sur-decoupe">Q2. Cinq applications Django, ce n'est pas de la sur-découpe ?</a></li>
+<li><a href="#q3-trois-moteurs-pdf-dans-la-meme-application-ce-nest-pas-beaucoup">Q3. Trois moteurs PDF dans la même application, ce n'est pas beaucoup ?</a></li>
+<li><a href="#q4-comment-le-contenu-dun-rapport-est-il-structure-en-base">Q4. Comment le contenu d'un rapport est-il structuré en base ?</a></li>
+<li><a href="#q5-votre-generation-est-synchrone-que-se-passe-t-il-si-elle-echoue-a-mi-parcours">Q5. Votre génération est synchrone. Que se passe-t-il si elle échoue à mi-parcours ?</a></li>
+<li><a href="#q6-comment-testez-vous-la-generation-de-documents">Q6. Comment testez-vous la génération de documents ?</a></li>
+<li><a href="#q7-le-pont-de-service-permet-au-hub-dimpersonner-un-utilisateur-ce-nest-pas-risque">Q7. Le pont de service permet au hub d'impersonner un utilisateur. Ce n'est pas risqué ?</a></li>
+<li><a href="#q8-quest-ce-que-vous-referiez-differemment-sur-ce-backend">Q8. Qu'est-ce que vous referiez différemment sur ce backend ?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+    </nav>
+    <article>
+<h1 id="boost-report-backend-django">Boost-Report — Backend Django</h1>
+<p class="meta"><em>Fiche projet 1/5 — dépôt <code>boost-reports</code>, dossier <code>generationrapports/</code>. Le cœur métier : cinq applications Django, deux moteurs de génération documentaire, le client OIDC.</em></p>
+<h2 id="0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</h2>
+<dl>
+<dt>Application Django (« app »)</dt>
+<dd>Module autonome dans un projet Django, avec ses modèles, ses vues et ses migrations. Un projet est un assemblage d'apps. Ce n'est <strong>pas</strong> un service : les cinq apps de Boost-Report tournent dans un seul processus.</dd>
+<dt>DRF (Django REST Framework)</dt>
+<dd>Surcouche de Django pour construire des API REST : sérialiseurs, ViewSets, routeurs, classes de permission, pagination, throttling.</dd>
+<dt>Sérialiseur</dt>
+<dd>Objet DRF qui convertit un modèle en JSON (sortie) et valide un JSON entrant avant de le transformer en modèle (entrée). Il porte à la fois la représentation et la validation.</dd>
+<dt>ViewSet / routeur</dt>
+<dd>Un <strong>ViewSet</strong> regroupe les actions CRUD d'une ressource (<code>list</code>, <code>retrieve</code>, <code>create</code>, <code>update</code>, <code>destroy</code>) plus des actions personnalisées. Le <strong>routeur</strong> en dérive automatiquement les URLs.</dd>
+<dt><code>docxtpl</code> / <code>python-docx</code></dt>
+<dd><code>python-docx</code> manipule un document Word par programmation. <code>docxtpl</code> ajoute la logique de <strong>template</strong> : on part d'un vrai <code>.docx</code> contenant les styles de l'entreprise et on y injecte du contenu via des balises <strong>Jinja2</strong>.</dd>
+<dt>Subdoc</dt>
+<dd>Sous-document <code>docxtpl</code> qui <strong>hérite des styles du template</strong> parent. C'est le mécanisme qui permet de construire du contenu programmatiquement tout en restant dans la charte graphique.</dd>
+<dt>Gotenberg</dt>
+<dd>Service conteneurisé qui convertit des documents (DOCX, HTML…) en PDF en s'appuyant sur LibreOffice en arrière-plan.</dd>
+<dt>WeasyPrint</dt>
+<dd>Moteur Python qui convertit <strong>HTML + CSS</strong> en PDF, avec support des règles d'impression CSS (<code>@page</code>, sauts de page, en-têtes et pieds répétés).</dd>
+<dt><code>fpdf2</code></dt>
+<dd>Librairie Python générant un PDF <strong>directement</strong>, sans moteur de rendu intermédiaire. Beaucoup plus rapide, mais tout le placement est à écrire à la main.</dd>
+<dt>Pydantic</dt>
+<dd>Bibliothèque de validation de données par annotations de type Python. Utilisée ici pour valider la structure des blocs de contenu avant rendu.</dd>
+<dt>Gunicorn</dt>
+<dd>Serveur d'application WSGI qui exécute Django en production, avec plusieurs processus workers. Le <code>runserver</code> de Django n'est jamais destiné à la production.</dd>
+<dt>Throttling</dt>
+<dd>Limitation du débit de requêtes. Ici : 10 générations par minute et par utilisateur.</dd>
+<dt>JIT-provisioning</dt>
+<dd>Création automatique du compte utilisateur local à sa <strong>première connexion</strong> SSO, à partir des claims du fournisseur d'identité. Pas d'import préalable d'annuaire.</dd>
+</dl>
+<hr />
+<h2 id="1-tldr">1. TL;DR</h2>
+<pre class="mermaid">flowchart TB
+    subgraph django["API Django + DRF — un seul processus Gunicorn"]
+        CORE["&lt;b&gt;core&lt;/b&gt;&lt;br/&gt;modèles · auth OIDC · permissions&lt;br/&gt;visibilité · provisioning"]
+        API["&lt;b&gt;api&lt;/b&gt;&lt;br/&gt;endpoints REST · sérialiseurs&lt;br/&gt;schémas Pydantic"]
+        GEN["&lt;b&gt;generator&lt;/b&gt;&lt;br/&gt;Word (docxtpl + Strategy)&lt;br/&gt;PDF (fpdf2 · WeasyPrint · Gotenberg)"]
+        ANA["&lt;b&gt;analytics&lt;/b&gt;&lt;br/&gt;collecte · agrégation · export xlsx"]
+        ADM["&lt;b&gt;admin_panel&lt;/b&gt;&lt;br/&gt;back-office · journal d'audit"]
+    end
+    API --&gt; CORE
+    API --&gt; GEN
+    GEN --&gt; CORE
+    ANA --&gt; CORE
+    ADM --&gt; CORE
+</pre>
+
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stack</td>
+<td>Python 3.11 · Django · Django REST Framework · Gunicorn</td>
+</tr>
+<tr>
+<td>Base</td>
+<td>PostgreSQL 17 (Azure Flexible Server), <strong>13 tables</strong></td>
+</tr>
+<tr>
+<td>Stockage</td>
+<td>Azure Blob Storage (photos, documents générés)</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td>Client <strong>OIDC</strong> vers SXE-Hub, écrit à la main + pont de service HS256</td>
+</tr>
+<tr>
+<td>Génération</td>
+<td>Word via <code>docxtpl</code> + Strategy Pattern · PDF via <code>fpdf2</code>, WeasyPrint et Gotenberg selon le pipeline</td>
+</tr>
+<tr>
+<td>Tests</td>
+<td>~1 062, sur PostgreSQL 17 réel en CI</td>
+</tr>
+<tr>
+<td>Lint</td>
+<td>Ruff (<code>check</code> + <code>format --check</code>), bloquants</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition jury">
+<p class="admonition-title">Le point de départ à raconter</p>
+<p>Tout ça vient d'un <strong><code>views.py</code> de 586 lignes</strong> qui mélangeait routage API, logique métier et génération de documents, plus un moteur de rendu de ~500 lignes construit en cascade de conditions. Le découpage en cinq apps et le Strategy Pattern sont la réponse à cette douleur — pas une architecture posée a priori.</p>
+</div>
+<hr />
+<h2 id="2-les-cinq-applications">2. Les cinq applications</h2>
+<h3 id="21-core-le-domaine">2.1 <code>core</code> — le domaine</h3>
+<p>C'est l'app la plus dense, et c'est voulu : tout ce qui touche à <strong>qui a le droit de voir quoi</strong> y est centralisé.</p>
+<table>
+<thead>
+<tr>
+<th>Fichier</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>models.py</code></td>
+<td>Les 13 entités du domaine</td>
+</tr>
+<tr>
+<td><code>oidc.py</code></td>
+<td>Client OIDC : découverte, code flow + PKCE, validation d'<code>id_token</code></td>
+</tr>
+<tr>
+<td><code>oidc_views.py</code></td>
+<td>Endpoints <code>/api/oidc/login</code> et <code>/api/oidc/callback</code></td>
+</tr>
+<tr>
+<td><code>authentication.py</code></td>
+<td><code>OIDCSessionAuthentication</code> (session first-party) et <code>ServiceTokenAuthentication</code> (pont hub)</td>
+</tr>
+<tr>
+<td><code>permissions.py</code></td>
+<td><code>IsAppAdmin</code>, <code>CanEditReport</code>, <code>ServiceTokenScopePermission</code></td>
+</tr>
+<tr>
+<td><code>access.py</code></td>
+<td><strong><code>filter_visible_queryset</code></strong> — la source unique de la règle de visibilité</td>
+</tr>
+<tr>
+<td><code>media_access.py</code> / <code>media_views.py</code></td>
+<td>Garde d'accès aux fichiers, adossée à la même règle</td>
+</tr>
+<tr>
+<td><code>provisioning.py</code></td>
+<td>JIT-provisioning depuis les claims OIDC</td>
+</tr>
+<tr>
+<td><code>services/</code></td>
+<td>Policies métier : <code>report_permission_policy</code>, <code>photo_appendix_permission_policy</code>, <code>comment_service</code>, <code>section_service</code>, <code>ai_reformulation_service</code>, <code>editor_assignment</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition jury">
+<p class="admonition-title">Le principe « fat models » de Django</p>
+<p>La convention Django est de garder la logique métier <strong>au plus près des modèles</strong>, et les vues fines (routage HTTP + sérialisation). C'est le raisonnement qui a guidé le refactoring. Nuance à apporter : quand la règle métier ne concerne pas un seul modèle — comme « qui a le droit d'éditer ce rapport », qui dépend de l'utilisateur, du rapport et du profil — elle sort dans un <strong>objet policy</strong> (<code>ReportPermissionPolicy</code>) plutôt que d'être écrasée dans un modèle. Fat models, oui, mais pas fourre-tout.</p>
+</div>
+<h3 id="22-api-la-couche-de-presentation">2.2 <code>api</code> — la couche de présentation</h3>
+<p>Les vues sont découpées <strong>par ressource</strong>, pas dans un fichier unique : <code>reports.py</code>, <code>photo_appendix.py</code>, <code>sections.py</code>, <code>comments.py</code>, <code>users.py</code>, <code>ai.py</code>. Idem pour les sérialiseurs.</p>
+<p><code>schemas.py</code> porte les <strong>schémas Pydantic</strong> qui valident la structure des blocs de contenu — une seconde ligne de validation, en amont du rendu, distincte de celle des sérialiseurs DRF qui valide les champs de l'API.</p>
+<h3 id="23-generator-la-production-documentaire">2.3 <code>generator</code> — la production documentaire</h3>
+<p>C'est l'app la plus riche techniquement, avec <strong>trois pipelines coexistants</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Pipeline</th>
+<th>Chaîne</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rapport V1</strong></td>
+<td>blocs JSON → <code>docxtpl</code> + Strategy → DOCX → <strong>Gotenberg</strong> (LibreOffice) → PDF</td>
+<td>Rapports créés en V1</td>
+</tr>
+<tr>
+<td><strong>Rapport V2</strong></td>
+<td>BlockNote → <strong>HTML sémantique</strong> → template Jinja2 + CSS charte → <strong>WeasyPrint</strong> → PDF</td>
+<td>Nouveaux rapports</td>
+</tr>
+<tr>
+<td><strong>Annexes photo</strong></td>
+<td>photos + gabarit → <strong><code>fpdf2</code></strong> directement → PDF</td>
+<td>Annexes photo</td>
+</tr>
+</tbody>
+</table>
+<p>Fichiers notables : <code>blocknote_html_converter.py</code>, <code>html_pdf_renderer.py</code>, <code>weasyprint_adapter.py</code>, <code>photo_appendix_direct_pdf.py</code>, <code>report_pdf_service.py</code>, <code>variable_resolver.py</code>, <code>caption_formatter.py</code>, <code>cover_context.py</code>, <code>exceptions.py</code>, et le paquet <code>brick_strategies/</code>.</p>
+<h3 id="24-analytics-le-suivi-dadoption">2.4 <code>analytics</code> — le suivi d'adoption</h3>
+<p>Un tableau de bord <strong>réservé aux administrateurs</strong> : utilisateurs actifs par jour, semaine et mois, documents créés et finalisés, activité par agence et par template. Données <strong>exportables en <code>.xlsx</code></strong> pour le reporting.</p>
+<p>La collecte est passive : <code>OIDCSessionAuthentication</code> enregistre l'activité du jour à chaque requête authentifiée.</p>
+<div class="codehilite"><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_track_activity</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enregistre l&#39;activité du jour (analytics). Échec silencieux + log.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">DailyActivity</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">localdate</span><span class="p">())</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Analytics tracking failed for </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="admonition jury">
+<p class="admonition-title">Le détail qui montre du métier</p>
+<p>L'échec est <strong>silencieux et loggué</strong>. Une erreur d'analytics ne doit jamais faire échouer la requête de l'utilisateur : c'est une fonctionnalité secondaire, elle ne peut pas dégrader la fonctionnalité principale. C'est une décision consciente sur la <strong>criticité</strong> d'un composant, pas un <code>try/except</code> paresseux.</p>
+</div>
+<h3 id="25-admin_panel-et-admin_audit">2.5 <code>admin_panel</code> et <code>admin_audit</code></h3>
+<p>Le back-office gère utilisateurs, rôles et agences de rattachement. <strong>Chaque action d'administration est tracée dans un journal d'audit conservant l'état avant et après modification</strong> — c'est ce qui permet de répondre à « qui a changé ces droits, et depuis quoi ? ».</p>
+<hr />
+<h2 id="3-la-chaine-de-generation-word">3. La chaîne de génération Word</h2>
+<h3 id="31-le-mecanisme-complet">3.1 Le mécanisme complet</h3>
+<pre class="mermaid">flowchart LR
+    A["Blocs JSON&lt;br/&gt;(champ data du Report)"] --&gt; B["docxtpl ouvre le&lt;br/&gt;template Word Sixense"]
+    B --&gt; C["new_subdoc()&lt;br/&gt;hérite de TOUS les styles"]
+    C --&gt; D["Pour chaque bloc :&lt;br/&gt;BrickFactory → Strategy"]
+    D --&gt; E["StyleResolver&lt;br/&gt;traduit les noms de styles"]
+    E --&gt; F["Rendu Jinja2&lt;br/&gt;subdoc injecté dans le template"]
+    F --&gt; G[".docx aux normes&lt;br/&gt;de l'entreprise"]
+</pre>
+
+<p>Le point clé à savoir expliquer : <strong>le template Word embarque déjà tout</strong>. La charte graphique, la page de garde, le tableau de suivi des indices, l'ensemble des styles de Sixense Engineering. L'application vient <strong>y injecter du contenu sans toucher à la mise en forme</strong>. L'utilisateur n'a manipulé aucun style et le document sort directement aux normes.</p>
+<h3 id="32-le-styleresolver-ladapter-a-ne-pas-oublier">3.2 Le <code>StyleResolver</code> — l'Adapter à ne pas oublier</h3>
+<p>Chaque template Word peut nommer ses styles différemment (« Titre 1 », « Heading 1 », « SXE Titre 1 »…). Le <code>StyleResolver</code> fait le lien entre les noms <strong>attendus par l'application</strong> et ceux <strong>réellement présents</strong> dans le template, via une table d'alias.</p>
+<p>C'est une couche d'abstraction qui permet de <strong>supporter plusieurs templates sans modifier le code de génération</strong> — et c'est ce qui rend possible l'objectif de multi-template administrable par les lignes métier.</p>
+<h3 id="33-le-cache-par-empreinte">3.3 Le cache par empreinte</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Principe du ReportPdfService</span>
+<span class="n">empreinte</span> <span class="o">=</span> <span class="n">sha256</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">report</span><span class="o">.</span><span class="n">updated_at</span><span class="si">}{</span><span class="n">report</span><span class="o">.</span><span class="n">template_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">empreinte</span> <span class="o">==</span> <span class="n">report</span><span class="o">.</span><span class="n">pdf_fingerprint</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">pdf_path</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">report</span><span class="o">.</span><span class="n">pdf_path</span>          <span class="c1"># cache hit : aucune génération</span>
+<span class="c1"># cache miss → génération complète, puis mise à jour de l&#39;empreinte et du chemin</span>
+</code></pre></div>
+
+<p>Deux conditions, pas une : l'empreinte correspond <strong>et</strong> le fichier existe. La seconde protège du cas où le fichier a disparu (nettoyage, redémarrage, migration de stockage) alors que la base pense encore qu'il est là.</p>
+<h3 id="34-la-migration-du-moteur-pdf-la-meilleure-histoire-technique-du-dossier">3.4 La migration du moteur PDF — la meilleure histoire technique du dossier</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Avant</th>
+<th>Après</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Moteur</td>
+<td><strong>Gotenberg</strong> (DOCX → LibreOffice → PDF)</td>
+<td><strong><code>fpdf2</code></strong> (génération directe)</td>
+</tr>
+<tr>
+<td>Temps</td>
+<td><strong>20–30 secondes</strong></td>
+<td><strong>~3 secondes</strong></td>
+</tr>
+<tr>
+<td>Fidélité charte</td>
+<td>Correcte</td>
+<td>Page de garde, footer, mise en page respectées</td>
+</tr>
+<tr>
+<td>Dépendance</td>
+<td>Un conteneur tiers</td>
+<td>Une librairie Python</td>
+</tr>
+</tbody>
+</table>
+<p>Le déclencheur n'est pas venu d'un test mais d'un <strong>usage réel</strong> : 20 à 30 secondes est inacceptable quand on veut simplement vérifier rapidement un aperçu.</p>
+<div class="admonition jury">
+<p class="admonition-title">Ce que cette migration prouve</p>
+<p>Que la performance perçue est un critère fonctionnel, pas un raffinement. La chaîne DOCX → LibreOffice → PDF fonctionnait, passait les tests, et rendait la fonctionnalité pénible à utiliser. Aucune suite de tests n'aurait signalé ça. Le contrepoids honnête : <code>fpdf2</code> demande d'écrire tout le placement à la main, donc le gain de vitesse se paie en code de mise en page — un compromis acceptable ici parce que le gabarit d'annexe est très contraint (2, 4 ou 6 photos par page).</p>
+</div>
+<hr />
+<h2 id="4-lauthentification-cote-serveur">4. L'authentification, côté serveur</h2>
+<p>Le détail complet du flow OIDC est dans la <a href="03-securite-auth.html">fiche Sécurité</a>. Les points spécifiques au backend :</p>
+<ul>
+<li>Le <strong>client OIDC est écrit en Python sans librairie tierce</strong> (<code>core/oidc.py</code>), pour garder la maîtrise du flux : découverte avec cache 1 h, code flow + PKCE S256, validation RS256 via <code>PyJWKClient</code> sur le JWKS du hub, contrôle de <code>iss</code> / <code>aud</code> / <code>exp</code> / <code>nonce</code>.</li>
+<li>La session applicative est un <strong>cookie Django first-party</strong>. <code>OIDCSessionAuthentication</code> hérite de <code>SessionAuthentication</code>, donc <strong>l'enforcement CSRF s'applique</strong> sur toutes les méthodes non sûres.</li>
+<li><code>authenticate_header</code> est surchargée pour renvoyer <code>"Session"</code>, ce qui force DRF à répondre <strong>401</strong> (et non 403) aux requêtes anonymes — c'est ce que le SPA intercepte pour relancer le login OIDC.</li>
+<li>Le rôle applicatif est <strong>ré-appliqué à chaque requête</strong> depuis la session, sans toucher au modèle <code>User</code> de Django.</li>
+<li>Le <strong>pont de service</strong> (<code>ServiceTokenAuthentication</code>) accepte un JWT HS256 court émis par le hub, borné par <code>ServiceTokenScopePermission</code> à une allowlist stricte.</li>
+</ul>
+<hr />
+<h2 id="5-ce-qui-a-change-depuis-la-redaction-du-dossier">5. Ce qui a changé depuis la rédaction du dossier</h2>
+<p>Une section à connaître : si le jury regarde le dépôt, il verra des choses que le dossier ne décrit pas.</p>
+<ul>
+<li><strong>Un pipeline staging + production.</strong> <code>deploy.yml</code> déploie le staging à chaque push sur <code>main</code> ; <code>deploy-prod.yml</code> promeut les images du commit taggé <strong>sans rebuild</strong> à la publication d'une release GitHub. Le dossier décrit l'état antérieur, où chaque merge partait directement en production.</li>
+<li><strong>Un domaine dédié</strong> pour la production.</li>
+<li>Des services supplémentaires : <code>ai_reformulation_service</code> (aide à la reformulation), <code>portal_notifications</code> (notifications vers le hub), <code>share_appendix</code> (partage d'annexes), <code>templates_registry</code>.</li>
+<li>Le registre est <strong>Azure Container Registry</strong> (<code>sxehubcr.azurecr.io</code>), plus le registre GitLab.</li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">Comment le présenter</p>
+<p>Ne pas cacher l'écart : « le dossier documente l'état à sa rédaction, le projet a continué d'évoluer depuis, voici ce qui a bougé ». Un projet figé au moment du dossier serait un moins bon signal qu'un projet qui vit.</p>
+</div>
+<hr />
+<h2 id="6-code-essentiel-a-savoir-expliquer">6. Code essentiel à savoir expliquer</h2>
+<h3 id="61-la-regle-de-visibilite-source-unique">6.1 La règle de visibilité — source unique</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/access.py</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">filter_visible_queryset</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">qs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    - anonyme          → queryset vide</span>
+<span class="sd">    - admin applicatif → tout</span>
+<span class="sd">    - visibility == 3  → tout</span>
+<span class="sd">    - visibility == 2  → ressources liées aux agences de l&#39;utilisateur</span>
+<span class="sd">    - autre            → ressources créées par l&#39;utilisateur</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="s2">&quot;is_authenticated&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">qs</span><span class="o">.</span><span class="n">none</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="s2">&quot;is_app_admin&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">qs</span>
+
+    <span class="n">extra_q</span> <span class="o">=</span> <span class="n">_extra_visibility_q</span><span class="p">(</span><span class="n">qs</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>   <span class="c1"># editor/reviewer, shared_with</span>
+    <span class="o">...</span>
+    <span class="k">if</span> <span class="n">visibility</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">agency_ids</span> <span class="o">=</span> <span class="n">UserAgency</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;agency_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">base_q</span> <span class="o">=</span> <span class="n">Q</span><span class="p">(</span><span class="n">agency__in</span><span class="o">=</span><span class="n">agency_ids</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">base_q</span> <span class="o">=</span> <span class="n">Q</span><span class="p">(</span><span class="n">created_by</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">extra_q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">qs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">base_q</span> <span class="o">|</span> <span class="n">extra_q</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">qs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">base_q</span><span class="p">)</span>
+</code></pre></div>
+
+<p>À souligner : consommée <strong>à la fois</strong> par le <code>VisibilityFilterMixin</code> des ViewSets <strong>et</strong> par la <code>MediaAccessPolicy</code> des fichiers. Une seule source de vérité pour la liste JSON et pour le fichier binaire.</p>
+<h3 id="62-le-verrouillage-des-mutations">6.2 Le verrouillage des mutations</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># core/permissions.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CanEditReport</span><span class="p">(</span><span class="n">BasePermission</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verrouille les mutations sur un Report au rédacteur actif.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_object_permission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="n">SAFE_METHODS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">ReportPermissionPolicy</span><span class="o">.</span><span class="n">can_edit</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">report</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span>
+</code></pre></div>
+
+<p>La règle métier n'est <strong>pas</strong> dans la classe de permission : elle est déléguée au policy object, donc testable seule et réutilisable ailleurs.</p>
+<h3 id="63-linterface-des-strategies-de-rendu">6.3 L'interface des stratégies de rendu</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># generator/brick_strategies/base.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AbstractStrategy</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subdoc</span><span class="p">,</span> <span class="n">resolver</span><span class="p">:</span> <span class="n">StyleResolver</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insère le contenu de la brique dans le sous-document Word.&quot;&quot;&quot;</span>
+</code></pre></div>
+
+<h3 id="64-le-runner-qui-ne-connait-aucun-type-de-bloc">6.4 Le runner, qui ne connaît aucun type de bloc</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># generator/brick_strategies/runner.py</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">render_bricks</span><span class="p">(</span><span class="n">tpl</span><span class="p">,</span> <span class="n">bricks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
+    <span class="n">sd</span> <span class="o">=</span> <span class="n">tpl</span><span class="o">.</span><span class="n">new_subdoc</span><span class="p">()</span>
+    <span class="n">resolver</span> <span class="o">=</span> <span class="n">StyleResolver</span><span class="p">(</span><span class="n">sd</span><span class="o">.</span><span class="n">part</span><span class="o">.</span><span class="n">document</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">brick_data</span> <span class="ow">in</span> <span class="n">bricks</span><span class="p">:</span>
+        <span class="n">strategy</span> <span class="o">=</span> <span class="n">BrickFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">brick_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">strategy</span><span class="p">:</span>
+            <span class="n">strategy</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sd</span><span class="p">,</span> <span class="n">resolver</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sd</span>
+</code></pre></div>
+
+<hr />
+<h2 id="7-questions-probables-du-jury">7. Questions probables du jury</h2>
+<h3 id="q1-pourquoi-django-plutot-que-fastapi-ou-flask">Q1. Pourquoi Django plutôt que FastAPI ou Flask ?</h3>
+<p>Trois raisons, dans l'ordre où elles ont compté. C'est un framework que je connais bien, ce qui comptait pour démarrer vite sur un projet où j'étais seul. Il apporte <strong>l'ORM, les migrations, l'admin et l'authentification</strong> en standard, là où Flask demande d'assembler tout ça et où FastAPI n'a pas d'ORM intégré. Et il a un écosystème mature pour ce que je devais faire, notamment DRF pour l'API. À noter que sur SXE-Hub j'ai choisi <strong>FastAPI</strong>, parce que le besoin était différent : beaucoup d'asynchrone, un bus temps réel, pas d'admin à générer. Le choix de framework dépend du problème, pas d'une préférence.</p>
+<h3 id="q2-cinq-applications-django-ce-nest-pas-de-la-sur-decoupe">Q2. Cinq applications Django, ce n'est pas de la sur-découpe ?</h3>
+<p>Chacune a une raison de changer distincte. <code>generator</code> change quand le format de sortie évolue — c'est arrivé trois fois : Gotenberg, <code>fpdf2</code>, WeasyPrint. <code>core</code> change quand le domaine ou les règles d'accès évoluent. <code>analytics</code> change quand on veut suivre une nouvelle métrique. Ces trois évolutions sont indépendantes et se sont produites à des moments différents. Le test que j'applique : si deux modules changent toujours ensemble, ils devraient n'en faire qu'un. Ce n'est le cas d'aucune de ces cinq apps.</p>
+<h3 id="q3-trois-moteurs-pdf-dans-la-meme-application-ce-nest-pas-beaucoup">Q3. Trois moteurs PDF dans la même application, ce n'est pas beaucoup ?</h3>
+<p>C'est le prix d'une migration progressive, et je l'assume. <code>fpdf2</code> couvre les annexes photo — gabarit contraint, vitesse critique, gain de 20-30 s à 3 s. WeasyPrint couvre l'éditeur V2, parce que le contenu part de HTML et que le rendu doit être fidèle à ce que l'utilisateur voit dans l'éditeur. Gotenberg ne subsiste que pour les rapports <strong>créés en V1</strong>, qui doivent rester régénérables à l'identique : chaque rapport reste sur la version avec laquelle il a été créé. La dette est réelle et bornée : Gotenberg disparaîtra quand plus aucun rapport V1 actif n'existera. Casser la régénération de documents déjà livrés à des clients aurait été inacceptable.</p>
+<h3 id="q4-comment-le-contenu-dun-rapport-est-il-structure-en-base">Q4. Comment le contenu d'un rapport est-il structuré en base ?</h3>
+<p>Chaque bloc est un objet JSON avec un <code>type</code> et des propriétés, et l'ensemble du contenu est un <strong>tableau de ces objets</strong> stocké dans un champ JSON du modèle <code>Report</code>. Les sections ont chacune leur propre contenu JSON, typées <code>FORM</code> ou <code>FREE</code> avec un indicateur de progression. Le choix de ne pas normaliser est délibéré : le contenu est un arbre de blocs hétérogènes, toujours lu et écrit intégralement, et son format évolue avec l'éditeur — une migration de schéma à chaque évolution de format serait ingérable. La validation de ce JSON est faite en amont par des <strong>schémas Pydantic</strong>, ce qui compense l'absence de contrainte structurelle en base.</p>
+<h3 id="q5-votre-generation-est-synchrone-que-se-passe-t-il-si-elle-echoue-a-mi-parcours">Q5. Votre génération est synchrone. Que se passe-t-il si elle échoue à mi-parcours ?</h3>
+<p>Les erreurs métier sont isolées dans des <strong>exceptions dédiées</strong> (<code>generator/exceptions.py</code>) et remontent en réponse HTTP explicite plutôt qu'en 500 opaque. Le rapport en base n'est pas modifié tant que la génération n'a pas abouti : l'empreinte de cache et le chemin ne sont écrits qu'après succès, donc un échec ne laisse pas la base en état incohérent. Ce qui peut rester, c'est un fichier partiel sur le stockage — un déchet, pas une corruption, et le prochain cache miss l'écrase. Le vrai risque du synchrone n'est pas la cohérence mais le <strong>timeout</strong> de la Web App sur un rapport très volumineux ; c'est ce qui justifierait le passage à Celery.</p>
+<h3 id="q6-comment-testez-vous-la-generation-de-documents">Q6. Comment testez-vous la génération de documents ?</h3>
+<p>À plusieurs niveaux. Chaque <strong>stratégie de rendu</strong> est testée isolément : on lui donne un bloc, on vérifie ce qu'elle produit dans le sous-document — c'est précisément ce que le Strategy Pattern a rendu possible, l'ancienne cascade de conditions n'était testable qu'en entier. Le <code>StyleResolver</code> et le <code>variable_resolver</code> ont leurs propres tests. Le traitement d'images aussi. Et des tests d'intégration tapent les vrais endpoints et vérifient qu'un document sort. Ce que je <strong>ne</strong> teste pas, c'est le <strong>rendu visuel</strong> : je vérifie que le contenu est présent, pas qu'il est joliment placé. Un changement de style dans le template Word passerait au vert — c'est une limite que j'ai identifiée, et un test de comparaison d'image serait la réponse.</p>
+<h3 id="q7-le-pont-de-service-permet-au-hub-dimpersonner-un-utilisateur-ce-nest-pas-risque">Q7. Le pont de service permet au hub d'impersonner un utilisateur. Ce n'est pas risqué ?</h3>
+<p>Si, c'est le mécanisme le plus sensible du projet, et il est conçu en conséquence. Le token est signé HS256 avec un secret partagé, a un <strong>TTL d'environ 120 secondes</strong>, et surtout il est borné par <code>ServiceTokenScopePermission</code> à une allowlist stricte : lister, lire et créer des annexes photo, lire les agences, lire <code>/api/me/</code>. Tout le reste — upload, génération, suppression, rapports, administration — est refusé, et le refus est <strong>par défaut</strong> : une route ajoutée demain est fermée sans que j'aie à y penser. Le raisonnement explicite était : si le secret fuite, quel est le rayon de souffle ? La réponse est « créer et lire des annexes », ce qui est acceptable. Ce serait inacceptable sans l'allowlist.</p>
+<h3 id="q8-quest-ce-que-vous-referiez-differemment-sur-ce-backend">Q8. Qu'est-ce que vous referiez différemment sur ce backend ?</h3>
+<p>Deux choses. D'abord, j'aurais modélisé le <strong>workflow de rédaction</strong> comme une machine à états explicite dès le départ : les transitions brouillon → relecture → validé sont aujourd'hui réparties entre les permissions, les vues et le modèle, ce qui les rend difficiles à vérifier d'un coup d'œil. C'est exactement le même raisonnement qui m'a fait sortir <code>ReportPermissionPolicy</code>, appliqué à un domaine que je n'ai pas encore traité. Ensuite, j'aurais posé le <strong>contrat du pont hub → Boost-Report</strong> dans un schéma partagé et testé, plutôt que dans des constantes alignées par commentaire dans les deux dépôts. Aujourd'hui une divergence d'<code>audience</code> ou de <code>scope</code> ne serait détectée qu'en production.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>

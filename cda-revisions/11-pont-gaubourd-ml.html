@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pont Gaubourd — traitement du signal et Random Forest — Révisions CDA 2026</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="./index.html">← Index des fiches</a>
+    <a href="./qcm.html" class="header-right">QCM →</a>
+  </header>
+  <main>
+    <nav class="toc" role="doc-toc">
+<div class="toc">
+<ul>
+<li><a href="#0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</a></li>
+<li><a href="#1-tldr">1. TL;DR</a></li>
+<li><a href="#2-la-demarche-quatre-etapes-chacune-ouvrant-la-suivante">2. La démarche : quatre étapes, chacune ouvrant la suivante</a></li>
+<li><a href="#3-le-traitement-du-signal">3. Le traitement du signal</a><ul>
+<li><a href="#31-le-probleme">3.1 Le problème</a></li>
+<li><a href="#32-le-pretraitement-deux-corrections-successives">3.2 Le prétraitement — deux corrections successives</a></li>
+<li><a href="#33-la-detection">3.3 La détection</a></li>
+<li><a href="#34-les-premieres-informations-extraites">3.4 Les premières informations extraites</a></li>
+<li><a href="#35-la-validation-physique">3.5 La validation physique</a></li>
+</ul>
+</li>
+<li><a href="#4-les-18-features">4. Les 18 features</a><ul>
+<li><a href="#41-la-composition">4.1 La composition</a></li>
+<li><a href="#42-le-resultat-le-plus-interessant">4.2 Le résultat le plus intéressant</a></li>
+</ul>
+</li>
+<li><a href="#5-les-trois-invariances">5. Les trois invariances</a></li>
+<li><a href="#6-le-modele">6. Le modèle</a><ul>
+<li><a href="#61-pourquoi-un-random-forest">6.1 Pourquoi un Random Forest</a></li>
+<li><a href="#62-les-hyperparametres">6.2 Les hyperparamètres</a></li>
+<li><a href="#63-class_weightbalanced-le-reglage-a-savoir-defendre">6.3 class_weight="balanced" — le réglage à savoir défendre</a></li>
+</ul>
+</li>
+<li><a href="#7-les-resultats-et-leur-lecture-honnete">7. Les résultats et leur lecture honnête</a><ul>
+<li><a href="#71-validation-croisee-stratifiee-5-fold">7.1 Validation croisée stratifiée 5-fold</a></li>
+<li><a href="#72-la-precision-honnete-sur-la-matrice-de-confusion">7.2 La précision honnête sur la matrice de confusion</a></li>
+<li><a href="#73-pourquoi-ces-scores-ne-sont-pas-ceux-dun-modele-parfait">7.3 Pourquoi ces scores ne sont pas ceux d'un modèle parfait</a></li>
+</ul>
+</li>
+<li><a href="#8-loutil-en-pratique">8. L'outil en pratique</a><ul>
+<li><a href="#81-le-deroulement-dune-journee">8.1 Le déroulement d'une journée</a></li>
+<li><a href="#82-le-mode-automatique">8.2 Le mode automatique</a></li>
+<li><a href="#83-les-livrables">8.3 Les livrables</a></li>
+<li><a href="#84-le-reentrainement-incremental">8.4 Le réentraînement incrémental</a></li>
+</ul>
+</li>
+<li><a href="#9-perspectives">9. Perspectives</a></li>
+<li><a href="#10-questions-probables-du-jury">10. Questions probables du jury</a><ul>
+<li><a href="#q1-pourquoi-un-random-forest-plutot-quun-reseau-de-neurones">Q1. Pourquoi un Random Forest plutôt qu'un réseau de neurones ?</a></li>
+<li><a href="#q2-81-dexactitude-ce-nest-pas-tres-bon">Q2. 81 % d'exactitude, ce n'est pas très bon ?</a></li>
+<li><a href="#q3-expliquez-class_weightbalanced">Q3. Expliquez class_weight="balanced".</a></li>
+<li><a href="#q4-comment-savez-vous-que-vous-detectez-des-camions-et-pas-du-bruit">Q4. Comment savez-vous que vous détectez des camions et pas du bruit ?</a></li>
+<li><a href="#q5-a-quoi-servent-vos-trois-invariances">Q5. À quoi servent vos trois invariances ?</a></li>
+<li><a href="#q6-pourquoi-ne-pas-automatiser-completement-la-validation">Q6. Pourquoi ne pas automatiser complètement la validation ?</a></li>
+<li><a href="#q7-ce-projet-est-tres-different-de-boost-report-quen-avez-vous-retire">Q7. Ce projet est très différent de Boost-Report. Qu'en avez-vous retiré ?</a></li>
+<li><a href="#q8-comment-industrialiseriez-vous-cette-approche-sur-dautres-ouvrages">Q8. Comment industrialiseriez-vous cette approche sur d'autres ouvrages ?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+    </nav>
+    <article>
+<h1 id="pont-gaubourd-traitement-du-signal-et-random-forest">Pont Gaubourd — traitement du signal et Random Forest</h1>
+<p class="meta"><em>Fiche projet 5/5 — dépôt <code>shm-bridge-traffic-ml</code>. Détection de passages de poids lourds sur un pont instrumenté, du signal brut au modèle de classification.</em></p>
+<h2 id="0-vocabulaire-a-connaitre-avant-de-lire">0. Vocabulaire à connaître avant de lire</h2>
+<dl>
+<dt>SHM (Structural Health Monitoring)</dt>
+<dd>Surveillance de l'état de santé d'un ouvrage par instrumentation permanente. Métier historique de Sixense.</dd>
+<dt>Extensomètre / jauge de déformation</dt>
+<dd>Capteur mesurant la <strong>déformation</strong> d'une structure, exprimée en µm/m (micromètre par mètre) — un allongement relatif. Ce n'est pas une mesure de poids, mais de réponse mécanique.</dd>
+<dt>Échantillonnage / fréquence (Hz)</dt>
+<dd>Nombre de mesures par seconde. <strong>50 Hz</strong> ici : cinquante points par seconde et par capteur. Sur une journée, cela représente des millions de points, dont l'immense majorité ne correspond à aucun passage.</dd>
+<dt>Ligne de base (baseline) / dérive</dt>
+<dd>Composante lente du signal, qui s'éloigne du zéro au fil du temps (température, fluage, dérive du capteur). Il faut la retirer pour que les événements soient comparables entre eux.</dd>
+<dt>Fenêtre glissante</dt>
+<dd>Traitement appliqué sur une fenêtre de N points qui se déplace le long du signal. Une <strong>grande</strong> fenêtre (10 000 points ici) estime la tendance lente ; une <strong>petite</strong> (25 points) lisse le bruit.</dd>
+<dt>Lissage / moyenne mobile</dt>
+<dd>Remplacement de chaque point par la moyenne de ses voisins, pour atténuer le bruit haute fréquence. Le compromis : trop de lissage écrase aussi les vrais événements.</dd>
+<dt>SNR (Signal-to-Noise Ratio)</dt>
+<dd>Rapport signal sur bruit. Mesure à quel point l'événement se détache du fond. C'est la <strong>feature la plus importante</strong> du modèle.</dd>
+<dt>Feature</dt>
+<dd>Valeur numérique décrivant un événement, donnée en entrée au modèle. Un modèle n'apprend jamais sur un signal brut : il apprend sur des caractéristiques.</dd>
+<dt>Feature engineering</dt>
+<dd>Le travail de conception de ces caractéristiques. Sur un jeu de données modeste, sa qualité compte <strong>autant que le choix du modèle</strong>.</dd>
+<dt>Invariance</dt>
+<dd>Propriété d'un traitement qui rend le modèle insensible à ce qui ne devrait pas influencer sa décision (la voie empruntée, le sens de la déformation, le tonnage).</dd>
+<dt>Random Forest</dt>
+<dd>Ensemble d'arbres de décision entraînés chacun sur un sous-échantillon aléatoire des données et des features, dont on <strong>agrège les votes</strong>. Le vote de nombreux arbres réduit fortement la variance et donc le surapprentissage.</dd>
+<dt>Surapprentissage (overfitting)</dt>
+<dd>Le modèle apprend le bruit et les particularités de son jeu d'entraînement au lieu de la règle générale. Symptôme : excellent sur l'entraînement, mauvais sur des données nouvelles.</dd>
+<dt>Validation croisée (k-fold)</dt>
+<dd>Découpage du jeu en k parts ; on entraîne k fois sur k-1 parts et on teste sur la restante. La moyenne des k scores ne dépend pas d'un tirage favorable. <strong>Stratifiée</strong> : chaque part conserve la proportion des classes.</dd>
+<dt>Précision / rappel / F1</dt>
+<dd><strong>Précision</strong> = parmi les événements que le modèle valide, quelle proportion est réellement valide (contre les faux positifs). <strong>Rappel</strong> = parmi les vrais passages, quelle proportion le modèle retrouve (contre les faux négatifs). <strong>F1</strong> = moyenne harmonique des deux.</dd>
+<dt>Matrice de confusion</dt>
+<dd>Tableau croisant classe réelle et classe prédite : vrais positifs, faux positifs, vrais négatifs, faux négatifs. Elle montre <strong>où</strong> sont les erreurs, pas seulement combien.</dd>
+<dt>Déséquilibre de classes / <code>class_weight</code></dt>
+<dd>Quand une classe est bien plus fréquente que l'autre, un modèle non corrigé apprend à toujours prédire la majoritaire. <code>class_weight="balanced"</code> pondère l'erreur en faveur de la minoritaire.</dd>
+</dl>
+<hr />
+<h2 id="1-tldr">1. TL;DR</h2>
+<p>Un outil Python <strong>autonome, en local</strong>, sans interface web ni cloud. La chaîne complète va du fichier brut de capteur au rapport client.</p>
+<pre class="mermaid">flowchart TB
+    A["Fichiers .dat horodatés&lt;br/&gt;2 capteurs — 50 Hz"] --&gt; B["Fusion de la journée"]
+    B --&gt; C["Prétraitement&lt;br/&gt;baseline (fenêtre 10 000)&lt;br/&gt;+ lissage (fenêtre 25)"]
+    C --&gt; D["Détection par seuil&lt;br/&gt;6 µm/m + regroupement temporel"]
+    D --&gt; E["Invariances&lt;br/&gt;spatiale · signe · amplitude"]
+    E --&gt; F["Extraction de 18 features"]
+    F --&gt; G["Random Forest&lt;br/&gt;suggestion + confiance"]
+    G --&gt; H["Validation opérateur&lt;br/&gt;GUI Tkinter"]
+    H --&gt; I["Exports&lt;br/&gt;PNG · CSV · Excel"]
+    I -.-&gt;|"réentraînement incrémental"| G
+</pre>
+
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Valeur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Capteurs</td>
+<td>2 extensomètres dynamiques (Nord / Sud), <strong>50 Hz</strong></td>
+</tr>
+<tr>
+<td>Stack</td>
+<td>Python 3.10+ · pandas · NumPy · SciPy · Matplotlib · scikit-learn · Tkinter</td>
+</tr>
+<tr>
+<td>Seuil de détection</td>
+<td><strong>6 µm/m</strong> sur le signal lissé</td>
+</tr>
+<tr>
+<td>Features</td>
+<td><strong>18</strong> — 8 scalaires + 10 de forme</td>
+</tr>
+<tr>
+<td>Modèle</td>
+<td><strong>Random Forest</strong> — 300 arbres, profondeur max 10, <code>class_weight="balanced"</code></td>
+</tr>
+<tr>
+<td>Jeu d'entraînement</td>
+<td><strong>~1 150 événements</strong> labellisés à la main sur 30 jours</td>
+</tr>
+<tr>
+<td>Résultats (5-fold)</td>
+<td>Exactitude <strong>0,814 ± 0,032</strong> · Précision <strong>0,677</strong> · Rappel <strong>0,706</strong> · F1 <strong>0,690</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition jury">
+<p class="admonition-title">La phrase qui cadre le projet</p>
+<p>« Le modèle ne décide pas seul. Il propose, l'opérateur tranche. » Ce n'est pas une limitation temporaire mais une décision de conception : sur des données de terrain où une part des événements reste ambiguë, tout valider automatiquement laisserait passer des erreurs sans contrôle.</p>
+</div>
+<hr />
+<h2 id="2-la-demarche-quatre-etapes-chacune-ouvrant-la-suivante">2. La démarche : quatre étapes, chacune ouvrant la suivante</h2>
+<p>Contrairement à Boost-Report, ce projet n'a <strong>pas suivi de cycle de sprints</strong>. C'est de la R&amp;D, menée au rythme des besoins et des disponibilités des ingénieurs pour valider les directions.</p>
+<table>
+<thead>
+<tr>
+<th>Étape</th>
+<th>Ce qui a été fait</th>
+<th>Ce que ça a débloqué</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Appropriation</strong></td>
+<td>Comprendre la physique de la déformation d'un pont sous charge, l'allure du signal, la signature d'un passage au milieu du bruit</td>
+<td>Sans ça, impossible de concevoir des features pertinentes. Cette phase a beaucoup reposé sur les échanges avec le <strong>référent métier</strong>, qui apportait la lecture physique</td>
+</tr>
+<tr>
+<td><strong>2. Script d'automatisation</strong></td>
+<td>Concaténer les fichiers d'une journée, nettoyer le signal, détecter par seuil, sortir des résultats exploitables</td>
+<td><strong>Pas encore d'IA</strong> — juste un traitement qui fait gagner du temps sur une tâche manuelle. L'outil est déjà utile</td>
+</tr>
+<tr>
+<td><strong>3. Interface de validation</strong></td>
+<td>L'opérateur passe en revue chaque événement détecté et le valide ou le rejette</td>
+<td>Double bénéfice : l'outil devient directement utilisable <strong>et</strong> il constitue le jeu de données labellisé, indispensable pour la suite</td>
+</tr>
+<tr>
+<td><strong>4. Modèle + réentraînement</strong></td>
+<td>Random Forest sur ~1 150 événements triés à la main, puis chaque validation devient un nouvel exemple</td>
+<td>Le modèle propose une pré-validation et <strong>continue de progresser</strong> après son entraînement initial</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition jury">
+<p class="admonition-title">L'enchaînement le plus intelligent du projet</p>
+<p>L'étape 3 est ce qui rend l'étape 4 possible. Construire l'interface de validation <strong>avant</strong> d'avoir un modèle a produit le jeu de données labellisé — et le labelling est le goulot d'étranglement de tout projet supervisé. Ce n'est pas un détour, c'est le chemin le plus court : livrer un outil utile qui génère au passage la donnée dont on aura besoin.</p>
+</div>
+<hr />
+<h2 id="3-le-traitement-du-signal">3. Le traitement du signal</h2>
+<h3 id="31-le-probleme">3.1 Le problème</h3>
+<p>Deux capteurs à 50 Hz sur une journée : plusieurs millions de points, dont l'immense majorité ne correspond à <strong>aucun</strong> passage. Tout l'enjeu est d'isoler les quelques instants qui comptent.</p>
+<p>Et ce sont des <strong>données de terrain</strong> : du bruit de mesure et une fiabilité variable des capteurs. Composer avec cette réalité a représenté une part importante du travail.</p>
+<h3 id="32-le-pretraitement-deux-corrections-successives">3.2 Le prétraitement — deux corrections successives</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># config.py</span>
+<span class="n">FENETRE_BASELINE</span> <span class="o">=</span> <span class="mi">10000</span>   <span class="c1"># fenêtre glissante pour la baseline [samples]</span>
+<span class="n">FENETRE_LISSAGE</span>  <span class="o">=</span> <span class="mi">25</span>      <span class="c1"># fenêtre de lissage [samples]</span>
+<span class="n">SEUIL_DETECTION</span>  <span class="o">=</span> <span class="mf">6.0</span>     <span class="c1"># seuil de détection [µm/m]</span>
+</code></pre></div>
+
+<ol>
+<li><strong>Retrait de la ligne de base</strong> — une baseline estimée sur une <strong>large</strong> fenêtre glissante (10 000 points ≈ 200 secondes) est soustraite. Elle capture la dérive lente (température, fluage) sans absorber les événements, qui durent quelques secondes.</li>
+<li><strong>Lissage</strong> — une moyenne glissante sur une <strong>petite</strong> fenêtre (25 points = 0,5 s) atténue le bruit haute fréquence, pour éviter que des micro-variations soient prises pour des événements.</li>
+</ol>
+<div class="admonition jury">
+<p class="admonition-title">Pourquoi ces deux tailles de fenêtre ?</p>
+<p>C'est le point technique le plus fin du prétraitement, et il repose sur une <strong>séparation d'échelles de temps</strong>. La dérive est lente (minutes), l'événement est court (secondes), le bruit est rapide (fractions de seconde). Une fenêtre de baseline <strong>trop courte</strong> absorberait les événements eux-mêmes — on les soustrairait du signal. Une fenêtre de lissage <strong>trop longue</strong> écraserait la forme du pic, qui est justement ce que le modèle apprend. Les valeurs sont dans <code>config.py</code> et ajustables, mais leur ordre de grandeur découle directement de la physique du phénomène.</p>
+</div>
+<h3 id="33-la-detection">3.3 La détection</h3>
+<p>Quand l'amplitude du signal lissé dépasse <strong>6 µm/m</strong> sur l'un des deux capteurs, on est en présence d'un événement. Comme un même passage génère une <strong>série</strong> de points au-dessus du seuil, les points proches dans le temps sont <strong>regroupés</strong> pour ne compter qu'un seul événement.</p>
+<p>Le seuil est <strong>volontairement élevé</strong> : il ne cherche pas à tout attraper, mais à ne retenir que les déformations importantes.</p>
+<h3 id="34-les-premieres-informations-extraites">3.4 Les premières informations extraites</h3>
+<ul>
+<li><strong>Vitesse du véhicule</strong> — estimée à partir de la durée de la déformation et de la <strong>longueur d'influence</strong> de l'ouvrage (<code>LONGUEUR_INFLUENCE = 18.72 m</code>).</li>
+<li><strong>Sens de circulation</strong> — déduit du rapport des amplitudes entre les deux capteurs.</li>
+<li><strong>Amplitudes, extrema, forme du signal.</strong></li>
+</ul>
+<p>Chaque événement est ensuite <strong>tracé</strong> : les deux courbes de capteurs superposées, avec le pic et les extrema repérés. C'est ce graphique que l'opérateur regarde pour trancher.</p>
+<h3 id="35-la-validation-physique">3.5 La validation physique</h3>
+<p>Un <strong>essai contrôlé</strong>, réalisé lors d'une fermeture ponctuelle du pont, a permis de vérifier le lien entre passage réel et signature dans le signal. La déformation mesurée correspondait à ce qu'on attendait.</p>
+<div class="admonition jury">
+<p class="admonition-title">L'argument le plus solide du projet</p>
+<p>C'est une validation <strong>par la physique</strong>, pas seulement par la statistique. Un modèle peut afficher de bons scores en apprenant un artefact du jeu de données. L'essai contrôlé établit que la chaîne de détection mesure bien le phénomène qu'elle prétend mesurer. C'est la question qu'un jury technique posera : « comment savez-vous que vous détectez des camions et pas du bruit corrélé ? »</p>
+</div>
+<hr />
+<h2 id="4-les-18-features">4. Les 18 features</h2>
+<h3 id="41-la-composition">4.1 La composition</h3>
+<table>
+<thead>
+<tr>
+<th>Famille</th>
+<th>Features</th>
+<th>Ce qu'elles décrivent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Scalaires</strong> (8)</td>
+<td><code>Vitesse_kmh</code>, <code>Max_P</code>, <code>Max_Sec</code>, <code>Min_P</code>, <code>Min_Sec</code>, <code>Ratio_P</code>, <code>Ratio_Sec</code>, <code>Ratio_PrimSec</code></td>
+<td>Intensité et rapports entre capteurs</td>
+</tr>
+<tr>
+<td><strong>Forme</strong> (10)</td>
+<td><code>n_samples</code>, <code>symetrie_P/Sec</code>, <code>snr_P/Sec</code>, <code>n_pics_P</code>, <code>pente_montee_P/Sec</code>, <code>pente_descente_P/Sec</code></td>
+<td>Allure de la signature : symétrie autour du pic, rapport signal/bruit, pics secondaires, pentes</td>
+</tr>
+</tbody>
+</table>
+<p>L'idée : <strong>traduire en chiffres l'allure générale de la déformation</strong>.</p>
+<h3 id="42-le-resultat-le-plus-interessant">4.2 Le résultat le plus intéressant</h3>
+<p>Les features qui pèsent le plus dans les décisions du modèle ne sont <strong>pas les amplitudes brutes</strong>, mais le <strong>rapport signal sur bruit du capteur principal</strong> et la <strong>forme de la descente du signal</strong>.</p>
+<p>Autrement dit : ce qui distingue un vrai passage, c'est moins son <strong>intensité</strong> que la <strong>netteté et l'allure de sa signature</strong>.</p>
+<div class="admonition jury">
+<p class="admonition-title">Pourquoi c'est cohérent avec la physique</p>
+<p>Un poids lourd laisse une empreinte franche et régulière — il charge et décharge l'ouvrage de façon continue. Un artefact (choc, perturbation électrique, dérive de capteur) a une allure plus confuse. Le fait que le modèle ait convergé <strong>tout seul</strong> vers les descripteurs de forme, alors qu'on pourrait naïvement penser que le tonnage — donc l'amplitude — est le critère, est un bon signe : il a appris le phénomène et pas une corrélation fortuite.</p>
+</div>
+<hr />
+<h2 id="5-les-trois-invariances">5. Les trois invariances</h2>
+<p>C'est le point sur lequel j'ai le plus travaillé : <strong>rendre le modèle indépendant de tout ce qui ne devrait pas influencer sa décision</strong>. Un passage reste un passage, quelle que soit la voie, le sens ou le tonnage.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Invariance</th>
+<th>Transformation</th>
+<th>Ce qu'elle neutralise</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Spatiale</strong></td>
+<td>Le capteur ayant enregistré le pic le plus fort devient « <strong>principal</strong> », l'autre « <strong>secondaire</strong> »</td>
+<td>La voie de circulation. Le modèle voit toujours un principal et un secondaire, peu importe le côté d'où vient le véhicule</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>De signe</strong></td>
+<td>Si le pic absolu est négatif, le signal est multiplié par −1</td>
+<td>Le sens de la déformation (compression ou traction)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>D'amplitude</strong></td>
+<td>Le signal est divisé par la valeur de son pic → maximum ramené à +1,0</td>
+<td>Le <strong>tonnage</strong>. Le modèle apprend la forme, pas l'intensité absolue</td>
+</tr>
+</tbody>
+</table>
+<p>Le code, court et lisible :</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># src/utils.py</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">normaliser_signal</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalisation invariante au signe et à l&#39;amplitude.</span>
+
+<span class="sd">    1. Invariance de signe - si le pic absolu est négatif, le signal est</span>
+<span class="sd">       multiplié par -1 pour que le pic principal pointe toujours vers le</span>
+<span class="sd">       haut (compression ou traction indifféremment).</span>
+<span class="sd">    2. Normalisation d&#39;amplitude - la courbe est divisée par la valeur du</span>
+<span class="sd">       pic, de sorte que le maximum vaut toujours +1.0 quel que soit le</span>
+<span class="sd">       tonnage du véhicule.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">idx_pic</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">s</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="n">idx_pic</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="o">-</span><span class="n">s</span>
+    <span class="n">peak</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">idx_pic</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">peak</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span> <span class="o">/</span> <span class="n">peak</span>
+    <span class="k">return</span> <span class="n">s</span>
+</code></pre></div>
+
+<p>Deux détails de robustesse à savoir défendre : <code>np.argmax(np.abs(s))</code> cherche le pic <strong>en valeur absolue</strong> (le pic peut être négatif), et le garde <code>if abs(peak) &gt; 0</code> évite une division par zéro sur un signal nul — le tableau est alors rendu inchangé.</p>
+<div class="admonition jury">
+<p class="admonition-title">Pourquoi les invariances comptent autant sur un petit jeu de données</p>
+<p>Avec ~1 150 exemples seulement, chaque dimension de variation que le modèle doit apprendre coûte des exemples. Sans invariance d'amplitude, il faudrait des exemples de camions de tous les tonnages ; sans invariance spatiale, des exemples dans les deux sens. Les invariances <strong>suppriment ces dimensions avant l'apprentissage</strong> : le modèle concentre ses ~1 150 exemples sur ce qui compte vraiment, la forme. C'est du feature engineering au sens noble — utiliser la connaissance du domaine pour réduire ce que le modèle doit découvrir seul.</p>
+</div>
+<hr />
+<h2 id="6-le-modele">6. Le modèle</h2>
+<h3 id="61-pourquoi-un-random-forest">6.1 Pourquoi un Random Forest</h3>
+<table>
+<thead>
+<tr>
+<th>Critère</th>
+<th>Random Forest</th>
+<th>Alternative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Données <strong>tabulaires</strong></td>
+<td>Excellent — c'est son terrain</td>
+<td>Un réseau de neurones n'apporte rien ici</td>
+</tr>
+<tr>
+<td>Volume d'exemples modeste</td>
+<td>Fonctionne bien sur ~1 150</td>
+<td>Le deep learning en demanderait bien plus</td>
+</tr>
+<tr>
+<td>Surapprentissage</td>
+<td>Peu sensible grâce au <strong>vote de nombreux arbres</strong></td>
+<td>Un arbre seul surapprend massivement</td>
+</tr>
+<tr>
+<td><strong>Interprétabilité</strong></td>
+<td>Fournit le classement d'importance des features</td>
+<td>Un réseau est une boîte noire</td>
+</tr>
+<tr>
+<td>Coût de calcul</td>
+<td>Faible, tourne en local</td>
+<td>GPU souhaitable</td>
+</tr>
+</tbody>
+</table>
+<p>Pour un projet exploratoire avec un jeu de données de taille modeste, c'était le bon compromis entre performance et simplicité.</p>
+<h3 id="62-les-hyperparametres">6.2 Les hyperparamètres</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># config.py</span>
+<span class="n">RF_PARAMS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">n_estimators</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>           <span class="c1"># nombre d&#39;arbres — le vote réduit la variance</span>
+    <span class="n">max_depth</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>               <span class="c1"># profondeur max — limite le surapprentissage</span>
+    <span class="n">min_samples_leaf</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>         <span class="c1"># min d&#39;exemples par feuille — idem</span>
+    <span class="n">max_features</span><span class="o">=</span><span class="s2">&quot;sqrt&quot;</span><span class="p">,</span>        <span class="c1"># décorrèle les arbres entre eux</span>
+    <span class="n">class_weight</span><span class="o">=</span><span class="s2">&quot;balanced&quot;</span><span class="p">,</span>    <span class="c1"># ← LE réglage important</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>            <span class="c1"># reproductibilité</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>                  <span class="c1"># parallélisation</span>
+<span class="p">)</span>
+<span class="n">OPTIMISER_HYPERPARAMS</span> <span class="o">=</span> <span class="kc">False</span>   <span class="c1"># True = GridSearchCV (~5 min)</span>
+</code></pre></div>
+
+<h3 id="63-class_weightbalanced-le-reglage-a-savoir-defendre">6.3 <code>class_weight="balanced"</code> — le réglage à savoir défendre</h3>
+<p>Les événements <strong>rejetés sont environ deux fois plus nombreux</strong> que les validés.</p>
+<p>Sans correction, le modèle aurait tendance à <strong>tout rejeter</strong> : il obtiendrait environ 67 % d'exactitude en ne prédisant jamais « valide », ce qui donnerait un bon score en apparence et le rendrait <strong>totalement inutile</strong>.</p>
+<p><code>class_weight="balanced"</code> donne plus de poids à la classe minoritaire pendant l'entraînement, pour qu'il apprenne réellement à reconnaître un passage plutôt qu'à jouer la sécurité.</p>
+<div class="admonition piege">
+<p class="admonition-title">Le piège de l'exactitude sur données déséquilibrées</p>
+<p>C'est <strong>la</strong> question de jury sur le déséquilibre de classes. Un modèle qui prédit toujours la classe majoritaire affiche une exactitude élevée et n'a rien appris. C'est pour ça qu'on regarde <strong>précision, rappel et F1</strong> — et la matrice de confusion, qui montre où sont les erreurs. Sur ce projet, mon exactitude de 0,814 doit se lire avec la précision de 0,677 et le rappel de 0,706 : ce sont ces deux chiffres qui disent que le modèle traite réellement la classe minoritaire.</p>
+</div>
+<hr />
+<h2 id="7-les-resultats-et-leur-lecture-honnete">7. Les résultats et leur lecture honnête</h2>
+<h3 id="71-validation-croisee-stratifiee-5-fold">7.1 Validation croisée stratifiée 5-fold</h3>
+<table>
+<thead>
+<tr>
+<th>Métrique</th>
+<th>Score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exactitude</td>
+<td><strong>0,814 ± 0,032</strong></td>
+</tr>
+<tr>
+<td>Précision</td>
+<td>0,677 ± 0,055</td>
+</tr>
+<tr>
+<td>Rappel</td>
+<td>0,706 ± 0,069</td>
+</tr>
+<tr>
+<td>F1-score</td>
+<td>0,690 ± 0,057</td>
+</tr>
+</tbody>
+</table>
+<p>Pourquoi la validation croisée plutôt qu'un simple découpage train/test : elle entraîne et teste sur <strong>plusieurs découpages différents</strong>, ce qui donne une mesure qui ne dépend pas d'un tirage favorable. L'écart-type (± 0,032) est aussi une information : il dit que le résultat est <strong>stable</strong> d'un découpage à l'autre.</p>
+<h3 id="72-la-precision-honnete-sur-la-matrice-de-confusion">7.2 La précision honnête sur la matrice de confusion</h3>
+<p>La matrice de confusion présentée dans le dossier est calculée <strong>sur l'ensemble d'entraînement</strong>, après réentraînement final du modèle sur tout le jeu. Le modèle a déjà vu ces données, donc <strong>ses chiffres sont plus élevés</strong> que ceux de la validation croisée. Elle sert à <strong>visualiser la répartition des erreurs</strong>, pas à mesurer la performance.</p>
+<div class="admonition jury">
+<p class="admonition-title">Le point d'honnêteté méthodologique à mettre en avant</p>
+<p>Présenter une matrice de confusion sur l'ensemble d'entraînement <strong>sans le dire</strong> serait une faute méthodologique — ce sont des chiffres flattés. Le dire explicitement, et donner les scores de validation croisée comme mesure de référence, montre qu'on comprend la différence. C'est le genre de nuance qu'un jury technique cherche.</p>
+</div>
+<h3 id="73-pourquoi-ces-scores-ne-sont-pas-ceux-dun-modele-parfait">7.3 Pourquoi ces scores ne sont pas ceux d'un modèle parfait</h3>
+<p>Trois raisons, à donner ensemble :</p>
+<ul>
+<li>Les données sont <strong>réelles</strong>, avec du bruit de capteur et une fiabilité variable.</li>
+<li>Une partie des événements est <strong>ambiguë par nature</strong>.</li>
+<li>Le référent métier a <strong>confirmé qu'un opérateur hésiterait de la même façon</strong> sur ces cas limites.</li>
+</ul>
+<p>Le dernier point est le plus important : <strong>la limite n'est pas celle du modèle, elle est dans la donnée</strong>. Un modèle à 0,95 sur ces données serait suspect — il aurait probablement appris un artefact.</p>
+<p>L'essentiel des erreurs se concentre sur ces cas ambigus : quelques faux positifs (des événements rejetés que le modèle propose de valider) et quelques faux négatifs.</p>
+<hr />
+<h2 id="8-loutil-en-pratique">8. L'outil en pratique</h2>
+<h3 id="81-le-deroulement-dune-journee">8.1 Le déroulement d'une journée</h3>
+<ol>
+<li><strong>Fenêtre de lancement</strong> : l'opérateur saisit la date à traiter et choisit le mode.</li>
+<li>Le script enchaîne fusion des fichiers → prétraitement → détection → extraction des features.</li>
+<li>Chaque événement est affiché sous forme de graphique — les deux courbes et les points caractéristiques — avec la <strong>suggestion du modèle</strong> : un bandeau « VALIDE » ou « REJET » avec le <strong>pourcentage de confiance</strong>, vert pour un passage, rouge pour un rejet.</li>
+<li>L'opérateur valide ou rejette (raccourcis clavier <code>O</code> / <code>N</code>).</li>
+</ol>
+<h3 id="82-le-mode-automatique">8.2 Le mode automatique</h3>
+<p>Au-dessus d'un <strong>seuil de confiance paramétrable, fixé par défaut à 80 %</strong> (<code>SEUIL_AUTO = 0.80</code>), le modèle valide ou rejette les événements les plus sûrs et ne soumet à l'opérateur que les cas incertains.</p>
+<p><strong>Ce mode n'est pas utilisé en production.</strong> Il sert de test : une façon de mesurer si le modèle devient assez fiable pour prendre en charge une partie des décisions sans supervision. Tant que ce n'est pas le cas, l'opérateur garde la main sur l'ensemble.</p>
+<h3 id="83-les-livrables">8.3 Les livrables</h3>
+<table>
+<thead>
+<tr>
+<th>Sortie</th>
+<th>Contenu</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Excel</strong></td>
+<td>Récapitulatif de tous les événements de la journée avec leurs caractéristiques</td>
+<td>Rapport client</td>
+</tr>
+<tr>
+<td><strong>PNG</strong></td>
+<td>Graphiques classés en deux dossiers, <code>VALIDES</code> et <code>REJETES</code></td>
+<td>Retrouver chaque passage</td>
+</tr>
+<tr>
+<td><strong>CSV</strong></td>
+<td>Données brutes de chaque événement</td>
+<td><strong>Alimente les réentraînements</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Ces sorties ont servi à produire le <strong>rapport remis au client</strong>, ce qui était l'un des deux objectifs du projet.</p>
+<h3 id="84-le-reentrainement-incremental">8.4 Le réentraînement incrémental</h3>
+<p>Chaque journée traitée enrichit le jeu de données des décisions de l'opérateur, et le modèle est réentraîné. Il s'affine au fil de l'usage, et sa performance progresse à mesure que le volume d'exemples validés augmente.</p>
+<div class="admonition attention">
+<p class="admonition-title">La limite de la boucle de rétroaction</p>
+<p>C'est le risque à savoir nommer : si le modèle influence l'opérateur — qui suit la suggestion sans la remettre en question — le réentraînement <strong>renforce les erreurs du modèle</strong> au lieu de les corriger. C'est un biais d'automatisation classique. La protection actuelle est que l'opérateur garde la main sur <strong>tous</strong> les événements, y compris ceux où le modèle est confiant, ce qui laisse la possibilité du désaccord. Basculer en mode automatique retirerait cette protection sur les cas à haute confiance — une raison de plus de ne pas l'activer tant que la fiabilité n'est pas établie.</p>
+</div>
+<hr />
+<h2 id="9-perspectives">9. Perspectives</h2>
+<p>Évolutions identifiées, avec leur justification :</p>
+<table>
+<thead>
+<tr>
+<th>Piste</th>
+<th>Apport attendu</th>
+<th>Réserve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CNN 1D</strong></td>
+<td>Apprendre directement sur la courbe brute, sans feature engineering manuel</td>
+<td>Plus lourd, plus gourmand en données et en calcul. <strong>Le gain réel reste à démontrer</strong> face à un Random Forest déjà satisfaisant</td>
+</tr>
+<tr>
+<td><strong>LSTM / CNN temporel</strong></td>
+<td>Modéliser la dynamique temporelle, mieux discriminer les véhicules multi-essieux</td>
+<td>Même réserve</td>
+</tr>
+<tr>
+<td><strong>Clustering non supervisé</strong> (DBSCAN, k-means)</td>
+<td>Grouper les signatures par type de véhicule <strong>sans labels</strong></td>
+<td>Exploratoire</td>
+</tr>
+<tr>
+<td><strong>Transfer learning multi-ponts</strong></td>
+<td>Pré-entraîner sur Gaubourd, affiner sur un nouvel ouvrage avec peu de labels</td>
+<td>C'est <strong>la</strong> piste alignée sur l'objectif d'industrialisation</td>
+</tr>
+<tr>
+<td><strong>Traitement en flux temps réel</strong></td>
+<td>Alertes au-dessus d'un seuil de charge</td>
+<td>Change la nature de l'outil</td>
+</tr>
+<tr>
+<td><strong>Intégration WIM</strong> (pesage en marche)</td>
+<td>Estimer les charges à l'essieu, produire des rapports de conformité réglementaire</td>
+<td>Nécessite un autre équipement</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition jury">
+<p class="admonition-title">La réponse à donner sur le deep learning</p>
+<p>« Pour un outil qui doit rester simple à faire tourner et à reprendre, cet ajout de complexité n'est peut-être pas justifié. » C'est la bonne posture : identifier la piste, comprendre ce qu'elle apporterait, et savoir dire qu'on ne l'a pas prise parce que le gain n'est pas démontré face à son coût. Choisir la complexité minimale qui résout le problème est une décision d'ingénieur, pas un manque d'ambition.</p>
+</div>
+<hr />
+<h2 id="10-questions-probables-du-jury">10. Questions probables du jury</h2>
+<h3 id="q1-pourquoi-un-random-forest-plutot-quun-reseau-de-neurones">Q1. Pourquoi un Random Forest plutôt qu'un réseau de neurones ?</h3>
+<p>Quatre raisons qui allaient toutes dans le même sens. Il fonctionne bien sur des données <strong>tabulaires</strong>, ce que sont mes 18 features. Il ne demande pas un volume d'exemples énorme, alors que je n'en ai que ~1 150. Il est peu sensible au surapprentissage grâce au vote de nombreux arbres. Et surtout il est <strong>interprétable</strong> : c'est lui qui m'a donné le classement d'importance des features, et donc l'information la plus intéressante du projet — que la forme prime sur l'amplitude. Un réseau aurait été une boîte noire sur un projet où je devais expliquer les résultats à un référent métier qui les valide. Sur un jeu de cette taille, il aurait de toute façon surappris.</p>
+<h3 id="q2-81-dexactitude-ce-nest-pas-tres-bon">Q2. 81 % d'exactitude, ce n'est pas très bon ?</h3>
+<p>Il faut lire ce chiffre avec le contexte. Les données sont réelles, avec du bruit de capteur et une fiabilité variable, et une partie des événements est <strong>ambiguë par nature</strong>. Le point décisif est que le référent métier a confirmé qu'<strong>un opérateur humain hésiterait de la même façon</strong> sur ces cas limites — la limite n'est pas celle du modèle, elle est dans la donnée. Un modèle à 95 % sur ce jeu me rendrait méfiant : il aurait probablement appris un artefact. Et surtout, ces scores viennent d'une <strong>validation croisée 5-fold</strong> avec un écart-type faible (± 0,032), pas d'un découpage favorable. L'objectif était d'assister l'opérateur, pas de le remplacer, et pour ça 81 % fait gagner un temps réel.</p>
+<h3 id="q3-expliquez-class_weightbalanced">Q3. Expliquez <code>class_weight="balanced"</code>.</h3>
+<p>Mes classes sont déséquilibrées : les événements rejetés sont environ deux fois plus nombreux que les validés. Sans correction, le modèle aurait un moyen très simple d'obtenir un bon score — tout rejeter. Il afficherait environ 67 % d'exactitude en n'ayant strictement rien appris, et serait inutile puisqu'il ne détecterait aucun passage. <code>class_weight="balanced"</code> pondère l'erreur inversement à la fréquence de chaque classe pendant l'entraînement, ce qui rend une erreur sur un « valide » plus coûteuse. C'est aussi pour ça que je regarde la précision, le rappel et le F1 plutôt que la seule exactitude : sur des classes déséquilibrées, l'exactitude est une métrique trompeuse.</p>
+<h3 id="q4-comment-savez-vous-que-vous-detectez-des-camions-et-pas-du-bruit">Q4. Comment savez-vous que vous détectez des camions et pas du bruit ?</h3>
+<p>Trois éléments qui se renforcent. D'abord un <strong>essai contrôlé</strong> lors d'une fermeture ponctuelle du pont : la déformation mesurée correspondait à ce qu'on attendait pour un passage réel, ce qui valide la chaîne de détection par la physique et pas seulement par la statistique. Ensuite, les labels viennent d'un <strong>ingénieur calcul</strong> qui sait lire une signature de déformation — la qualité d'un modèle supervisé dépend directement de la qualité de ses labels. Enfin, le classement d'importance des features est cohérent avec la physique : le modèle s'appuie sur le rapport signal/bruit et la forme de la descente, ce qu'on attend d'un chargement mécanique franc, et pas sur des grandeurs sans lien avec le phénomène.</p>
+<h3 id="q5-a-quoi-servent-vos-trois-invariances">Q5. À quoi servent vos trois invariances ?</h3>
+<p>À rendre le modèle indépendant de ce qui ne devrait pas influencer sa décision. L'invariance <strong>spatiale</strong> remappe les capteurs Nord/Sud en principal/secondaire selon lequel a le pic le plus fort, ce qui rend le modèle aveugle à la voie de circulation. L'invariance de <strong>signe</strong> retourne le signal si le pic est négatif, ce qui le rend indifférent au sens de la déformation. La <strong>normalisation d'amplitude</strong> divise par la valeur du pic, ce qui l'empêche d'apprendre sur le tonnage. L'enjeu est directement lié à la taille du jeu : chaque dimension de variation que le modèle doit apprendre coûte des exemples, et je n'en ai que ~1 150. Les invariances suppriment ces dimensions avant l'apprentissage, pour que tous les exemples servent à apprendre ce qui compte — la forme de la signature.</p>
+<h3 id="q6-pourquoi-ne-pas-automatiser-completement-la-validation">Q6. Pourquoi ne pas automatiser complètement la validation ?</h3>
+<p>Le mode automatique <strong>existe</strong> — au-dessus d'un seuil de confiance paramétrable, fixé par défaut à 80 % — mais il n'est pas utilisé en production. Il sert de test, pour mesurer si le modèle devient assez fiable pour prendre en charge une partie des décisions. Sur des données de terrain où une part des événements reste ambiguë, tout valider automatiquement laisserait passer des erreurs sans contrôle, et ces erreurs alimenteraient ensuite le réentraînement. C'est le risque de la boucle de rétroaction : si le modèle décide seul et se réentraîne sur ses propres décisions, il renforce ses erreurs. Tant que l'opérateur voit tous les événements, y compris ceux à haute confiance, le désaccord reste possible.</p>
+<h3 id="q7-ce-projet-est-tres-different-de-boost-report-quen-avez-vous-retire">Q7. Ce projet est très différent de Boost-Report. Qu'en avez-vous retiré ?</h3>
+<p>Une autre façon de concevoir une application : autour de la <strong>donnée et de l'aide à la décision</strong>, pas autour d'un parcours utilisateur. Il n'y a ni interface web ni déploiement cloud — un outil Python autonome en local. Ce que ça m'a appris, c'est qu'un modèle ne vaut que par la donnée qui l'alimente : la phase d'appropriation avec le référent métier, avant d'écrire une ligne de code, a été déterminante pour concevoir des features pertinentes. Et que construire l'outil de labellisation <strong>avant</strong> le modèle n'était pas un détour mais le chemin le plus court, puisqu'il a rendu l'outil immédiatement utile tout en produisant le jeu de données.</p>
+<h3 id="q8-comment-industrialiseriez-vous-cette-approche-sur-dautres-ouvrages">Q8. Comment industrialiseriez-vous cette approche sur d'autres ouvrages ?</h3>
+<p>C'était le second objectif du projet — servir de terrain d'essai à une approche transposable. Le monitoring d'ouvrages est un métier de Sixense et beaucoup de missions reposent sur le même principe : des capteurs qui enregistrent en continu, des données à analyser manuellement. La structure est déjà prête pour ça : tous les paramètres physiques et de modèle sont <strong>centralisés dans <code>config.py</code></strong> — seuil, longueur d'influence, fenêtres, hyperparamètres — donc adapter à un autre ouvrage relève de la configuration, pas de la réécriture. Ce qui ne se transpose pas directement, c'est le modèle lui-même : chaque ouvrage a sa propre réponse mécanique. La piste que j'identifie est le <strong>transfer learning</strong> — pré-entraîner sur Gaubourd et affiner sur un nouvel ouvrage avec peu d'exemples labellisés, plutôt que de repartir de zéro à chaque mission.</p>
+    </article>
+  </main>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+  </script>
+</body>
+</html>
