@@ -157,17 +157,18 @@
   <!-- 3. SCHÉMA -->
   <section class="slide">
     <div class="kicker">2 · Flux et cycle de vie</div>
-    <h2>Le parcours d'une donnée</h2>
+    <h2 style="margin-bottom:14px">Le parcours d'une donnée</h2>
+    <p style="font-size:22px;color:var(--muted);margin-bottom:34px">Données suivies : consentement, vérification d'âge, paiement, statut du contenu</p>
     <div class="flow">
       <div class="step"><div class="t">Collecte</div><div class="b"><span>Upload + consentement</span><span class="m">créateur</span><br><span>Vérification d'âge</span><span class="m">prestataire externe</span><br><span>Paiement</span><span class="m">prestataire externe</span></div></div>
       <div class="step"><div class="t">Traitement</div><div class="b"><span>Rattachement au compte</span><br><span>Modération</span><span class="m">+ score de risque</span></div></div>
       <div class="step"><div class="t">Stockage</div><div class="b"><span>Payments · CA</span><span>Compliance · US</span><span>Platform Ops · DE</span><span>Trust &amp; Safety · FR</span><br><span class="m">un silo par pays</span></div></div>
       <div class="step"><div class="t">Usages</div><div class="b"><span>Diffusion</span><span>Accès compte</span><span>Facturation</span><span>Recours</span><br><span class="m">autorités, PSP (externes)</span></div></div>
-      <div class="step"><div class="t">Fin de vie</div><div class="b"><span>Conservation de 30 j à 3 650 j</span><br><span>Suppression</span><span class="m">non tracée</span></div></div>
+      <div class="step"><div class="t">Fin de vie</div><div class="b"><span>Conservation de 30 j à 3 650 j</span><br><span>Pas d'archivage distinct</span><br><span>Suppression</span><span class="m">non tracée</span></div></div>
     </div>
     <div class="callouts">
-      <div class="callout"><span class="num">1</span><span><b>La donnée suit le pays, pas sa nature.</b> Payments se retrouve à détenir des preuves de consentement.</span></div>
-      <div class="callout"><span class="num">2</span><span><b>Les statuts se contredisent.</b> R019 : consentement retiré, contenu toujours en ligne. R013 : âge échoué, compte actif.</span></div>
+      <div class="callout"><span class="num">1</span><span><b>Accès excessif.</b> La donnée suit le pays, pas sa nature : Payments accède aux preuves de consentement. R013 : âge échoué, compte actif.</span></div>
+      <div class="callout"><span class="num">2</span><span><b>Perte de qualité.</b> R019 : consentement retiré, contenu toujours en ligne.</span></div>
     </div>
   </section>
 
