@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aylo – Présentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#111;--muted:#777;--line:#e5e5e5;--accent:#ff7a00;--ok:#16a34a}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#fff;overflow:hidden}
+  body{font-family:Inter,system-ui,Arial,sans-serif;color:var(--ink)}
+  .stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center;background:#fff}
+  .slide{position:absolute;inset:0;padding:110px 140px;opacity:0;pointer-events:none;transition:opacity .5s ease}
+  .slide.active{opacity:1;pointer-events:auto}
+  .kicker{font-size:22px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:22px}
+  h1{font-size:88px;font-weight:900;line-height:1.02;letter-spacing:-.03em}
+  h2{font-size:64px;font-weight:800;line-height:1.05;letter-spacing:-.02em;margin-bottom:48px}
+  p.lead{font-size:30px;color:var(--muted);line-height:1.4;max-width:1100px}
+  .footer{position:absolute;left:140px;right:140px;bottom:48px;display:flex;justify-content:space-between;font-size:18px;color:var(--muted)}
+  .progress{position:fixed;left:0;bottom:0;height:4px;background:var(--accent);transition:width .4s ease;z-index:10}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:#f3f3f3;padding:2px 8px;border-radius:6px}
+
+  /* ---------- INTRO ---------- */
+  #intro{padding:0}
+  .gate{position:absolute;left:420px;top:200px;width:760px;height:420px;border:2px solid var(--ink);border-radius:28px;background:#fff;box-shadow:0 30px 80px rgba(0,0,0,.08);opacity:0}
+  .gate .bar{height:54px;border-bottom:2px solid var(--ink);display:flex;align-items:center;gap:10px;padding:0 22px}
+  .gate .bar i{width:14px;height:14px;border-radius:50%;border:2px solid var(--ink);display:block}
+  .gate .q{text-align:center;margin-top:62px}
+  .gate .q small{display:block;font-size:20px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+  .gate .q b{font-size:58px;font-weight:900;letter-spacing:-.02em}
+  .btn{position:absolute;width:200px;height:90px;border:3px solid var(--ink);border-radius:20px;background:#fff;font:900 40px Inter,Arial,sans-serif;display:flex;align-items:center;justify-content:center;opacity:0;z-index:2}
+  #yes{left:560px;top:450px}
+  #no{left:840px;top:450px}
+  #cursor{position:absolute;left:0;top:0;width:56px;height:56px;z-index:5;opacity:0;filter:drop-shadow(0 4px 6px rgba(0,0,0,.2))}
+  #sweat{position:absolute;font-size:30px;font-weight:800;opacity:0;z-index:3;white-space:nowrap}
+  #stamp{position:absolute;left:470px;top:300px;width:660px;text-align:center;border:10px solid var(--ok);color:var(--ok);border-radius:24px;padding:18px 0 22px;font-size:110px;font-weight:900;letter-spacing:.02em;opacity:0;z-index:6;background:rgba(255,255,255,.92)}
+  #stamp small{display:block;font-size:26px;font-weight:700;letter-spacing:0;margin-top:4px}
+  .punch{position:absolute;left:0;right:0;text-align:center;opacity:0}
+  #p1{top:300px;font-size:76px;font-weight:900;letter-spacing:-.03em}
+  #p2{top:420px;font-size:40px;font-weight:500;color:var(--muted)}
+  #p2 b{color:var(--ink)}
+  #hint{position:absolute;right:60px;bottom:40px;font-size:18px;color:var(--muted);opacity:0}
+  #start{position:absolute;left:0;right:0;top:420px;text-align:center;font-size:26px;color:var(--muted);animation:blink 1.6s ease-in-out infinite}
+  @keyframes blink{50%{opacity:.35}}
+
+  /* ---------- CARDS ---------- */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:36px}
+  .card{border:2px solid var(--line);border-radius:24px;padding:40px 38px}
+  .card .tag{font-size:18px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .card h3{font-size:44px;font-weight:800;margin:14px 0 18px;letter-spacing:-.02em}
+  .card p{font-size:24px;line-height:1.45;color:#444}
+  .card.hl{border-color:var(--ink)}
+
+  /* ---------- FLOW ---------- */
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:28px;align-items:start;margin-top:10px}
+  .step{position:relative}
+  .step .t{font-size:17px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+  .step .b{border:2px solid var(--ink);border-radius:16px;padding:16px 18px;font-size:21px;line-height:1.5;min-height:250px}
+  .step .b.ext{border-style:dashed}
+  .step:not(:last-child)::after{content:"→";position:absolute;right:-26px;top:150px;font-size:30px;color:var(--muted)}
+  .step .b span{display:block}
+  .step .b .m{color:var(--muted);font-size:18px}
+  .num{display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;font-size:18px;align-items:center;justify-content:center;margin-right:10px;flex:none}
+  .callouts{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:44px}
+  .callout{display:flex;align-items:flex-start;font-size:25px;line-height:1.45}
+
+  /* ---------- BIG NUMBERS ---------- */
+  .vs{display:flex;align-items:center;gap:80px;margin-top:30px}
+  .vs .big{white-space:nowrap;font-size:180px;font-weight:900;letter-spacing:-.05em;line-height:1}
+  .vs .big.a{color:var(--accent)}
+  .vs .lbl{font-size:28px;color:var(--muted);margin-top:14px;max-width:520px;line-height:1.4}
+  .vs .sep{font-size:60px;font-weight:300;color:var(--muted)}
+
+  /* ---------- RISKS ---------- */
+  .risk{display:grid;grid-template-columns:560px 1fr 70px;align-items:center;gap:28px;margin-bottom:26px;font-size:26px}
+  .risk .ev{display:block;font-size:19px;color:var(--muted);margin-top:4px}
+  .risk .track{height:22px;background:#f2f2f2;border-radius:11px;overflow:hidden}
+  .risk .fill{height:100%;width:0;background:var(--ink);border-radius:11px;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+  .risk.top .fill{background:var(--accent)}
+  .risk .s{font-size:34px;font-weight:900;text-align:right}
+
+  /* ---------- RECOS ---------- */
+  .reco{display:flex;gap:34px;align-items:flex-start;padding:30px 0;border-top:2px solid var(--line)}
+  .reco:last-child{border-bottom:2px solid var(--line)}
+  .reco .n{font-size:64px;font-weight:900;color:var(--accent);line-height:1;width:60px}
+  .reco h3{font-size:38px;font-weight:800;margin-bottom:8px}
+  .reco p{font-size:24px;color:#555;line-height:1.45}
+
+  .center{display:flex;flex-direction:column;justify-content:center;height:100%}
+
+  /* ---------- OUTRO ---------- */
+  #outroText{position:absolute;inset:0;padding:110px 140px;opacity:0}
+  .file{position:absolute;left:400px;top:290px;width:230px;height:290px;border:3px solid var(--ink);border-radius:18px 56px 18px 18px;background:#fff;padding:70px 24px 0;text-align:center;opacity:0;z-index:2}
+  .file .fold{position:absolute;right:-3px;top:-3px;width:56px;height:56px;border-left:3px solid var(--ink);border-bottom:3px solid var(--ink);border-radius:0 56px 0 14px}
+  .file b{display:block;font-size:58px;font-weight:900;letter-spacing:-.02em}
+  .file span{display:block;font-size:19px;color:var(--muted);margin-top:8px;line-height:1.3}
+  .file em{display:block;white-space:nowrap;font-style:normal;font-weight:800;font-size:20px;color:var(--accent);margin-top:18px}
+  .trash{position:absolute;left:1000px;top:300px;width:220px;height:290px;opacity:0}
+  .trash .lid{position:absolute;left:-10px;top:0;width:240px;height:30px;border:3px solid var(--ink);border-radius:10px;background:#fff;transform-origin:8px 28px}
+  .trash .lid::before{content:"";position:absolute;left:85px;top:-20px;width:64px;height:18px;border:3px solid var(--ink);border-bottom:none;border-radius:10px 10px 0 0}
+  .trash .can{position:absolute;left:10px;top:42px;width:200px;height:248px;border:3px solid var(--ink);border-radius:6px 6px 26px 26px;background:#fff;display:flex;justify-content:space-evenly;padding:30px 20px}
+  .trash .can i{display:block;width:6px;border-radius:3px;background:var(--line)}
+  .cur{position:absolute;left:0;top:0;width:56px;height:56px;z-index:5;opacity:0;filter:drop-shadow(0 4px 6px rgba(0,0,0,.2))}
+  #stamp2{position:absolute;left:420px;top:330px;width:760px;text-align:center;border:10px solid var(--ok);color:var(--ok);border-radius:24px;padding:18px 0 22px;font-size:110px;font-weight:900;opacity:0;z-index:6;background:rgba(255,255,255,.94)}
+  #stamp2 small{display:block;font-size:26px;font-weight:700;margin-top:4px}
+  #non2{left:1250px;top:770px;opacity:0}
+  #bubble{position:absolute;left:880px;top:660px;padding:16px 24px;border:3px solid var(--ink);border-radius:22px;background:#fff;font-size:26px;font-weight:700;opacity:0;z-index:3;white-space:nowrap}
+  #bubble::after{content:"";position:absolute;right:120px;bottom:-16px;width:26px;height:26px;background:#fff;border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:rotate(45deg)}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <!-- 0. INTRO ANIMÉE -->
+  <section class="slide active" id="intro">
+    <div class="gate" id="gate">
+      <div class="bar"><i></i><i></i><i></i></div>
+      <div class="q"><small>Contrôle d'âge</small><b>Avez-vous 18 ans ?</b></div>
+    </div>
+    <div class="btn" id="yes">OUI</div>
+    <div class="btn" id="no">NON</div>
+    <div id="sweat">hé ho 😰</div>
+    <svg id="cursor" viewBox="0 0 24 24"><path d="M4 2 L4 20 L9 15 L12.5 22 L15.5 20.6 L12 13.8 L19 13.8 Z" fill="#111" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    <div id="stamp">MAJEUR ✓<small>Méthode de vérification : « on vous croit »</small></div>
+    <div class="punch" id="p1">La vérification d'âge, version 2010.</div>
+    <div class="punch" id="p2">Aujourd'hui, c'est <b>une donnée</b>. Et une donnée, <b>ça se gouverne</b>.</div>
+    <div id="hint">→ pour continuer · R pour rejouer</div>
+    <div id="start">Appuyez sur Espace pour commencer</div>
+    <audio id="sfx" src="intro.mp3" preload="auto"></audio>
+  </section>
+
+  <!-- 1. TITRE -->
+  <section class="slide">
+    <div class="center">
+      <div class="kicker">Data gouvernance · Session 1 · Contexte 8</div>
+      <h1>Aylo / Pornhub</h1>
+      <h1 style="color:var(--muted);font-weight:800">Une preuve qui protège,<br>une donnée qui expose.</h1>
+      <p class="lead" style="margin-top:40px">Comment gouverner une donnée dont la conservation prouve un consentement, mais dont l'existence crée un risque ?</p>
+    </div>
+    <div class="footer"><span>Arthur Poncin</span><span>Jeu de données fictif : 08_Aylo.xlsx, 30 enregistrements</span></div>
+  </section>
+
+  <!-- 2. CARTOGRAPHIE -->
+  <section class="slide">
+    <div class="kicker">1 · Cartographie du patrimoine data</div>
+    <h2>11 familles de données.<br>3 qui comptent vraiment.</h2>
+    <div class="cards">
+      <div class="card hl"><div class="tag">La plus stratégique</div><h3>Consentement</h3><p>Sans lui, aucun contenu n'est diffusable. C'est la preuve sur laquelle repose toute l'activité.</p></div>
+      <div class="card hl"><div class="tag">La plus sensible</div><h3>Vérification d'âge</h3><p>Elle relie une identité réelle à l'usage d'un site pour adultes, donc à la vie sexuelle (RGPD, art. 9).</p></div>
+      <div class="card"><div class="tag">Paraît secondaire</div><h3>Jeton de paiement</h3><p>Il relie une personne bancairement identifiable à sa consommation. Et <code>TOK-0506</code> est partagé entre deux comptes.</p></div>
+    </div>
+    <div class="footer"><span>Autres familles : contenu, modération, comptes, accès, recours, pays, cycle de vie, traçabilité</span><span></span></div>
+  </section>
+
+  <!-- 3. SCHÉMA -->
+  <section class="slide">
+    <div class="kicker">2 · Flux et cycle de vie</div>
+    <h2>Le parcours d'une donnée</h2>
+    <div class="flow">
+      <div class="step"><div class="t">Collecte</div><div class="b"><span>Upload + consentement</span><span class="m">créateur</span><br><span>Vérification d'âge</span><span class="m">prestataire externe</span><br><span>Paiement</span><span class="m">prestataire externe</span></div></div>
+      <div class="step"><div class="t">Traitement</div><div class="b"><span>Rattachement au compte</span><br><span>Modération</span><span class="m">+ score de risque</span></div></div>
+      <div class="step"><div class="t">Stockage</div><div class="b"><span>Payments · CA</span><span>Compliance · US</span><span>Platform Ops · DE</span><span>Trust &amp; Safety · FR</span><br><span class="m">un silo par pays</span></div></div>
+      <div class="step"><div class="t">Usages</div><div class="b"><span>Diffusion</span><span>Accès compte</span><span>Facturation</span><span>Recours</span><br><span class="m">autorités, PSP (externes)</span></div></div>
+      <div class="step"><div class="t">Fin de vie</div><div class="b"><span>Conservation de 30 j à 3 650 j</span><br><span>Suppression</span><span class="m">non tracée</span></div></div>
+    </div>
+    <div class="callouts">
+      <div class="callout"><span class="num">1</span><span><b>La donnée suit le pays, pas sa nature.</b> Payments se retrouve à détenir des preuves de consentement.</span></div>
+      <div class="callout"><span class="num">2</span><span><b>Les statuts se contredisent.</b> R019 : consentement retiré, contenu toujours en ligne. R013 : âge échoué, compte actif.</span></div>
+    </div>
+  </section>
+
+  <!-- 4. LE CHIFFRE -->
+  <section class="slide">
+    <div class="kicker">2 · Le point de rupture principal</div>
+    <h2>La conservation est inversée.</h2>
+    <div class="vs">
+      <div><div class="big">30 j</div><div class="lbl">durée de conservation d'une <b>preuve valide</b> de consentement, alors que le contenu reste en ligne</div></div>
+      <div class="sep">vs</div>
+      <div><div class="big a">3 650 j</div><div class="lbl">durée de conservation d'un <b>échec</b> de vérification d'âge (R027), peut-être celui d'un mineur</div></div>
+    </div>
+    <div class="footer"><span>On jette ce qui protège. On garde ce qui expose.</span><span></span></div>
+  </section>
+
+  <!-- 5. RISQUES -->
+  <section class="slide" id="risks">
+    <div class="kicker">3 · Matrice de risques</div>
+    <h2>6 risques, classés par score</h2>
+    <div class="risk top"><div>Contenu diffusé sans consentement<span class="ev">R019 en ligne malgré le retrait</span></div><div class="track"><div class="fill" data-w="100"></div></div><div class="s">16</div></div>
+    <div class="risk top"><div>Accès ou contenu d'un mineur<span class="ev">R013 : âge échoué, compte actif</span></div><div class="track"><div class="fill" data-w="75"></div></div><div class="s">12</div></div>
+    <div class="risk top"><div>Preuve de consentement perdue<span class="ev">purgée en 30 à 90 j</span></div><div class="track"><div class="fill" data-w="75"></div></div><div class="s">12</div></div>
+    <div class="risk top"><div>Fuite de données intimes<span class="ev">échecs gardés jusqu'à 10 ans</span></div><div class="track"><div class="fill" data-w="75"></div></div><div class="s">12</div></div>
+    <div class="risk"><div>Paiement mal attribué<span class="ev">TOK-0506 sur deux comptes</span></div><div class="track"><div class="fill" data-w="50"></div></div><div class="s">8</div></div>
+    <div class="risk"><div>Mauvais droit appliqué<span class="ev">un compte dans deux pays</span></div><div class="track"><div class="fill" data-w="37.5"></div></div><div class="s">6</div></div>
+    <div class="footer"><span>Score = probabilité × impact (de 1 à 4)</span><span></span></div>
+  </section>
+
+  <!-- 6. RECOMMANDATIONS -->
+  <section class="slide">
+    <div class="kicker">4 · Recommandations de gouvernance</div>
+    <h2>Trois règles</h2>
+    <div class="reco"><div class="n">1</div><div><h3>Un owner par nature de donnée</h3><p>Le consentement et l'âge vont à Trust &amp; Safety, Compliance contrôle, Payments ne garde que les paiements. On abandonne le découpage par pays.</p></div></div>
+    <div class="reco"><div class="n">2</div><div><h3>Des règles de cohérence bloquantes</h3><p>Un consentement retiré ou inconnu retire le contenu. Un âge non vérifié bloque le compte. Chaque jeton de paiement est unique.</p></div></div>
+    <div class="reco"><div class="n">3</div><div><h3>Garder la preuve, pas la donnée</h3><p>On garde une attestation minimale (date, méthode, résultat) tant que le contenu est en ligne. On supprime le reste, et chaque purge est tracée.</p></div></div>
+  </section>
+
+  <!-- 7. CONCLUSION -->
+  <section class="slide" id="outro">
+    <div class="file" id="file"><div class="fold"></div><b>R027</b><span>échec de vérification d'âge</span><em>conservé 3 650 j</em></div>
+    <div class="trash" id="trash">
+      <div class="lid" id="lid"></div>
+      <div class="can"><i></i><i></i><i></i></div>
+    </div>
+    <svg class="cur" id="cursor2" viewBox="0 0 24 24"><path d="M4 2 L4 20 L9 15 L12.5 22 L15.5 20.6 L12 13.8 L19 13.8 Z" fill="#111" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+    <div id="stamp2">PURGÉ ✓<small>… et c'est tracé dans le journal de purge</small></div>
+    <div class="center" id="outroText">
+      <div class="kicker">Conclusion</div>
+      <h1>Garder la preuve,<br><span style="color:var(--accent)">pas la donnée.</span></h1>
+      <p class="lead" style="margin-top:40px">La question n'est pas technique : il faut décider ce qu'on accepte de conserver pour protéger les personnes, et rien de plus.</p>
+      <p class="lead" style="margin-top:60px;color:var(--ink);font-weight:700">Merci. Des questions ?</p>
+    </div>
+    <div class="btn" id="non2">NON</div>
+    <div id="bubble">Pardon… j'ai raté la présentation ?</div>
+  </section>
+
+</div>
+<div class="progress" id="progress"></div>
+
+<script>
+const stage=document.getElementById('stage');
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`translate(-50%,-50%) scale(${s})`}
+addEventListener('resize',fit);fit();
+
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+function show(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  document.getElementById('progress').style.width=(cur/(slides.length-1)*100)+'%';
+  document.querySelectorAll('#risks .fill').forEach(f=>f.style.width=slides[cur].id==='risks'?f.dataset.w+'%':'0');
+  if(cur===0&&started) playIntro();
+  if(slides[cur].id==='outro') playOutro(); else outroRun++;
+}
+/* Le navigateur bloque le son tant qu'il n'y a pas eu d'interaction : l'intro démarre au premier appui. */
+let started=false,actx=null;
+function start(){
+  started=true;$('start').style.display='none';
+  try{actx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}
+  const s=$('sfx');s.muted=true;s.play().then(()=>{s.pause();s.currentTime=0;s.muted=false}).catch(()=>{s.muted=false});
+  playIntro();
+}
+/* Son : intro.mp3 s'il est présent à côté du fichier, sinon petit jingle synthétisé */
+function jingle(){
+  if(!actx)return;
+  const t=actx.currentTime+.02,out=actx.createGain();out.gain.value=.5;out.connect(actx.destination);
+  const note=(f,s,d,type='sawtooth',v=.35,slide)=>{const o=actx.createOscillator(),g=actx.createGain(),lp=actx.createBiquadFilter();
+    o.type=type;o.frequency.setValueAtTime(f,t+s);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+s+d);
+    lp.type='lowpass';lp.frequency.value=1800;g.gain.setValueAtTime(0,t+s);g.gain.linearRampToValueAtTime(v,t+s+.02);g.gain.exponentialRampToValueAtTime(.001,t+s+d);
+    o.connect(lp);lp.connect(g);g.connect(out);o.start(t+s);o.stop(t+s+d+.05)};
+  note(110,0,.22,'square',.4);note(110,.25,.12,'square',.3);note(147,.4,.22,'square',.4);note(98,.65,.5,'square',.4,82);
+  [[440,554,659],[494,622,740]].forEach((ch,i)=>ch.forEach(f=>note(f,.9+i*.28,i?0.9:.2,'sawtooth',.12)));
+}
+function playSound(){const s=$('sfx');s.currentTime=0;s.play().catch(jingle)}
+addEventListener('keydown',e=>{
+  if(!started&&cur===0){e.preventDefault();start();return}
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();show(cur+1)}
+  else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();show(cur-1)}
+  else if(e.key==='Home')show(0);
+  else if(e.key==='End')show(slides.length-1);
+  else if(e.key.toLowerCase()==='r'&&cur===0)playIntro();
+  else if(e.key.toLowerCase()==='r'&&slides[cur].id==='outro')playOutro();
+  else if(e.key.toLowerCase()==='f'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+});
+addEventListener('click',e=>{ if(!started&&cur===0){start();return} if(e.clientX>innerWidth*0.15) show(cur+1); else show(cur-1); });
+
+/* ---------- Intro ---------- */
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let run=0;
+const anim=(el,kf,o)=>el.animate(kf,Object.assign({fill:'forwards',easing:'cubic-bezier(.2,.8,.2,1)'},o)).finished;
+let cx=1500,cy=900;
+async function moveCursor(x,y,d=700){const a=anim($('cursor'),[{transform:`translate(${cx}px,${cy}px)`},{transform:`translate(${x}px,${y}px)`}],{duration:d,easing:'cubic-bezier(.45,0,.2,1)'});cx=x;cy=y;return a}
+let nx=0,ny=0;
+function dodge(x,y,rot,d=260){const a=anim($('no'),[{transform:`translate(${nx}px,${ny}px)`},{transform:`translate(${x}px,${y}px) rotate(${rot}deg)`}],{duration:d,easing:'cubic-bezier(.2,1.6,.4,1)'});nx=x;ny=y;return a}
+
+async function playIntro(){
+  const id=++run; const alive=()=>id===run&&cur===0;
+  ['gate','yes','no','cursor','stamp','p1','p2','hint','sweat'].forEach(k=>{$(k).getAnimations().forEach(a=>a.cancel());$(k).style.opacity=''});
+  $('yes').style.background='';$('yes').style.color='';$('yes').style.borderColor='';
+  cx=1500;cy=900;nx=0;ny=0;
+  await sleep(300); if(!alive())return;
+  anim($('gate'),[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'scale(1)'}],{duration:600,easing:'cubic-bezier(.2,1.5,.4,1)'});
+  await sleep(250);
+  anim($('yes'),[{opacity:0,transform:'translateY(30px)'},{opacity:1,transform:'none'}],{duration:400});
+  anim($('no'),[{opacity:0,transform:'translateY(30px)'},{opacity:1,transform:'translate(0,0)'}],{duration:400,delay:120});
+  await sleep(900); if(!alive())return;
+  $('cursor').style.opacity=1;
+  await moveCursor(930,500,1100); if(!alive())return;
+  await dodge(330,230,8); await sleep(250);
+  await moveCursor(1260,720,500); if(!alive())return;
+  await dodge(-500,260,-12); await sleep(200);
+  $('sweat').style.left='300px';$('sweat').style.top='640px';
+  anim($('sweat'),[{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'none'}],{duration:250});
+  await moveCursor(430,760,450); if(!alive())return;
+  await dodge(-500,-560,-30,200);
+  anim($('sweat'),[{opacity:1},{opacity:0}],{duration:200});
+  await dodge(900,-700,720,700);
+  await sleep(350); if(!alive())return;
+  await moveCursor(650,490,700); if(!alive())return;
+  await anim($('cursor'),[{transform:`translate(${cx}px,${cy}px) scale(1)`},{transform:`translate(${cx}px,${cy}px) scale(.8)`},{transform:`translate(${cx}px,${cy}px) scale(1)`}],{duration:220});
+  $('yes').style.background='var(--ok)';$('yes').style.color='#fff';$('yes').style.borderColor='var(--ok)';
+  playSound();
+  await sleep(250); if(!alive())return;
+  await anim($('stamp'),[{opacity:0,transform:'scale(2.6) rotate(-14deg)'},{opacity:1,transform:'scale(1) rotate(-8deg)'}],{duration:380,easing:'cubic-bezier(.3,1.4,.5,1)'});
+  anim(stage,[{transform:stage.style.transform+' translate(0,0)'},{transform:stage.style.transform+' translate(-8px,6px)'},{transform:stage.style.transform+' translate(6px,-4px)'},{transform:stage.style.transform+' translate(0,0)'}],{duration:260,fill:'none'});
+  await sleep(2600); if(!alive())return;
+  ['gate','yes','stamp','cursor'].forEach(k=>anim($(k),[{opacity:1},{opacity:0}],{duration:500}));
+  await sleep(600); if(!alive())return;
+  await anim($('p1'),[{opacity:0,transform:'translateY(30px)'},{opacity:1,transform:'none'}],{duration:700});
+  await sleep(1300); if(!alive())return;
+  await anim($('p2'),[{opacity:0,transform:'translateY(30px)'},{opacity:1,transform:'none'}],{duration:700});
+  await sleep(900); if(!alive())return;
+  anim($('hint'),[{opacity:0},{opacity:1}],{duration:600});
+}
+/* ---------- Outro ---------- */
+let outroRun=0;
+async function playOutro(){
+  const id=++outroRun; const alive=()=>id===outroRun&&slides[cur].id==='outro';
+  const els=['file','trash','lid','cursor2','stamp2','outroText','non2','bubble'];
+  els.forEach(k=>{$(k).getAnimations().forEach(a=>a.cancel());$(k).style.opacity=''});
+  const c=$('cursor2'),f=$('file');
+  const at=(x,y,s=1)=>`translate(${x}px,${y}px) scale(${s})`;
+  await sleep(400); if(!alive())return;
+  anim(f,[{opacity:0,transform:'translateY(40px) scale(.8)'},{opacity:1,transform:'none'}],{duration:550,easing:'cubic-bezier(.2,1.5,.4,1)'});
+  await sleep(200);
+  await anim($('trash'),[{opacity:0,transform:'translateY(40px) scale(.8)'},{opacity:1,transform:'none'}],{duration:550,easing:'cubic-bezier(.2,1.5,.4,1)'});
+  await sleep(500); if(!alive())return;
+  c.style.opacity=1;
+  await anim(c,[{transform:at(1500,900)},{transform:at(520,420)}],{duration:1000,easing:'cubic-bezier(.45,0,.2,1)'}); if(!alive())return;
+  await anim(c,[{transform:at(520,420)},{transform:at(520,420,.8)}],{duration:150});
+  anim($('lid'),[{transform:'rotate(0)'},{transform:'rotate(-38deg)'}],{duration:400,easing:'cubic-bezier(.2,1.6,.4,1)'});
+  anim(f,[{transform:'none'},{transform:'translate(30px,-60px) rotate(-6deg)'},{transform:'translate(590px,-170px) rotate(10deg) scale(.85)'}],{duration:1100,easing:'cubic-bezier(.45,0,.2,1)'});
+  await anim(c,[{transform:at(520,420,.8)},{transform:at(550,360,.8)},{transform:at(1110,250,.8)}],{duration:1100,easing:'cubic-bezier(.45,0,.2,1)'}); if(!alive())return;
+  anim(c,[{transform:at(1110,250,.8)},{transform:at(1110,250)}],{duration:150});
+  await anim(f,[{transform:'translate(590px,-170px) rotate(10deg) scale(.85)',opacity:1},{transform:'translate(600px,60px) rotate(25deg) scale(.3)',opacity:0}],{duration:450,easing:'cubic-bezier(.5,0,.9,.5)'});
+  await anim($('lid'),[{transform:'rotate(-38deg)'},{transform:'rotate(0)'}],{duration:220,easing:'cubic-bezier(.5,0,.9,.5)'});
+  anim($('trash'),[{transform:'rotate(0)'},{transform:'rotate(-5deg)'},{transform:'rotate(4deg)'},{transform:'rotate(-2deg)'},{transform:'rotate(0)'}],{duration:500,fill:'none'});
+  await sleep(450); if(!alive())return;
+  await anim($('stamp2'),[{opacity:0,transform:'scale(2.6) rotate(10deg)'},{opacity:1,transform:'scale(1) rotate(-6deg)'}],{duration:380,easing:'cubic-bezier(.3,1.4,.5,1)'});
+  anim(stage,[{transform:stage.style.transform+' translate(0,0)'},{transform:stage.style.transform+' translate(-8px,6px)'},{transform:stage.style.transform+' translate(6px,-4px)'},{transform:stage.style.transform+' translate(0,0)'}],{duration:260,fill:'none'});
+  await sleep(2400); if(!alive())return;
+  ['trash','stamp2','cursor2'].forEach(k=>anim($(k),[{opacity:1},{opacity:0}],{duration:500}));
+  await sleep(600); if(!alive())return;
+  await anim($('outroText'),[{opacity:0,transform:'translateY(30px)'},{opacity:1,transform:'none'}],{duration:700});
+  await sleep(1800); if(!alive())return;
+  await anim($('non2'),[{opacity:1,transform:'translate(-1500px,-900px) rotate(-720deg)'},{opacity:1,transform:'translate(0,0) rotate(0)'}],{duration:1100,easing:'cubic-bezier(.2,.9,.3,1.15)'});
+  anim($('non2'),[{transform:'rotate(0)'},{transform:'rotate(-8deg)'},{transform:'rotate(6deg)'},{transform:'rotate(0)'}],{duration:500,composite:'add',fill:'none'});
+  await sleep(500); if(!alive())return;
+  anim($('bubble'),[{opacity:0,transform:'translateY(15px) scale(.8)'},{opacity:1,transform:'none'}],{duration:400,easing:'cubic-bezier(.2,1.5,.4,1)'});
+}
+show(0);
+</script>
+</body>
+</html>
