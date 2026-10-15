@@ -107,15 +107,21 @@
   #stamp2 small{display:block;font-size:26px;font-weight:700;margin-top:4px}
   #non2{left:1170px;top:770px;opacity:0}
   #bubble{position:absolute;left:800px;top:660px;padding:16px 24px;border:3px solid var(--ink);border-radius:22px;background:#fff;font-size:26px;font-weight:700;opacity:0;z-index:3;white-space:nowrap}
-  #claude{position:absolute;left:1400px;top:730px;width:120px;height:120px;opacity:0;z-index:4}
-  #claude .spin{width:100%;height:100%}
-  #claude.alive .spin{animation:bob 2.4s ease-in-out infinite}
-  #claude .eyes{transform-origin:50px 48px}
-  #claude.alive .eyes{animation:blinkEye 3.2s infinite}
-  @keyframes bob{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-10px) rotate(8deg)}50%{transform:translateY(0) rotate(0)}75%{transform:translateY(-6px) rotate(-8deg)}}
-  @keyframes blinkEye{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
-  #bubble2{position:absolute;left:1090px;top:580px;padding:14px 22px;border:3px solid #d97757;border-radius:22px;background:#fff;font-size:24px;font-weight:700;opacity:0;z-index:3;white-space:nowrap}
-  #bubble2::after{content:"";position:absolute;right:50px;bottom:-15px;width:24px;height:24px;background:#fff;border-right:3px solid #d97757;border-bottom:3px solid #d97757;transform:rotate(45deg)}
+  #claude{position:absolute;left:1018px;top:776px;width:132px;height:84px;opacity:0;z-index:4}
+  #claude svg{width:100%;height:100%;display:block;overflow:visible}
+  #claude .eyes{transform-box:fill-box;transform-origin:center}
+  #claude.walking .legA{animation:step .3s steps(1) infinite}
+  #claude.walking .legB{animation:step .3s steps(1) infinite .15s}
+  #claude.walking .body{animation:hop .3s steps(1) infinite}
+  #claude.alive .body{animation:hop 1.2s steps(1) infinite}
+  #claude.alive .eyes{animation:blinkEye 3s steps(1) infinite}
+  #claude.alive .armR{transform-box:fill-box;transform-origin:left center;animation:wave .5s steps(1) infinite}
+  @keyframes step{0%{transform:translateY(0)}50%{transform:translateY(-1px)}}
+  @keyframes hop{0%{transform:translateY(0)}50%{transform:translateY(-.4px)}}
+  @keyframes blinkEye{0%{transform:scaleY(1)}90%{transform:scaleY(.2)}96%{transform:scaleY(1)}}
+  @keyframes wave{0%{transform:rotate(0)}50%{transform:rotate(-45deg)}}
+  #bubble2{position:absolute;right:618px;top:788px;padding:14px 22px;border:3px solid #d97757;border-radius:22px;background:#fff;font-size:24px;font-weight:700;opacity:0;z-index:3;white-space:nowrap}
+  #bubble2::after{content:"";position:absolute;right:-15px;top:14px;width:24px;height:24px;background:#fff;border-right:3px solid #d97757;border-bottom:3px solid #d97757;transform:rotate(-45deg)}
   #bubble::after{content:"";position:absolute;right:120px;bottom:-16px;width:26px;height:26px;background:#fff;border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:rotate(45deg)}
 </style>
 </head>
@@ -172,7 +178,7 @@
       <div class="step"><div class="t">Collecte</div><div class="b"><span>Upload + consentement</span><span class="m">créateur</span><br><span>Vérification d'âge</span><span class="m">prestataire externe</span><br><span>Paiement</span><span class="m">prestataire externe</span></div></div>
       <div class="step"><div class="t">Traitement</div><div class="b"><span>Rattachement au compte</span><br><span>Modération</span><span class="m">+ score de risque</span></div></div>
       <div class="step"><div class="t">Stockage</div><div class="b"><span>Payments · CA</span><span>Compliance · US</span><span>Platform Ops · DE</span><span>Trust &amp; Safety · FR</span><br><span class="m">un silo par pays</span></div></div>
-      <div class="step"><div class="t">Usages</div><div class="b"><span>Diffusion</span><span>Accès compte</span><span>Facturation</span><span>Recours</span><br><span class="m">autorités, PSP (externes)</span></div></div>
+      <div class="step"><div class="t">Usages</div><div class="b"><span>Diffusion</span><span>Accès compte</span><span>Facturation</span><span>Recours</span><br><span class="m">autorités, prestataire de paiement (externes)</span></div></div>
       <div class="step"><div class="t">Fin de vie</div><div class="b"><span>Conservation de 30 j à 3 650 j</span><br><span>Pas d'archivage distinct</span><br><span>Suppression</span><span class="m">non tracée</span></div></div>
     </div>
     <div class="callouts">
@@ -232,15 +238,18 @@
     </div>
     <div class="btn" id="non2">NON</div>
     <div id="bubble">Pardon… j'ai raté la présentation ?</div>
-    <div id="claude"><div class="spin"><svg viewBox="0 0 100 100">
-      <g stroke="#d97757" stroke-width="12" stroke-linecap="round">
-        <line x1="50" y1="50" x2="50" y2="8"/><line x1="50" y1="50" x2="80" y2="20"/><line x1="50" y1="50" x2="92" y2="52"/><line x1="50" y1="50" x2="78" y2="82"/>
-        <line x1="50" y1="50" x2="48" y2="93"/><line x1="50" y1="50" x2="18" y2="80"/><line x1="50" y1="50" x2="8" y2="47"/><line x1="50" y1="50" x2="22" y2="18"/>
+    <div id="claude"><svg viewBox="0 0 11 7" shape-rendering="crispEdges">
+      <g class="body" fill="#d97757">
+        <rect x="2" y="0" width="7" height="5"/>
+        <rect class="armL" x="0" y="2" width="2" height="1"/>
+        <rect class="armR" x="9" y="2" width="2" height="1"/>
+        <g class="eyes" fill="#1a1a1a"><rect x="3" y="1" width="1" height="2"/><rect x="7" y="1" width="1" height="2"/></g>
       </g>
-      <circle cx="50" cy="50" r="17" fill="#d97757"/>
-      <g class="eyes" fill="#1a1a1a"><ellipse cx="44" cy="48" rx="3.2" ry="4.2"/><ellipse cx="56" cy="48" rx="3.2" ry="4.2"/></g>
-      <path d="M44 56 Q50 61 56 56" fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round"/>
-    </svg></div></div>
+      <g fill="#d97757">
+        <rect class="legA" x="2" y="5" width="1" height="2"/><rect class="legB" x="4" y="5" width="1" height="2"/>
+        <rect class="legA" x="6" y="5" width="1" height="2"/><rect class="legB" x="8" y="5" width="1" height="2"/>
+      </g>
+    </svg></div>
     <div id="bubble2">T'inquiète, j'ai tout noté.</div>
   </section>
 
@@ -348,7 +357,7 @@ let outroRun=0;
 async function playOutro(){
   const id=++outroRun; const alive=()=>id===outroRun&&slides[cur].id==='outro';
   const els=['file','trash','lid','cursor2','stamp2','outroText','non2','bubble','claude','bubble2'];
-  $('claude').classList.remove('alive');
+  $('claude').classList.remove('alive','walking');
   els.forEach(k=>{$(k).getAnimations().forEach(a=>a.cancel());$(k).style.opacity=''});
   const c=$('cursor2'),f=$('file');
   const at=(x,y,s=1)=>`translate(${x}px,${y}px) scale(${s})`;
@@ -381,7 +390,10 @@ async function playOutro(){
   anim($('bubble'),[{opacity:0,transform:'translateY(15px) scale(.8)'},{opacity:1,transform:'none'}],{duration:400,easing:'cubic-bezier(.2,1.5,.4,1)'});
   await sleep(1800); if(!alive())return;
   const cl=$('claude');
-  await anim(cl,[{opacity:1,transform:'translateY(260px) rotate(-180deg) scale(.4)'},{opacity:1,transform:'translateY(-30px) rotate(20deg) scale(1.1)',offset:.7},{opacity:1,transform:'none'}],{duration:900,easing:'cubic-bezier(.2,.9,.3,1)'});
+  cl.classList.add('walking');
+  await anim(cl,[{opacity:1,transform:'translateX(-1180px)'},{opacity:1,transform:'none'}],{duration:3400,easing:'linear'});
+  cl.classList.remove('walking'); if(!alive())return;
+  await anim(cl,[{opacity:1,transform:'none'},{opacity:1,transform:'translateY(-36px)'},{opacity:1,transform:'none'}],{duration:420,easing:'cubic-bezier(.3,.6,.4,1)'});
   cl.classList.add('alive');
   await sleep(400); if(!alive())return;
   anim($('bubble2'),[{opacity:0,transform:'translateY(15px) scale(.8)'},{opacity:1,transform:'none'}],{duration:400,easing:'cubic-bezier(.2,1.5,.4,1)'});
