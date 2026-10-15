@@ -105,8 +105,17 @@
   .cur{position:absolute;left:0;top:0;width:56px;height:56px;z-index:5;opacity:0;filter:drop-shadow(0 4px 6px rgba(0,0,0,.2))}
   #stamp2{position:absolute;left:420px;top:330px;width:760px;text-align:center;border:10px solid var(--ok);color:var(--ok);border-radius:24px;padding:18px 0 22px;font-size:110px;font-weight:900;opacity:0;z-index:6;background:rgba(255,255,255,.94)}
   #stamp2 small{display:block;font-size:26px;font-weight:700;margin-top:4px}
-  #non2{left:1250px;top:770px;opacity:0}
-  #bubble{position:absolute;left:880px;top:660px;padding:16px 24px;border:3px solid var(--ink);border-radius:22px;background:#fff;font-size:26px;font-weight:700;opacity:0;z-index:3;white-space:nowrap}
+  #non2{left:1170px;top:770px;opacity:0}
+  #bubble{position:absolute;left:800px;top:660px;padding:16px 24px;border:3px solid var(--ink);border-radius:22px;background:#fff;font-size:26px;font-weight:700;opacity:0;z-index:3;white-space:nowrap}
+  #claude{position:absolute;left:1400px;top:730px;width:120px;height:120px;opacity:0;z-index:4}
+  #claude .spin{width:100%;height:100%}
+  #claude.alive .spin{animation:bob 2.4s ease-in-out infinite}
+  #claude .eyes{transform-origin:50px 48px}
+  #claude.alive .eyes{animation:blinkEye 3.2s infinite}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-10px) rotate(8deg)}50%{transform:translateY(0) rotate(0)}75%{transform:translateY(-6px) rotate(-8deg)}}
+  @keyframes blinkEye{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+  #bubble2{position:absolute;left:1090px;top:580px;padding:14px 22px;border:3px solid #d97757;border-radius:22px;background:#fff;font-size:24px;font-weight:700;opacity:0;z-index:3;white-space:nowrap}
+  #bubble2::after{content:"";position:absolute;right:50px;bottom:-15px;width:24px;height:24px;background:#fff;border-right:3px solid #d97757;border-bottom:3px solid #d97757;transform:rotate(45deg)}
   #bubble::after{content:"";position:absolute;right:120px;bottom:-16px;width:26px;height:26px;background:#fff;border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:rotate(45deg)}
 </style>
 </head>
@@ -218,11 +227,21 @@
     <div class="center" id="outroText">
       <div class="kicker">Conclusion</div>
       <h1>Garder la preuve,<br><span style="color:var(--accent)">pas la donnée.</span></h1>
-      <p class="lead" style="margin-top:40px">La question n'est pas technique : il faut décider ce qu'on accepte de conserver pour protéger les personnes, et rien de plus.</p>
+      <p class="lead" style="margin-top:40px">Il faut décider ce qu'on accepte de conserver pour protéger les personnes.</p>
       <p class="lead" style="margin-top:60px;color:var(--ink);font-weight:700">Merci. Des questions ?</p>
     </div>
     <div class="btn" id="non2">NON</div>
     <div id="bubble">Pardon… j'ai raté la présentation ?</div>
+    <div id="claude"><div class="spin"><svg viewBox="0 0 100 100">
+      <g stroke="#d97757" stroke-width="12" stroke-linecap="round">
+        <line x1="50" y1="50" x2="50" y2="8"/><line x1="50" y1="50" x2="80" y2="20"/><line x1="50" y1="50" x2="92" y2="52"/><line x1="50" y1="50" x2="78" y2="82"/>
+        <line x1="50" y1="50" x2="48" y2="93"/><line x1="50" y1="50" x2="18" y2="80"/><line x1="50" y1="50" x2="8" y2="47"/><line x1="50" y1="50" x2="22" y2="18"/>
+      </g>
+      <circle cx="50" cy="50" r="17" fill="#d97757"/>
+      <g class="eyes" fill="#1a1a1a"><ellipse cx="44" cy="48" rx="3.2" ry="4.2"/><ellipse cx="56" cy="48" rx="3.2" ry="4.2"/></g>
+      <path d="M44 56 Q50 61 56 56" fill="none" stroke="#1a1a1a" stroke-width="2.4" stroke-linecap="round"/>
+    </svg></div></div>
+    <div id="bubble2">T'inquiète, j'ai tout noté.</div>
   </section>
 
 </div>
@@ -328,7 +347,8 @@ async function playIntro(){
 let outroRun=0;
 async function playOutro(){
   const id=++outroRun; const alive=()=>id===outroRun&&slides[cur].id==='outro';
-  const els=['file','trash','lid','cursor2','stamp2','outroText','non2','bubble'];
+  const els=['file','trash','lid','cursor2','stamp2','outroText','non2','bubble','claude','bubble2'];
+  $('claude').classList.remove('alive');
   els.forEach(k=>{$(k).getAnimations().forEach(a=>a.cancel());$(k).style.opacity=''});
   const c=$('cursor2'),f=$('file');
   const at=(x,y,s=1)=>`translate(${x}px,${y}px) scale(${s})`;
@@ -359,6 +379,12 @@ async function playOutro(){
   anim($('non2'),[{transform:'rotate(0)'},{transform:'rotate(-8deg)'},{transform:'rotate(6deg)'},{transform:'rotate(0)'}],{duration:500,composite:'add',fill:'none'});
   await sleep(500); if(!alive())return;
   anim($('bubble'),[{opacity:0,transform:'translateY(15px) scale(.8)'},{opacity:1,transform:'none'}],{duration:400,easing:'cubic-bezier(.2,1.5,.4,1)'});
+  await sleep(1800); if(!alive())return;
+  const cl=$('claude');
+  await anim(cl,[{opacity:1,transform:'translateY(260px) rotate(-180deg) scale(.4)'},{opacity:1,transform:'translateY(-30px) rotate(20deg) scale(1.1)',offset:.7},{opacity:1,transform:'none'}],{duration:900,easing:'cubic-bezier(.2,.9,.3,1)'});
+  cl.classList.add('alive');
+  await sleep(400); if(!alive())return;
+  anim($('bubble2'),[{opacity:0,transform:'translateY(15px) scale(.8)'},{opacity:1,transform:'none'}],{duration:400,easing:'cubic-bezier(.2,1.5,.4,1)'});
 }
 show(0);
 </script>
