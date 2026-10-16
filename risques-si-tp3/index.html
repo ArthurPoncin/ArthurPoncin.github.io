@@ -391,21 +391,29 @@
     </div>
   </section>
 
-  <!-- 3. Méthode -->
+  <!-- 3. Démarche -->
   <section class="slide">
-    <div class="title-bar"><h2>Notre grille de notation</h2></div>
-    <table style="font-size:17px">
-      <tr><th style="width:150px">Note</th><th>D : arrêt supportable</th><th>I : remise en état</th><th>C : divulgation</th><th>T : besoin de preuve</th></tr>
-      <tr><td class="s1">1 : Faible</td><td>Plus de 48 h</td><td>Corrigée tout de suite</td><td>Impact faible, sans préjudice durable</td><td>Journaux techniques suffisants</td></tr>
-      <tr><td class="s2">2 : Moyenne</td><td>Entre 12 h et 48 h</td><td>Restauration depuis une sauvegarde</td><td>Atteinte ponctuelle à l'image</td><td>Historique utile (audit, litige)</td></tr>
-      <tr><td class="s3">3 : Forte</td><td>Moins de 12 h</td><td>Jours de correction, pertes, sécurité</td><td>Patrimoine, confiance, données sensibles</td><td>Preuve exigée : réglementation, fraude</td></tr>
-    </table>
-    <h3 style="margin-top:24px">Trois règles appliquées</h3>
-    <ol style="margin-left:30px">
-      <li style="font-size:20px"><strong>Données personnelles</strong> : au minimum I = 3, C = 3 et T = 2.</li>
-      <li style="font-size:20px"><strong>Disponibilité variable</strong> : on retient la période critique (paie, clôture, campagne).</li>
-      <li style="font-size:20px"><strong>On note le besoin, pas l'existant</strong> : datacenters redondés et sauvegardes ne font pas baisser les notes.</li>
-    </ol>
+    <div class="title-bar"><h2>Notre démarche</h2></div>
+    <div class="cols">
+      <div>
+        <h3>Les quatre questions posées</h3>
+        <ul>
+          <li><strong>D</strong> : combien de temps peut-on se passer de l'application ?</li>
+          <li><strong>I</strong> : que coûte le retour à la normale si les données sont faussées ?</li>
+          <li><strong>C</strong> : que se passe-t-il si les données fuient ?</li>
+          <li><strong>T</strong> : faut-il prouver qui a fait quoi, et quand ?</li>
+        </ul>
+        <p class="note">Notes de 1 (faible) à 3 (forte).</p>
+      </div>
+      <div>
+        <h3>Trois règles appliquées</h3>
+        <ol style="margin-left:30px">
+          <li><strong>Données personnelles</strong> : au minimum I = 3, C = 3 et T = 2.</li>
+          <li><strong>Disponibilité variable</strong> : on retient la période critique (paie, clôture, campagne).</li>
+          <li><strong>On note le besoin, pas l'existant</strong> : datacenters redondés et sauvegardes ne font pas baisser les notes.</li>
+        </ol>
+      </div>
+    </div>
   </section>
 
   <!-- 4. PAYEX -->
