@@ -250,13 +250,9 @@
   @keyframes hold1 { from, to { opacity: 1; } }
   @keyframes hold0 { from, to { opacity: 0; } }
 
-  .shield { position: absolute; left: 510px; top: 0; width: 120px; text-align: center; z-index: 3; }
   .shield svg { display: block; }
   .shield-txt { position: absolute; left: 0; right: 0; top: 40px; text-align: center; color: #fff; font-size: 30px; font-weight: bold; letter-spacing: .08em; }
-  .shield p { font-size: 14px !important; color: var(--navy); font-weight: bold; letter-spacing: .06em; margin-top: 2px; }
-  .slide.play .shield { animation: bigSlam .5s cubic-bezier(.55,0,.7,1.3) 3.5s backwards; }
-  @keyframes bigSlam { 0% { opacity: 0; transform: translateY(-120px) scale(1.8); } 80% { opacity: 1; transform: scale(.95); } 100% { opacity: 1; transform: none; } }
-  .shock { position: absolute; left: 570px; top: 62px; width: 40px; height: 40px; margin: -20px 0 0 -20px; border: 4px solid var(--blue); border-radius: 50%; opacity: 0; pointer-events: none; }
+  .shock { position: absolute; left: 570px; top: 68px; width: 40px; height: 40px; margin: -20px 0 0 -20px; border: 4px solid var(--blue); border-radius: 50%; opacity: 0; pointer-events: none; }
   .slide.play .shock { animation: shock .8s ease-out 3.95s; }
   @keyframes shock { 0% { opacity: .5; transform: scale(1); } 100% { opacity: 0; transform: scale(9); } }
 
@@ -293,6 +289,35 @@
 
   .thanks { position: absolute; left: 0; right: 0; top: 624px; text-align: center; font-size: 28px !important; color: var(--navy); font-weight: bold; }
   .slide.play .thanks { animation: fadeUp .7s ease-out 5.2s backwards; }
+
+
+  /* Conversation ASSET */
+  .chat { display: flex; flex-direction: column; gap: 8px; }
+  .msg { display: block; max-width: 88%; border-radius: 12px; padding: 6px 10px; font-size: 14px; line-height: 1.3; }
+  .msg b { display: block; font-size: 12px; color: var(--grey); margin-bottom: 1px; }
+  .msg.them { background: #f2f2f2; border-bottom-left-radius: 3px; }
+  .msg.me { background: var(--head); border-bottom-right-radius: 3px; margin-left: auto; }
+  .fasset { width: 190px; }
+  .fasset .msg { max-width: 100%; font-size: 13px; }
+
+  /* Tampon DICT */
+  .shield { position: absolute; left: 510px; top: 4px; width: 120px; z-index: 4; opacity: 0; transform-origin: 50% 100%; }
+  .shield .handle { position: absolute; left: 44px; top: -46px; width: 32px; height: 50px; border-radius: 14px 14px 4px 4px; background: #8a6a4a; z-index: -1; }
+  .slide.play .shield { animation: stamp 1.6s cubic-bezier(.5,0,.5,1) 3.1s both; }
+  @keyframes stamp {
+    0% { opacity: 0; transform: translateY(-260px) scale(1.5); }
+    15% { opacity: 1; transform: translateY(-200px) scale(1.5); }
+    45% { opacity: 1; transform: translateY(0) scale(1.15); }
+    52% { opacity: 1; transform: translateY(6px) scale(1.25, .9); }
+    60% { opacity: 1; transform: translateY(0) scale(1.15); }
+    100% { opacity: 0; transform: translateY(-300px) scale(1.4); }
+  }
+  .imprint { position: absolute; left: 505px; top: 0; width: 130px; height: 136px; transform: rotate(-8deg); color: #1f3864; text-align: center; z-index: 3; }
+  .imprint svg { position: absolute; inset: 0; }
+  .imp-a { position: absolute; left: 0; right: 0; top: 34px; font-size: 32px; font-weight: bold; letter-spacing: .08em; }
+  .imp-b { position: absolute; left: 0; right: 0; top: 76px; font-size: 14px; font-weight: bold; letter-spacing: .2em; }
+  .slide.play .imprint { animation: ink .3s ease-out 3.95s backwards; }
+  @keyframes ink { 0% { opacity: 0; transform: rotate(-8deg) scale(1.25); } 100% { opacity: 1; transform: rotate(-8deg); } }
 
   @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
   @keyframes cellIn { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
@@ -468,14 +493,11 @@
         <p class="lbl">Usage</p>
         <p>Jours ouvrés, et jusqu'à 22 h pendant la clôture des comptes. Calcul automatique des amortissements chaque mois</p>
         <div class="scene">
-          <div class="calendar">
-            <div class="page p3"><b>MER</b><span>ASSET en panne<br>depuis 3 jours</span></div>
-            <div class="page p2"><b>MAR</b><span>ASSET en panne<br>depuis 2 jours</span></div>
-            <div class="page p1"><b>LUN</b><span>ASSET en panne</span></div>
+          <div class="chat">
+            <div class="msg them pop-in" style="--t:1.3s"><b>🚨 Support IT</b>ASSET est en panne depuis 3 jours !</div>
+            <div class="msg me pop-in" style="--t:2.7s"><b>😎 Comptabilité</b>Ah bon ? La clôture, c'est dans 3 semaines.</div>
           </div>
-          <span class="coffee pop-in" style="--t:3.2s">☕</span>
-          <span class="zz pop-in" style="--t:3.5s">zzz</span>
-          <p class="scene-cap" style="--t:3.8s">En milieu de mois, personne n'a remarqué. En clôture, ce serait une autre histoire.</p>
+          <p class="scene-cap" style="--t:3.5s">Pendant la clôture, la réponse serait très différente.</p>
         </div>
       </div>
       <div>
@@ -626,7 +648,7 @@
     </ul>
     <div class="stage" id="stage">
       <div class="ground"></div>
-      <div class="fasset"><div class="page"><b>MER</b><span>ASSET en panne</span></div><span class="fz">zzz</span><small>ASSET n'a rien remarqué.</small></div>
+      <div class="fasset"><div class="msg me">😎 « La clôture, c'est dans 3 semaines. »</div><small>ASSET, toujours en panne.</small></div>
       <div class="fcar"><svg viewBox="0 -24 140 94" width="160" height="107">
           <g class="bad hold1" style="--t:3.95s"><line x1="80" y1="8" x2="80" y2="-6" stroke="#333" stroke-width="3"/><circle cx="80" cy="-12" r="9" fill="none" stroke="#333" stroke-width="3"/><line x1="71" y1="-12" x2="89" y2="-12" stroke="#333" stroke-width="2"/></g>
           <path d="M8 46 L18 29 L44 23 L60 8 L100 8 L118 24 L132 30 L134 46 Z" fill="#1f3864"/>
@@ -640,9 +662,10 @@
         <div class="row"><span>Salaire de base</span><span>2 450,00 €</span></div>
         <div class="row net"><span>Net à payer</span><span style="position:relative"><span class="hold0" style="--t:3.95s">1 910,00 €</span><span class="rich hold1" style="--t:3.95s">191 000,00 €</span></span></div>
       </div></div>
+      <div class="imprint"><svg viewBox="0 0 120 126" width="130" height="136"><path d="M60 5 L110 22 V60 C110 92 88 112 60 121 C32 112 10 92 10 60 V22 Z" fill="rgba(31,56,100,.06)" stroke="#1f3864" stroke-width="5"/><path d="M60 15 L100 29 V60 C100 86 82 103 60 111 C38 103 20 86 20 60 V29 Z" fill="none" stroke="#1f3864" stroke-width="1.5" stroke-dasharray="4 3"/></svg><span class="imp-a">DICT</span><span class="imp-b">VALIDÉ</span></div>
       <div class="shield">
         <svg viewBox="0 0 120 126" width="120" height="126"><path d="M60 3 L112 21 V60 C112 93 89 114 60 123 C31 114 8 93 8 60 V21 Z" fill="#1f3864"/><path d="M60 13 L102 28 V60 C102 87 83 104 60 112 C37 104 18 87 18 60 V28 Z" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2"/></svg><span class="shield-txt">DICT</span>
-        <p>STANDARD APPLIQUÉ</p>
+        <div class="handle"></div>
       </div>
       <div class="shock"></div>
       <svg class="fhacker" viewBox="0 0 120 124">
