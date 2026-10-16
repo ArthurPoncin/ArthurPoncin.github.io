@@ -240,7 +240,8 @@
   .slide.play#finale ul li:nth-child(2) { animation-delay: .15s; }
   .slide.play#finale ul li:nth-child(3) { animation-delay: .3s; }
   .slide.play#finale ul li:nth-child(4) { animation-delay: .45s; }
-  .slide.play#finale { animation: shake .45s ease-in-out 4.95s; }
+  .slide.play#finale { animation: shakeSoft .35s ease-in-out 3.9s; }
+  @keyframes shakeSoft { 0%, 100% { transform: scale(var(--k)); } 30% { transform: scale(var(--k)) translateY(3px); } 65% { transform: scale(var(--k)) translateY(-2px); } }
   .stage { position: absolute; left: 70px; right: 70px; top: 318px; height: 300px; }
   .ground { position: absolute; left: 0; right: 0; bottom: 6px; height: 2px; background: #e3e3e3; }
   .hold1 { animation: hold1 .01s linear var(--t) backwards !important; }
@@ -253,34 +254,34 @@
   .shield svg { display: block; }
   .shield-txt { position: absolute; left: 0; right: 0; top: 40px; text-align: center; color: #fff; font-size: 30px; font-weight: bold; letter-spacing: .08em; }
   .shield p { font-size: 14px !important; color: var(--navy); font-weight: bold; letter-spacing: .06em; margin-top: 2px; }
-  .slide.play .shield { animation: bigSlam .55s cubic-bezier(.55,0,.7,1.3) 4.6s backwards; }
-  @keyframes bigSlam { 0% { opacity: 0; transform: translateY(-260px) scale(4) rotate(-20deg); } 80% { opacity: 1; transform: scale(.92); } 100% { opacity: 1; transform: none; } }
+  .slide.play .shield { animation: bigSlam .5s cubic-bezier(.55,0,.7,1.3) 3.5s backwards; }
+  @keyframes bigSlam { 0% { opacity: 0; transform: translateY(-120px) scale(1.8); } 80% { opacity: 1; transform: scale(.95); } 100% { opacity: 1; transform: none; } }
   .shock { position: absolute; left: 570px; top: 62px; width: 40px; height: 40px; margin: -20px 0 0 -20px; border: 4px solid var(--blue); border-radius: 50%; opacity: 0; pointer-events: none; }
-  .slide.play .shock { animation: shock .9s ease-out 5s; }
-  @keyframes shock { 0% { opacity: .9; transform: scale(1); } 100% { opacity: 0; transform: scale(28); } }
+  .slide.play .shock { animation: shock .8s ease-out 3.95s; }
+  @keyframes shock { 0% { opacity: .5; transform: scale(1); } 100% { opacity: 0; transform: scale(9); } }
 
   .fcar { position: absolute; left: 0; bottom: 8px; width: 160px; transform: translateX(190px); }
   .fcar svg { display: block; overflow: visible; }
-  .slide.play .fcar { animation: carChaos 4.4s cubic-bezier(.4,0,.6,1) 1.4s backwards; }
-  .slide.play .fcar svg { animation: bump .3s ease-in-out 1.4s 11; }
-  @keyframes carChaos { 0% { transform: translateX(-240px); } 25% { transform: translateX(300px) rotate(-4deg); } 45% { transform: translateX(80px) scaleX(-1); } 70% { transform: translateX(640px); } 78% { transform: translateX(640px); } 100% { transform: translateX(190px); } }
+  .slide.play .fcar { animation: carIn 1.3s cubic-bezier(.25,.8,.4,1) 1s backwards; }
+  .slide.play .fcar svg { animation: bump .32s ease-in-out 1s 4; }
+  @keyframes carIn { from { transform: translateX(-260px); } to { transform: translateX(190px); } }
   .fcar .bad { opacity: 0; }
 
   .fslip { position: absolute; left: 0; top: 0; width: 205px; transform: translate(390px, 158px) rotate(-3deg); }
   .fslip .slip { font-size: 13px; }
-  .slide.play .fslip { animation: slipFly 1.6s cubic-bezier(.3,.7,.4,1) 1.9s backwards; }
-  @keyframes slipFly { 0% { transform: translate(1150px, -260px) rotate(540deg) scale(.4); } 100% { transform: translate(390px, 158px) rotate(-3deg); } }
+  .slide.play .fslip { animation: slipFly .8s cubic-bezier(.34,1.4,.64,1) 1.7s backwards; }
+  @keyframes slipFly { 0% { opacity: 0; transform: translate(390px, 60px) rotate(-3deg); } 100% { opacity: 1; transform: translate(390px, 158px) rotate(-3deg); } }
   .fslip .rich { position: absolute; right: 10px; color: var(--alert); font-weight: bold; opacity: 0; }
 
   .fhacker { position: absolute; right: 40px; bottom: 8px; width: 104px; }
-  .slide.play .fhacker { animation: sneak 2.6s steps(13) 1.8s backwards; }
-  @keyframes sneak { from { transform: translateX(180px); } to { transform: none; } }
+  .slide.play .fhacker { animation: sneak 1s cubic-bezier(.25,.8,.4,1) 2.3s backwards; }
+  @keyframes sneak { from { opacity: 0; transform: translateX(160px); } to { opacity: 1; transform: none; } }
   .cage { position: absolute; right: 26px; bottom: 6px; width: 132px; height: 150px; border-top: 8px solid #555; border-radius: 4px 4px 0 0;
     background: repeating-linear-gradient(90deg, transparent 0 14px, #555 14px 19px); z-index: 2; }
-  .slide.play .cage { animation: cageDrop .35s cubic-bezier(.6,0,1,1) 4.85s backwards; }
+  .slide.play .cage { animation: cageDrop .35s cubic-bezier(.6,0,1,1) 4.1s backwards; }
   @keyframes cageDrop { 0% { transform: translateY(-420px); opacity: 0; } 1% { opacity: 1; } 100% { transform: none; opacity: 1; } }
   .ah { position: absolute; right: 150px; bottom: 120px; background: #fff; border: 2px solid var(--navy); border-radius: 12px; padding: 3px 12px; font-weight: bold; color: var(--navy); font-size: 18px; }
-  .slide.play .ah { animation: pop .4s cubic-bezier(.34,1.56,.64,1) 5.6s backwards; }
+  .slide.play .ah { animation: pop .4s cubic-bezier(.34,1.56,.64,1) 4.6s backwards; }
 
   .fasset { position: absolute; left: 0; bottom: 8px; width: 150px; }
   .fasset .page { position: relative; width: 84px; height: 80px; }
@@ -289,11 +290,9 @@
   .slide.play .fz { animation: zz 1.6s ease-in-out infinite; }
   @keyframes zz { 0%, 100% { transform: none; opacity: .5; } 50% { transform: translate(6px, -8px); opacity: 1; } }
 
-  .mailfly { position: absolute; left: -60px; font-size: 26px; pointer-events: none; animation: mailFly linear forwards; }
-  @keyframes mailFly { to { transform: translate(1300px, var(--dy)) rotate(var(--r)); } }
 
   .thanks { position: absolute; left: 0; right: 0; top: 624px; text-align: center; font-size: 28px !important; color: var(--navy); font-weight: bold; }
-  .slide.play .thanks { animation: fadeUp .7s ease-out 6.2s backwards; }
+  .slide.play .thanks { animation: fadeUp .7s ease-out 5.2s backwards; }
 
   @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
   @keyframes cellIn { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
@@ -629,17 +628,17 @@
       <div class="ground"></div>
       <div class="fasset"><div class="page"><b>MER</b><span>ASSET en panne</span></div><span class="fz">zzz</span><small>ASSET n'a rien remarqué.</small></div>
       <div class="fcar"><svg viewBox="0 -24 140 94" width="160" height="107">
-          <g class="bad hold1" style="--t:4.95s"><line x1="80" y1="8" x2="80" y2="-6" stroke="#333" stroke-width="3"/><circle cx="80" cy="-12" r="9" fill="none" stroke="#333" stroke-width="3"/><line x1="71" y1="-12" x2="89" y2="-12" stroke="#333" stroke-width="2"/></g>
+          <g class="bad hold1" style="--t:3.95s"><line x1="80" y1="8" x2="80" y2="-6" stroke="#333" stroke-width="3"/><circle cx="80" cy="-12" r="9" fill="none" stroke="#333" stroke-width="3"/><line x1="71" y1="-12" x2="89" y2="-12" stroke="#333" stroke-width="2"/></g>
           <path d="M8 46 L18 29 L44 23 L60 8 L100 8 L118 24 L132 30 L134 46 Z" fill="#1f3864"/>
           <path d="M65 13 L97 13 L108 24 L60 24 Z" fill="#d9e2f3"/>
           <circle cx="34" cy="50" r="11" fill="#333"/><circle cx="34" cy="50" r="4" fill="#bbb"/>
-          <g class="hold0" style="--t:4.95s"><circle cx="110" cy="50" r="11" fill="#333"/><circle cx="110" cy="50" r="4" fill="#bbb"/></g>
-          <g class="bad hold1" style="--t:4.95s"><rect x="99" y="39" width="22" height="22" fill="#333"/><rect x="106" y="46" width="8" height="8" fill="#bbb"/></g>
+          <g class="hold0" style="--t:3.95s"><circle cx="110" cy="50" r="11" fill="#333"/><circle cx="110" cy="50" r="4" fill="#bbb"/></g>
+          <g class="bad hold1" style="--t:3.95s"><rect x="99" y="39" width="22" height="22" fill="#333"/><rect x="106" y="46" width="8" height="8" fill="#bbb"/></g>
         </svg></div>
       <div class="fslip"><div class="slip">
         <div class="slip-h">BULLETIN DE PAIE</div>
         <div class="row"><span>Salaire de base</span><span>2 450,00 €</span></div>
-        <div class="row net"><span>Net à payer</span><span style="position:relative"><span class="hold0" style="--t:4.95s">1 910,00 €</span><span class="rich hold1" style="--t:4.95s">191 000,00 €</span></span></div>
+        <div class="row net"><span>Net à payer</span><span style="position:relative"><span class="hold0" style="--t:3.95s">1 910,00 €</span><span class="rich hold1" style="--t:3.95s">191 000,00 €</span></span></div>
       </div></div>
       <div class="shield">
         <svg viewBox="0 0 120 126" width="120" height="126"><path d="M60 3 L112 21 V60 C112 93 89 114 60 123 C31 114 8 93 8 60 V21 Z" fill="#1f3864"/><path d="M60 13 L102 28 V60 C102 87 83 104 60 112 C37 104 18 87 18 60 V28 Z" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2"/></svg><span class="shield-txt">DICT</span>
@@ -703,27 +702,6 @@
     }, 2700);
   }
 
-  // E-mails « Répondre à tous » du final
-  let mailTimer;
-  function mails() {
-    const stage = document.getElementById('stage');
-    stage.querySelectorAll('.mailfly').forEach(m => m.remove());
-    clearTimeout(mailTimer);
-    mailTimer = setTimeout(() => {
-      for (let n = 0; n < 22; n++) {
-        const m = document.createElement('span');
-        m.className = 'mailfly';
-        m.textContent = '✉️';
-        m.style.top = (10 + Math.random() * 200) + 'px';
-        m.style.setProperty('--dy', (Math.random() * 80 - 40) + 'px');
-        m.style.setProperty('--r', (Math.random() * 60 - 30) + 'deg');
-        m.style.animationDuration = (1.1 + Math.random() * .9) + 's';
-        m.style.animationDelay = (Math.random() * .9) + 's';
-        stage.appendChild(m);
-      }
-    }, 2500);
-  }
-
   function show(n) {
     i = Math.max(0, Math.min(n, slides.length - 1));
     slides.forEach((s, x) => { s.classList.toggle('active', x === i); s.classList.remove('play'); });
@@ -731,8 +709,6 @@
     slides[i].classList.add('play');
     clearTimeout(confettiTimer);
     if (slides[i].id === 'podium') confetti(slides[i]);
-    clearTimeout(mailTimer);
-    if (slides[i].id === 'finale') mails();
     document.getElementById('nav').textContent = `${i + 1} / ${slides.length}`;
   }
   addEventListener('keydown', e => {
