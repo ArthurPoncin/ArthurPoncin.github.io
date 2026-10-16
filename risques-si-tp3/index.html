@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DICT, Groupe 1</title>
+<style>
+  :root {
+    --navy: #1f3864;
+    --blue: #2e75b6;
+    --text: #222;
+    --grey: #666;
+    --border: #bfbfbf;
+    --head: #d9e2f3;
+    --red: #f4b6b6;
+    --orange: #ffd966;
+    --green: #c6e0b4;
+    --alert: #c00000;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #808080; color: var(--text); font-family: Calibri, Carlito, Arial, sans-serif; overflow: hidden; }
+
+  .deck { position: fixed; inset: 0; display: grid; place-items: center; }
+  .slide {
+    position: absolute; width: 1280px; height: 720px; padding: 0 70px 60px;
+    background: #fff; display: none; transform-origin: center; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,.35);
+  }
+  .slide.active { display: block; }
+
+  .title-bar { border-bottom: 3px solid var(--navy); padding: 40px 0 14px; margin-bottom: 26px; display: flex; align-items: baseline; justify-content: space-between; }
+  .title-bar small { font-size: 20px; color: var(--grey); }
+  h1 { font-size: 52px; color: var(--navy); font-weight: bold; }
+  h2 { font-size: 36px; color: var(--navy); font-weight: bold; }
+  h3 { font-size: 22px; color: var(--blue); margin-bottom: 10px; }
+  p, li { font-size: 22px; line-height: 1.4; }
+  ul { margin-left: 28px; }
+  li { margin-bottom: 8px; }
+  li::marker { color: var(--blue); }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 18px; }
+  th, td { border: 1px solid var(--border); padding: 7px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--navy); color: #fff; font-weight: bold; }
+  tr:nth-child(even) td { background: #f2f2f2; }
+  td.c { text-align: center; }
+  td.s3 { background: var(--red) !important; text-align: center; font-weight: bold; }
+  td.s2 { background: var(--orange) !important; text-align: center; font-weight: bold; }
+  td.s1 { background: var(--green) !important; text-align: center; font-weight: bold; }
+
+  .note { font-size: 18px; color: var(--grey); margin-top: 14px; }
+  .footer { position: absolute; left: 70px; right: 70px; bottom: 20px; display: flex; justify-content: space-between; font-size: 14px; color: var(--grey); border-top: 1px solid var(--border); padding-top: 8px; background: #fff; }
+
+  /* Couverture */
+  .cover { height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; }
+  .cover h1 { font-size: 46px; border-bottom: 3px solid var(--navy); padding-bottom: 18px; margin-bottom: 22px; }
+  .cover p { color: var(--grey); }
+  .team-label { margin-top: 44px; margin-bottom: 14px; }
+  .team { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 30px; }
+  .who { text-align: center; padding: 14px 4px; border-top: 3px solid var(--blue); }
+  .who span { display: block; font-size: 22px; }
+  .who b { display: block; font-size: 22px; color: var(--navy); letter-spacing: .03em; }
+  .credits { margin-top: 70px; }
+  .credits .group { font-size: 18px; color: var(--blue); font-weight: bold; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .credits .names { font-size: 22px; color: var(--text); }
+  .credits .course { font-size: 18px; color: var(--grey); margin-top: 6px; }
+  .stamp {
+    position: absolute; right: 30px; bottom: 95px; padding: 10px 22px; border: 5px solid var(--alert); border-radius: 8px;
+    color: var(--alert); font-size: 34px; font-weight: bold; letter-spacing: .08em; transform: rotate(-12deg); opacity: .85;
+    font-family: "Courier New", monospace; text-align: center; line-height: 1.1;
+  }
+  .stamp small { display: block; font-size: 16px; letter-spacing: .02em; }
+  .slide.play .stamp { opacity: 0; animation: slam .7s cubic-bezier(.34,1.56,.64,1) 1.2s forwards; }
+  .slide.play .cover > :not(.stamp) { opacity: 0; animation: fadeUp .7s ease-out forwards; }
+  .slide.play .cover > :nth-child(2) { animation-delay: .15s; }
+  .slide.play .cover > :nth-child(3) { animation-delay: .3s; }
+  .slide.play .cover > :nth-child(4) { animation-delay: .45s; }
+  .slide.play .cover > :nth-child(5) { animation-delay: .6s; }
+  .slide.play.shake { animation: shake .35s ease-in-out 1.6s; }
+
+  /* Fiches application */
+  .app { display: grid; grid-template-columns: 330px 1fr; gap: 36px; }
+  .card { border-left: 4px solid var(--blue); padding-left: 18px; }
+  .card p, .card li { font-size: 19px; }
+  .card ul { margin-left: 20px; }
+  .card li { margin-bottom: 5px; }
+  .card .lbl { font-size: 15px; color: var(--grey); text-transform: uppercase; letter-spacing: .06em; margin-top: 10px; }
+  .card .lbl:first-child { margin-top: 0; }
+  .crit { display: grid; grid-template-columns: 78px 1fr; gap: 18px; align-items: center; padding: 13px 0; border-bottom: 1px solid #e3e3e3; }
+  .crit:last-child { border-bottom: 0; }
+  .badge { width: 78px; height: 78px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; color: var(--text); }
+  .badge i { font-style: normal; font-size: 15px; color: #444; }
+  .badge b { font-size: 38px; line-height: 1; }
+  .b3 { background: var(--red); } .b2 { background: var(--orange); } .b1 { background: var(--green); }
+  .crit p { font-size: 20px; line-height: 1.35; }
+  .crit p strong { color: var(--navy); }
+  .verdict { margin-top: 12px; font-size: 20px; color: var(--navy); font-weight: bold; }
+  .verdict span { font-weight: normal; color: var(--grey); font-size: 17px; }
+  .slide.play .crit { opacity: 0; animation: fadeUp .45s ease-out forwards; }
+  .slide.play .crit:nth-child(1) { animation-delay: .1s; }
+  .slide.play .crit:nth-child(2) { animation-delay: .25s; }
+  .slide.play .crit:nth-child(3) { animation-delay: .4s; }
+  .slide.play .crit:nth-child(4) { animation-delay: .55s; }
+
+
+  /* Synthèse */
+  .heat td, .heat th { text-align: center; vertical-align: middle; font-size: 22px; padding: 10px; }
+  .heat td:first-child { text-align: left; font-weight: bold; color: var(--navy); }
+  .heat td.tot { font-weight: bold; font-size: 24px; }
+  .slide.play .heat td.s1, .slide.play .heat td.s2, .slide.play .heat td.s3 { animation: cellIn .4s ease-out backwards; }
+
+  /* Podium */
+  .podium-wrap { position: relative; height: 470px; }
+  .podium { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 14px; }
+  .step { width: 200px; display: flex; flex-direction: column; align-items: center; }
+  .step .who-app { text-align: center; margin-bottom: 10px; }
+  .step .who-app b { display: block; font-size: 26px; color: var(--navy); }
+  .step .who-app span { font-size: 17px; color: var(--grey); }
+  .step .medal { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-size: 28px; font-weight: bold; color: #fff; margin-bottom: 8px; box-shadow: 0 3px 8px rgba(0,0,0,.2); }
+  .gold { background: #d4a017; } .silver { background: #9aa4ad; }
+  .bar { width: 100%; background: var(--head); border-top: 4px solid var(--navy); display: flex; align-items: flex-start; justify-content: center; padding-top: 12px; font-size: 40px; font-weight: bold; color: var(--navy); }
+  .step.p1 .bar { height: 230px; } .step.p2 .bar { height: 170px; }
+  .slide.play .bar { animation: grow .9s cubic-bezier(.22,1,.36,1) backwards; transform-origin: bottom; }
+  .slide.play .step.p2 .bar { animation-delay: .3s; }
+  .slide.play .step.p1 .bar { animation-delay: 1.2s; }
+  .slide.play .step .top { animation: drop .8s cubic-bezier(.34,1.56,.64,1) backwards; }
+  .slide.play .step.p2 .top { animation-delay: .9s; }
+  .slide.play .step.p1 .top { animation-delay: 2s; }
+  .loser { position: absolute; right: -20px; bottom: 20px; width: 240px; border: 2px dashed var(--border); border-radius: 10px; padding: 12px 14px; text-align: center; background: #fff; transform: rotate(3deg); }
+  .loser .zz { font-size: 40px; line-height: 1; }
+  .loser b { display: block; font-size: 22px; color: var(--navy); }
+  .loser span { font-size: 16px; color: var(--grey); }
+  .fourth { position: absolute; left: 0; bottom: 20px; width: 230px; border-left: 4px solid var(--border); padding-left: 14px; }
+  .fourth b { display: block; font-size: 20px; color: var(--navy); }
+  .fourth span { font-size: 16px; color: var(--grey); }
+  .slide.play .loser { animation: slideIn 1s cubic-bezier(.34,1.56,.64,1) 3.4s backwards; }
+  .slide.play .fourth { animation: fadeUp .6s ease-out 3s backwards; }
+  .slide.play .twist { animation: fadeUp .6s ease-out 4.6s backwards; }
+  .twist { text-align: center; font-size: 22px; margin-top: 18px; color: var(--text); }
+  .twist strong { color: var(--alert); }
+  .confetti { position: absolute; top: -20px; width: 10px; height: 16px; border-radius: 2px; pointer-events: none; animation: fall linear forwards; }
+
+
+  /* Chaîne PRODLINE */
+  .line { position: relative; height: 128px; margin-top: 4px; }
+  #prodline .crit { padding: 8px 0; }
+  .belt { position: absolute; left: 0; right: 0; bottom: 6px; height: 12px; border-radius: 6px;
+    background: repeating-linear-gradient(90deg, #9aa4ad 0 18px, #c9cfd4 18px 36px); }
+  .slide.play .belt { animation: belt .6s linear infinite; }
+  .station { position: absolute; left: 470px; top: 0; width: 150px; z-index: 1; text-align: center; }
+  .station .box { border: 2px solid var(--navy); border-radius: 6px; background: #fff; font-size: 14px; padding: 3px 4px; color: var(--navy); font-weight: bold; line-height: 1.2; }
+  .station .box small { display: block; font-weight: normal; color: var(--alert); font-size: 12px; }
+  .station .arm { width: 4px; height: 10px; background: var(--navy); margin: 0 auto; }
+  .spark { position: absolute; top: 46px; font-size: 18px; color: #d4a017; opacity: 0; }
+  .car { position: absolute; left: 0; bottom: 14px; width: 196px; height: 132px; transform: translateX(880px); }
+  .car svg { display: block; overflow: visible; }
+  .car .ok { opacity: 0; }
+  .caption { position: absolute; left: 0; top: 4px; width: 440px; font-size: 18px; line-height: 1.3; color: var(--text); }
+  .caption strong { color: var(--alert); }
+  .slide.play .car { animation: carMove 7s cubic-bezier(.45,0,.55,1) .9s both; }
+  .slide.play .car .ok { animation: okOut 7s linear .9s both; }
+  .slide.play .car .bad { animation: badIn 7s linear .9s both; }
+  .slide.play .car svg { animation: bump .32s ease-in-out 5.1s 11; }
+  .slide.play .station .box { animation: hit 7s linear .9s both; }
+  .slide.play .spark { animation: spark 7s linear .9s both; }
+  .slide.play .caption { animation: fadeUp .6s ease-out 8.3s backwards; }
+  @keyframes belt { to { background-position: 36px 0; } }
+  @keyframes carMove { 0% { transform: translateX(-170px); } 30%, 55% { transform: translateX(447px); } 100% { transform: translateX(880px); } }
+  @keyframes okOut { 0%, 46% { opacity: 1; } 48%, 100% { opacity: 0; } }
+  @keyframes badIn { 0%, 46% { opacity: 0; } 48%, 100% { opacity: 1; } }
+  @keyframes bump { 0%, 100% { transform: none; } 50% { transform: translateY(-7px) rotate(-3deg); } }
+  @keyframes hit { 0%, 32% { box-shadow: none; transform: none; } 36%, 44% { box-shadow: 0 0 0 5px rgba(192,0,0,.25); transform: translateX(-3px); } 40%, 48% { transform: translateX(3px); } 55%, 100% { box-shadow: none; transform: none; } }
+  @keyframes spark { 0%, 34% { opacity: 0; transform: scale(.3); } 40% { opacity: 1; transform: scale(1.3) rotate(40deg); } 50%, 100% { opacity: 0; transform: scale(.5) rotate(90deg); } }
+
+  /* Fuite QUALITYDOC */
+  .leak { position: relative; height: 170px; margin-top: 14px; }
+  .rights { position: absolute; left: 0; top: 0; font-size: 14px; color: var(--alert); border: 1px dashed var(--alert); border-radius: 4px; padding: 2px 6px; }
+  .doc { position: absolute; left: 0; top: 40px; width: 92px; text-align: center; transform: translate(112px, 62px) scale(.5) rotate(8deg); transform-origin: top left; }
+  .doc span { display: block; font-size: 13px; color: var(--navy); line-height: 1.15; margin-top: 2px; }
+  .hacker { position: absolute; right: 2px; bottom: 0; width: 104px; }
+  .thumb { position: absolute; right: 92px; bottom: 34px; font-size: 32px; }
+  .bubble { position: absolute; right: 0; top: 34px; background: #fff; border: 2px solid var(--navy); border-radius: 12px; padding: 4px 10px; font-size: 15px; font-weight: bold; color: var(--navy); white-space: nowrap; }
+  .bubble::after { content: ""; position: absolute; right: 18px; bottom: -9px; border: 8px solid transparent; border-top-color: var(--navy); border-bottom: 0; }
+  .slide.play .rights { animation: pop .5s cubic-bezier(.34,1.56,.64,1) 1.2s backwards; }
+  .slide.play .doc { animation: steal 1.5s cubic-bezier(.5,0,.3,1) 2.3s backwards; }
+  .slide.play .hacker { animation: fadeUp .5s ease-out 1.6s backwards; }
+  .slide.play .thumb { animation: pop .5s cubic-bezier(.34,1.56,.64,1) 3.9s backwards; }
+  .slide.play .bubble { animation: pop .5s cubic-bezier(.34,1.56,.64,1) 4.2s backwards; }
+  @keyframes steal { 0% { transform: none; } 50% { transform: translate(80px, -10px) rotate(-6deg); } 100% { transform: translate(112px, 62px) scale(.5) rotate(8deg); } }
+
+
+  /* Petites scènes par application */
+  .scene { position: relative; height: 172px; margin-top: 14px; }
+  .scene-cap { position: absolute; left: 0; bottom: 0; font-size: 15px !important; color: var(--grey); line-height: 1.3; }
+  .swap { position: relative; display: inline-block; }
+  .swap .old { position: absolute; left: 0; top: 0; white-space: nowrap; opacity: 0; }
+  .swap .new { color: var(--alert); font-weight: bold; }
+  .slide.play .swap .old { animation: oldOut 1.4s ease-in-out var(--t) both; }
+  .slide.play .swap .new { animation: newIn 1.4s ease-out var(--t) both; }
+  @keyframes oldOut { 0%, 45% { opacity: 1; transform: none; } 50% { transform: translateX(-3px); } 55% { transform: translateX(3px); } 60% { transform: translateX(-2px); opacity: 1; } 70%, 100% { opacity: 0; } }
+  @keyframes newIn { 0%, 68% { opacity: 0; transform: scale(.6); } 85% { opacity: 1; transform: scale(1.25); } 100% { opacity: 1; transform: none; } }
+  .pop-in { display: inline-block; }
+  .slide.play .pop-in { animation: pop .5s cubic-bezier(.34,1.56,.64,1) var(--t) backwards; }
+  .slide.play .scene-cap { animation: fadeUp .6s ease-out var(--t) backwards; }
+
+  .slip { border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 14px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.08); }
+  .slip-h { font-size: 12px; letter-spacing: .08em; color: var(--grey); border-bottom: 1px solid #e3e3e3; padding-bottom: 4px; margin-bottom: 4px; }
+  .slip .row { display: flex; justify-content: space-between; line-height: 1.5; }
+  .slip .net { border-top: 1px solid #e3e3e3; margin-top: 3px; padding-top: 3px; font-weight: bold; color: var(--navy); }
+  .slip .swap { text-align: right; }
+  .slip .swap .old { left: auto; right: 0; }
+  .party { position: absolute; right: -14px; top: -18px; font-size: 30px; }
+
+  .mail { border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.08); overflow: hidden; }
+  .mail-h { background: var(--navy); color: #fff; font-size: 12px; padding: 3px 8px; letter-spacing: .04em; }
+  .mrow { padding: 3px 8px; border-bottom: 1px solid #eee; white-space: nowrap; }
+  .mbody { padding: 4px 8px; color: var(--grey); font-style: italic; }
+  .send { height: 6px; background: #eee; }
+  .send div { height: 100%; width: 100%; background: var(--alert); }
+  .slide.play .send div { animation: sendBar 1.4s linear 2.6s backwards; }
+  @keyframes sendBar { from { width: 0; } to { width: 100%; } }
+  .oops { position: absolute; right: -16px; top: -20px; font-size: 32px; }
+
+  .calendar { position: relative; width: 116px; height: 112px; }
+  .page { position: absolute; inset: 0; background: #fff; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,.08); }
+  .page b { display: block; background: var(--alert); color: #fff; font-size: 16px; padding: 4px 0; letter-spacing: .1em; }
+  .page span { display: block; font-size: 13px; color: var(--grey); padding: 10px 6px 0; line-height: 1.25; }
+  .page.p1, .page.p2 { opacity: 0; transform: translate(-40px, -60px) rotate(-25deg); }
+  .slide.play .page.p1 { animation: tear .7s ease-in 1.4s backwards; }
+  .slide.play .page.p2 { animation: tear .7s ease-in 2.4s backwards; }
+  @keyframes tear { from { opacity: 1; transform: none; } to { opacity: 0; transform: translate(-40px, -60px) rotate(-25deg); } }
+  .coffee { position: absolute; left: 140px; top: 30px; font-size: 44px; }
+  .zz { position: absolute; left: 196px; top: 14px; font-size: 18px; color: var(--grey); font-weight: bold; letter-spacing: .1em; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: none; } }
+  @keyframes cellIn { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+  @keyframes slam { 0% { opacity: 0; transform: scale(5) rotate(-30deg); } 60% { opacity: .9; } 100% { opacity: .85; transform: rotate(-12deg); } }
+  @keyframes shake { 0%, 100% { transform: scale(var(--k)); } 25% { transform: scale(var(--k)) translate(-6px, 3px); } 50% { transform: scale(var(--k)) translate(5px, -4px); } 75% { transform: scale(var(--k)) translate(-3px, 2px); } }
+  @keyframes pop { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
+  @keyframes grow { from { transform: scaleY(0); } to { transform: none; } }
+  @keyframes drop { 0% { opacity: 0; transform: translateY(-240px); } 100% { opacity: 1; transform: none; } }
+  @keyframes slideIn { 0% { opacity: 0; transform: translateX(400px) rotate(30deg); } 100% { opacity: 1; transform: rotate(3deg); } }
+  @keyframes fall { to { transform: translateY(780px) rotate(var(--r)); } }
+
+  .nav { position: fixed; bottom: 10px; right: 14px; font-size: 14px; color: #fff; z-index: 5; }
+
+  @media print {
+    @page { size: 1280px 720px; margin: 0; }
+    html, body { overflow: visible; background: #fff; }
+    .deck { position: static; display: block; }
+    .slide { display: block; position: relative; transform: none !important; box-shadow: none; page-break-after: always; }
+    .nav, .confetti { display: none; }
+    .slide *, .slide { animation: none !important; }
+    .stamp { opacity: .85 !important; }
+    .slide.play .cover > :not(.stamp), .slide.play .crit { opacity: 1 !important; }
+  }
+</style>
+</head>
+<body>
+<main class="deck">
+
+  <!-- 1. Couverture -->
+  <section class="slide">
+    <div class="cover">
+      <h1>Classification DICT des applications PEUCIT</h1>
+      <p style="font-size:28px;color:var(--text)">Standard technique de sécurité des SI : applications n° 1, 3, 4, 7 et 10</p>
+      <div class="credits">
+        <p class="group">Groupe 1</p>
+        <p class="names">Arthur Poncin · Nathan Chevaudra · Amen Ahouandogbo · Habibou Halirou · Jihad Mabsout</p>
+        <p class="course">TP 3 · Stratégie des risques IT · EPSI M1</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Contexte -->
+  <section class="slide">
+    <div class="title-bar"><h2>Contexte et mission</h2></div>
+    <div class="cols">
+      <div>
+        <h3>PEUCIT</h3>
+        <ul>
+          <li>Constructeur automobile, 260 000 personnes</li>
+          <li>154 Md€ de CA, 6,5 M de véhicules par an</li>
+          <li>Environ 3 000 applications</li>
+        </ul>
+        <h3 style="margin-top:22px">Les constats de la DSI</h3>
+        <ul>
+          <li>Des applications mal protégées</li>
+          <li>Des investissements cyber décorrélés de la criticité métier</li>
+          <li>Des PRA à prioriser</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Notre mission</h3>
+        <p>Noter de 1 à 3 nos 5 applications sur les 4 critères DICT, en justifiant chaque note.</p>
+        <h3 style="margin-top:22px">Pour permettre ensuite de</h3>
+        <ul>
+          <li>Prioriser les PCA/PRA</li>
+          <li>Adapter les mesures de cybersécurité</li>
+          <li>Hiérarchiser les investissements</li>
+          <li>Repérer les applications à surveiller de près</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Méthode -->
+  <section class="slide">
+    <div class="title-bar"><h2>Notre grille de notation</h2></div>
+    <table style="font-size:17px">
+      <tr><th style="width:150px">Note</th><th>D : arrêt supportable</th><th>I : remise en état</th><th>C : divulgation</th><th>T : besoin de preuve</th></tr>
+      <tr><td class="s1">1 : Faible</td><td>Plus de 48 h</td><td>Corrigée tout de suite</td><td>Impact faible, sans préjudice durable</td><td>Journaux techniques suffisants</td></tr>
+      <tr><td class="s2">2 : Moyenne</td><td>Entre 12 h et 48 h</td><td>Restauration depuis une sauvegarde</td><td>Atteinte ponctuelle à l'image</td><td>Historique utile (audit, litige)</td></tr>
+      <tr><td class="s3">3 : Forte</td><td>Moins de 12 h</td><td>Jours de correction, pertes, sécurité</td><td>Patrimoine, confiance, données sensibles</td><td>Preuve exigée : réglementation, fraude</td></tr>
+    </table>
+    <h3 style="margin-top:24px">Trois règles appliquées</h3>
+    <ol style="margin-left:30px">
+      <li style="font-size:20px"><strong>Données personnelles</strong> : au minimum I = 3, C = 3 et T = 2.</li>
+      <li style="font-size:20px"><strong>Disponibilité variable</strong> : on retient la période critique (paie, clôture, campagne).</li>
+      <li style="font-size:20px"><strong>On note le besoin, pas l'existant</strong> : datacenters redondés et sauvegardes ne font pas baisser les notes.</li>
+    </ol>
+  </section>
+
+  <!-- 4. PAYEX -->
+  <section class="slide">
+    <div class="title-bar"><h2>N° 1 · PAYEX</h2><small>Paie France</small></div>
+    <div class="app">
+      <div class="card">
+        <p class="lbl">Utilisateurs</p>
+        <p>34 : gestionnaires RH, responsables, administrateurs</p>
+        <p class="lbl">Données</p>
+        <ul>
+          <li>Identité, adresse, RIB</li>
+          <li>Salaires, primes</li>
+          <li>Sanctions, arrêts maladie</li>
+          <li>Données fiscales</li>
+        </ul>
+        <p class="lbl">Usage</p>
+        <p>Toute l'année, vital les 5 derniers jours ouvrés du mois</p>
+        <div class="scene">
+          <div class="slip">
+            <div class="slip-h">BULLETIN DE PAIE · OCTOBRE</div>
+            <div class="row"><span>Salaire de base</span><span>2 450,00 €</span></div>
+            <div class="row"><span>Cotisations</span><span>- 540,00 €</span></div>
+            <div class="row net"><span>Net à payer</span><span class="swap" style="--t:1.2s"><span class="old">1 910,00 €</span><span class="new">191 000,00 €</span></span></div>
+          </div>
+          <span class="party pop-in" style="--t:2.6s">🎉</span>
+          <p class="scene-cap" style="--t:3s">Le salarié est ravi. La DRH, beaucoup moins.</p>
+        </div>
+      </div>
+      <div>
+        <div class="crit"><div class="badge b3"><i>D</i><b>3</b></div><p>Plusieurs jours d'arrêt en fin de mois = <strong>pas de salaires versés</strong>. Hypothèse : les virements partent avant le jour de paie, la marge réelle tombe <strong>sous 12 h</strong>. Hors paie : 2.</p></div>
+        <div class="crit"><div class="badge b3"><i>I</i><b>3</b></div><p>Un salaire modifié par erreur : erreurs de paiement, rappels, <strong>conflits sociaux</strong>, régularisations RH et compta.</p></div>
+        <div class="crit"><div class="badge b3"><i>C</i><b>3</b></div><p>RIB, salaires, arrêts maladie : <strong>données de santé</strong>, donc sensibles au sens du RGPD et protégées en priorité.</p></div>
+        <div class="crit"><div class="badge b3"><i>T</i><b>3</b></div><p>Historique complet obligatoire, <strong>chaque changement de salaire doit être justifié</strong>.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. PRODLINE -->
+  <section class="slide" id="prodline">
+    <div class="title-bar"><h2>N° 3 · PRODLINE</h2><small>Pilotage des chaînes</small></div>
+    <div class="app">
+      <div class="card">
+        <p class="lbl">Utilisateurs</p>
+        <p>1 390 : opérateurs, chefs d'équipe, responsables</p>
+        <p class="lbl">Usage</p>
+        <p>24h/24, 6 j/7, 900 véhicules par jour</p>
+      </div>
+      <div>
+        <div class="crit"><div class="badge b3"><i>D</i><b>3</b></div><p>Au-delà de <strong>10 minutes</strong>, les lignes s'arrêtent. Plus de <strong>300 000 € par heure</strong>.</p></div>
+        <div class="crit"><div class="badge b3"><i>I</i><b>3</b></div><p>Une mauvaise nomenclature = une mauvaise pièce sur des centaines de véhicules : <strong>rappels massifs</strong> et risque pour la sécurité des clients.</p></div>
+        <div class="crit"><div class="badge b2"><i>C</i><b>2</b></div><p>Savoir-faire industriel, mais <strong>partagé par 1 400 personnes</strong> et sans données personnelles. Le vrai danger, c'est l'arrêt ou le sabotage, pas la fuite.</p></div>
+        <div class="crit"><div class="badge b3"><i>T</i><b>3</b></div><p>Chaque véhicule doit rester <strong>traçable plus de 15 ans</strong> (VIN, pièces montées) pour cibler les rappels. Normes CO2 européennes.</p></div>
+      </div>
+    </div>
+    <div class="line">
+      <p class="caption">Résultat : la même erreur sur <strong>900 véhicules par jour</strong>, puis un rappel massif. <strong>I = 3</strong></p>
+      <div class="station"><div class="box">Robot de montage<small>nomenclature v2.3 ⚠</small></div><div class="arm"></div></div>
+      <span class="spark" style="left:500px">✦</span><span class="spark" style="left:585px;top:56px">✦</span><span class="spark" style="left:545px;top:40px">✶</span>
+      <div class="car"><svg viewBox="0 -24 140 94" width="196" height="132">
+        <g class="bad"><line x1="80" y1="8" x2="80" y2="-6" stroke="#333" stroke-width="3"/><circle cx="80" cy="-12" r="9" fill="none" stroke="#333" stroke-width="3"/><line x1="71" y1="-12" x2="89" y2="-12" stroke="#333" stroke-width="2"/></g>
+        <path d="M8 46 L18 29 L44 23 L60 8 L100 8 L118 24 L132 30 L134 46 Z" fill="#1f3864"/>
+        <path d="M65 13 L97 13 L108 24 L60 24 Z" fill="#d9e2f3"/>
+        <circle cx="34" cy="50" r="11" fill="#333"/><circle cx="34" cy="50" r="4" fill="#bbb"/>
+        <g class="ok"><circle cx="110" cy="50" r="11" fill="#333"/><circle cx="110" cy="50" r="4" fill="#bbb"/></g>
+        <g class="bad"><rect x="99" y="39" width="22" height="22" fill="#333"/><rect x="106" y="46" width="8" height="8" fill="#bbb"/></g>
+      </svg></div>
+      <div class="belt"></div>
+    </div>
+  </section>
+
+  <!-- 6. ASSET -->
+  <section class="slide">
+    <div class="title-bar"><h2>N° 4 · ASSET</h2><small>Immobilisations</small></div>
+    <div class="app">
+      <div class="card">
+        <p class="lbl">Utilisateurs</p>
+        <p>300 à la Direction financière</p>
+        <p class="lbl">Données</p>
+        <ul>
+          <li>250 000 biens</li>
+          <li>Valeurs d'achat, amortissements</li>
+          <li>Localisation, n° d'inventaire</li>
+        </ul>
+        <p class="lbl">Usage</p>
+        <p>Jours ouvrés, de 7 h à 22 h en clôture. Batch mensuel</p>
+        <div class="scene">
+          <div class="calendar">
+            <div class="page p3"><b>MER</b><span>ASSET en panne<br>depuis 3 jours</span></div>
+            <div class="page p2"><b>MAR</b><span>ASSET en panne<br>depuis 2 jours</span></div>
+            <div class="page p1"><b>LUN</b><span>ASSET en panne</span></div>
+          </div>
+          <span class="coffee pop-in" style="--t:3.2s">☕</span>
+          <span class="zz pop-in" style="--t:3.5s">zzz</span>
+          <p class="scene-cap" style="--t:3.8s">Hors clôture, personne n'a remarqué.</p>
+        </div>
+      </div>
+      <div>
+        <div class="crit"><div class="badge b2"><i>D</i><b>2</b></div><p>Hors clôture, <strong>plusieurs jours d'arrêt acceptables</strong> (1). En clôture, plus d'une journée retarde les comptes (2). On retient la clôture.</p></div>
+        <div class="crit"><div class="badge b2"><i>I</i><b>2</b></div><p>Une erreur fausse les états financiers, <strong>sans effet sur la production</strong>. Les amortissements se recalculent.</p></div>
+        <div class="crit"><div class="badge b1"><i>C</i><b>1</b></div><p>Pas de données personnelles. Les valeurs sont déjà <strong>publiées dans les comptes annuels</strong>.</p></div>
+        <div class="crit"><div class="badge b2"><i>T</i><b>2</b></div><p>Les commissaires aux comptes contrôlent les entrées et les mises au rebut. Une <strong>mise au rebut fictive</strong> peut masquer un vol.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. TALENT -->
+  <section class="slide">
+    <div class="title-bar"><h2>N° 7 · TALENT</h2><small>Entretiens annuels et objectifs</small></div>
+    <div class="app">
+      <div class="card">
+        <p class="lbl">Utilisateurs</p>
+        <p>22 000 salariés, 3 000 managers, 80 gestionnaires RH</p>
+        <p class="lbl">Données</p>
+        <ul>
+          <li>Évaluations, commentaires</li>
+          <li>Objectifs, compétences</li>
+          <li>Souhaits et pronostics de carrière</li>
+        </ul>
+        <p class="lbl">Usage</p>
+        <p>Campagnes en déc.-janv. et en juin</p>
+        <div class="scene">
+          <div class="mail">
+            <div class="mail-h">Nouveau message</div>
+            <div class="mrow">À : <span class="swap" style="--t:1.1s"><span class="old">Jean D.</span><span class="new">Tous les salariés France (22 000)</span></span></div>
+            <div class="mrow">Objet : Ton évaluation (confidentiel)</div>
+            <div class="mbody">« Objectifs non atteints, pas le plus motivé du service… »</div>
+            <div class="send"><div></div></div>
+          </div>
+          <span class="oops pop-in" style="--t:4.1s">😱</span>
+          <p class="scene-cap" style="--t:4.4s">Un clic sur « Répondre à tous ».</p>
+        </div>
+      </div>
+      <div>
+        <div class="crit"><div class="badge b2"><i>D</i><b>2</b></div><p>Une campagne dure des semaines : quelques heures d'arrêt se rattrapent. <strong>Au-delà de 48 h en campagne</strong>, les entretiens glissent (hors campagne : 1).</p></div>
+        <div class="crit"><div class="badge b3"><i>I</i><b>3</b></div><p>Une évaluation modifiée à tort <strong>pénalise un salarié</strong>, fausse une augmentation, déclenche un conflit.</p></div>
+        <div class="crit"><div class="badge b3"><i>C</i><b>3</b></div><p>Appréciations hiérarchiques, pronostics de carrière : <strong>parmi les données RH les plus sensibles</strong>, confidentielles par nature.</p></div>
+        <div class="crit"><div class="badge b3"><i>T</i><b>3</b></div><p>25 000 utilisateurs : il faut savoir <strong>qui a lu l'évaluation de qui</strong>, et prouver les modifications en cas de litige.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. QUALITYDOC -->
+  <section class="slide">
+    <div class="title-bar"><h2>N° 10 · QUALITYDOC</h2><small>Plateforme documentaire</small></div>
+    <div class="app">
+      <div class="card">
+        <p class="lbl">Utilisateurs</p>
+        <p>Environ 8 000 (qualité, IT, RH, achats…)</p>
+        <p class="lbl">Documents</p>
+        <ul>
+          <li>Normes qualité, certifications</li>
+          <li>Dossiers d'architecture IT</li>
+          <li>Comptes rendus, formations</li>
+        </ul>
+        <p class="lbl">Usage</p>
+        <p>Jours ouvrés</p>
+        <div class="leak">
+          <span class="rights">Droits : tout le monde</span>
+          <div class="doc"><svg viewBox="0 0 60 74" width="60" height="74"><path d="M2 2 H42 L58 18 V72 H2 Z" fill="#fff" stroke="#1f3864" stroke-width="3"/><path d="M42 2 V18 H58" fill="none" stroke="#1f3864" stroke-width="3"/><line x1="12" y1="32" x2="48" y2="32" stroke="#9aa4ad" stroke-width="3"/><line x1="12" y1="42" x2="48" y2="42" stroke="#9aa4ad" stroke-width="3"/><line x1="12" y1="52" x2="38" y2="52" stroke="#9aa4ad" stroke-width="3"/></svg><span>Dossier d'archi IT</span></div>
+          <svg class="hacker" viewBox="0 0 120 124">
+            <defs><radialGradient id="glow"><stop offset="0" stop-color="#9dff6a"/><stop offset=".45" stop-color="#5be32a" stop-opacity=".6"/><stop offset="1" stop-color="#5be32a" stop-opacity="0"/></radialGradient></defs>
+            <path d="M8 124 C8 96 28 82 60 82 C92 82 112 96 112 124 Z" fill="#2b3240"/>
+            <path d="M60 6 C33 6 20 29 20 55 C20 72 27 84 40 90 L80 90 C93 84 100 72 100 55 C100 29 87 6 60 6 Z" fill="#3b4456"/>
+            <path d="M60 6 C47 6 38 13 33 23 C42 16 50 14 60 14 C70 14 78 16 87 23 C82 13 73 6 60 6 Z" fill="#4a5468"/>
+            <ellipse cx="60" cy="56" rx="23" ry="27" fill="#0c0e12"/>
+            <path d="M37 56 C37 38 47 28 60 28 C73 28 83 38 83 56" fill="none" stroke="#262c38" stroke-width="3"/>
+            <circle cx="50" cy="52" r="7" fill="url(#glow)"/><circle cx="70" cy="52" r="7" fill="url(#glow)"/>
+            <ellipse cx="50" cy="52" rx="3" ry="2.2" fill="#c8ff9e"/><ellipse cx="70" cy="52" rx="3" ry="2.2" fill="#c8ff9e"/>
+            <path d="M51 66 Q61 72 70 63" fill="none" stroke="#5be32a" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M50 88 L48 101" stroke="#c9cfd4" stroke-width="2"/><circle cx="48" cy="102" r="2" fill="#c9cfd4"/>
+            <path d="M70 88 L72 101" stroke="#c9cfd4" stroke-width="2"/><circle cx="72" cy="102" r="2" fill="#c9cfd4"/>
+            <path d="M26 106 L94 106 L100 124 L20 124 Z" fill="#aeb6bf"/>
+            <rect x="32" y="96" width="56" height="12" rx="2" fill="#c9cfd4"/>
+            <text x="60" y="120" text-anchor="middle" font-family="Courier New, monospace" font-size="10" font-weight="bold" fill="#2b3240">&lt;/&gt;</text>
+          </svg>
+          <span class="thumb">👍</span>
+          <span class="bubble">Merci pour le plan !</span>
+        </div>
+      </div>
+      <div>
+        <div class="crit"><div class="badge b1"><i>D</i><b>1</b></div><p><strong>Aucun processus ne s'arrête</strong> sans elle, les documents courants peuvent vivre ailleurs.</p></div>
+        <div class="crit"><div class="badge b3"><i>I</i><b>3</b></div><p>Elle stocke des <strong>documents RH, donc des données personnelles</strong> : I au minimum 3. Un mauvais document peut aussi fausser une décision.</p></div>
+        <div class="crit"><div class="badge b3"><i>C</i><b>3</b></div><p>C'est <strong>le coffre recommandé pour les documents sensibles</strong>. Dossiers d'architecture IT = carte au trésor pour un attaquant.</p></div>
+        <div class="crit"><div class="badge b2"><i>T</i><b>2</b></div><p>Le circuit de validation sert de <strong>preuve lors des audits qualité</strong>. Pas d'exigence réglementaire forte.</p></div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:6px">« Sauvegardée et redondée » : c'est une mesure existante, elle ne fait pas baisser la note.</p>
+  </section>
+
+  <!-- 9. Synthèse -->
+  <section class="slide">
+    <div class="title-bar"><h2>Synthèse</h2></div>
+    <table class="heat" style="width:900px;margin:0 auto">
+      <tr><th style="text-align:left">Application</th><th>D</th><th>I</th><th>C</th><th>T</th><th>Total /12</th></tr>
+      <tr><td>PAYEX</td><td class="s3" style="animation-delay:.1s">3</td><td class="s3" style="animation-delay:.15s">3</td><td class="s3" style="animation-delay:.2s">3</td><td class="s3" style="animation-delay:.25s">3</td><td class="tot">12</td></tr>
+      <tr><td>PRODLINE</td><td class="s3" style="animation-delay:.3s">3</td><td class="s3" style="animation-delay:.35s">3</td><td class="s2" style="animation-delay:.4s">2</td><td class="s3" style="animation-delay:.45s">3</td><td class="tot">11</td></tr>
+      <tr><td>TALENT</td><td class="s2" style="animation-delay:.5s">2</td><td class="s3" style="animation-delay:.55s">3</td><td class="s3" style="animation-delay:.6s">3</td><td class="s3" style="animation-delay:.65s">3</td><td class="tot">11</td></tr>
+      <tr><td>QUALITYDOC</td><td class="s1" style="animation-delay:.7s">1</td><td class="s3" style="animation-delay:.75s">3</td><td class="s3" style="animation-delay:.8s">3</td><td class="s2" style="animation-delay:.85s">2</td><td class="tot">9</td></tr>
+      <tr><td>ASSET</td><td class="s2" style="animation-delay:.9s">2</td><td class="s2" style="animation-delay:.95s">2</td><td class="s1" style="animation-delay:1s">1</td><td class="s2" style="animation-delay:1.05s">2</td><td class="tot">7</td></tr>
+    </table>
+    <div class="cols" style="margin-top:30px;gap:40px">
+      <p style="font-size:20px">Les deux applications <strong>RH</strong> sont au maximum en confidentialité et en traçabilité.</p>
+      <p style="font-size:20px"><strong>PRODLINE</strong> est la seule où une panne se compte en minutes.</p>
+    </div>
+  </section>
+
+  <!-- 10. Podium -->
+  <section class="slide" id="podium">
+    <div class="title-bar"><h2>Le classement</h2><small>Total DICT sur 12</small></div>
+    <div class="podium-wrap">
+      <div class="fourth"><b>4e · QUALITYDOC</b><span>9 / 12, sauvée par ses documents sensibles</span></div>
+      <div class="podium">
+        <div class="step p2"><div class="top" style="display:flex;flex-direction:column;align-items:center"><div class="medal silver">2</div><div class="who-app"><b>PRODLINE</b><span>ex aequo</span></div></div><div class="bar">11</div></div>
+        <div class="step p1"><div class="top" style="display:flex;flex-direction:column;align-items:center"><div class="medal gold">1</div><div class="who-app"><b>PAYEX</b><span>sans faute : 3-3-3-3</span></div></div><div class="bar">12</div></div>
+        <div class="step p2"><div class="top" style="display:flex;flex-direction:column;align-items:center"><div class="medal silver">2</div><div class="who-app"><b>TALENT</b><span>ex aequo</span></div></div><div class="bar">11</div></div>
+      </div>
+      <div class="loser"><div class="zz">😴</div><b>ASSET · 7 / 12</b><span>Prix spécial de la sérénité. Plusieurs jours de panne ? Même pas mal.</span></div>
+    </div>
+    <p class="twist">Mais pour le PRA, l'ordre change : <strong>PRODLINE passe en premier</strong>. Le total ne fait pas tout.</p>
+  </section>
+
+  <!-- 11. Ce que ça change -->
+  <section class="slide">
+    <div class="title-bar"><h2>Ce que la classification change</h2></div>
+    <table style="font-size:20px">
+      <tr><th style="width:230px">Usage</th><th style="width:170px">Critère lu</th><th>Décision</th></tr>
+      <tr><td><strong>Priorité PRA</strong></td><td>D</td><td>1. PRODLINE (bascule quasi immédiate) · 2. PAYEX (PRA testé avant chaque fin de mois) · 3. TALENT et ASSET (48 h en période critique) · 4. QUALITYDOC</td></tr>
+      <tr><td><strong>Mesures cyber</strong></td><td>C et I</td><td>PAYEX, TALENT : chiffrement, accès au strict besoin, revue des habilitations. PRODLINE : réseau industriel isolé, contrôle des changements de nomenclature. QUALITYDOC : droits par document</td></tr>
+      <tr><td><strong>Investissements</strong></td><td>Les 4</td><td>D'abord PRODLINE, puis PAYEX et TALENT, puis QUALITYDOC. ASSET reste sur le socle commun du groupe</td></tr>
+      <tr><td><strong>Surveillance renforcée</strong></td><td>T = 3</td><td>PAYEX, PRODLINE, TALENT : alertes sur les changements de RIB ou de salaire, les consultations massives d'évaluations, les nomenclatures modifiées hors processus</td></tr>
+    </table>
+  </section>
+
+  <!-- 12. Conclusion -->
+  <section class="slide">
+    <div class="title-bar"><h2>Conclusion</h2></div>
+    <ul>
+      <li>3 applications sur 5 atteignent le niveau maximal sur au moins trois critères.</li>
+      <li>Les applications <strong>RH</strong> sont critiques pour la <strong>confidentialité</strong>, <strong>PRODLINE</strong> pour la <strong>disponibilité</strong>.</li>
+      <li>On note le besoin, pas les protections déjà en place : c'est ce qui permet ensuite de mesurer l'écart.</li>
+      <li>Le total aide à se repérer, mais chaque décision se lit sur un critère précis.</li>
+    </ul>
+    <p style="margin-top:70px;text-align:center;font-size:28px;color:var(--navy);font-weight:bold">Merci de votre attention. Des questions ?</p>
+  </section>
+
+</main>
+<div class="nav" id="nav"></div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  let i = 0;
+  slides.forEach((s, n) => {
+    if (n === 0) return;
+    const f = document.createElement('div');
+    f.className = 'footer';
+    f.innerHTML = `<span>Groupe 1 · Classification DICT</span><span>${n + 1}</span>`;
+    s.appendChild(f);
+  });
+
+  let k = 1;
+  function fit() {
+    k = Math.min(innerWidth / 1320, innerHeight / 760);
+    slides.forEach(s => { s.style.transform = `scale(${k})`; s.style.setProperty('--k', k); });
+  }
+
+  // Confettis du podium
+  const colors = ['#1f3864', '#2e75b6', '#ffd966', '#f4b6b6', '#c6e0b4', '#d4a017'];
+  let confettiTimer;
+  function confetti(slide) {
+    slide.querySelectorAll('.confetti').forEach(c => c.remove());
+    clearTimeout(confettiTimer);
+    confettiTimer = setTimeout(() => {
+      for (let n = 0; n < 90; n++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = (400 + Math.random() * 480) + 'px';
+        c.style.background = colors[n % colors.length];
+        c.style.setProperty('--r', (Math.random() * 900 - 450) + 'deg');
+        c.style.animationDuration = (1.8 + Math.random() * 1.6) + 's';
+        c.style.animationDelay = (Math.random() * .6) + 's';
+        slide.appendChild(c);
+      }
+    }, 2700);
+  }
+
+  function show(n) {
+    i = Math.max(0, Math.min(n, slides.length - 1));
+    slides.forEach((s, x) => { s.classList.toggle('active', x === i); s.classList.remove('play'); });
+    void slides[i].offsetWidth;
+    slides[i].classList.add('play');
+    clearTimeout(confettiTimer);
+    if (slides[i].id === 'podium') confetti(slides[i]);
+    document.getElementById('nav').textContent = `${i + 1} / ${slides.length}`;
+  }
+  addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); show(i + 1); }
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); show(i - 1); }
+    if (e.key === 'f') document.documentElement.requestFullscreen?.();
+  });
+  addEventListener('click', () => show(i + 1));
+  addEventListener('resize', fit);
+  fit(); show((parseInt(location.hash.slice(1)) || 1) - 1);
+</script>
+</body>
+</html>
