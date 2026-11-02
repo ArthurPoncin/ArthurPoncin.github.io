@@ -246,7 +246,7 @@ p{margin:0}
 /* baguette budget */
 .bag{position:relative;margin:36px 0 8px;height:40px;display:flex;align-items:center}
 .bag::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:repeating-linear-gradient(90deg,#DCD6CB 0 6px,transparent 6px 12px)}
-.loaf{position:relative;width:94.59%;height:40px;border-radius:999px;overflow:hidden;display:flex;box-shadow:0 10px 18px -10px rgba(110,50,10,.6),inset 0 6px 8px -4px rgba(255,236,200,.55),inset 0 -6px 8px -4px rgba(70,28,5,.45)}
+.loaf{position:relative;width:var(--w,94.59%);height:40px;border-radius:999px;overflow:hidden;display:flex;box-shadow:0 10px 18px -10px rgba(110,50,10,.6),inset 0 6px 8px -4px rgba(255,236,200,.55),inset 0 -6px 8px -4px rgba(70,28,5,.45)}
 .part{height:100%;display:flex;align-items:center;padding:0 18px;font-family:var(--mono);font-size:12px;white-space:nowrap;overflow:hidden;position:relative}
 .part span{background:rgba(0,0,0,.28);padding:2px 7px;border-radius:5px;position:relative;z-index:2}
 .part::after{content:"";position:absolute;top:11px;bottom:11px;left:var(--sl);right:14px;background:repeating-linear-gradient(118deg,transparent 0 30px,rgba(255,238,205,.75) 30px 35px,transparent 35px 64px);pointer-events:none}
@@ -254,7 +254,7 @@ p{margin:0}
 .part.inv{--sl:118px;background:linear-gradient(180deg,#F2CF85,#D9A23A 55%,#A8741F);color:#3E2A05}
 .part.inv span{background:rgba(255,255,255,.35)}
 .slide.active .loaf{animation:rise 1.6s cubic-bezier(.25,.8,.25,1) both;animation-delay:.45s}
-@keyframes rise{from{width:0;height:8px}35%{height:14px}to{width:94.59%;height:40px}}
+@keyframes rise{from{width:0;height:8px}35%{height:14px}to{width:var(--w,94.59%);height:40px}}
 .bag .cap,.bag .ref{z-index:2}
 
 /* ---------- 08 arbitrage ---------- */
@@ -411,6 +411,105 @@ p{margin:0}
 .counter.on{opacity:1}
 .replay{position:absolute;left:50%;transform:translateX(-50%);bottom:26px;font-family:var(--mono);font-size:10.5px;color:#55545A;letter-spacing:.1em;z-index:8}
 
+/* ---------- feuille de route fusionnée ---------- */
+.g2 .gh,.g2 .gr{grid-template-columns:250px 1fr 130px}
+.g2 .gr{height:50px}
+.g2 .gr .n{gap:12px}
+.g2 .gr .n b{display:block;font-size:14.5px;font-weight:600}
+.g2 .gr .n small{display:block;font-size:11.5px;color:var(--muted);font-weight:500;margin-top:1px}
+.g2 .ch{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);text-align:right;padding-bottom:6px}
+.g2 .c{text-align:right;font-family:var(--mono);font-size:14px;font-weight:600;line-height:1.2}
+.g2 .c small{display:block;font-size:10.5px;color:var(--muted);font-weight:500}
+.g2 .c.m{color:var(--muted);font-weight:500}
+.g2 .bar.soft{background:var(--crust-soft);color:var(--crust)}
+
+/* ---------- innovation animée ---------- */
+.scene{position:relative;height:290px;margin-top:10px}
+.scene .wire{position:absolute;top:127px;height:2px;background:repeating-linear-gradient(90deg,#CFC8BB 0 6px,transparent 6px 12px)}
+.scene .lab{position:absolute;width:240px;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.scene .lab b{display:block;font-family:var(--font);font-size:13px;letter-spacing:0;text-transform:none;color:var(--ink);margin-bottom:2px}
+.ph{position:absolute;left:40px;top:0;width:150px;height:250px;border-radius:26px;background:#16171B;padding:8px;box-shadow:0 24px 40px -22px rgba(0,0,0,.55)}
+.ph .scr{height:100%;border-radius:19px;background:#fff;display:flex;flex-direction:column;align-items:center;padding:16px 10px;position:relative;overflow:hidden}
+.ph .brand{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--crust);font-weight:600}
+.ph .emo{font-size:46px;margin:14px 0 6px;line-height:1}
+.ph .t{font-size:11.5px;color:var(--muted);text-align:center;line-height:1.35}
+.ph .btn{position:absolute;left:12px;right:12px;bottom:16px;background:var(--crust);color:#fff;border-radius:10px;padding:9px 0;text-align:center;font-weight:700;font-size:13px}
+.ph .code{position:absolute;left:10px;right:10px;bottom:12px;background:var(--ink);color:#fff;border-radius:10px;padding:6px 8px;text-align:center;opacity:0}
+.ph .code small{display:block;font-family:var(--mono);font-size:8.5px;color:var(--wheat);letter-spacing:.1em}
+.ph .code b{font-family:var(--mono);font-size:18px;letter-spacing:.18em}
+.finger{position:absolute;left:128px;top:206px;font-size:30px;opacity:0;z-index:3}
+.sibox{position:absolute;left:463px;top:62px;width:210px;height:130px;border-radius:16px;background:var(--ink);color:#fff;padding:16px 18px}
+.sibox small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--wheat)}
+.sibox .st2{font-size:12.5px;color:#B9B7B1;margin-top:10px}
+.sibox .nw{position:relative;height:46px;margin-top:2px;font-family:var(--display);font-weight:800;font-size:44px;letter-spacing:-.03em;line-height:46px}
+.sibox .nw span{position:absolute;left:0;top:0}
+.sibox .nw .n41{opacity:0;color:var(--wheat)}
+.dist{position:absolute;left:946px;top:0;width:150px;height:250px;border-radius:20px 20px 10px 10px;background:linear-gradient(180deg,#CF7333,#9A4514);box-shadow:0 24px 40px -22px rgba(110,40,5,.7),inset 0 3px 0 rgba(255,220,180,.35)}
+.dist .scr2{position:relative;margin:16px auto 0;width:110px;height:46px;border-radius:8px;background:#1D1E22;font-family:var(--mono);font-size:10px;color:var(--wheat);text-align:center}
+.dist .scr2 span{position:absolute;inset:0;display:grid;place-items:center;line-height:1.3}
+.dist .scr2 .ok{opacity:0;color:#7EE2A0}
+.dist .reader{position:absolute;left:20px;top:82px;width:72px;height:24px;border-radius:6px;background:#1D1E22;overflow:hidden}
+.dist .reader i{position:absolute;left:6px;right:6px;top:11px;height:2px;background:#FF4D4D;box-shadow:0 0 8px #FF4D4D;opacity:0}
+.dist .led{position:absolute;right:20px;top:88px;width:13px;height:13px;border-radius:50%;background:#E5484D;box-shadow:0 0 10px #E5484D}
+.dist .slot{position:absolute;left:14px;right:14px;bottom:28px;height:40px;border-radius:9px;background:#2A1406;box-shadow:inset 0 4px 8px rgba(0,0,0,.6)}
+.dist .bg{position:absolute;left:36px;top:2px;font-size:32px;line-height:1}
+.pk{position:absolute;top:121px;width:14px;height:14px;border-radius:50%;background:var(--wheat);box-shadow:0 0 0 5px rgba(217,162,58,.25),0 0 14px rgba(217,162,58,.8);opacity:0}
+.fl2{grid-template-columns:repeat(4,1fr);gap:26px;margin-top:6px}
+.fl2 .st{padding:10px 14px}
+.fl2 .st h3{font-size:16px;margin:3px 0 2px}
+.fl2 .st p{font-size:12.5px}
+.fl2+.strip{margin-top:12px}
+.slide.active .scene .finger{animation:k-fin 10s infinite}
+.slide.active .scene .btn{animation:k-btn 10s infinite}
+.slide.active .scene .code{animation:k-code 10s infinite}
+.slide.active .scene .pk1{animation:k-p1 10s infinite}
+.slide.active .scene .pk2{animation:k-p2 10s infinite}
+.slide.active .scene .pk3{animation:k-p3 10s infinite}
+.slide.active .scene .sibox{animation:k-si 10s infinite}
+.slide.active .scene .n42{animation:k-42 10s infinite}
+.slide.active .scene .n41{animation:k-41 10s infinite}
+.slide.active .scene .reader i{animation:k-beam 10s infinite}
+.slide.active .scene .led{animation:k-led 10s infinite}
+.slide.active .scene .scr2 .wait{animation:k-wait 10s infinite}
+.slide.active .scene .scr2 .ok{animation:k-ok 10s infinite}
+.slide.active .scene .bg{animation:k-bag 10s infinite}
+.slide.active .fl2 .st{animation:k-step 10s infinite}
+@keyframes k-fin{0%,3%{opacity:0;transform:translate(18px,18px)}8%{opacity:1;transform:none}11%{transform:scale(.88)}14%{opacity:1;transform:none}19%,100%{opacity:0}}
+@keyframes k-btn{0%,10%{opacity:1;transform:none}11%{transform:scale(.92)}13%,57%{opacity:1;transform:none}60%,97%{opacity:0}100%{opacity:1}}
+@keyframes k-code{0%,58%{opacity:0;transform:translateY(10px)}62%,97%{opacity:1;transform:none}100%{opacity:0}}
+@keyframes k-p1{0%,13%{opacity:0;left:190px}14%{opacity:1;left:190px}23%{opacity:1;left:449px}24%,100%{opacity:0;left:449px}}
+@keyframes k-p2{0%,50%{opacity:0;left:449px}51%{opacity:1;left:449px}58%{opacity:1;left:190px}59%,100%{opacity:0;left:190px}}
+@keyframes k-p3{0%,78%{opacity:0;left:673px}79%{opacity:1;left:673px}86%{opacity:1;left:932px}87%,100%{opacity:0;left:932px}}
+@keyframes k-si{0%,24%{box-shadow:0 0 0 0 rgba(217,162,58,0)}30%,44%{box-shadow:0 0 0 8px rgba(217,162,58,.35)}50%,100%{box-shadow:0 0 0 0 rgba(217,162,58,0)}}
+@keyframes k-42{0%,31%{opacity:1;transform:none}35%,96%{opacity:0;transform:translateY(-16px)}100%{opacity:1;transform:none}}
+@keyframes k-41{0%,31%{opacity:0;transform:translateY(16px)}35%,96%{opacity:1;transform:none}100%{opacity:0}}
+@keyframes k-beam{0%,75%{opacity:0}77%,83%{opacity:1}85%,100%{opacity:0}}
+@keyframes k-led{0%,86%{background:#E5484D;box-shadow:0 0 10px #E5484D}88%,97%{background:#3FB950;box-shadow:0 0 14px #3FB950}100%{background:#E5484D;box-shadow:0 0 10px #E5484D}}
+@keyframes k-wait{0%,86%{opacity:1}88%,97%{opacity:0}100%{opacity:1}}
+@keyframes k-ok{0%,86%{opacity:0}88%,97%{opacity:1}100%{opacity:0}}
+@keyframes k-bag{0%,87%{transform:none}93%,97%{transform:translateX(-118px) rotate(-10deg)}100%{transform:none}}
+@keyframes k-step{0%,24.9%{background:var(--ink);color:#fff}25%,100%{background:var(--card);color:var(--ink)}}
+.fl2 .st:nth-child(2){animation-delay:2.5s!important}.fl2 .st:nth-child(3){animation-delay:5s!important}.fl2 .st:nth-child(4){animation-delay:7.5s!important}
+.slide.active .fl2 .st p{color:inherit;opacity:.85}
+
+/* ---------- budget simplifié ---------- */
+.part.glow{animation:glow 2.2s ease-in-out infinite 2.2s}
+@keyframes glow{50%{filter:brightness(1.18) saturate(1.25)}}
+.pjh{display:flex;justify-content:space-between;align-items:baseline;margin-top:30px;padding-bottom:10px;border-bottom:1.5px solid var(--ink)}
+.pjh b{font-size:16px;font-weight:700}
+.pjh span{font-family:var(--mono);color:var(--crust);font-size:16px;font-weight:600}
+.pjs{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:14px}
+.pj{background:var(--wheat-soft);border-radius:12px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:7px;box-shadow:inset 0 0 0 1px #EBD29B}
+.pj .hd{display:flex;align-items:center;gap:8px}
+.pj .hd b{font-size:14px;font-weight:600;line-height:1.2}
+.pj .amt{font-family:var(--display);font-size:32px;font-weight:800;letter-spacing:-.03em;color:var(--crust);line-height:1}
+.pj .amt small{font-size:13px;color:var(--muted);margin-left:3px;font-weight:600}
+.pj .mb{height:6px;border-radius:99px;background:rgba(180,86,26,.14);overflow:hidden}
+.pj .mb i{display:block;height:100%;width:var(--v);background:var(--crust);border-radius:99px;transform-origin:left}
+.slide.active .pj .mb i{animation:wide 1s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*90ms + 700ms)}
+.pj small.pd{font-size:11.5px;color:var(--muted);line-height:1.35}
+.pj.off{background:var(--card);box-shadow:none}.pj.off .amt{color:#A3A19B}
+
 /* ---------- controls / notes ---------- */
 .ctrl{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:4px;background:rgba(251,250,247,.92);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:99px;padding:4px;z-index:5;opacity:.4;transition:opacity .3s;box-shadow:0 10px 30px -12px rgba(0,0,0,.25)}
 .ctrl:hover,.ctrl:focus-within{opacity:1}
@@ -444,6 +543,7 @@ p{margin:0}
   .ctrl,.np{display:none!important}
   .rocket,.cd,.rain,.counter,.replay{display:none!important}
   .finale .ftrail path{stroke-dashoffset:0!important}
+  .scene *,.fl2 .st,.pj .mb i,.part.glow{animation:none!important}
   .finale .slam{opacity:1;transform:translate(-50%,-50%) rotate(-2deg)}.finale .slam p{opacity:1}.finale .veil{opacity:1}.finale .pin .pop{opacity:1;transform:none}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
@@ -463,6 +563,10 @@ p{margin:0}
   .cover h1{font-size:46px;margin-top:40px}
   .cover .sub{font-size:16px}
   .cover .names{position:static;margin-top:28px}
+  .g2 .gh,.g2 .gr{grid-template-columns:200px 1fr 110px}
+  .scene{display:none}
+  .fl2{grid-template-columns:1fr}
+  .pjs{grid-template-columns:1fr 1fr}
   .finale{min-height:420px}
   .finale .pin,.finale .ftrail,.rocket,.cd,.rain,.counter,.replay,.fhead{display:none}
   .finale .slam{opacity:1;width:100%;transform:translate(-50%,-50%)}.finale .slam h2{font-size:44px}.finale .slam p{opacity:1;font-size:13px}
@@ -528,7 +632,7 @@ p{margin:0}
   <div class="bub" style="left:1000px;top:374px;--d:1.5s" aria-hidden="true"><span class="em"><i>🥖</i><span class="plus">+</span><i>🍖</i></span><span><b>Bocadillo de jamón</b><small>¡Una barra, por favor!</small></span></div>
   <div class="bub" style="left:850px;top:212px;--d:2.0s" aria-hidden="true"><span class="em"><i>🥖</i><span class="plus">+</span><i>🍕</i></span><span><b>Baguette al dente</b><small>Mamma mia !</small></span></div>
   <div class="names r" style="--i:3"><span>Nathan</span><span>Arthur</span><span>Anass</span><span>Jihad</span><span>Matthieu</span><span>Lucas</span></div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">01 / 19</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">01 / 13</span></div>
   <aside class="notes"><ul><li>On se présente comme la DSI de Ma Baguette face au COMEX.</li><li>Objectif : obtenir trois validations, la stratégie, la feuille de route et le budget N+1.</li></ul></aside>
 </section>
 
@@ -561,7 +665,7 @@ p{margin:0}
       </div>
     </div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">02 / 19</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">02 / 13</span></div>
   <aside class="notes"><ul><li>La stratégie est claire : une équipe commerciale par pays, au moins 3 pays dès l'an 1.</li><li>Le SAV reste en France mais devient européen.</li><li>Chaque direction a exprimé un besoin : c'est notre point de départ.</li></ul></aside>
 </section>
 
@@ -574,7 +678,7 @@ p{margin:0}
     <figure class="fg r" style="--i:3"><svg viewBox="0 0 3 2" role="img" aria-label="Drapeau : Espagne"><rect width="3" height="2" fill="#AA151B"/><rect y=".5" width="3" height="1" fill="#F1BF00"/></svg><figcaption>Espagne</figcaption></figure>
     <figure class="fg r" style="--i:4"><svg viewBox="0 0 3 2" role="img" aria-label="Drapeau : Italie"><rect width="1" height="2" fill="#009246"/><rect x="1" width="1" height="2" fill="#FFFFFF"/><rect x="2" width="1" height="2" fill="#CE2B37"/></svg><figcaption>Italie</figcaption></figure>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">03 / 19</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">03 / 13</span></div>
   <aside class="notes"><ul><li>On vise les trois plus gros marchés hors de France : c'est cohérent avec l'objectif de n°1 européen.</li><li>Aucun n'est francophone : d'où le site en 4 langues et un support en anglais.</li><li>Chaque pays a une société locale : c'est ce qui impose l'ERP multi-sociétés et le SIRH international.</li><li>La facture électronique, surtout en Italie, est un vrai impact SI à prévoir dans le projet ERP.</li></ul></aside>
 </section>
 
@@ -594,67 +698,31 @@ p{margin:0}
       </tbody>
     </table>
   </div></div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">04 / 19</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">04 / 13</span></div>
   <aside class="notes"><ul><li>Lire la slide ligne par ligne : besoin, limite actuelle, projet.</li><li>Chaque projet de la feuille de route répond à un blocage précis : rien n'est gratuit.</li><li>La salle serveur unique est le risque le plus grave : si elle tombe, production, ERP et SAV s'arrêtent.</li></ul></aside>
 </section>
 
 <!-- 04 ─ STRATÉGIE -->
 <section class="slide" data-sec="1">
-  <div class="top"><div class="kicker">Stratégie SI</div><div class="secs"></div></div>
-  <h2 class="r">Cinq axes au service d'un seul objectif : <em>réussir l'ouverture européenne</em></h2>
-  <div class="axes">
-    <div class="axe r" style="--i:2"><span class="n">01</span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><h3>Ouvrir le SI à l'international</h3><p>Des outils multi-pays, multi-langues, multi-sociétés.</p><div class="chips"><span>ERP</span><span>Site</span></div></div>
-    <div class="axe r" style="--i:3"><span class="n">02</span><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></svg><h3>Gérer les équipes à l'étranger</h3><p>Contrats et paie conformes au droit de chaque pays.</p><div class="chips"><span>SIRH</span></div></div>
-    <div class="axe r" style="--i:4"><span class="n">03</span><svg viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg><h3>Offrir un SAV européen</h3><p>Un support plus large, puis des distributeurs connectés.</p><div class="chips"><span>Hotline</span><span>IoT</span></div></div>
-    <div class="axe r" style="--i:5"><span class="n">04</span><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><h3>Sécuriser la continuité</h3><p>Ne plus dépendre d'une seule salle serveur.</p><div class="chips"><span>Second site</span><span>PRA</span></div></div>
-    <div class="axe dark r" style="--i:6"><span class="n">05</span><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><h3>Piloter et rendre compte</h3><p>Comités, indicateurs, budget suivi chaque mois.</p><div class="chips"><span>Comités</span><span>IT Scorecard</span><span>RGPD</span></div></div>
-  </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">05 / 19</span></div>
-  <aside class="notes"><ul><li>Les axes 1 à 4 répondent aux blocages du diagnostic.</li><li>L'axe 5 est transverse : c'est la gouvernance, détaillée slide 17.</li></ul></aside>
-</section>
-
-<!-- 05 ─ FEUILLE DE ROUTE -->
-<section class="slide" data-sec="2">
   <div class="top"><div class="kicker">Feuille de route</div><div class="secs"></div></div>
-  <h2 class="r">Six projets priorisés,<br><em>un sponsor</em> pour chacun</h2>
-  <div class="body"><div class="scroll r" style="--i:2">
-    <table class="tbl road">
-      <thead><tr><th style="width:56px">Prio.</th><th>Projet</th><th>Sponsor</th><th class="k">Invest.</th><th class="k">Charge / an</th><th class="k">Livraison</th></tr></thead>
-      <tbody>
-        <tr><td><span class="pill p1">P1</span></td><td><b>SIRH international</b><span>Paie et contrats en DE, ES, IT</span></td><td>DRH</td><td class="k">130 K€</td><td class="k">20 K€</td><td class="k">T2 N+1</td></tr>
-        <tr><td><span class="pill p1">P1</span></td><td><b>ERP multi-sociétés</b><span>3 filiales, facture électronique</span></td><td>DAF</td><td class="k">50 K€</td><td class="k m">—</td><td class="k">T2 N+1</td></tr>
-        <tr><td><span class="pill p1">P1</span></td><td><b>Site multilingue</b><span>FR, EN, DE, ES, IT</span></td><td>Dir. commerciale</td><td class="k">60 K€</td><td class="k m">—</td><td class="k">T2 N+1</td></tr>
-        <tr class="sep"><td><span class="pill p1">P1</span></td><td><b>Hotline étendue</b><span>+1 technicien support FR / EN</span></td><td>Dir. SAV</td><td class="k m">—</td><td class="k">80 K€</td><td class="k">T2 N+1</td></tr>
-        <tr><td><span class="pill p2">P2</span></td><td><b>Second site / PRA</b><span>300 K€ de matériel par an sur 2 ans + 80 K€ de prestations</span></td><td>DG</td><td class="k">300 K€ / an</td><td class="k m">—</td><td class="k">T2 N+2</td></tr>
-        <tr><td><span class="pill p3">P3</span></td><td><b>Distributeurs connectés<span class="star">*</span></b><span>Stock en temps réel, réservation en ligne</span></td><td>Dir. SAV</td><td class="k m">à chiffrer</td><td class="k m">—</td><td class="k">T4 N+3</td></tr>
-      </tbody>
-    </table>
-    <p class="note"><span class="pill p1">P1</span> indispensable avant l'arrivée des commerciaux · <span class="pill p2">P2</span> sécuriser · <span class="pill p3">P3</span> accélérer · <b>*</b> innovation proposée par la DSI, chiffrée en N+2. Coûts issus du sujet. Charge / an du SIRH : maintenance ≈ 20 % du prix d'achat (règle du cours).</p>
+  <h2 class="r">Six projets, <em>tout le P1 prêt avant l'ouverture</em></h2>
+  <div class="body"><div class="scroll r" style="--i:2"><div class="gantt g2">
+    <div class="gh"><div></div><div class="years"><div>N+1</div><div>N+2</div><div>N+3</div></div><div class="ch">COÛT</div></div>
+    <div class="gh"><div></div><div class="cols"><div class="q">T1</div><div class="q">T2</div><div class="q">T3</div><div class="q">T4</div><div class="q">T1</div><div class="q">T2</div><div class="q">T3</div><div class="q">T4</div><div class="q">T1</div><div class="q">T2</div><div class="q">T3</div><div class="q">T4</div></div><div></div></div>
+    <div class="gr"><span class="n"><span class="pill p1">P1</span><span><b>SIRH international</b><small>DRH</small></span></span><div class="cols"><div class="bar b1 w" style="grid-column:1/3;--i:1">paramétrage</div></div><span class="c">130 K€<small>+ 20 K€ / an</small></span></div>
+    <div class="gr"><span class="n"><span class="pill p1">P1</span><span><b>ERP multi-sociétés</b><small>DAF</small></span></span><div class="cols"><div class="bar b1 w" style="grid-column:1/3;--i:2"></div></div><span class="c">50 K€</span></div>
+    <div class="gr"><span class="n"><span class="pill p1">P1</span><span><b>Site multilingue</b><small>Dir. commerciale</small></span></span><div class="cols"><div class="bar b1 w" style="grid-column:1/3;--i:3"></div></div><span class="c">60 K€</span></div>
+    <div class="gr"><span class="n"><span class="pill p1">P1</span><span><b>Hotline étendue</b><small>Dir. SAV</small></span></span><div class="cols"><div class="bar b1 w" style="grid-column:1/2;--i:4">recrut.</div><div class="bar soft w" style="grid-column:2/13;--i:4">en service</div></div><span class="c">80 K€<small>par an</small></span></div>
+    <div class="gr"><span class="n"><span class="pill p2">P2</span><span><b>Second site / PRA</b><small>DG</small></span></span><div class="cols"><div class="bar b2 w" style="grid-column:2/5;--i:5">phase 1 · 380 K€</div><div class="bar b2 ghost w" style="grid-column:5/7;--i:5">phase 2 · 300 K€</div></div><span class="c">680 K€<small>sur 2 ans</small></span></div>
+    <div class="gr"><span class="n"><span class="pill p3">P3</span><span><b>Distributeurs connectés</b><small>Dir. SAV</small></span></span><div class="cols"><div class="bar b3 w" style="grid-column:8/13;--i:6">pilote puis déploiement</div></div><span class="c m">à chiffrer<small>en N+2</small></span></div>
+    <div class="ms" style="left:calc(250px + (100% - 380px) * 2 / 12)"><span>Ouverture DE · ES · IT</span></div>
   </div></div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">06 / 19</span></div>
-  <aside class="notes"><ul><li>Les 5 premiers projets et leurs coûts viennent du sujet ; le dernier est notre proposition d'innovation, pas encore chiffrée.</li><li>Rappeler la règle du cours : un logiciel acheté coûte ≈ 20 % de son prix chaque année en maintenance (SIRH : 20 % de 100 K€).</li><li>Chaque projet a un sponsor métier : ce n'est pas un projet « de la DSI ».</li></ul></aside>
+  <div class="legend r" style="--i:8"><span><i style="--c:var(--crust)"></i>P1 · indispensable à l'ouverture</span><span><i style="--c:var(--slate)"></i>P2 · continuité</span><span><i style="--c:var(--wheat)"></i>P3 · innovation</span><span style="margin-left:auto">Coûts du sujet · + 20 K€ / an = maintenance du SIRH (20 %, règle du cours)</span></div>
+  </div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">05 / 13</span></div>
+  <aside class="notes"><ul><li>Le jalon rouge est la date clé : les commerciaux arrivent au T3 N+1.</li><li>Les 4 projets P1 (SIRH, ERP, site, hotline) sont livrés au T2 : on ne recrute personne qu'on ne sait pas payer.</li><li>Chaque projet a un sponsor métier, indiqué sous son nom.</li><li>Le PRA est étalé sur 2 ans pour tenir le plafond : 380 K€ en N+1, 300 K€ en N+2.</li><li>Les distributeurs connectés sont notre innovation, chiffrée en N+2.</li></ul></aside>
 </section>
 
-<!-- 06 ─ PLANNING -->
-<section class="slide" data-sec="2">
-  <div class="top"><div class="kicker">Planning</div><div class="secs"></div></div>
-  <h2 class="r">Tout le P1 est prêt <em>avant l'arrivée des commerciaux</em></h2>
-  <div class="body"><div class="scroll r" style="--i:2"><div class="gantt">
-    <div class="gh"><div></div><div class="years"><div>N+1</div><div>N+2</div><div>N+3</div></div></div>
-    <div class="gh"><div></div><div class="cols"><div class="q">T1</div><div class="q">T2</div><div class="q">T3</div><div class="q">T4</div><div class="q">T1</div><div class="q">T2</div><div class="q">T3</div><div class="q">T4</div><div class="q">T1</div><div class="q">T2</div><div class="q">T3</div><div class="q">T4</div></div></div>
-    <div class="gr"><span class="n"><span class="pill p1">P1</span>SIRH international</span><div class="cols"><div class="bar b1 w" style="grid-column:1/3;--i:1">paramétrage</div></div></div>
-    <div class="gr"><span class="n"><span class="pill p1">P1</span>ERP multi-sociétés</span><div class="cols"><div class="bar b1 w" style="grid-column:1/3;--i:2"></div></div></div>
-    <div class="gr"><span class="n"><span class="pill p1">P1</span>Site multilingue</span><div class="cols"><div class="bar b1 w" style="grid-column:1/3;--i:3"></div></div></div>
-    <div class="gr"><span class="n"><span class="pill p1">P1</span>Hotline étendue</span><div class="cols"><div class="bar b1 w" style="grid-column:1/2;--i:4">recrut.</div><div class="bar w" style="grid-column:2/13;--i:4;background:var(--crust-soft);color:var(--crust)">en service</div></div></div>
-    <div class="gr"><span class="n"><span class="pill p2">P2</span>Second site / PRA</span><div class="cols"><div class="bar b2 w" style="grid-column:2/5;--i:5">phase 1 · 300 K€ / an</div><div class="bar b2 ghost w" style="grid-column:5/7;--i:6">phase 2 · 300 K€ / an</div></div></div>
-    <div class="gr"><span class="n"><span class="pill p3">P3</span>Distributeurs connectés</span><div class="cols"><div class="bar b3 w" style="grid-column:8/13;--i:8">pilote puis déploiement</div></div></div>
-    <div class="ms" style="left:calc(220px + (100% - 220px) * 2 / 12)"><span>Ouverture DE · ES · IT</span></div>
-  </div></div>
-  <div class="legend r" style="--i:9"><span><i style="--c:var(--crust)"></i>P1 · ouverture</span><span><i style="--c:var(--slate)"></i>P2 · continuité</span><span><i style="--c:var(--wheat)"></i>P3 · innovation</span></div>
-  </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">07 / 19</span></div>
-  <aside class="notes"><ul><li>Le jalon rouge est la date clé : les commerciaux arrivent au T3 N+1.</li><li>SIRH, ERP, site et hotline sont livrés au T2 : on ne recrute personne qu'on ne sait pas payer.</li><li>Le PRA démarre au T2 et se termine en N+2 : c'est l'arbitrage budgétaire expliqué slide 15.</li></ul></aside>
-</section>
 
 <!-- INNOVATION -->
 <!-- PROJET 1 -->
@@ -674,7 +742,7 @@ p{margin:0}
       <div class="rkb"><b>RISQUE ET PARADE</b>SIRH pas prêt avant les embauches : lancement dès le T1, prestataire de paie local en secours.</div>
     </div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">08 / 19</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">06 / 13</span></div>
   <aside class="notes"><ul><li>C'est le projet le plus critique : sans SIRH, on ne peut ni embaucher ni payer.</li><li>130 K€ : 100 K€ d'achat et 30 K€ d'installation et de formation.</li><li>20 K€ par an de maintenance, soit 20 % du prix d'achat, règle du cours.</li></ul></aside>
 </section>
 
@@ -695,7 +763,7 @@ p{margin:0}
       <div class="rkb"><b>RISQUE ET PARADE</b>Non-conformité fiscale : facture électronique prête dès l'ouverture, revue juridique par pays.</div>
     </div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">09 / 19</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">07 / 13</span></div>
   <aside class="notes"><ul><li>On fait évoluer l'ERP existant au lieu d'en changer : c'est pour cela que le coût reste limité.</li><li>Chaque pays a sa société locale, c'est ce qui impose le multi-sociétés.</li><li>La facture électronique est le point d'attention, surtout en Italie avec la plateforme d'État SdI.</li></ul></aside>
 </section>
 
@@ -716,7 +784,7 @@ p{margin:0}
       <div class="rkb"><b>RISQUE ET PARADE</b>Non-conformité RGPD ou droit local : revue juridique par pays avant la mise en ligne.</div>
     </div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">10 / 19</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">08 / 13</span></div>
   <aside class="notes"><ul><li>C'est la demande de la direction commerciale.</li><li>Le site est livré au T2, avant l'arrivée des commerciaux au T3.</li><li>Il servira aussi de base à notre innovation, la réservation en ligne.</li></ul></aside>
 </section>
 
@@ -737,7 +805,7 @@ p{margin:0}
       <div class="rkb"><b>RISQUE ET PARADE</b>Outils mal adoptés par les nouvelles équipes : formation à l'arrivée, suivi du taux d'adoption.</div>
     </div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">11 / 19</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">09 / 13</span></div>
   <aside class="notes"><ul><li>Ce projet ne coûte aucun investissement : c'est une charge annuelle de 80 K€, un coût chargé.</li><li>Le recrutement a lieu au T1 pour une mise en service au T2, avant les commerciaux.</li></ul></aside>
 </section>
 
@@ -758,180 +826,74 @@ p{margin:0}
       <div class="rkb"><b>RISQUE ET PARADE</b>Panne avant la fin du PRA : sauvegardes externalisées et phase 1 opérationnelle fin N+1.</div>
     </div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">12 / 19</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">10 / 13</span></div>
   <aside class="notes"><ul><li>C'est le risque le plus grave : si la salle tombe, production, ERP et SAV s'arrêtent.</li><li>300 K€ de matériel par an pendant 2 ans, plus 80 K€ de prestations en N+1.</li><li>Phase 1 : 80 K€ de prestations et 300 K€ de matériel. Phase 2 : les 300 K€ restants.</li><li>Ce découpage permet de tenir le plafond : voir la slide Arbitrage.</li></ul></aside>
 </section>
 
 <!-- PROJET 6 : INNOVATION IT -->
 <section class="slide" data-sec="2">
   <div class="top"><div class="kicker">Projet 6 sur 6 · Innovation IT</div><div class="secs"></div></div>
-  <h2 class="r">Distributeurs connectés : <em>réserver sa baguette en ligne</em></h2>
-  <div class="innoit">
-    <div class="flow">
-      <div class="st r" style="--i:2"><span class="n">01</span><h3>Réserver</h3><p>Le client choisit son distributeur sur le site.</p></div>
-      <div class="st r" style="--i:3"><span class="n">02</span><h3>Bloquer</h3><p>Le SI vérifie le stock en temps réel et bloque une baguette.</p></div>
-      <div class="st r" style="--i:4"><span class="n">03</span><h3>Confirmer</h3><p>Le client reçoit un code de retrait.</p></div>
-      <div class="st r" style="--i:5"><span class="n">04</span><h3>Retirer</h3><p>Le distributeur lit le code et délivre la baguette.</p></div>
-    </div>
-    <div class="sireq r" style="--i:6">
-      <b>Ce que ça demande au SI</b>
-      <div><strong>Boîtier connecté</strong>remonte le stock de chaque distributeur</div>
-      <div><strong>API de stock</strong>relie les distributeurs au SI central</div>
-      <div><strong>Module de réservation</strong>intégré au site multilingue</div>
-      <div><strong>Lecteur de code</strong>installé sur le distributeur</div>
-    </div>
-    <div class="strip r" style="--i:7">
+  <h2 class="r" style="max-width:none">Distributeurs connectés : <em>réserver sa baguette en ligne</em></h2>
+  <div class="scene r" style="--i:2" aria-hidden="true">
+    <div class="wire" style="left:190px;width:273px"></div><div class="wire" style="left:673px;width:273px"></div>
+    <div class="ph"><div class="scr"><span class="brand">MA BAGUETTE</span><span class="emo">🥖</span><span class="t">Tradition · distributeur n°12</span><span class="btn">Réserver</span><span class="code"><small>CODE DE RETRAIT</small><b>4F7K</b></span></div></div>
+    <span class="finger">👆</span>
+    <div class="sibox"><small>SI MA BAGUETTE</small><div class="st2">Stock du distributeur n°12</div><div class="nw"><span class="n42">42</span><span class="n41">41</span></div></div>
+    <div class="dist"><div class="scr2"><span class="wait">EN ATTENTE</span><span class="ok">CODE OK ✓<br>BON APPÉTIT</span></div><div class="reader"><i></i></div><span class="led"></span><div class="slot"><span class="bg">🥖</span></div></div>
+    <span class="pk pk1"></span><span class="pk pk2"></span><span class="pk pk3"></span>
+    <div class="lab" style="left:-5px;top:262px"><b>Module de réservation</b>sur le site multilingue</div>
+    <div class="lab" style="left:448px;top:204px"><b>API de stock</b>temps réel</div>
+    <div class="lab" style="left:901px;top:262px"><b>Boîtier connecté</b>+ lecteur de code</div>
+  </div>
+  <div class="flow fl2 r" style="--i:3">
+    <div class="st"><span class="n">01</span><h3>Réserver</h3><p>Le client choisit son distributeur sur le site.</p></div>
+    <div class="st"><span class="n">02</span><h3>Bloquer</h3><p>Le SI vérifie le stock et bloque une baguette.</p></div>
+    <div class="st"><span class="n">03</span><h3>Confirmer</h3><p>Le client reçoit un code de retrait.</p></div>
+    <div class="st"><span class="n">04</span><h3>Retirer</h3><p>Le distributeur lit le code et délivre la baguette.</p></div>
+  </div>
+  <div class="strip r" style="--i:4">
       <div><b>Priorité · sponsor</b>P3, Dir. SAV</div>
       <div><b>Budget</b>À chiffrer en N+2</div>
       <div><b>Planning</b>Pilote puis déploiement, livraison T4 N+3</div>
       <div><b>Risque et parade</b>Baguette non retirée : libérée après un délai</div>
     </div>
-  </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">13 / 19</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">11 / 13</span></div>
   <aside class="notes"><ul><li>Notre innovation est une innovation IT : le distributeur devient un objet connecté au SI.</li><li>Le service visible est simple : réserver en ligne et retirer au distributeur.</li><li>Tout repose sur le stock en temps réel : sans lui, impossible de garantir la baguette réservée.</li><li>Le module s'appuie sur le site multilingue, déjà financé en N+1.</li><li>Aucun coût n'est demandé en N+1 : le chiffrage sera présenté en N+2.</li></ul></aside>
 </section>
+
 
 <!-- 07 ─ BUDGET -->
 <section class="slide" data-sec="3">
   <div class="top"><div class="kicker">Budget N+1</div><div class="secs"></div></div>
-  <div class="bhead">
-    <div class="r"><div class="big num"><span data-count="3216">3 216</span><small>K€</small></div><p class="lead" style="margin-top:8px">soit +7,2 % sur le budget N de 3 000 K€</p></div>
+  <div class="bhead" style="margin-top:auto">
+    <div class="r"><div class="big num"><span data-count="3216">3 216</span><small>K€</small></div><p class="lead" style="margin-top:8px">+7,2 % sur le budget N de 3 000 K€</p></div>
     <span class="okchip r" style="--i:1">✓ Sous le plafond de 3 300 K€ · marge 84 K€</span>
   </div>
   <div class="bag r" style="--i:2">
-    <div class="loaf">
-      <div class="part fon" style="width:80.72%"><span>Fonctionnement 2 596</span></div>
-      <div class="part inv" style="width:19.28%"><span>Invest. 620</span></div>
+    <div class="loaf" style="--w:97.45%">
+      <div class="part fon" style="width:77.61%"><span>Socle 2 496</span></div>
+      <div class="part inv glow" style="width:22.39%"><span>Projets + 720</span></div>
     </div>
-    <div class="ref" style="left:88.24%"><span>Budget N · 3 000</span></div>
-    <div class="cap" style="left:97.06%"><span>Plafond 3 300</span></div>
+    <div class="ref" style="left:90.91%"><span>Budget N · 3 000</span></div>
+    <div class="cap" style="left:99.8%"><span>Plafond 3 300</span></div>
   </div>
-  <div class="bsplit">
-    <div class="bcol r" style="--i:4">
-      <h3><span><i class="sw" style="--c:#B4561A"></i>Fonctionnement (charges)</span><span class="num">2 596 K€</span></h3>
-      <div class="li base"><span>Socle N reconduit (budget N hors projets)</span><span>2 400</span></div>
-      <div class="li add"><span>Hausses : +4 % appliqué à tout le socle, par prudence</span><span>+ 96</span></div>
-      <div class="li add"><span>Technicien hotline FR / EN (chargé)</span><span>+ 80</span></div>
-      <div class="li add"><span>Maintenance du SIRH : 20 % de 100 K€</span><span>+ 20</span></div>
-      <p class="note" style="margin-top:10px"><b>Pourquoi +4 % partout ?</b> Le sujet annonce Microsoft +4 %, Syntec +2,2 % et salaires +1,2 %. Sans le détail du socle, on applique la hausse la plus forte à l'ensemble : le budget est volontairement surestimé.</p>
-    </div>
-    <div class="bcol r" style="--i:5">
-      <h3><span><i class="sw" style="--c:#D9A23A"></i>Investissements (achats)</span><span class="num">620 K€</span></h3>
-      <div class="li"><span>PRA phase 1 : prestations 80 + moitié du matériel 300</span><span>380</span></div>
-      <div class="li"><span>SIRH international : achat 100 + formation 30</span><span>130</span></div>
-      <div class="li"><span>Site multilingue</span><span>60</span></div>
-      <div class="li"><span>ERP multi-sociétés</span><span>50</span></div>
-      <p class="note" style="margin-top:10px"><b>Marge globale de 84 K€</b> pour les dotations des 34 nouveaux arrivants (20 commerciaux + 3 % de 450), soit ≈ 2,5 K€ par personne. <b>Seule hypothèse :</b> 600 K€ du budget N étaient des projets ponctuels terminés.</p>
-    </div>
+  <div class="pjh r" style="--i:3"><b>Ce que les projets ajoutent au budget</b><span>+ 720 K€</span></div>
+  <div class="pjs">
+    <div class="pj r" style="--i:4"><div class="hd"><span class="pill p2">P2</span><b>Second site / PRA</b></div><div class="amt num">+<span data-count="380">380</span><small>K€</small></div><div class="mb"><i style="--v:100%"></i></div><small class="pd">phase 1 : 80 de prestations + 300 de matériel</small></div>
+    <div class="pj r" style="--i:5"><div class="hd"><span class="pill p1">P1</span><b>SIRH international</b></div><div class="amt num">+<span data-count="150">150</span><small>K€</small></div><div class="mb"><i style="--v:39.47%"></i></div><small class="pd">130 d'achat + 20 de maintenance</small></div>
+    <div class="pj r" style="--i:6"><div class="hd"><span class="pill p1">P1</span><b>Hotline étendue</b></div><div class="amt num">+<span data-count="80">80</span><small>K€</small></div><div class="mb"><i style="--v:21.05%"></i></div><small class="pd">1 technicien FR / EN, chargé</small></div>
+    <div class="pj r" style="--i:7"><div class="hd"><span class="pill p1">P1</span><b>Site multilingue</b></div><div class="amt num">+<span data-count="60">60</span><small>K€</small></div><div class="mb"><i style="--v:15.79%"></i></div><small class="pd">achat</small></div>
+    <div class="pj r" style="--i:8"><div class="hd"><span class="pill p1">P1</span><b>ERP multi-sociétés</b></div><div class="amt num">+<span data-count="50">50</span><small>K€</small></div><div class="mb"><i style="--v:13.16%"></i></div><small class="pd">évolution multi-sociétés</small></div>
+    <div class="pj off r" style="--i:9"><div class="hd"><span class="pill p3">P3</span><b>Distributeurs connectés</b></div><div class="amt num">+<span data-count="0">0</span><small>K€</small></div><div class="mb"><i style="--v:0%"></i></div><small class="pd">chiffré en N+2</small></div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">14 / 19</span></div>
-  <aside class="notes"><ul><li>Tous les montants viennent du sujet, sauf une hypothèse : le budget N comprenait 600 K€ de projets terminés.</li><li>On ne connaît pas la répartition du socle : on applique donc +4 %, la plus forte hausse annoncée, à tout le socle. Choix prudent.</li><li>Maintenance : règle du cours, 20 % du prix d'achat d'un logiciel.</li><li>Pas de marge sur chaque ligne mais une marge globale (conseil du cours), qui couvre les dotations des 34 arrivants de la GPEC.</li></ul></aside>
+  <p class="note r" style="--i:10;margin-bottom:auto">Socle = budget N hors projets (2 400 K€) + 4 % de hausses par prudence (+ 96 K€). La marge de 84 K€ couvre les dotations des 34 nouveaux arrivants.</p>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">12 / 13</span></div>
+  <aside class="notes"><ul><li>Deux blocs : le socle (ce qu'on dépense déjà, + 4 % de hausses par prudence) et ce que les projets ajoutent.</li><li>Les projets ajoutent 720 K€ : le PRA est le plus gros poste, d'où son étalement sur 2 ans.</li><li>Tous les montants viennent du sujet ; seule hypothèse : 600 K€ du budget N étaient des projets terminés.</li><li>Marge globale de 84 K€ (conseil du cours) pour équiper les 34 nouveaux arrivants.</li></ul></aside>
 </section>
+
 
 <!-- 08 ─ ARBITRAGE -->
-<section class="slide" data-sec="3">
-  <div class="top"><div class="kicker">Arbitrage</div><div class="secs"></div></div>
-  <h2 class="r">Tout lancer en N+1 dépasserait le plafond : <em>on étale le PRA</em></h2>
-  <div class="arb">
-    <div>
-      <div class="cmp">
-        <div class="row bad r" style="--i:2"><h4><span>Les 5 projets demandés, tous en N+1</span><span>3 516 K€ · +216</span></h4>
-          <div class="track"><div class="seg w" style="left:0;width:91.67%;background:var(--ink2);border-radius:8px 0 0 8px;--i:2"></div><div class="over w" style="left:91.67%;width:6.00%;--i:3"></div><div class="cap" style="left:91.67%"></div></div></div>
-        <div class="row good r" style="--i:4"><h4><span>Notre proposition : PRA en 2 phases</span><span>3 216 K€ · −84</span></h4>
-          <div class="track"><div class="seg w" style="left:0;width:89.33%;background:var(--crust);--i:4"></div><div class="cap" style="left:91.67%"></div></div></div>
-        <p class="note r" style="--i:5;margin-top:-6px"><span style="display:inline-block;width:2px;height:12px;background:var(--red);vertical-align:-2px;margin-right:8px"></span>Plafond fixé par la direction financière : 3 300 K€ (3 000 K€ + 10 %)</p>
-      </div>
-      <div class="later">
-        <div class="r" style="--i:5"><small>REPORTÉ EN N+2</small><b>PRA phase 2 (matériel)</b><span>300 K€</span></div>
-        <div class="r" style="--i:7"><small>N+3</small><b>Distributeurs connectés</b><span>à chiffrer</span></div>
-      </div>
-    </div>
-    <div class="why r" style="--i:4">
-      <h3>Pourquoi le PRA ?</h3>
-      <ul>
-        <li>Les 4 projets P1 conditionnent l'ouverture des pays : on ne peut pas les décaler.</li>
-        <li>Le PRA est le plus gros poste (680 K€) et se découpe naturellement : on installe en N+1, on complète le matériel en N+2.</li>
-        <li>La phase 1 couvre déjà le risque principal : une salle de secours opérationnelle fin N+1.</li>
-        <li>En attendant, des sauvegardes externalisées limitent l'exposition.</li>
-        <li>Achat plutôt que location, comme le demande la direction financière.</li>
-      </ul>
-    </div>
-  </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">15 / 19</span></div>
-  <aside class="notes"><ul><li>C'est le cœur de l'exercice : montrer qu'on a fait un choix et l'assumer.</li><li>Tout faire tout de suite coûterait 3 516 K€, soit 216 K€ au-dessus du plafond.</li><li>En reportant la moitié du matériel du PRA (300 K€) en N+2, on tient le plafond avec une marge globale de 84 K€.</li></ul></aside>
-</section>
-
-<!-- 09 ─ RISQUES -->
-<section class="slide" data-sec="4">
-  <div class="top"><div class="kicker">Risques</div><div class="secs"></div></div>
-  <h2 class="r">Quatre risques identifiés, <em>une parade pour chacun</em></h2>
-  <div class="rk">
-    <div class="r" style="--i:2">
-      <div class="mx">
-        <div class="ax ay">FORTE</div><div class="cell c1"></div><div class="cell c2"><span class="dotr">R4</span></div><div class="cell c3"></div>
-        <div class="ax ay">MOYENNE</div><div class="cell c0"></div><div class="cell c2"><span class="dotr">R3</span></div><div class="cell c3"><span class="dotr">R1</span></div>
-        <div class="ax ay">FAIBLE</div><div class="cell c0"></div><div class="cell c1"></div><div class="cell c2"><span class="dotr">R2</span></div>
-        <div></div><div class="ax">MODÉRÉ</div><div class="ax">FORT</div><div class="ax">CRITIQUE</div>
-      </div>
-      <p class="mxl">PROBABILITÉ ↑ · IMPACT →</p>
-    </div>
-    <div class="rlist">
-      <div class="ri r" style="--i:3"><span class="dotr">R1</span><div><h4>Le SIRH n'est pas prêt avant les embauches <span class="lvl crit">CRITIQUE</span></h4><p><b>Parade :</b> lancement dès le T1, embauches calées sur la mise en service, prestataire de paie local en secours.</p></div></div>
-      <div class="ri r" style="--i:4"><span class="dotr">R2</span><div><h4>Panne de l'unique salle serveur <span class="lvl high">ÉLEVÉ</span></h4><p><b>Parade :</b> sauvegardes externalisées tout de suite, PRA phase 1 opérationnel fin N+1.</p></div></div>
-      <div class="ri r" style="--i:5"><span class="dotr">R3</span><div><h4>Non-conformité RGPD ou droit DE / ES / IT <span class="lvl high">ÉLEVÉ</span></h4><p><b>Parade :</b> revue juridique par pays avant chaque mise en ligne (site, SIRH), facture électronique prête dès l'ouverture.</p></div></div>
-      <div class="ri r" style="--i:6"><span class="dotr">R4</span><div><h4>Outils mal adoptés par les nouvelles équipes <span class="lvl mid">MOYEN</span></h4><p><b>Parade :</b> formation à l'arrivée, support en anglais, suivi du taux d'adoption.</p></div></div>
-    </div>
-  </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">16 / 19</span></div>
-  <aside class="notes"><ul><li>Matrice probabilité × impact, comme vu en cours, pour prioriser.</li><li>R1 est le plus critique : sans SIRH, on ne peut ni embaucher ni payer.</li><li>R4 rappelle que la conduite du changement est la clé de la réussite.</li></ul></aside>
-</section>
-
-<!-- 10 ─ GOUVERNANCE -->
-<section class="slide" data-sec="4">
-  <div class="top"><div class="kicker">Gouvernance</div><div class="secs"></div></div>
-  <h2 class="r">Trois comités pour décider, <em>quatre indicateurs</em> pour mesurer</h2>
-  <div class="gov">
-    <div class="scroll r" style="--i:2">
-      <table class="tbl">
-        <thead><tr><th>Comité</th><th>Rythme</th><th>Qui</th><th>Pour quoi</th></tr></thead>
-        <tbody>
-          <tr><td><b>Comité de pilotage</b></td><td><span class="freq">trimestre</span></td><td class="m">DG, DSI, DAF, DRH, sponsors</td><td>Arbitrer priorités et budget, bilan des projets</td></tr>
-          <tr><td><b>Comité projet</b></td><td><span class="freq">mois</span></td><td class="m">Sponsor, chef de projet, DSI</td><td>Avancement, budget engagé et dépensé, risques</td></tr>
-          <tr><td><b>Comité technique</b></td><td><span class="freq">semaine</span></td><td class="m">Équipes DSI, prestataires</td><td>Choix techniques, incidents, mises en production</td></tr>
-        </tbody>
-      </table>
-      <p class="note">Suivi budgétaire mensuel : prévu, engagé, dépensé, reste disponible. Point d'atterrissage fin juillet.</p>
-    </div>
-    <div class="r" style="--i:3">
-      <div class="sch">IT Scorecard · objectifs N+1</div>
-      <div class="sc">
-        <div><small>Finance</small><b>≤ 100 %</b><p>dépenses réelles / budget voté</p></div>
-        <div><small>Clients</small><b>≥ 98 %</b><p>taux de service du SI</p></div>
-        <div><small>Processus</small><b>4 / 4</b><p>projets P1 livrés avant l'ouverture</p></div>
-        <div><small>Apprentissage</small><b>100 %</b><p>nouveaux arrivants formés aux outils</p></div>
-      </div>
-    </div>
-  </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">17 / 19</span></div>
-  <aside class="notes"><ul><li>Plus on monte, moins on se réunit souvent mais plus on décide gros.</li><li>Les 4 indicateurs suivent les 4 perspectives de l'IT Scorecard (Kaplan et Norton).</li><li>98 % de taux de service : la cible correcte donnée en cours.</li></ul></aside>
-</section>
-
-<!-- 11 ─ DÉCISIONS -->
-<section class="slide final" data-sec="5">
-  <div class="top"><div class="kicker">Décisions attendues</div><div class="secs"></div></div>
-  <h2 class="r" style="color:#fff">Ce que nous demandons <em style="color:var(--wheat)">au COMEX aujourd'hui</em></h2>
-  <div class="dec">
-    <div class="d r" style="--i:2"><span class="n">01</span><h3>Valider la stratégie SI</h3><p>Les <em>5 axes</em> au service de l'ouverture européenne.</p></div>
-    <div class="d r" style="--i:3"><span class="n">02</span><h3>Valider la feuille de route</h3><p><em>4 projets P1</em> en N+1, le PRA en deux phases, l'innovation chiffrée en N+2.</p></div>
-    <div class="d r" style="--i:4"><span class="n">03</span><h3>Voter le budget N+1</h3><p><em>3 216 K€</em> : 2 596 K€ de fonctionnement et 620 K€ d'investissements.</p></div>
-    <div class="d r" style="--i:5"><span class="n">04</span><h3>Nommer les sponsors</h3><p><em>Un sponsor métier</em> par projet, présent au comité de pilotage.</p></div>
-  </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">18 / 19</span></div>
-  <aside class="notes"><ul><li>Terminer sur les décisions : c'est ce que le COMEX doit retenir.</li><li>Ouvrir aux questions.</li></ul></aside>
-</section>
-
-<!-- FINALE -->
-<section class="slide finale" data-sec="5">
+<section class="slide finale" data-sec="4">
   <div class="grid-bg"></div>
   <div class="fhead">Opération Baguette</div>
   <div class="counter" id="fcount">baguettes livrées en Europe<b>0</b></div>
@@ -949,12 +911,11 @@ p{margin:0}
     <span class="shades">😎</span>
   </div>
   <div class="puffs" id="puffs"></div>
-  <div class="cd" id="cd"></div>
   <div class="rain" id="rain"></div>
   <div class="veil" id="veil"></div>
   <div class="slam" id="slam"><h2>On a du pain<br><em>sur la planche.</em></h2><p>Merci ! Des questions ?</p></div>
   <span class="replay">R · rejouer</span>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">19 / 19</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">13 / 13</span></div>
   <aside class="notes"><ul><li>Laisser l'animation tourner sans parler (environ 10 secondes).</li><li>Puis : « Comme vous le voyez, on a du pain sur la planche. Merci, avez-vous des questions ? »</li><li>Touche R pour rejouer l'animation.</li></ul></aside>
 </section>
 
@@ -964,7 +925,7 @@ p{margin:0}
 
 <script>
 (function(){
-  const SECS=['Contexte','Stratégie','Feuille de route','Budget','Pilotage','Décisions'];
+  const SECS=['Contexte','Feuille de route','Projets','Budget','Fin'];
   const slides=[...document.querySelectorAll('.slide')];
   const deck=document.getElementById('deck');
   const np=document.getElementById('np');
@@ -1002,7 +963,7 @@ p{margin:0}
       timers.forEach(clearTimeout);timers=[];cancelAnimationFrame(raf);running=false;
       sl.querySelectorAll('.pin[data-pin]').forEach(p=>p.classList.remove('hit'));
       sl.querySelector('#rain').innerHTML='';sl.querySelector('#puffs').innerHTML='';
-      ['slam','veil','cd'].forEach(id=>sl.querySelector('#'+id).className=id);
+      ['slam','veil'].forEach(id=>sl.querySelector('#'+id).className=id);
       sl.querySelector('#fcount').className='counter';sl.querySelector('#fcount b').textContent='0';
       const r=sl.querySelector('#rocket');r.style.opacity=0;
       const t=sl.querySelector('#ftrail');const L=t.getTotalLength();t.style.strokeDasharray=L;t.style.strokeDashoffset=L;
@@ -1018,9 +979,8 @@ p{margin:0}
       if(reduce.matches||narrow.matches){finalState(sl);return}
       reset(sl);running=true;
       const home=sl.querySelector('.pin.home');home.classList.remove('hit');void home.offsetWidth;
-      const cd=sl.querySelector('#cd');
-      ['3','2','1','DÉCOLLAGE !'].forEach((txt,i)=>later(()=>{cd.className='cd';void cd.offsetWidth;cd.textContent=txt;cd.className='cd go'+(i===3?' lift':'');if(i===3)home.classList.add('hit')},300+i*600));
-      later(()=>fly(sl),2400);
+      later(()=>home.classList.add('hit'),200);
+      later(()=>fly(sl),900);
     }
     function fly(sl){
       const path=sl.querySelector('#ftrail'),L=path.getTotalLength(),rk=sl.querySelector('#rocket'),puffs=sl.querySelector('#puffs');
