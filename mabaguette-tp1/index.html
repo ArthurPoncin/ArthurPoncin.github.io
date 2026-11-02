@@ -109,6 +109,21 @@ p{margin:0}
 .asks div{display:flex;gap:8px;align-items:baseline}
 .asks b{font-family:var(--mono);font-size:10.5px;color:var(--crust);letter-spacing:.06em;min-width:84px;text-transform:uppercase}
 
+/* ---------- pays ---------- */
+.pays{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:auto 0}
+.pc{background:var(--card);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.pc .flag{height:8px;background:var(--f)}
+.pc .in{padding:22px 24px 20px;display:flex;flex-direction:column;flex:1}
+.pc h3{font-size:28px;font-weight:800;display:flex;justify-content:space-between;align-items:baseline}
+.pc h3 small{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.1em}
+.pc .pw{font-size:14.5px;color:var(--ink2);margin:8px 0 14px;line-height:1.45;min-height:63px}
+.pc .kv{display:flex;justify-content:space-between;gap:12px;font-size:13.5px;padding:8px 0;border-top:1px solid var(--line)}
+.pc .kv span:first-child{color:var(--muted)}
+.pc .kv b{font-weight:600;text-align:right}
+.pc .kv b.big2{font-family:var(--display);font-size:20px;line-height:1}
+.pc .si{margin-top:auto;background:var(--paper);border-radius:10px;padding:11px 13px;font-size:13px;line-height:1.45;color:var(--ink2)}
+.pc .si b{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--crust);margin-bottom:3px}
+
 /* ---------- tables ---------- */
 .tbl{width:100%;border-collapse:collapse;font-size:15px}
 .tbl th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:0 14px 12px;border-bottom:1.5px solid var(--ink)}
@@ -301,7 +316,8 @@ p{margin:0}
   .cover .names{position:static;margin-top:28px}
   .route{display:none}
   .ctx,.arb,.rk,.gov,.bsplit,.dec{grid-template-columns:1fr;gap:22px}
-  .ctx,.axes,.arb,.rk,.gov,.dec{margin-top:22px}
+  .ctx,.axes,.arb,.rk,.gov,.dec,.pays{margin-top:22px}
+  .pays{grid-template-columns:1fr}
   .stats{gap:12px}.stat .v{font-size:40px}
   .asks{grid-template-columns:1fr}
   .axes{grid-template-columns:1fr}.axe{min-height:0}.axe h3{margin-top:18px}
@@ -325,19 +341,19 @@ p{margin:0}
   <div class="grid-bg"></div><div class="glow"></div>
   <div class="brand r"><b>M</b>Ma Baguette · DSI · COMEX novembre 2026</div>
   <h1 class="r" style="--i:1">Un SI prêt<br>pour <span>l'Europe</span></h1>
-  <p class="sub r" style="--i:2">Stratégie SI, feuille de route à 3 ans et budget N+1 pour accompagner l'ouverture de 3 pays.</p>
+  <p class="sub r" style="--i:2">Stratégie SI, feuille de route à 3 ans et budget N+1 pour ouvrir l'Allemagne, l'Espagne et l'Italie.</p>
   <svg class="route" viewBox="0 0 470 360" aria-hidden="true">
     <path class="base" d="M40 300 C 140 300, 150 200, 230 190 S 330 120, 420 50"/>
     <path class="trace" d="M40 300 C 140 300, 150 200, 230 190 S 330 120, 420 50" style="stroke-dasharray:600;stroke-dashoffset:0"/>
     <circle class="home" cx="40" cy="300" r="9"/>
     <text x="22" y="333">FRANCE</text><text x="22" y="348" style="font-size:10px;fill:#77767A">aujourd'hui</text>
     <circle cx="150" cy="238" r="7"/><circle cx="230" cy="190" r="7"/><circle cx="318" cy="132" r="7"/>
-    <text x="118" y="270">PAYS 1</text><text x="208" y="222">PAYS 2</text><text x="296" y="164">PAYS 3</text>
+    <text x="164" y="256">ALLEMAGNE</text><text x="244" y="208">ESPAGNE</text><text x="332" y="150">ITALIE</text>
     <circle class="goal" cx="420" cy="50" r="11"/>
     <text class="big" x="330" y="28">n°1 européen</text><text x="372" y="84">à 3 ans</text>
   </svg>
   <div class="names r" style="--i:3"><span>Nathan</span><span>Arthur</span><span>Anass</span><span>Jihad</span><span>Mathieu</span><span>Lucas</span></div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">01 / 11</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">01 / 12</span></div>
   <aside class="notes"><ul><li>On se présente comme la DSI de Ma Baguette face au COMEX.</li><li>Objectif : obtenir trois validations, la stratégie, la feuille de route et le budget N+1.</li></ul></aside>
 </section>
 
@@ -358,7 +374,7 @@ p{margin:0}
     <div class="goals">
       <h3 class="r" style="--i:3">L'ambition annoncée</h3>
       <div class="stats">
-        <div class="stat r" style="--i:3"><div class="v num"><span data-count="3">3</span></div><p>pays ouverts dès la première année</p></div>
+        <div class="stat r" style="--i:3"><div class="v num"><span data-count="3">3</span></div><p>pays dès l'an 1 : Allemagne, Espagne, Italie</p></div>
         <div class="stat r" style="--i:4"><div class="v num"><span data-count="20">20</span></div><p>commerciaux recrutés à l'étranger</p></div>
         <div class="stat r" style="--i:5"><div class="v num">n°1</div><p>européen de la baguette en distributeur</p></div>
       </div>
@@ -370,11 +386,46 @@ p{margin:0}
       </div>
     </div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">02 / 11</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">02 / 12</span></div>
   <aside class="notes"><ul><li>La stratégie est claire : une équipe commerciale par pays, au moins 3 pays dès l'an 1.</li><li>Le SAV reste en France mais devient européen.</li><li>Chaque direction a exprimé un besoin : c'est notre point de départ.</li></ul></aside>
 </section>
 
-<!-- 03 ─ DIAGNOSTIC -->
+<!-- 03 ─ PAYS -->
+<section class="slide" data-sec="0">
+  <div class="top"><div class="kicker">Pays cibles</div><div class="secs"></div></div>
+  <h2 class="r">Trois pays dès l'an 1 : <em>Allemagne, Espagne, Italie</em></h2>
+  <div class="pays">
+    <div class="pc r" style="--i:2;--f:linear-gradient(90deg,#16171B 0 33.3%,#C8261B 33.3% 66.6%,#E8B21F 66.6%)"><div class="flag"></div><div class="in">
+      <h3>Allemagne <small>DE</small></h3>
+      <p class="pw">Le plus grand marché d'Europe, avec 84 millions d'habitants.</p>
+      <div class="kv"><span>Commerciaux</span><b class="big2 num">9</b></div>
+      <div class="kv"><span>Société locale</span><b>GmbH</b></div>
+      <div class="kv"><span>Langue du site</span><b>allemand</b></div>
+      <div class="si"><b>POINT D'ATTENTION SI</b>Réception des factures électroniques B2B obligatoire depuis 2025.</div>
+    </div></div>
+    <div class="pc r" style="--i:3;--f:linear-gradient(90deg,#B8231A 0 25%,#F1BF24 25% 75%,#B8231A 75%)"><div class="flag"></div><div class="in">
+      <h3>Espagne <small>ES</small></h3>
+      <p class="pw">48 millions d'habitants, une forte culture du pain frais, une frontière commune.</p>
+      <div class="kv"><span>Commerciaux</span><b class="big2 num">5</b></div>
+      <div class="kv"><span>Société locale</span><b>S.L.</b></div>
+      <div class="kv"><span>Langue du site</span><b>espagnol</b></div>
+      <div class="si"><b>POINT D'ATTENTION SI</b>Facture électronique B2B en cours de généralisation : l'ERP doit suivre.</div>
+    </div></div>
+    <div class="pc r" style="--i:4;--f:linear-gradient(90deg,#1E8A4C 0 33.3%,#F4F2EC 33.3% 66.6%,#C8261B 66.6%)"><div class="flag"></div><div class="in">
+      <h3>Italie <small>IT</small></h3>
+      <p class="pw">59 millions d'habitants, du pain frais acheté chaque jour.</p>
+      <div class="kv"><span>Commerciaux</span><b class="big2 num">6</b></div>
+      <div class="kv"><span>Société locale</span><b>S.r.l.</b></div>
+      <div class="kv"><span>Langue du site</span><b>italien</b></div>
+      <div class="si"><b>POINT D'ATTENTION SI</b>Facture électronique obligatoire via la plateforme d'État (SdI).</div>
+    </div></div>
+  </div>
+  <p class="note r" style="--i:5;margin-top:0">Les 20 commerciaux sont répartis selon la taille des marchés. Langue commune du support : l'anglais (hotline FR / EN).</p>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">03 / 12</span></div>
+  <aside class="notes"><ul><li>On vise les trois plus gros marchés hors de France : c'est cohérent avec l'objectif de n°1 européen.</li><li>Aucun n'est francophone : d'où le site en 4 langues et un support en anglais.</li><li>Chaque pays a une société locale : c'est ce qui impose l'ERP multi-sociétés et le SIRH international.</li><li>La facture électronique, surtout en Italie, est un vrai impact SI à prévoir dans le projet ERP.</li></ul></aside>
+</section>
+
+<!-- 04 ─ DIAGNOSTIC -->
 <section class="slide" data-sec="0">
   <div class="top"><div class="kicker">Diagnostic</div><div class="secs"></div></div>
   <h2 class="r">Notre SI a été pensé pour la France : <em>5 blocages</em> à lever</h2>
@@ -382,15 +433,15 @@ p{margin:0}
     <table class="tbl diag">
       <thead><tr><th style="width:34%">Ce que la stratégie exige</th><th style="width:33%">Ce que le SI permet aujourd'hui</th><th>Notre réponse</th></tr></thead>
       <tbody>
-        <tr><td>Recruter et payer 20 commerciaux dans 3 pays</td><td>Paie et contrats uniquement français</td><td><b><span class="pill p1">P1</span>SIRH international</b></td></tr>
-        <tr><td>Gérer une société par pays</td><td>ERP mono-société</td><td><b><span class="pill p1">P1</span>ERP multi-sociétés</b></td></tr>
-        <tr><td>Vendre aux franchisés européens</td><td>Site web en français seulement</td><td><b><span class="pill p1">P1</span>Site multilingue</b></td></tr>
+        <tr><td>Recruter et payer 20 commerciaux en Allemagne, Espagne et Italie</td><td>Paie et contrats de droit français uniquement</td><td><b><span class="pill p1">P1</span>SIRH international</b></td></tr>
+        <tr><td>Gérer 3 filiales : GmbH, S.L., S.r.l.</td><td>ERP mono-société</td><td><b><span class="pill p1">P1</span>ERP multi-sociétés</b></td></tr>
+        <tr><td>Vendre en allemand, espagnol et italien</td><td>Site web en français seulement</td><td><b><span class="pill p1">P1</span>Site multilingue</b></td></tr>
         <tr><td>Un SAV pour toute l'Europe</td><td>Support aux horaires français</td><td><b><span class="pill p1">P1</span>Hotline étendue FR / EN</b></td></tr>
         <tr><td>Produire et vendre sans interruption</td><td>Une seule salle serveur, sur le site de production</td><td><b><span class="pill p2">P2</span>Second site + PRA</b></td></tr>
       </tbody>
     </table>
   </div></div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">03 / 11</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">04 / 12</span></div>
   <aside class="notes"><ul><li>Lire la slide ligne par ligne : besoin, limite actuelle, projet.</li><li>Chaque projet de la feuille de route répond à un blocage précis : rien n'est gratuit.</li><li>La salle serveur unique est le risque le plus grave : si elle tombe, production, ERP et SAV s'arrêtent.</li></ul></aside>
 </section>
 
@@ -405,8 +456,8 @@ p{margin:0}
     <div class="axe r" style="--i:5"><span class="n">04</span><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><h3>Sécuriser la continuité</h3><p>Ne plus dépendre d'une seule salle serveur.</p><div class="chips"><span>Second site</span><span>PRA</span></div></div>
     <div class="axe dark r" style="--i:6"><span class="n">05</span><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><h3>Piloter et rendre compte</h3><p>Comités, indicateurs, budget suivi chaque mois.</p><div class="chips"><span>Comités</span><span>IT Scorecard</span><span>RGPD</span></div></div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">04 / 11</span></div>
-  <aside class="notes"><ul><li>Les axes 1 à 4 répondent aux blocages du diagnostic.</li><li>L'axe 5 est transverse : c'est la gouvernance, détaillée slide 10.</li></ul></aside>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">05 / 12</span></div>
+  <aside class="notes"><ul><li>Les axes 1 à 4 répondent aux blocages du diagnostic.</li><li>L'axe 5 est transverse : c'est la gouvernance, détaillée slide 11.</li></ul></aside>
 </section>
 
 <!-- 05 ─ FEUILLE DE ROUTE -->
@@ -417,9 +468,9 @@ p{margin:0}
     <table class="tbl road">
       <thead><tr><th style="width:56px">Prio.</th><th>Projet</th><th>Sponsor</th><th class="k">Invest.</th><th class="k">Charge / an</th><th class="k">Livraison</th></tr></thead>
       <tbody>
-        <tr><td><span class="pill p1">P1</span></td><td><b>SIRH international</b><span>Recruter et payer dans 3 pays</span></td><td>DRH</td><td class="k">130 K€</td><td class="k">20 K€</td><td class="k">T2 N+1</td></tr>
-        <tr><td><span class="pill p1">P1</span></td><td><b>ERP multi-sociétés</b><span>Une société par pays</span></td><td>DAF</td><td class="k">50 K€</td><td class="k">10 K€</td><td class="k">T2 N+1</td></tr>
-        <tr><td><span class="pill p1">P1</span></td><td><b>Site multilingue</b><span>Vendre dans la langue de chaque pays</span></td><td>Dir. commerciale</td><td class="k">60 K€</td><td class="k">12 K€</td><td class="k">T2 N+1</td></tr>
+        <tr><td><span class="pill p1">P1</span></td><td><b>SIRH international</b><span>Paie et contrats en DE, ES, IT</span></td><td>DRH</td><td class="k">130 K€</td><td class="k">20 K€</td><td class="k">T2 N+1</td></tr>
+        <tr><td><span class="pill p1">P1</span></td><td><b>ERP multi-sociétés</b><span>3 filiales, facture électronique</span></td><td>DAF</td><td class="k">50 K€</td><td class="k">10 K€</td><td class="k">T2 N+1</td></tr>
+        <tr><td><span class="pill p1">P1</span></td><td><b>Site multilingue</b><span>FR, EN, DE, ES, IT</span></td><td>Dir. commerciale</td><td class="k">60 K€</td><td class="k">12 K€</td><td class="k">T2 N+1</td></tr>
         <tr class="sep"><td><span class="pill p1">P1</span></td><td><b>Hotline étendue</b><span>+1 technicien support FR / EN</span></td><td>Dir. SAV</td><td class="k m">—</td><td class="k">80 K€</td><td class="k">T2 N+1</td></tr>
         <tr><td><span class="pill p2">P2</span></td><td><b>Second site / PRA</b><span>En 2 phases : 400 K€ en N+1, 280 K€ en N+2</span></td><td>DG</td><td class="k">680 K€</td><td class="k m">dès N+2</td><td class="k">T2 N+2</td></tr>
         <tr><td><span class="pill p3">P3</span></td><td><b>CRM + mobilité<span class="star">*</span></b><span>Outiller les commerciaux sur le terrain</span></td><td>Dir. commerciale</td><td class="k">60 K€</td><td class="k m">dès N+2</td><td class="k">T3 N+2</td></tr>
@@ -428,7 +479,7 @@ p{margin:0}
     </table>
     <p class="note"><span class="pill p1">P1</span> indispensable avant l'arrivée des commerciaux · <span class="pill p2">P2</span> sécuriser · <span class="pill p3">P3</span> accélérer · <b>*</b> innovations proposées par la DSI. Charge / an des logiciels : maintenance ≈ 20 % du prix d'achat.</p>
   </div></div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">05 / 11</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">06 / 12</span></div>
   <aside class="notes"><ul><li>Les 5 premiers projets viennent de la feuille de route fixée ; les 2 derniers sont nos propositions d'innovation.</li><li>Rappeler la règle du cours : un investissement fait monter les charges annuelles (≈ 20 % de maintenance).</li><li>Chaque projet a un sponsor métier : ce n'est pas un projet « de la DSI ».</li></ul></aside>
 </section>
 
@@ -446,12 +497,12 @@ p{margin:0}
     <div class="gr"><span class="n"><span class="pill p2">P2</span>Second site / PRA</span><div class="cols"><div class="bar b2 w" style="grid-column:2/5;--i:5">phase 1 · 400 K€</div><div class="bar b2 ghost w" style="grid-column:5/7;--i:6">phase 2 · 280 K€</div></div></div>
     <div class="gr"><span class="n"><span class="pill p3">P3</span>CRM + mobilité</span><div class="cols"><div class="bar b3 w" style="grid-column:5/8;--i:7"></div></div></div>
     <div class="gr"><span class="n"><span class="pill p3">P3</span>Distributeurs connectés</span><div class="cols"><div class="bar b3 w" style="grid-column:8/13;--i:8">pilote puis déploiement</div></div></div>
-    <div class="ms" style="left:calc(220px + (100% - 220px) * 2 / 12)"><span>Ouverture des 3 pays</span></div>
+    <div class="ms" style="left:calc(220px + (100% - 220px) * 2 / 12)"><span>Ouverture DE · ES · IT</span></div>
   </div></div>
   <div class="legend r" style="--i:9"><span><i style="--c:var(--crust)"></i>P1 · ouverture</span><span><i style="--c:var(--slate)"></i>P2 · continuité</span><span><i style="--c:var(--wheat)"></i>P3 · innovation</span></div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">06 / 11</span></div>
-  <aside class="notes"><ul><li>Le jalon rouge est la date clé : les commerciaux arrivent au T3 N+1.</li><li>SIRH, ERP, site et hotline sont livrés au T2 : on ne recrute personne qu'on ne sait pas payer.</li><li>Le PRA démarre au T2 et se termine en N+2 : c'est l'arbitrage budgétaire expliqué slide 8.</li></ul></aside>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">07 / 12</span></div>
+  <aside class="notes"><ul><li>Le jalon rouge est la date clé : les commerciaux arrivent au T3 N+1.</li><li>SIRH, ERP, site et hotline sont livrés au T2 : on ne recrute personne qu'on ne sait pas payer.</li><li>Le PRA démarre au T2 et se termine en N+2 : c'est l'arbitrage budgétaire expliqué slide 9.</li></ul></aside>
 </section>
 
 <!-- 07 ─ BUDGET -->
@@ -488,7 +539,7 @@ p{margin:0}
       <p class="note" style="margin-top:10px"><b>Hypothèses :</b> socle N = 2 400 K€ (salaires DSI 800, Microsoft 300, prestations 600, autres 700). 34 arrivants = 20 commerciaux + 3 % de 450. Dotation 1,5 K€ de matériel et 1 K€/an de licences par personne.</p>
     </div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">07 / 11</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">08 / 12</span></div>
   <aside class="notes"><ul><li>Lire de gauche à droite : on part du socle, on ajoute chaque hausse imposée (Microsoft, Syntec, salaires) puis ce qu'entraînent nos projets.</li><li>Les investissements sont des achats, conformément à la consigne du DAF.</li><li>Les 34 arrivants viennent de la GPEC : 20 commerciaux + 3 % d'effectif.</li></ul></aside>
 </section>
 
@@ -522,7 +573,7 @@ p{margin:0}
       </ul>
     </div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">08 / 11</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">09 / 12</span></div>
   <aside class="notes"><ul><li>C'est le cœur de l'exercice : montrer qu'on a fait un choix et l'assumer.</li><li>Tout faire tout de suite coûterait 3 562 K€, soit 262 K€ au-dessus du plafond.</li><li>En reportant 280 K€ du PRA en N+2, on tient le plafond avec une marge globale de 18 K€.</li></ul></aside>
 </section>
 
@@ -543,11 +594,11 @@ p{margin:0}
     <div class="rlist">
       <div class="ri r" style="--i:3"><span class="dotr">R1</span><div><h4>Le SIRH n'est pas prêt avant les embauches <span class="lvl crit">CRITIQUE</span></h4><p><b>Parade :</b> lancement dès le T1, embauches calées sur la mise en service, prestataire de paie local en secours.</p></div></div>
       <div class="ri r" style="--i:4"><span class="dotr">R2</span><div><h4>Panne de l'unique salle serveur <span class="lvl high">ÉLEVÉ</span></h4><p><b>Parade :</b> sauvegardes externalisées tout de suite, PRA phase 1 opérationnel fin N+1.</p></div></div>
-      <div class="ri r" style="--i:5"><span class="dotr">R3</span><div><h4>Non-conformité RGPD ou droit local <span class="lvl high">ÉLEVÉ</span></h4><p><b>Parade :</b> revue juridique par pays avant chaque mise en ligne (site, SIRH).</p></div></div>
+      <div class="ri r" style="--i:5"><span class="dotr">R3</span><div><h4>Non-conformité RGPD ou droit DE / ES / IT <span class="lvl high">ÉLEVÉ</span></h4><p><b>Parade :</b> revue juridique par pays avant chaque mise en ligne (site, SIRH), facture électronique prête dès l'ouverture.</p></div></div>
       <div class="ri r" style="--i:6"><span class="dotr">R4</span><div><h4>Outils mal adoptés par les nouvelles équipes <span class="lvl mid">MOYEN</span></h4><p><b>Parade :</b> formation à l'arrivée, support en anglais, suivi du taux d'adoption.</p></div></div>
     </div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">09 / 11</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">10 / 12</span></div>
   <aside class="notes"><ul><li>Matrice probabilité × impact, comme vu en cours, pour prioriser.</li><li>R1 est le plus critique : sans SIRH, on ne peut ni embaucher ni payer.</li><li>R4 rappelle que la conduite du changement est la clé de la réussite.</li></ul></aside>
 </section>
 
@@ -577,7 +628,7 @@ p{margin:0}
       </div>
     </div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">10 / 11</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">11 / 12</span></div>
   <aside class="notes"><ul><li>Plus on monte, moins on se réunit souvent mais plus on décide gros.</li><li>Les 4 indicateurs suivent les 4 perspectives de l'IT Scorecard (Kaplan et Norton).</li><li>98 % de taux de service : la cible correcte donnée en cours.</li></ul></aside>
 </section>
 
@@ -591,7 +642,7 @@ p{margin:0}
     <div class="d r" style="--i:4"><span class="n">03</span><h3>Voter le budget N+1</h3><p><em>3 282 K€</em> : 2 591 K€ de fonctionnement et 691 K€ d'investissements.</p></div>
     <div class="d r" style="--i:5"><span class="n">04</span><h3>Nommer les sponsors</h3><p><em>Un sponsor métier</em> par projet, présent au comité de pilotage.</p></div>
   </div>
-  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">11 / 11</span></div>
+  <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">12 / 12</span></div>
   <aside class="notes"><ul><li>Terminer sur les décisions : c'est ce que le COMEX doit retenir.</li><li>Ouvrir aux questions.</li></ul></aside>
 </section>
 
