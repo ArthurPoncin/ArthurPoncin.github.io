@@ -280,7 +280,7 @@ p{margin:0}
 .part{height:100%;display:flex;align-items:center;padding:0 18px;font-family:var(--mono);font-size:12px;white-space:nowrap;overflow:hidden;position:relative}
 .part span{background:rgba(0,0,0,.28);padding:2px 7px;border-radius:5px;position:relative;z-index:2}
 .part::after{content:"";position:absolute;top:11px;bottom:11px;left:var(--sl);right:14px;background:repeating-linear-gradient(118deg,transparent 0 30px,rgba(255,238,205,.75) 30px 35px,transparent 35px 64px);pointer-events:none}
-.part.fon{--sl:200px;background:linear-gradient(180deg,#D98A45,#B4561A 55%,#8C3D10);color:#fff}
+.part.fon{--sl:280px;background:linear-gradient(180deg,#D98A45,#B4561A 55%,#8C3D10);color:#fff}
 .part.inv{--sl:118px;background:linear-gradient(180deg,#F2CF85,#D9A23A 55%,#A8741F);color:#3E2A05}
 .part.inv span{background:rgba(255,255,255,.35)}
 .slide.active .loaf{animation:rise 1.6s cubic-bezier(.25,.8,.25,1) both;animation-delay:.45s}
@@ -538,7 +538,13 @@ p{margin:0}
 .pj .mb i{display:block;height:100%;width:var(--v);background:var(--crust);border-radius:99px;transform-origin:left}
 .slide.active .pj .mb i{animation:wide 1s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*90ms + 700ms)}
 .pj small.pd{font-size:11.5px;color:var(--muted);line-height:1.35}
-.pj.off{background:var(--card);box-shadow:none}.pj.off .amt{color:#A3A19B}
+.pj.off{background:var(--card);box-shadow:none}
+.ratio{display:grid;grid-template-columns:auto auto;gap:12px 34px;align-items:end;justify-items:start}
+.ratio>div{display:flex;flex-direction:column}
+.ratio b{font-family:var(--display);font-size:46px;font-weight:800;letter-spacing:-.035em;line-height:1}
+.ratio>div span{font-size:13px;color:var(--muted);margin-top:5px;line-height:1.35}
+.ratio .add b{color:var(--crust)}
+.ratio .okchip{grid-column:1/-1;justify-self:end;font-size:13px}.pj.off .amt{color:#A3A19B}
 
 /* ---------- controls / notes ---------- */
 .ctrl{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:4px;background:rgba(251,250,247,.92);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:99px;padding:4px;z-index:5;opacity:.4;transition:opacity .3s;box-shadow:0 10px 30px -12px rgba(0,0,0,.25)}
@@ -897,13 +903,17 @@ p{margin:0}
 <section class="slide" data-sec="3">
   <div class="top"><div class="kicker">Budget N+1</div><div class="secs"></div></div>
   <div class="bhead" style="margin-top:auto">
-    <div class="r"><div class="big num"><span data-count="2836">2 836</span><small>K€</small></div><p class="lead" style="margin-top:8px">−5,5 % sur le budget N de 3 000 K€, qui comptait 600 K€ de projets</p></div>
-    <span class="okchip r" style="--i:1">✓ Sous le plafond de 3 300 K€ · marge 464 K€</span>
+    <div class="r"><div class="big num" style="color:var(--crust)">+<span data-count="340">340</span><small>K€</small></div><p class="lead" style="margin-top:8px">ajoutés par les projets en N+1, pour un budget total de <b style="color:var(--ink)">2 836 K€</b></p></div>
+    <div class="ratio r" style="--i:1">
+      <div><b class="num">88 %</b><span>dépense de base<br>2 496 K€</span></div>
+      <div class="add"><b class="num">12 %</b><span>nouveaux projets<br>340 K€</span></div>
+      <span class="okchip">✓ Sous le plafond de 3 300 K€ · marge 464 K€</span>
+    </div>
   </div>
   <div class="bag r" style="--i:2">
     <div class="loaf" style="--w:85.94%">
-      <div class="part fon" style="width:88.01%"><span>Socle 2 496</span></div>
-      <div class="part inv glow" style="width:11.99%"><span>+ 340</span></div>
+      <div class="part fon" style="width:88.01%"><span>Dépense de base · 2 496 K€ · 88 %</span></div>
+      <div class="part inv glow" style="width:11.99%"><span>12 %</span></div>
     </div>
     <div class="ref" style="left:90.91%"><span>Budget N · 3 000</span></div>
     <div class="cap" style="left:99.8%"><span>Plafond 3 300</span></div>
@@ -917,9 +927,9 @@ p{margin:0}
     <div class="pj off r" style="--i:8"><div class="hd"><span class="pill p2">P2</span><b>Second site / PRI</b></div><div class="amt num">+<span data-count="0">0</span><small>K€</small></div><div class="mb"><i style="--v:0%"></i></div><small class="pd">300 K€ en N+2</small></div>
     <div class="pj off r" style="--i:9"><div class="hd"><span class="pill p3">P3</span><b>Distributeurs connectés</b></div><div class="amt num">+<span data-count="0">0</span><small>K€</small></div><div class="mb"><i style="--v:0%"></i></div><small class="pd">300 K€ en N+3</small></div>
   </div>
-  <p class="note r" style="--i:10;margin-bottom:auto">Socle = budget N hors projets (2 400 K€) + 4 % de hausses par prudence (+ 96 K€). La marge de 464 K€ couvre les dotations des 34 nouveaux arrivants.</p>
+  <p class="note r" style="--i:10;margin-bottom:auto">Dépense de base = ce que la DSI dépense déjà : budget N hors projets (2 400 K€) + 4 % de hausses par prudence (+ 96 K€). La marge de 464 K€ couvre les dotations des 34 nouveaux arrivants.</p>
   <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">12 / 13</span></div>
-  <aside class="notes"><ul><li>Deux blocs : le socle (ce qu'on dépense déjà, + 4 % de hausses par prudence) et ce que les projets de N+1 ajoutent.</li><li>En N+1, seuls les 4 projets P1 sont lancés : + 340 K€ (SIRH avec sa maintenance, hotline, site, ERP).</li><li>La PRI (N+2) et les distributeurs connectés (N+3) ont chacun leur enveloppe de 300 K€ les années suivantes.</li><li>Le budget baisse par rapport à N, qui comptait 600 K€ de projets terminés. Marge de 464 K€ sous le plafond.</li></ul></aside>
+  <aside class="notes"><ul><li>Message clé : sur 2 836 K€, 88 % est la dépense de base (ce que la DSI dépense déjà) et seulement 12 %, soit 340 K€, vient des nouveaux projets.</li><li>Dépense de base : 3 000 K€ de budget N, moins 600 K€ de projets terminés, plus 4 % de hausses par prudence = 2 496 K€.</li><li>En N+1, seuls les 4 projets P1 sont lancés : + 340 K€ (SIRH avec sa maintenance, hotline, site, ERP).</li><li>La PRI (N+2) et les distributeurs connectés (N+3) ont chacun leur enveloppe de 300 K€ les années suivantes.</li><li>Le budget baisse par rapport à N, qui comptait 600 K€ de projets terminés. Marge de 464 K€ sous le plafond.</li></ul></aside>
 </section>
 
 
