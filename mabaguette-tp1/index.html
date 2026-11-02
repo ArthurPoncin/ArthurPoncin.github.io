@@ -539,6 +539,10 @@ p{margin:0}
 .slide.active .pj .mb i{animation:wide 1s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*90ms + 700ms)}
 .pj small.pd{font-size:11.5px;color:var(--muted);line-height:1.35}
 .pj.off{background:var(--card);box-shadow:none}
+.rq,.mt{display:block;line-height:1.4}
+.mt{margin-top:3px}
+.rq i,.mt i{font-style:normal;font-weight:700;margin-right:6px}
+.rq i{color:var(--red)}.mt i{color:var(--green)}
 .ratio{display:grid;grid-template-columns:auto auto;gap:12px 34px;align-items:end;justify-items:start}
 .ratio>div{display:flex;flex-direction:column}
 .ratio b{font-family:var(--display);font-size:46px;font-weight:800;letter-spacing:-.035em;line-height:1}
@@ -776,7 +780,7 @@ p{margin:0}
       <div class="hd"><span>Fiche projet</span><span class="pill p1">P1</span></div>
       <div><div class="fk"><span>Sponsor</span><b>DRH</b></div><div class="fk"><span>Ressources</span><b>Équipe logiciels + éditeur</b></div><div class="fk"><span>Investissement</span><b>130 K€</b></div><div class="fk"><span>Charge / an</span><b>20 K€</b></div><div class="fk"><span>Livraison</span><b>T2 N+1</b></div></div>
       <div class="mini"><div class="yr"><span>N+1</span><span>N+2</span><span>N+3</span></div><div class="cols"><div class="bar b1" style="grid-column:1/3">paramétrage</div></div></div>
-      <div class="rkb"><b>RISQUE ET MITIGATION</b>SIRH pas prêt avant les embauches : lancement dès le T1, prestataire de paie local en secours.</div>
+      <div class="rkb"><b>RISQUE ET MITIGATION</b><span class="rq"><i>Risque</i>le SIRH n'est pas prêt quand les commerciaux arrivent.</span><span class="mt"><i>Mitigation</i>on le lance en premier, et un prestataire de paie local prend le relais si besoin.</span></div>
     </div>
   </div>
   <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">06 / 13</span></div>
@@ -797,7 +801,7 @@ p{margin:0}
       <div class="hd"><span>Fiche projet</span><span class="pill p1">P1</span></div>
       <div><div class="fk"><span>Sponsor</span><b>DAF</b></div><div class="fk"><span>Ressources</span><b>Équipe logiciels + prestataire nantais</b></div><div class="fk"><span>Investissement</span><b>50 K€</b></div><div class="fk"><span>Charge / an</span><b>—</b></div><div class="fk"><span>Livraison</span><b>T2 N+1</b></div></div>
       <div class="mini"><div class="yr"><span>N+1</span><span>N+2</span><span>N+3</span></div><div class="cols"><div class="bar b1" style="grid-column:1/3"></div></div></div>
-      <div class="rkb"><b>RISQUE ET MITIGATION</b>Non-conformité fiscale : facture électronique prête dès l'ouverture, revue juridique par pays.</div>
+      <div class="rkb"><b>RISQUE ET MITIGATION</b><span class="rq"><i>Risque</i>nos factures ne respectent pas les règles d'un pays.</span><span class="mt"><i>Mitigation</i>la facture électronique est prête avant l'ouverture, validée par un juriste local.</span></div>
     </div>
   </div>
   <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">07 / 13</span></div>
@@ -818,7 +822,7 @@ p{margin:0}
       <div class="hd"><span>Fiche projet</span><span class="pill p1">P1</span></div>
       <div><div class="fk"><span>Sponsor</span><b>Dir. commerciale</b></div><div class="fk"><span>Ressources</span><b>Équipe logiciels + prestataire web</b></div><div class="fk"><span>Investissement</span><b>60 K€</b></div><div class="fk"><span>Charge / an</span><b>—</b></div><div class="fk"><span>Livraison</span><b>T2 N+1</b></div></div>
       <div class="mini"><div class="yr"><span>N+1</span><span>N+2</span><span>N+3</span></div><div class="cols"><div class="bar b1" style="grid-column:1/3"></div></div></div>
-      <div class="rkb"><b>RISQUE ET MITIGATION</b>Non-conformité RGPD ou droit local : revue juridique par pays avant la mise en ligne.</div>
+      <div class="rkb"><b>RISQUE ET MITIGATION</b><span class="rq"><i>Risque</i>le site ne respecte pas le RGPD ou la loi du pays.</span><span class="mt"><i>Mitigation</i>un juriste vérifie le site avant chaque mise en ligne.</span></div>
     </div>
   </div>
   <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">08 / 13</span></div>
@@ -839,7 +843,7 @@ p{margin:0}
       <div class="hd"><span>Fiche projet</span><span class="pill p1">P1</span></div>
       <div><div class="fk"><span>Sponsor</span><b>Dir. SAV</b></div><div class="fk"><span>Ressources</span><b>+1 technicien</b></div><div class="fk"><span>Investissement</span><b>—</b></div><div class="fk"><span>Charge / an</span><b>80 K€ chargés</b></div><div class="fk"><span>Livraison</span><b>T2 N+1</b></div></div>
       <div class="mini"><div class="yr"><span>N+1</span><span>N+2</span><span>N+3</span></div><div class="cols"><div class="bar b1" style="grid-column:1/2"></div><div class="bar" style="grid-column:2/13;background:var(--crust-soft);color:var(--crust)">en service</div></div></div>
-      <div class="rkb"><b>RISQUE ET MITIGATION</b>Outils mal adoptés par les nouvelles équipes : formation à l'arrivée, suivi du taux d'adoption.</div>
+      <div class="rkb"><b>RISQUE ET MITIGATION</b><span class="rq"><i>Risque</i>les nouvelles équipes utilisent mal les outils.</span><span class="mt"><i>Mitigation</i>une formation dès l'arrivée et un support en anglais.</span></div>
     </div>
   </div>
   <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">09 / 13</span></div>
@@ -860,7 +864,7 @@ p{margin:0}
       <div class="hd"><span>Fiche projet</span><span class="pill p2">P2</span></div>
       <div><div class="fk"><span>Sponsor</span><b>DG</b></div><div class="fk"><span>Ressources</span><b>Équipe infra + prestataire</b></div><div class="fk"><span>Investissement</span><b>300 K€ en N+2</b></div><div class="fk"><span>Charge / an</span><b>—</b></div><div class="fk"><span>Livraison</span><b>T4 N+2</b></div></div>
       <div class="mini"><div class="yr"><span>N+1</span><span>N+2</span><span>N+3</span></div><div class="cols"><div class="bar b2" style="grid-column:5/9">PRI</div></div></div>
-      <div class="rkb"><b>RISQUE ET MITIGATION</b>Panne avant la mise en service de la PRI : sauvegardes externalisées dès N+1.</div>
+      <div class="rkb"><b>RISQUE ET MITIGATION</b><span class="rq"><i>Risque</i>la salle serveur tombe en panne avant la PRI.</span><span class="mt"><i>Mitigation</i>dès N+1, les sauvegardes sont copiées hors du site.</span></div>
     </div>
   </div>
   <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">10 / 13</span></div>
@@ -892,7 +896,7 @@ p{margin:0}
       <div><b>Priorité · sponsor</b>P3, Dir. SAV</div>
       <div><b>Budget</b>300 K€ en N+3</div>
       <div><b>Planning</b>Pilote puis déploiement, livraison T4 N+3</div>
-      <div><b>Risque et mitigation</b>Baguette non retirée : libérée après un délai</div>
+      <div><b>Risque et mitigation</b><span class="rq"><i>Risque</i>une baguette réservée n'est jamais retirée.</span><span class="mt"><i>Mitigation</i>elle est remise en vente après un délai.</span></div>
     </div>
   <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">11 / 13</span></div>
   <aside class="notes"><ul><li>Notre innovation est une innovation IT : le distributeur devient un objet connecté au SI.</li><li>Le service visible est simple : réserver en ligne et retirer au distributeur.</li><li>Tout repose sur le stock en temps réel : sans lui, impossible de garantir la baguette réservée.</li><li>Le module s'appuie sur le site multilingue, déjà financé en N+1.</li><li>Rien en N+1 : c'est le lot de N+3, avec une enveloppe de 300 K€.</li></ul></aside>
