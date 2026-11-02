@@ -281,6 +281,8 @@ p{margin:0}
 .part span{background:rgba(0,0,0,.28);padding:2px 7px;border-radius:5px;position:relative;z-index:2}
 .part::after{content:"";position:absolute;top:11px;bottom:11px;left:var(--sl);right:14px;background:repeating-linear-gradient(118deg,transparent 0 30px,rgba(255,238,205,.75) 30px 35px,transparent 35px 64px);pointer-events:none}
 .part.fon{--sl:280px;background:linear-gradient(180deg,#D98A45,#B4561A 55%,#8C3D10);color:#fff}
+.part.fon.grey{background:linear-gradient(180deg,#C9C4BA,#A8A398 55%,#8A857B)}
+.ratio .base b{color:#A8A398}
 .part.inv{--sl:118px;background:linear-gradient(180deg,#F2CF85,#D9A23A 55%,#A8741F);color:#3E2A05}
 .part.inv span{background:rgba(255,255,255,.35)}
 .slide.active .loaf{animation:rise 1.6s cubic-bezier(.25,.8,.25,1) both;animation-delay:.45s}
@@ -907,19 +909,19 @@ p{margin:0}
 <section class="slide" data-sec="3">
   <div class="top"><div class="kicker">Budget N+1</div><div class="secs"></div></div>
   <div class="bhead" style="margin-top:auto">
-    <div class="r"><div class="big num" style="color:var(--crust)">+<span data-count="300">300</span><small>K€</small></div><p class="lead" style="margin-top:8px">ajoutés par les projets en N+1, pour un budget total de <b style="color:var(--ink)">2 796 K€</b></p></div>
+    <div class="r"><div class="big num" style="color:var(--crust)">+<span data-count="300">300</span><small>K€</small></div><p class="lead" style="margin-top:8px">ajoutés par les projets en N+1, pour un budget total de <b style="color:var(--ink)">3 000 K€</b></p></div>
     <div class="ratio r" style="--i:1">
-      <div><b class="num">89 %</b><span>dépense de base<br>2 496 K€</span></div>
-      <div class="add"><b class="num">11 %</b><span>nouveaux projets<br>300 K€</span></div>
-      <span class="okchip">✓ Sous le plafond de 3 300 K€ · marge 504 K€</span>
+      <div class="base"><b class="num">90 %</b><span>dépense de base<br>déjà engagée</span></div>
+      <div class="add"><b class="num">10 %</b><span>nouveaux projets<br>300 K€</span></div>
+      <span class="okchip">✓ 3 000 K€ au total · sous le plafond de 3 300 K€</span>
     </div>
   </div>
   <div class="bag r" style="--i:2">
-    <div class="loaf" style="--w:84.73%">
-      <div class="part fon" style="width:89.27%"><span>Dépense de base · 2 496 K€ · 89 %</span></div>
-      <div class="part inv glow" style="width:10.73%"><span>11 %</span></div>
+    <div class="loaf" style="--w:90.91%">
+      <div class="part fon grey" style="width:90%"><span>Dépense de base · 90 %</span></div>
+      <div class="part inv glow" style="width:10%"><span>+ 300 K€</span></div>
     </div>
-    <div class="ref" style="left:90.91%"><span>Budget N · 3 000</span></div>
+    <div class="ref" style="left:90.91%"><span>Total · 3 000</span></div>
     <div class="cap" style="left:99.8%"><span>Plafond 3 300</span></div>
   </div>
   <div class="pjh r" style="--i:3"><b>Ce que les projets ajoutent au budget</b><span>+ 300 K€</span></div>
@@ -931,9 +933,9 @@ p{margin:0}
     <div class="pj off r" style="--i:8"><div class="hd"><span class="pill p2">P2</span><b>Second site / PRI</b></div><div class="amt num">+<span data-count="0">0</span><small>K€</small></div><div class="mb"><i style="--v:0%"></i></div><small class="pd">300 K€ en N+2</small></div>
     <div class="pj off r" style="--i:9"><div class="hd"><span class="pill p3">P3</span><b>Distributeurs connectés</b></div><div class="amt num">+<span data-count="0">0</span><small>K€</small></div><div class="mb"><i style="--v:0%"></i></div><small class="pd">300 K€ en N+3</small></div>
   </div>
-  <p class="note r" style="--i:10;margin-bottom:auto">Dépense de base = ce que la DSI dépense déjà : budget N hors projets (2 400 K€) + 4 % de hausses par prudence (+ 96 K€). La marge de 504 K€ couvre les dotations des 34 nouveaux arrivants.</p>
+  <p class="note r" style="--i:10;margin-bottom:auto">Dépense de base : salaires, licences, maintenance et télécoms déjà engagés. Nos projets ajoutent 300 K€ pour un budget total de 3 000 K€, sous le plafond de 3 300 K€.</p>
   <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">12 / 13</span></div>
-  <aside class="notes"><ul><li>Message clé : sur 2 796 K€, 89 % est la dépense de base (ce que la DSI dépense déjà) et seulement 11 %, soit 300 K€, vient des nouveaux projets.</li><li>Dépense de base : 3 000 K€ de budget N, moins 600 K€ de projets terminés, plus 4 % de hausses par prudence = 2 496 K€.</li><li>En N+1, seuls les 4 projets P1 sont lancés : + 300 K€, notre plafond annuel de projets (SIRH 130, hotline 80, site 50, ERP 40). La maintenance du SIRH démarre en N+2.</li><li>La PRI (N+2) et les distributeurs connectés (N+3) ont chacun leur enveloppe de 300 K€ les années suivantes.</li><li>Le budget baisse par rapport à N, qui comptait 600 K€ de projets terminés. Marge de 504 K€ sous le plafond.</li></ul></aside>
+  <aside class="notes"><ul><li>Message clé : sur un budget de 3 000 K€, 90 % est la dépense de base déjà engagée, et nos projets n'en représentent que 10 %, soit 300 K€.</li><li>300 K€, c'est notre plafond annuel de projets : SIRH 130, hotline 80, site 50, ERP 40.</li><li>La PRI (N+2) et les distributeurs connectés (N+3) ont chacun leur enveloppe de 300 K€ les années suivantes.</li><li>On reste à 3 000 K€, sous le plafond de 3 300 K€ fixé par la direction financière.</li></ul></aside>
 </section>
 
 
