@@ -538,7 +538,7 @@ p{margin:0}
 <!-- 05 ─ FEUILLE DE ROUTE -->
 <section class="slide" data-sec="2">
   <div class="top"><div class="kicker">Feuille de route</div><div class="secs"></div></div>
-  <h2 class="r">Six projets priorisés, <em>un sponsor</em> pour chacun</h2>
+  <h2 class="r">Six projets priorisés,<br><em>un sponsor</em> pour chacun</h2>
   <div class="body"><div class="scroll r" style="--i:2">
     <table class="tbl road">
       <thead><tr><th style="width:56px">Prio.</th><th>Projet</th><th>Sponsor</th><th class="k">Invest.</th><th class="k">Charge / an</th><th class="k">Livraison</th></tr></thead>
@@ -746,13 +746,6 @@ p{margin:0}
 
 </div></div>
 
-<div class="ctrl">
-  <button id="prev" aria-label="Slide précédente">←</button>
-  <div class="dots" id="dots"></div>
-  <button id="next" aria-label="Slide suivante">→</button>
-  <button id="nt" aria-label="Notes de présentation" aria-pressed="false" title="Notes (N)">Notes</button>
-  <button id="fs" aria-label="Plein écran" title="Plein écran (F)">⛶</button>
-</div>
 <div class="np" id="np"><h4>Notes · <span id="npn"></span></h4><div id="npc"></div></div>
 
 <script>
@@ -760,7 +753,6 @@ p{margin:0}
   const SECS=['Contexte','Stratégie','Feuille de route','Budget','Pilotage','Décisions'];
   const slides=[...document.querySelectorAll('.slide')];
   const deck=document.getElementById('deck');
-  const dots=document.getElementById('dots');
   const np=document.getElementById('np');
   const narrow=matchMedia("screen and (max-width:759px)");
   const reduce=matchMedia('(prefers-reduced-motion:reduce)');
@@ -770,7 +762,6 @@ p{margin:0}
   slides.forEach((s,k)=>{
     const box=s.querySelector('.secs');
     if(box)box.innerHTML=SECS.map((t,j)=>'<span'+(j==+s.dataset.sec?' class="on"':'')+'>'+t+'</span>').join('');
-    const d=document.createElement('i');d.onclick=e=>{e.stopPropagation();show(k)};dots.appendChild(d);
   });
 
   function countUp(slide){
@@ -794,7 +785,6 @@ p{margin:0}
     if(n===cur)return;
     cur=n;
     slides.forEach((s,k)=>{s.classList.toggle('active',k===cur);s.classList.toggle('past',k<cur)});
-    [...dots.children].forEach((d,k)=>d.classList.toggle('on',k===cur));
     countUp(slides[cur]);notes();
     try{history.replaceState(null,'','#'+(cur+1))}catch(e){}
   }
@@ -802,16 +792,11 @@ p{margin:0}
     deck.style.transform=narrow.matches?'none':'scale('+Math.min(innerWidth/1340,innerHeight/790)+')';
   }
   function toggleNotes(){
-    const on=np.classList.toggle('on');
-    document.getElementById('nt').setAttribute('aria-pressed',on);
+    np.classList.toggle('on');
   }
   function fullscreen(){
     try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})}catch(e){}
   }
-  document.getElementById('prev').onclick=e=>{e.stopPropagation();show(cur-1)};
-  document.getElementById('next').onclick=e=>{e.stopPropagation();show(cur+1)};
-  document.getElementById('nt').onclick=e=>{e.stopPropagation();toggleNotes()};
-  document.getElementById('fs').onclick=e=>{e.stopPropagation();fullscreen()};
   np.addEventListener('click',e=>e.stopPropagation());
   document.addEventListener('keydown',e=>{
     if(narrow.matches||e.metaKey||e.ctrlKey||e.altKey)return;
