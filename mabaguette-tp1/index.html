@@ -549,6 +549,14 @@ p{margin:0}
 .mt{margin-top:3px}
 .rq i,.mt i{font-style:normal;font-weight:700;margin-right:6px}
 .rq i{color:var(--red)}.mt i{color:var(--green)}
+.dotx{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:26px;align-items:center;margin-top:14px;background:var(--slate-soft);border-radius:12px;padding:12px 20px;box-shadow:inset 3px 0 0 var(--slate)}
+.dotx .ic{font-size:26px;letter-spacing:2px}
+.dotx b{display:block;font-size:14.5px;font-weight:700;color:var(--ink)}
+.dotx small{display:block;font-size:11.5px;color:var(--muted);line-height:1.35;margin-top:2px}
+.dotx .v{text-align:right}
+.dotx .v b{font-family:var(--display);font-size:22px;letter-spacing:-.02em;color:var(--slate)}
+.dotx .v.tot{padding-left:22px;border-left:1.5px solid rgba(53,85,126,.25)}
+.dotx .v.tot b{color:var(--ink)}
 .ratio{display:grid;grid-template-columns:auto auto;gap:12px 34px;align-items:end;justify-items:start}
 .ratio>div{display:flex;flex-direction:column}
 .ratio b{font-family:var(--display);font-size:46px;font-weight:800;letter-spacing:-.035em;line-height:1}
@@ -615,6 +623,7 @@ p{margin:0}
   .scene{display:none}
   .fl2{grid-template-columns:1fr}
   .pjs{grid-template-columns:1fr 1fr}
+  .dotx{grid-template-columns:1fr 1fr;gap:12px}.dotx .ic{display:none}.dotx>div:first-of-type{grid-column:1/-1}.dotx .v{text-align:left}.dotx .v.tot{border:0;padding:0}
   .finale{min-height:420px}
   .finale .pin,.finale .ftrail,.rocket,.cd,.rain,.counter,.replay,.fhead{display:none}
   .finale .slam{opacity:1;width:100%;transform:translate(-50%,-50%)}.finale .slam h2{font-size:44px}.finale .slam p{opacity:1;font-size:13px}
@@ -938,9 +947,16 @@ p{margin:0}
     <div class="pj off r" style="--i:8"><div class="hd"><span class="pill p2">P2</span><b>Second site / PRI</b></div><div class="amt num">+<span data-count="0">0</span><small>K€</small></div><div class="mb"><i style="--v:0%"></i></div><small class="pd">300 K€ en N+2</small></div>
     <div class="pj off r" style="--i:9"><div class="hd"><span class="pill p3">P3</span><b>Distributeurs connectés</b></div><div class="amt num">+<span data-count="0">0</span><small>K€</small></div><div class="mb"><i style="--v:0%"></i></div><small class="pd">300 K€ en N+3</small></div>
   </div>
-  <p class="note r" style="--i:10;margin-bottom:auto">Dépense de base : salaires, licences, maintenance et télécoms déjà engagés, <b>dont les dotations des 34 nouveaux arrivants prévus par la GPEC</b> (PC et smartphone achetés, forfaits et licences en charges). Nos projets ajoutent 300 K€ pour un budget total de 3 000 K€.</p>
+  <div class="dotx r" style="--i:10">
+    <span class="ic">💻📱</span>
+    <div><b>Dotations des 34 nouveaux arrivants</b><small>20 commerciaux + 14 recrues internes (GPEC) · inclus dans la dépense de base</small></div>
+    <div class="v"><b class="num">51 K€</b><small>PC + smartphone<br>achat · investissement</small></div>
+    <div class="v"><b class="num">34 K€</b><small>forfaits + licences<br>charges / an</small></div>
+    <div class="v tot"><b class="num">≈ 85 K€</b><small>2,5 K€<br>par personne</small></div>
+  </div>
+  <p class="note r" style="--i:11;margin-bottom:auto">Dépense de base : salaires, licences, maintenance et télécoms déjà engagés. Nos projets ajoutent 300 K€ pour un budget total de 3 000 K€.</p>
   <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">12 / 13</span></div>
-  <aside class="notes"><ul><li>Message clé : sur un budget de 3 000 K€, 90 % est la dépense de base déjà engagée, et nos projets n'en représentent que 10 %, soit 300 K€.</li><li>300 K€, c'est notre plafond annuel de projets : SIRH 130, hotline 80, site 50, ERP 40.</li><li>La PRI (N+2) et les distributeurs connectés (N+3) ont chacun leur enveloppe de 300 K€ les années suivantes.</li><li>Le budget total reste à 3 000 K€.</li><li>Dotations : les 20 commerciaux et les 14 recrues internes (3 % de 450) reçoivent PC, smartphone et licences. Le matériel est acheté (investissement, comme le demande la direction financière), les forfaits et licences sont des charges annuelles.</li></ul></aside>
+  <aside class="notes"><ul><li>Message clé : sur un budget de 3 000 K€, 90 % est la dépense de base déjà engagée, et nos projets n'en représentent que 10 %, soit 300 K€.</li><li>300 K€, c'est notre plafond annuel de projets : SIRH 130, hotline 80, site 50, ERP 40.</li><li>La PRI (N+2) et les distributeurs connectés (N+3) ont chacun leur enveloppe de 300 K€ les années suivantes.</li><li>Le budget total reste à 3 000 K€.</li><li>Dotations : 34 arrivants × 2,5 K€ ≈ 85 K€, déjà compris dans la dépense de base. Les 20 commerciaux et les 14 recrues internes (3 % de 450) reçoivent PC, smartphone et licences. Le matériel est acheté (investissement, comme le demande la direction financière), les forfaits et licences sont des charges annuelles.</li></ul></aside>
 </section>
 
 
