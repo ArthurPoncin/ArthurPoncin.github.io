@@ -316,6 +316,13 @@ p{margin:0}
 @keyframes rpop{from{opacity:0;transform:translateX(-12px) scale(.85)}to{opacity:1;transform:none}}
 @keyframes rwave{0%,30%,100%{transform:none}5%,15%,25%{transform:translateY(-2px)}10%,20%{transform:none}}
 @keyframes rblink{0%,94%,100%{transform:none}96%{transform:scaleY(.2)}}
+.kind{display:inline-block;align-self:flex-start;font-style:normal;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:5px;margin-top:auto}
+.kind.inv{background:var(--crust-soft);color:var(--crust);box-shadow:inset 0 0 0 1px rgba(180,86,26,.3)}
+.kind.chg{background:var(--slate-soft);color:var(--slate);box-shadow:inset 0 0 0 1px rgba(53,85,126,.3)}
+.pj.off .kind{opacity:.55}
+.pjh .split{display:flex;align-items:center;gap:8px}
+.pjh .split .kind{margin:0;font-size:11px;padding:4px 9px}
+.pjh .split em{font-style:normal;font-family:var(--mono);font-weight:600;color:var(--crust);margin-left:6px}
 .part.fon.grey{background:linear-gradient(180deg,#C9C4BA,#A8A398 55%,#8A857B)}
 .part.inv{--sl:118px;background:linear-gradient(180deg,#F2CF85,#D9A23A 55%,#A8741F);color:#3E2A05}
 .part.inv span{background:rgba(255,255,255,.35)}
@@ -564,8 +571,8 @@ p{margin:0}
 .pjh{display:flex;justify-content:space-between;align-items:baseline;margin-top:20px;padding-bottom:10px;border-bottom:1.5px solid var(--ink)}
 .pjh b{font-size:16px;font-weight:700}
 .pjh span{font-family:var(--mono);color:var(--crust);font-size:16px;font-weight:600}
-.pjs{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:14px}
-.pj{background:var(--wheat-soft);border-radius:12px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:7px;box-shadow:inset 0 0 0 1px #EBD29B}
+.pjs{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:10px}
+.pj{background:var(--wheat-soft);border-radius:12px;padding:11px 13px 10px;display:flex;flex-direction:column;gap:5px;box-shadow:inset 0 0 0 1px #EBD29B}
 .pj .hd{display:flex;align-items:center;gap:8px}
 .pj .hd b{font-size:14px;font-weight:600;line-height:1.2}
 .pj .amt{font-family:var(--display);font-size:32px;font-weight:800;letter-spacing:-.03em;color:var(--crust);line-height:1}
@@ -579,7 +586,7 @@ p{margin:0}
 .mt{margin-top:3px}
 .rq i,.mt i{font-style:normal;font-weight:700;margin-right:6px}
 .rq i{color:var(--red)}.mt i{color:var(--green)}
-.dotx{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:26px;align-items:center;margin-top:14px;background:var(--slate-soft);border-radius:12px;padding:12px 20px;box-shadow:inset 3px 0 0 var(--slate)}
+.dotx{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:26px;align-items:center;margin-top:10px;background:var(--slate-soft);border-radius:12px;padding:9px 20px;box-shadow:inset 3px 0 0 var(--slate)}
 .dotx .ic{font-size:26px;letter-spacing:2px}
 .dotx b{display:block;font-size:14.5px;font-weight:700;color:var(--ink)}
 .dotx small{display:block;font-size:11.5px;color:var(--muted);line-height:1.35;margin-top:2px}
@@ -986,14 +993,14 @@ p{margin:0}
       <span class="rbl r">+ 300 K€</span>
     </div>
   </div>
-  <div class="pjh r" style="--i:3"><b>Ce que les projets ajoutent au budget</b><span>+ 300 K€</span></div>
+  <div class="pjh r" style="--i:3"><b>Ce que les projets ajoutent au budget</b><span class="split"><i class="kind inv">Investissement 220 K€</i><i class="kind chg">Charges 80 K€</i><em>= + 300 K€</em></span></div>
   <div class="pjs">
-    <div class="pj r" style="--i:4"><div class="hd"><span class="pill p1">P1</span><b>SIRH international</b></div><div class="amt num">+<span data-count="130">130</span><small>K€</small></div><div class="mb"><i style="--v:100%"></i></div><small class="pd">100 d'achat + 30 de formation</small></div>
-    <div class="pj r" style="--i:5"><div class="hd"><span class="pill p1">P1</span><b>Hotline étendue</b></div><div class="amt num">+<span data-count="80">80</span><small>K€</small></div><div class="mb"><i style="--v:61.54%"></i></div><small class="pd">1 technicien FR / EN, chargé</small></div>
-    <div class="pj r" style="--i:6"><div class="hd"><span class="pill p1">P1</span><b>Site multilingue</b></div><div class="amt num">+<span data-count="50">50</span><small>K€</small></div><div class="mb"><i style="--v:38.46%"></i></div><small class="pd">achat</small></div>
-    <div class="pj r" style="--i:7"><div class="hd"><span class="pill p1">P1</span><b>ERP multi-sociétés</b></div><div class="amt num">+<span data-count="40">40</span><small>K€</small></div><div class="mb"><i style="--v:30.77%"></i></div><small class="pd">évolution multi-sociétés</small></div>
-    <div class="pj off r" style="--i:8"><div class="hd"><span class="pill p2">P2</span><b>Second site / PRI</b></div><div class="amt num">+<span data-count="0">0</span><small>K€</small></div><div class="mb"><i style="--v:0%"></i></div><small class="pd">300 K€ en N+2</small></div>
-    <div class="pj off r" style="--i:9"><div class="hd"><span class="pill p3">P3</span><b>Distributeurs connectés</b></div><div class="amt num">+<span data-count="0">0</span><small>K€</small></div><div class="mb"><i style="--v:0%"></i></div><small class="pd">300 K€ en N+3</small></div>
+    <div class="pj r" style="--i:4"><div class="hd"><span class="pill p1">P1</span><b>SIRH international</b></div><div class="amt num">+<span data-count="130">130</span><small>K€</small></div><div class="mb"><i style="--v:100%"></i></div><small class="pd">100 d'achat + 30 de formation</small><span class="kind inv">Investissement</span></div>
+    <div class="pj r" style="--i:5"><div class="hd"><span class="pill p1">P1</span><b>Hotline étendue</b></div><div class="amt num">+<span data-count="80">80</span><small>K€</small></div><div class="mb"><i style="--v:61.54%"></i></div><small class="pd">1 technicien FR / EN, chargé</small><span class="kind chg">Charge / an</span></div>
+    <div class="pj r" style="--i:6"><div class="hd"><span class="pill p1">P1</span><b>Site multilingue</b></div><div class="amt num">+<span data-count="50">50</span><small>K€</small></div><div class="mb"><i style="--v:38.46%"></i></div><small class="pd">achat</small><span class="kind inv">Investissement</span></div>
+    <div class="pj r" style="--i:7"><div class="hd"><span class="pill p1">P1</span><b>ERP multi-sociétés</b></div><div class="amt num">+<span data-count="40">40</span><small>K€</small></div><div class="mb"><i style="--v:30.77%"></i></div><small class="pd">évolution multi-sociétés</small><span class="kind inv">Investissement</span></div>
+    <div class="pj off r" style="--i:8"><div class="hd"><span class="pill p2">P2</span><b>Second site / PRI</b></div><div class="amt num">+<span data-count="0">0</span><small>K€</small></div><div class="mb"><i style="--v:0%"></i></div><small class="pd">300 K€ en N+2</small><span class="kind inv">Investissement</span></div>
+    <div class="pj off r" style="--i:9"><div class="hd"><span class="pill p3">P3</span><b>Distributeurs connectés</b></div><div class="amt num">+<span data-count="0">0</span><small>K€</small></div><div class="mb"><i style="--v:0%"></i></div><small class="pd">300 K€ en N+3</small><span class="kind inv">Investissement</span></div>
   </div>
   <div class="dotx r" style="--i:10;margin-bottom:auto">
     <span class="ic">💻📱</span>
@@ -1003,7 +1010,7 @@ p{margin:0}
     <div class="v tot"><b class="num">≈ 85 K€</b><small>2,5 K€<br>par personne</small></div>
   </div>
   <div class="foot"><span>MA BAGUETTE · STRATÉGIE SI</span><span class="num">12 / 13</span></div>
-  <aside class="notes"><ul><li>Message clé : sur un budget de 3 000 K€, 90 % est la dépense de base déjà engagée, et nos projets n'en représentent que 10 %, soit 300 K€.</li><li>300 K€, c'est notre plafond annuel de projets : SIRH 130, hotline 80, site 50, ERP 40.</li><li>La PRI (N+2) et les distributeurs connectés (N+3) ont chacun leur enveloppe de 300 K€ les années suivantes.</li><li>Dépense de base : salaires, licences, maintenance et télécoms déjà engagés.</li><li>Le budget total reste à 3 000 K€.</li><li>ROI = (gains − coût) ÷ coût × 100. Un ROI positif veut dire que le projet rapporte plus qu'il ne coûte.</li><li>Dotations : 34 arrivants × 2,5 K€ ≈ 85 K€, déjà compris dans la dépense de base. Les 20 commerciaux et les 14 recrues internes (3 % de 450) reçoivent PC, smartphone et licences. Le matériel est acheté (investissement, comme le demande la direction financière), les forfaits et licences sont des charges annuelles.</li></ul></aside>
+  <aside class="notes"><ul><li>Message clé : sur un budget de 3 000 K€, 90 % est la dépense de base déjà engagée, et nos projets n'en représentent que 10 %, soit 300 K€.</li><li>300 K€, c'est notre plafond annuel de projets : SIRH 130, hotline 80, site 50, ERP 40.</li><li>La PRI (N+2) et les distributeurs connectés (N+3) ont chacun leur enveloppe de 300 K€ les années suivantes.</li><li>Dépense de base : salaires, licences, maintenance et télécoms déjà engagés.</li><li>Le budget total reste à 3 000 K€.</li><li>Investissement / charge : SIRH, site et ERP sont des achats ou des prestations de mise en place, donc de l'investissement (220 K€). La hotline est un salaire, donc une charge annuelle (80 K€).</li><li>ROI = (gains − coût) ÷ coût × 100. Un ROI positif veut dire que le projet rapporte plus qu'il ne coûte.</li><li>Dotations : 34 arrivants × 2,5 K€ ≈ 85 K€, déjà compris dans la dépense de base. Les 20 commerciaux et les 14 recrues internes (3 % de 450) reçoivent PC, smartphone et licences. Le matériel est acheté (investissement, comme le demande la direction financière), les forfaits et licences sont des charges annuelles.</li></ul></aside>
 </section>
 
 
