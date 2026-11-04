@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Recruter à l'ère de l'IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : scène 16:9 de 1600×900 mise à l'échelle, une diapositive à la fois, barre tricolore ÉCHO comme fil conducteur */
+:root{
+  --navy:#0E2747;
+  --navy-2:#16365F;
+  --ink:#16223A;
+  --muted:#5A6880;
+  --paper:#F5F7FA;
+  --card:#FFFFFF;
+  --line:#DCE3EC;
+  --blue:#2F6FB7;
+  --sky:#6AA5DC;
+  --rose:#D2335C;
+  --orange:#E07B3C;
+  --green:#86A92F;
+  --orange-t:#FBEADC;
+  --blue-t:#E2EDF8;
+  --rose-t:#F9E2E8;
+  --green-t:#EDF3D8;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --ease:cubic-bezier(.2,.75,.2,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  background:#0A1D36;
+  color:var(--ink);
+  font-family:var(--f-body);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+.viewport{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
+.stage{
+  width:1600px;height:900px;position:relative;flex:none;
+  transform-origin:center center;
+  background:var(--paper);
+  box-shadow:0 30px 80px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+
+/* ---------- Diapositives ---------- */
+.slide{
+  position:absolute;inset:0;
+  padding:92px 120px 110px;
+  display:flex;flex-direction:column;
+  opacity:0;visibility:hidden;
+  transform:translateX(60px);
+  transition:opacity .6s var(--ease),transform .8s var(--ease),visibility 0s linear .8s;
+}
+.slide.is-past{transform:translateX(-60px)}
+.slide.is-active{opacity:1;visibility:visible;transform:none;transition:opacity .6s var(--ease),transform .8s var(--ease),visibility 0s}
+.slide.dark{background:var(--navy);color:#fff}
+
+.r{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .9s var(--ease)}
+.is-active .r{opacity:1;transform:none;transition-delay:calc(var(--d,0) * 90ms + 200ms)}
+
+/* ---------- Typo ---------- */
+.eyebrow{
+  font-family:var(--f-mono);font-size:15px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--rose);display:flex;align-items:center;gap:14px;margin:0 0 18px;
+}
+.eyebrow .n{color:var(--muted)}
+.dark .eyebrow{color:var(--orange)}
+.dark .eyebrow .n{color:rgba(255,255,255,.5)}
+h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.005em}
+h2{font-size:66px;line-height:1;font-weight:700;color:var(--navy)}
+.dark h2{color:#fff}
+h3{font-size:30px;line-height:1.1;font-weight:700;color:var(--navy)}
+p{margin:0}
+.lead{font-size:24px;line-height:1.45;color:var(--muted);max-width:62ch}
+.dark .lead{color:rgba(255,255,255,.75)}
+.small{font-size:18px;line-height:1.5;color:var(--muted)}
+.src{font-family:var(--f-mono);font-size:13px;color:var(--muted);letter-spacing:.02em}
+.dark .src{color:rgba(255,255,255,.5)}
+
+/* Barre tricolore, reprise des supports ÉCHO */
+.tri{display:flex;height:5px;width:260px;border-radius:3px;overflow:hidden;margin:26px 0 0}
+.tri i{flex:1;transform:scaleX(0);transform-origin:left}
+.tri i:nth-child(1){background:var(--orange)}
+.tri i:nth-child(2){background:var(--blue)}
+.tri i:nth-child(3){background:var(--rose)}
+.tri i:nth-child(4){background:var(--sky)}
+.is-active .tri i{transform:scaleX(1);transition:transform .6s var(--ease)}
+.is-active .tri i:nth-child(1){transition-delay:.35s}
+.is-active .tri i:nth-child(2){transition-delay:.5s}
+.is-active .tri i:nth-child(3){transition-delay:.65s}
+.is-active .tri i:nth-child(4){transition-delay:.8s}
+
+.head{margin-bottom:46px}
+.grow{flex:1;min-height:0}
+
+/* ---------- Habillage fixe ---------- */
+.brandbar{
+  position:absolute;top:34px;left:120px;right:120px;z-index:5;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--f-mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+  pointer-events:none;transition:color .5s;
+}
+.brandbar b{font-weight:500;color:var(--navy);transition:color .5s}
+.stage.on-dark .brandbar{color:rgba(255,255,255,.55)}
+.stage.on-dark .brandbar b{color:#fff}
+.footer{
+  position:absolute;left:120px;right:120px;bottom:38px;z-index:5;
+  display:flex;align-items:center;gap:28px;
+  font-family:var(--f-mono);font-size:13px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;
+}
+.stage.on-dark .footer{color:rgba(255,255,255,.55)}
+.progress{flex:1;height:3px;background:rgba(14,39,71,.1);border-radius:2px;overflow:hidden}
+.stage.on-dark .progress{background:rgba(255,255,255,.14)}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--blue),var(--rose));transition:width .8s var(--ease)}
+.counter{font-variant-numeric:tabular-nums;min-width:74px;text-align:right}
+.navbtn{
+  pointer-events:auto;width:40px;height:40px;border-radius:50%;
+  border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;
+  display:grid;place-items:center;transition:background .25s,color .25s,opacity .25s;
+}
+.navbtn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.stage.on-dark .navbtn:hover{background:#fff;color:var(--navy);border-color:#fff}
+.navbtn:focus-visible,.toc a:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.navbtn[disabled]{opacity:.25;pointer-events:none}
+.navbtn svg{width:16px;height:16px}
+
+/* ---------- 1. Couverture ---------- */
+.cover{padding-top:150px;justify-content:space-between}
+.cover h1{font-size:150px;line-height:.9;font-weight:800;color:#fff;max-width:11ch}
+.cover h1 em{font-style:normal;color:var(--orange)}
+.cover .lead{margin-top:30px;font-size:27px}
+.cover-q{
+  display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:start;
+  max-width:980px;border-top:1px solid rgba(255,255,255,.18);padding-top:28px;
+}
+.cover-q .tag{font-family:var(--f-mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);padding-top:6px;white-space:nowrap}
+.cover-q p{font-family:var(--f-display);font-size:30px;line-height:1.2;font-weight:600;color:#fff}
+.streaks{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.streaks i{
+  position:absolute;height:14px;border-radius:7px;right:-200px;
+  transform:rotate(-24deg);transform-origin:right center;opacity:.9;
+  animation:drift 9s ease-in-out infinite alternate;
+}
+.streaks i:nth-child(1){top:120px;width:620px;background:var(--orange);animation-delay:-1s}
+.streaks i:nth-child(2){top:170px;width:780px;background:var(--blue)}
+.streaks i:nth-child(3){top:220px;width:540px;background:var(--rose);animation-delay:-3s}
+.streaks i:nth-child(4){top:270px;width:700px;background:var(--sky);animation-delay:-5s;opacity:.6}
+.streaks i:nth-child(5){top:320px;width:420px;background:rgba(255,255,255,.12);animation-delay:-2s}
+@keyframes drift{from{translate:0 0}to{translate:-70px 18px}}
+.cover .who{font-family:var(--f-mono);font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:26px}
+
+/* ---------- 2. Sommaire ---------- */
+.toc{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:10px}
+.toc a{
+  display:flex;flex-direction:column;justify-content:space-between;gap:40px;
+  min-height:230px;padding:28px 28px 26px;border-radius:6px;
+  background:var(--card);border:1px solid var(--line);
+  text-decoration:none;color:var(--navy);
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s;
+}
+.toc a:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(14,39,71,.12);border-color:transparent}
+.toc .num{font-family:var(--f-display);font-size:54px;font-weight:700;line-height:1}
+.toc .lbl{font-family:var(--f-display);font-size:30px;font-weight:700;line-height:1.05}
+.toc .hint{font-size:16px;color:var(--muted);margin-top:6px;line-height:1.35}
+.toc a:nth-child(4n+1) .num{color:var(--orange)}
+.toc a:nth-child(4n+2) .num{color:var(--blue)}
+.toc a:nth-child(4n+3) .num{color:var(--rose)}
+.toc a:nth-child(4n+4) .num{color:var(--sky)}
+.toc a.solution{background:var(--navy);color:#fff;border-color:var(--navy)}
+.toc a.solution .num{color:var(--orange)}
+.toc a.solution .hint{color:rgba(255,255,255,.7)}
+
+/* ---------- 3. Pourquoi ---------- */
+.why{display:grid;grid-template-columns:1.05fr 1fr;gap:80px;align-items:start}
+.defi{border-left:6px solid var(--orange);padding:6px 0 6px 34px}
+.defi .tag{font-family:var(--f-mono);font-size:14px;letter-spacing:.2em;color:var(--orange);text-transform:uppercase}
+.defi p{font-family:var(--f-display);font-size:46px;line-height:1.08;font-weight:700;color:var(--navy);margin-top:14px;text-wrap:balance}
+.statline{margin-top:46px;display:flex;gap:26px;align-items:flex-end}
+.statline .big{font-family:var(--f-display);font-size:120px;line-height:.82;font-weight:800;color:var(--rose);font-variant-numeric:tabular-nums}
+.statline .big small{font-size:60px}
+.statline p{font-size:20px;line-height:1.4;color:var(--ink);max-width:28ch}
+.facts{display:flex;flex-direction:column;gap:16px}
+.fact{display:grid;grid-template-columns:56px 1fr;gap:20px;align-items:start;padding:22px 26px;background:var(--card);border:1px solid var(--line);border-radius:6px}
+.fact .ic{width:56px;height:56px;border-radius:50%;display:grid;place-items:center}
+.fact .ic svg{width:26px;height:26px}
+.fact h3{font-size:25px}
+.fact p{font-size:18px;line-height:1.45;color:var(--muted);margin-top:4px}
+.stake{margin-top:6px;padding:22px 26px;background:var(--navy);color:#fff;border-radius:6px;font-size:20px;line-height:1.45}
+.stake b{color:var(--orange);font-weight:600}
+
+/* ---------- 4. Historique ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.kpi{padding:28px 0 26px 28px;border-left:1px solid var(--line)}
+.kpi:first-child{border-left:0;padding-left:0}
+.kpi .v{font-family:var(--f-display);font-size:78px;line-height:.95;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums}
+.kpi .l{font-size:18px;color:var(--muted);margin-top:6px}
+.kpi:nth-child(1) .v{color:var(--orange)}
+.kpi:nth-child(2) .v{color:var(--blue)}
+.kpi:nth-child(3) .v{color:var(--navy)}
+.kpi:nth-child(4) .v{color:var(--rose)}
+.timeline{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:30px;margin-top:56px;padding-top:44px}
+.timeline::before{content:"";position:absolute;top:13px;left:0;right:0;height:2px;background:var(--line)}
+.timeline .fill{position:absolute;top:13px;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--orange),var(--blue),var(--rose));transition:width 1.6s var(--ease) .5s}
+.is-active .timeline .fill{width:100%}
+.step{position:relative}
+.step::before{content:"";position:absolute;top:-40px;left:0;width:20px;height:20px;border-radius:50%;background:var(--paper);border:4px solid var(--blue)}
+.step:nth-child(2)::before{border-color:var(--orange)}
+.step:nth-child(4)::before{border-color:var(--rose)}
+.step:nth-child(5)::before{border-color:var(--rose);background:var(--rose)}
+.step .yr{font-family:var(--f-display);font-size:40px;font-weight:700;color:var(--navy);line-height:1}
+.step p{font-size:18px;line-height:1.45;color:var(--muted);margin-top:8px;max-width:30ch}
+.values{display:flex;align-items:center;gap:14px;margin-top:auto}
+.values span{font-family:var(--f-mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-right:8px}
+.chip{padding:10px 22px;border-radius:40px;font-weight:600;font-size:18px}
+
+/* ---------- 5. Comment ---------- */
+.axes{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.axe{padding:30px 34px;border-radius:6px;display:grid;grid-template-columns:1fr auto;gap:10px 30px;align-items:start;transition:transform .35s var(--ease)}
+.axe:hover{transform:translateY(-4px)}
+.axe .k{font-family:var(--f-display);font-size:34px;font-weight:800;text-transform:uppercase;letter-spacing:.01em}
+.axe .q{grid-column:1/-1;font-size:21px;line-height:1.4;color:var(--ink)}
+.axe .a{grid-column:1/-1;margin-top:10px;padding-top:14px;border-top:1px solid rgba(14,39,71,.12);font-size:18px;color:var(--muted);display:flex;gap:10px;align-items:baseline}
+.axe .a b{color:var(--navy);font-weight:600}
+.axe .arrow{font-family:var(--f-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+.axe.o{background:var(--orange-t)} .axe.o .k,.axe.o .arrow{color:var(--orange)}
+.axe.b{background:var(--blue-t)} .axe.b .k,.axe.b .arrow{color:var(--blue)}
+.axe.ro{background:var(--rose-t)} .axe.ro .k,.axe.ro .arrow{color:var(--rose)}
+.axe.g{background:var(--green-t)} .axe.g .k,.axe.g .arrow{color:var(--green)}
+
+/* ---------- 6. Objectifs ---------- */
+.obj{display:grid;grid-template-columns:1.25fr 1fr;gap:70px}
+.must{display:flex;flex-direction:column}
+.must li{list-style:none;display:grid;grid-template-columns:90px 1fr;align-items:center;gap:20px;padding:16px 0;border-bottom:1px solid var(--line)}
+.must ul{margin:0;padding:0}
+.must li:first-child{border-top:1px solid var(--line)}
+.must .c{font-family:var(--f-display);font-size:64px;font-weight:800;line-height:1;color:var(--blue);font-variant-numeric:tabular-nums}
+.must li:nth-child(1) .c,.must li:nth-child(5) .c{color:var(--orange)}
+.must li:nth-child(3) .c{color:var(--rose)}
+.must .t{font-size:23px;line-height:1.3;color:var(--ink)}
+.must .t small{display:block;font-size:16px;color:var(--muted);margin-top:2px}
+.crit{background:var(--navy);color:#fff;border-radius:6px;padding:36px 38px;display:flex;flex-direction:column;gap:18px}
+.crit h3{color:#fff}
+.crit ul{margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.crit li{list-style:none;display:flex;gap:14px;align-items:center;font-size:20px}
+.crit li::before{content:"";width:10px;height:10px;border-radius:2px;background:var(--orange);flex:none;transform:rotate(45deg)}
+.crit .plus{margin-top:auto;padding-top:18px;border-top:1px solid rgba(255,255,255,.18);font-size:18px;line-height:1.45;color:rgba(255,255,255,.75)}
+.crit .plus b{color:#fff;font-weight:600}
+
+/* ---------- 7. Chemin ---------- */
+.path{position:relative;margin-top:30px;height:470px}
+.path svg.route{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.path .route path{fill:none;stroke:url(#routeGrad);stroke-width:4;stroke-linecap:round;stroke-dasharray:2400;stroke-dashoffset:2400}
+.is-active .path .route path{stroke-dashoffset:0;transition:stroke-dashoffset 2.2s var(--ease) .4s}
+.milestone{position:absolute;width:210px}
+.milestone .dot{width:58px;height:58px;border-radius:50%;background:var(--card);border:4px solid var(--blue);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:26px;color:var(--navy);box-shadow:0 8px 20px rgba(14,39,71,.12)}
+.milestone h3{font-size:28px;margin-top:16px}
+.milestone p{font-size:17px;line-height:1.4;color:var(--muted);margin-top:6px}
+.milestone.last .dot{background:var(--rose);border-color:var(--rose);color:#fff}
+
+/* ---------- 8. Quoi ---------- */
+.what{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px}
+.deliv{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:28px 30px;display:flex;flex-direction:column;gap:12px}
+.deliv .ic{width:52px;height:52px;border-radius:12px;display:grid;place-items:center}
+.deliv .ic svg{width:26px;height:26px}
+.deliv p{font-size:18px;line-height:1.45;color:var(--muted)}
+.deliv ul{margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.deliv li{list-style:none;font-size:17px;color:var(--ink);padding-left:18px;position:relative}
+.deliv li::before{content:"";position:absolute;left:0;top:10px;width:7px;height:7px;border-radius:50%;background:var(--blue)}
+.story{margin-top:30px}
+.story .lab{font-family:var(--f-mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;justify-content:space-between}
+.reel{display:flex;height:118px;border-radius:6px;overflow:hidden;gap:3px}
+.shot{position:relative;padding:14px 16px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;min-width:0;transform:scaleY(0);transform-origin:bottom}
+.is-active .shot{transform:scaleY(1);transition:transform .6s var(--ease)}
+.shot .tc{font-family:var(--f-mono);font-size:12px;opacity:.8;letter-spacing:.05em}
+.shot b{font-family:var(--f-display);font-size:20px;font-weight:600;line-height:1.1}
+
+/* ---------- 9. Intercalaire ---------- */
+.divider{justify-content:center}
+.divider .big{font-family:var(--f-display);font-size:170px;line-height:.88;font-weight:800;color:#fff;max-width:12ch}
+.divider .big em{font-style:normal;color:var(--orange)}
+.divider .lead{margin-top:34px;font-size:28px}
+.ghost{position:absolute;right:80px;bottom:60px;font-family:var(--f-display);font-weight:800;font-size:520px;line-height:.8;color:rgba(255,255,255,.04);pointer-events:none}
+
+/* ---------- 10. Métier ---------- */
+.job{display:grid;grid-template-columns:1fr 1.1fr;gap:70px;align-items:start}
+.badge{display:inline-flex;align-items:center;gap:12px;padding:10px 18px;border-radius:40px;background:var(--rose-t);color:var(--rose);font-weight:600;font-size:17px}
+.badge i{width:8px;height:8px;border-radius:50%;background:var(--rose);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.8);opacity:.4}}
+.jobname{font-family:var(--f-display);font-size:92px;line-height:.92;font-weight:800;color:var(--navy);margin-top:22px}
+.jobname span{color:var(--blue)}
+.reasons{display:flex;flex-direction:column;gap:14px}
+.reason{display:grid;grid-template-columns:44px 1fr;gap:18px;padding:20px 24px;border-radius:6px;background:var(--card);border:1px solid var(--line)}
+.reason .rn{font-family:var(--f-display);font-size:40px;font-weight:800;line-height:1;color:var(--orange)}
+.reason h3{font-size:25px}
+.reason p{font-size:18px;line-height:1.45;color:var(--muted);margin-top:4px}
+.evo{margin-top:40px}
+.evo .lab{font-family:var(--f-mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.evo ol{margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.evo li{list-style:none;padding:14px 14px 12px;background:var(--blue-t);font-size:16px;line-height:1.3;color:var(--navy);font-weight:500}
+.evo li:first-child{border-radius:6px 0 0 6px}
+.evo li:last-child{border-radius:0 6px 6px 0;background:var(--navy);color:#fff}
+.evo li b{display:block;font-family:var(--f-mono);font-size:12px;font-weight:500;letter-spacing:.08em;color:var(--blue);margin-bottom:4px}
+.evo li:last-child b{color:var(--orange)}
+
+/* ---------- 11. Changements ---------- */
+.changes{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.chg{background:var(--card);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.chg .top{padding:26px 28px 20px;display:flex;flex-direction:column;gap:10px}
+.chg .idx{font-family:var(--f-display);font-size:18px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.chg h3{font-size:31px}
+.chg .row{padding:16px 28px;font-size:18px;line-height:1.45;border-top:1px solid var(--line)}
+.chg .row .k{display:block;font-family:var(--f-mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:4px;color:var(--muted)}
+.chg .row.now{color:var(--muted)}
+.chg .row.next{background:var(--navy);color:#fff;flex:1;border-top:0}
+.chg .row.next .k{color:var(--orange)}
+.chg:nth-child(1) .idx{color:var(--orange)}
+.chg:nth-child(2) .idx{color:var(--blue)}
+.chg:nth-child(3) .idx{color:var(--rose)}
+
+/* ---------- 12/13. Compétences ---------- */
+.skills{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.skill{position:relative;padding:34px 32px 30px;border-radius:6px;display:flex;flex-direction:column;gap:14px;min-height:420px;overflow:hidden}
+.skill .glyph{font-family:var(--f-display);font-size:92px;font-weight:800;line-height:.8;letter-spacing:-.02em;display:flex;align-items:flex-end;gap:14px}
+.skill .glyph::after{content:"";width:46px;height:5px;margin-bottom:10px;background:currentColor;opacity:.35}
+.skill h3{font-size:36px}
+.skill p{font-size:19px;line-height:1.5;color:var(--ink)}
+.skill .ex{margin-top:auto;padding-top:16px;border-top:1px solid rgba(14,39,71,.14);font-size:17px;line-height:1.45;color:var(--muted)}
+.skill .ex b{color:var(--navy);font-weight:600}
+.skill.o{background:var(--orange-t)} .skill.o .glyph{color:var(--orange)}
+.skill.b{background:var(--blue-t)} .skill.b .glyph{color:var(--blue)}
+.skill.ro{background:var(--rose-t)} .skill.ro .glyph{color:var(--rose)}
+.skill.g{background:var(--green-t)} .skill.g .glyph{color:var(--green)}
+.skill .type{font-family:var(--f-mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.punch{margin-top:30px;display:flex;align-items:center;gap:22px;font-family:var(--f-display);font-size:34px;font-weight:700;color:var(--navy)}
+.punch::before{content:"";width:60px;height:5px;border-radius:3px;background:var(--rose)}
+
+/* ---------- 14. Proposition ---------- */
+.prop{display:grid;grid-template-columns:1fr 1.45fr;gap:60px;align-items:start}
+.prop-name{font-family:var(--f-display);font-size:76px;line-height:.95;font-weight:800;color:var(--navy)}
+.prop-name span{color:var(--rose)}
+.prop .lead{font-size:21px;margin-top:20px}
+.charter{margin-top:30px;padding:24px 26px;border-radius:6px;background:var(--navy);color:#fff}
+.charter .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--orange)}
+.charter p{font-family:var(--f-display);font-size:28px;font-weight:600;line-height:1.15;margin-top:8px}
+.charter small{display:block;font-size:16px;color:rgba(255,255,255,.7);margin-top:10px;font-family:var(--f-body);line-height:1.45}
+.phases{display:flex;flex-direction:column;gap:14px}
+.phase{display:grid;grid-template-columns:150px 1fr;background:var(--card);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.phase .when{padding:22px 20px;display:flex;flex-direction:column;justify-content:center;gap:4px;color:#fff}
+.phase .when b{font-family:var(--f-display);font-size:32px;font-weight:800;line-height:1}
+.phase .when span{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;opacity:.85}
+.phase .body{padding:20px 26px}
+.phase .body h3{font-size:25px}
+.phase .body p{font-size:17px;line-height:1.45;color:var(--muted);margin-top:4px}
+.phase:nth-child(1) .when{background:var(--orange)}
+.phase:nth-child(2) .when{background:var(--blue)}
+.phase:nth-child(3) .when{background:var(--rose)}
+.why-mp{font-size:17px;line-height:1.45;color:var(--muted);margin-top:4px;padding-left:16px;border-left:3px solid var(--sky)}
+
+/* ---------- 15. Déploiement ---------- */
+.deploy{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.dstep{padding:0 26px 0 0;position:relative}
+.dstep .bar{height:10px;border-radius:5px;margin-bottom:22px;transform:scaleX(0);transform-origin:left}
+.is-active .dstep .bar{transform:scaleX(1);transition:transform .7s var(--ease)}
+.dstep:nth-child(1) .bar{background:var(--orange)}
+.dstep:nth-child(2) .bar{background:var(--blue);transition-delay:.25s}
+.dstep:nth-child(3) .bar{background:var(--rose);transition-delay:.5s}
+.dstep:nth-child(4) .bar{background:var(--navy);transition-delay:.75s}
+.dstep .k{font-family:var(--f-mono);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.dstep h3{font-size:34px;margin-top:6px}
+.dstep p{font-size:18px;line-height:1.45;color:var(--muted);margin-top:8px}
+.metrics{margin-top:56px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.metric{padding:22px 24px;border-radius:6px;background:var(--card);border:1px solid var(--line)}
+.metric .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--rose)}
+.metric h3{font-size:24px;margin-top:8px}
+.metric p{font-size:16px;line-height:1.45;color:var(--muted);margin-top:6px}
+.note{margin-top:20px}
+
+/* ---------- 16. Conclusion ---------- */
+.final{justify-content:space-between;padding-top:150px}
+.final .big{font-family:var(--f-display);font-size:120px;line-height:.9;font-weight:800;color:#fff}
+.final .big span{display:block}
+.final .answer{font-size:30px;line-height:1.35;color:rgba(255,255,255,.85);max-width:44ch;margin-top:24px}
+.final .answer b{color:#fff;font-weight:600}
+.why-mp b{color:var(--navy)}
+.final .big span:last-child{color:var(--orange)}
+.recap{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;border-radius:6px;overflow:hidden}
+.recap div{background:rgba(255,255,255,.07);padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+.recap .c{font-family:var(--f-display);font-size:42px;font-weight:800;color:var(--orange);line-height:1}
+.recap .t{font-size:16px;line-height:1.35;color:rgba(255,255,255,.85)}
+.thanks{display:flex;justify-content:space-between;align-items:baseline;margin-top:24px}
+.thanks p{font-family:var(--f-display);font-size:34px;font-weight:600;color:#fff}
+
+.cv{font-variant-numeric:tabular-nums}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important;transition-delay:0s!important}
+  .r{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="viewport">
+<div class="stage" id="stage">
+
+  <div class="brandbar"><span><b>ÉCHO</b> × Manpower France</span><span id="sectionName">Couverture</span></div>
+
+  <!-- 1. Couverture -->
+  <section class="slide dark cover" data-name="Couverture">
+    <div class="streaks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <div>
+      <p class="eyebrow r" style="--d:0">Projet ÉCHO</p>
+      <h1 class="r" style="--d:1">Recruter à l'ère de l'<em>IA</em></h1>
+      <p class="lead r" style="--d:2">Le chargé de recrutement à l'horizon 2030 : ce que l'IA change, ce qui reste humain, et comment Manpower peut s'y préparer.</p>
+      <p class="who r" style="--d:3">Novembre 2026</p>
+    </div>
+    <div class="cover-q r" style="--d:4">
+      <span class="tag">Question fil rouge</span>
+      <p>Face à l'essor de l'intelligence artificielle, quelles compétences feront la différence sur le marché du travail de demain ?</p>
+    </div>
+  </section>
+
+
+  <!-- 3. Pourquoi -->
+  <section class="slide" data-name="Le contexte">
+    <div class="head">
+      <p class="eyebrow r" style="--d:0">Le contexte</p>
+      <h2 class="r" style="--d:1">L'IA redessine déjà le travail</h2>
+    </div>
+    <div class="why grow">
+      <div>
+        <div class="defi r" style="--d:2">
+          <span class="tag">Le défi posé par Manpower</span>
+          <p>À l'heure où l'IA transforme les métiers, comment construire les compétences qui feront la différence demain ?</p>
+        </div>
+        <div class="statline r" style="--d:4">
+          <span class="big"><span class="cv" data-count="39">39</span><small>%</small></span>
+          <div>
+            <p>des compétences clés des travailleurs devraient changer d'ici 2030.</p>
+            <p class="src" style="margin-top:8px">Forum économique mondial, Future of Jobs Report 2025</p>
+          </div>
+        </div>
+      </div>
+      <div class="facts">
+        <div class="fact r" style="--d:3">
+          <span class="ic" style="background:var(--orange-t);color:var(--orange)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="3.5"/></svg></span>
+          <div><h3>Elle automatise</h3><p>Certaines tâches répétitives sortent du quotidien des professionnels.</p></div>
+        </div>
+        <div class="fact r" style="--d:4">
+          <span class="ic" style="background:var(--blue-t);color:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></span>
+          <div><h3>Elle enrichit les outils</h3><p>Les métiers gagnent en puissance d'analyse et en rapidité.</p></div>
+        </div>
+        <div class="fact r" style="--d:5">
+          <span class="ic" style="background:var(--rose-t);color:var(--rose)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="16" r="3"/><path d="M10.5 10.5l3 3M16 8h3M5 16h3"/></svg></span>
+          <div><h3>Elle change la façon de travailler</h3><p>Collaborer, décider et créer de la valeur ne se font plus de la même manière.</p></div>
+        </div>
+        <p class="stake r" style="--d:6">Notre enjeu : aider les futurs professionnels à rester <b>pertinents, adaptables et employables</b> dans un monde du travail en constante évolution.</p>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+
+
+  <!-- 10. Métier -->
+  <section class="slide" data-name="1 métier">
+    <div class="job grow">
+      <div>
+        <p class="eyebrow r" style="--d:0">Se projeter · Le métier choisi</p>
+        <span class="badge r" style="--d:1"><i></i>Horizon 2030</span>
+        <p class="jobname r" style="--d:2">Chargé·e de <span>recrutement</span></p>
+        <div class="evo r" style="--d:6">
+          <p class="lab">Un métier qui s'est déjà réinventé</p>
+          <ol>
+            <li><b>Hier</b>Annonces papier et agences</li>
+            <li><b>Années 2000</b>Sites d'offres d'emploi</li>
+            <li><b>Années 2010</b>Réseaux sociaux professionnels</li>
+            <li><b>Demain</b>IA de tri et de matching</li>
+          </ol>
+        </div>
+      </div>
+      <div class="reasons">
+        <p class="eyebrow r" style="--d:2">Pourquoi ce choix</p>
+        <div class="reason r" style="--d:3"><span class="rn">1</span><div><h3>Le cœur de métier de Manpower</h3><p>Recrutement, intérim, mise à disposition de personnel : c'est le métier que Manpower exerce chaque jour dans ses 700 agences.</p></div></div>
+        <div class="reason r" style="--d:4"><span class="rn">2</span><div><h3>Un métier en première ligne face à l'IA</h3><p>Tri de CV, recherche de profils, planification des entretiens : une grande partie des tâches se prête à l'automatisation.</p></div></div>
+        <div class="reason r" style="--d:5"><span class="rn">3</span><div><h3>Un métier humain par nature</h3><p>On recrute des personnes, pas des CV. La question de la valeur humaine s'y pose de façon très concrète.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. Changements -->
+  <section class="slide" data-name="3 changements">
+    <div class="head">
+      <p class="eyebrow r" style="--d:0">Comprendre · 3 changements majeurs</p>
+      <h2 class="r" style="--d:1">Ce que l'IA change pour le recruteur</h2>
+    </div>
+    <div class="changes grow">
+      <article class="chg r" style="--d:2">
+        <div class="top"><span class="idx">Changement 1</span><h3>La présélection devient automatique</h3></div>
+        <p class="row now"><span class="k">Aujourd'hui</span>Le recruteur lit lui-même des dizaines, parfois des centaines de CV par poste.</p>
+        <p class="row next"><span class="k">Demain</span>L'IA trie, résume les profils et propose une première liste. Le recruteur la vérifie et passe son temps en entretien.</p>
+      </article>
+      <article class="chg r" style="--d:3">
+        <div class="top"><span class="idx">Changement 2</span><h3>On recrute des compétences, plus des diplômes</h3></div>
+        <p class="row now"><span class="k">Aujourd'hui</span>Le diplôme et l'intitulé du dernier poste filtrent les candidatures.</p>
+        <p class="row next"><span class="k">Demain</span>L'IA repère les compétences transférables. Le recruteur ouvre les postes aux reconversions et aux profils atypiques.</p>
+      </article>
+      <article class="chg r" style="--d:4">
+        <div class="top"><span class="idx">Changement 3</span><h3>Le recruteur devient garant de l'équité</h3></div>
+        <p class="row now"><span class="k">Aujourd'hui</span>Les outils numériques de recrutement se diffusent avec peu de contrôle.</p>
+        <p class="row next"><span class="k">Demain</span>Le règlement européen sur l'IA classe les systèmes de recrutement « à haut risque » : transparence et contrôle humain obligatoires. Le recruteur détecte les biais et explique les décisions.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 12. Compétences humaines -->
+  <section class="slide" data-name="3 compétences humaines">
+    <div class="head">
+      <p class="eyebrow r" style="--d:0">Identifier la valeur humaine · 3 compétences clés</p>
+      <h2 class="r" style="--d:1">Ce que l'IA ne remplacera pas</h2>
+    </div>
+    <div class="skills">
+      <div class="skill o r" style="--d:2">
+        <span class="glyph">01</span>
+        <h3>Empathie et écoute</h3>
+        <p>Percevoir la motivation, le potentiel et les doutes d'un candidat : tout ce qu'un CV ne dit pas.</p>
+        <p class="ex"><b>Exemple :</b> sentir qu'un candidat en reconversion a besoin d'être rassuré avant de se lancer.</p>
+      </div>
+      <div class="skill b r" style="--d:3">
+        <span class="glyph">02</span>
+        <h3>Jugement et discernement</h3>
+        <p>Trancher en tenant compte du contexte, et repérer quand la recommandation de l'IA se trompe ou reproduit un biais.</p>
+        <p class="ex"><b>Exemple :</b> repêcher un profil écarté par l'outil à cause d'un trou dans le CV.</p>
+      </div>
+      <div class="skill ro r" style="--d:4">
+        <span class="glyph">03</span>
+        <h3>Confiance et conseil</h3>
+        <p>Créer une relation durable avec le candidat comme avec l'entreprise cliente : conseiller, convaincre, négocier.</p>
+        <p class="ex"><b>Exemple :</b> convaincre un client de rencontrer un candidat qui sort des critères habituels.</p>
+      </div>
+    </div>
+    <p class="punch r" style="--d:6">L'IA analyse des données. Le recruteur crée la confiance.</p>
+  </section>
+
+  <!-- 13. Compétences à développer -->
+  <section class="slide" data-name="3 compétences à développer">
+    <div class="head">
+      <p class="eyebrow r" style="--d:0">Se préparer · 3 compétences à développer dès aujourd'hui</p>
+      <h2 class="r" style="--d:1">Technique, relationnelle, transversale</h2>
+    </div>
+    <div class="skills">
+      <div class="skill b r" style="--d:2">
+        <span class="type">Technique</span>
+        <h3>Culture IA et données</h3>
+        <p>Savoir formuler une demande à un outil d'IA, lire un score de correspondance et connaître les limites d'un algorithme.</p>
+        <p class="ex"><b>Dès aujourd'hui :</b> utiliser les outils d'IA en projet et se former au règlement européen sur l'IA.</p>
+      </div>
+      <div class="skill g r" style="--d:3">
+        <span class="type">Relationnelle</span>
+        <h3>Entretien par compétences</h3>
+        <p>Mener un entretien structuré, proposer des mises en situation et donner un retour utile à chaque candidat.</p>
+        <p class="ex"><b>Dès aujourd'hui :</b> s'entraîner aux entretiens en binôme et pratiquer le retour constructif.</p>
+      </div>
+      <div class="skill ro r" style="--d:4">
+        <span class="type">Transversale</span>
+        <h3>Apprendre en continu</h3>
+        <p>Faire de la veille, remettre en question ses habitudes et s'adapter à des outils qui changent chaque année.</p>
+        <p class="ex"><b>Dès aujourd'hui :</b> tenir une veille régulière et tester un nouvel outil chaque trimestre.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14. Proposition -->
+  <section class="slide" data-name="1 proposition">
+    <div class="prop grow">
+      <div>
+        <p class="eyebrow r" style="--d:0">1 proposition concrète</p>
+        <p class="prop-name r" style="--d:1">Le Parcours <span>Recruteur augmenté</span></p>
+        <p class="lead r" style="--d:2">Un parcours de 12 semaines porté par Manpower pour former ses recruteurs et ses alternants à travailler avec l'IA sans perdre la main.</p>
+        <div class="charter r" style="--d:6">
+          <span class="k">Charte associée</span>
+          <p>« L'humain décide »</p>
+          <small>Toute décision de recrutement appuyée par l'IA est validée et expliquée par un recruteur, au candidat comme au client.</small>
+        </div>
+      </div>
+      <div class="phases">
+        <div class="phase r" style="--d:3"><div class="when"><b>Apprendre</b><span>Semaines 1 à 4</span></div><div class="body"><h3>Modules courts</h3><p>Culture IA, lecture des scores, biais algorithmiques et règlement européen sur l'IA.</p></div></div>
+        <div class="phase r" style="--d:4"><div class="when"><b>Pratiquer</b><span>Semaines 5 à 8</span></div><div class="body"><h3>Binômes et simulations</h3><p>Un recruteur expérimenté avec un alternant. Audit d'une liste de candidats produite par l'IA, entretiens simulés.</p></div></div>
+        <div class="phase r" style="--d:5"><div class="when"><b>Certifier</b><span>Semaines 9 à 12</span></div><div class="body"><h3>Cas réel en agence</h3><p>Un recrutement mené de bout en bout avec l'IA, présenté devant un comité interne. Badge « Recruteur augmenté ».</p></div></div>
+        <p class="why-mp r" style="--d:7"><b>Déploiement :</b> pilote dans quelques agences volontaires, bilan avec recruteurs, candidats et clients, puis extension aux 700 agences. Le parcours s'appuie sur les activités de formation et d'alternance de Manpower.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 16. Conclusion -->
+  <section class="slide dark final" data-name="Notre réponse">
+    <div class="streaks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <div>
+      <p class="eyebrow r" style="--d:0">Notre réponse à la question</p>
+      <p class="big r" style="--d:1"><span>L'IA trie.</span><span>L'humain choisit.</span></p>
+      <p class="answer r" style="--d:2">Demain, feront la différence ceux qui savent <b>travailler avec l'IA</b> et cultiver <b>ce qu'elle ne sait pas faire</b> : écouter, juger, créer la confiance.</p>
+    </div>
+    <div>
+      <div class="recap r" style="--d:3">
+        <div><span class="c">1</span><span class="t">métier : chargé·e de recrutement</span></div>
+        <div><span class="c">3</span><span class="t">changements : présélection, compétences, équité</span></div>
+        <div><span class="c">3</span><span class="t">compétences humaines : empathie, jugement, confiance</span></div>
+        <div><span class="c">3</span><span class="t">à développer : culture IA, entretien, apprendre en continu</span></div>
+        <div><span class="c">1</span><span class="t">proposition : le Parcours Recruteur augmenté</span></div>
+      </div>
+      <div class="thanks r" style="--d:5"><p>Merci. Place à vos questions.</p><span class="src">ÉCHO × Manpower France · 2026</span></div>
+    </div>
+  </section>
+
+  <div class="footer">
+    <button class="navbtn" id="prev" aria-label="Diapositive précédente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <button class="navbtn" id="next" aria-label="Diapositive suivante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+    <div class="progress"><span id="bar"></span></div>
+    <span class="counter" id="counter">01 / 08</span>
+  </div>
+
+</div>
+</div>
+
+<script>
+(function(){
+  var stage=document.getElementById('stage');
+  var slides=[].slice.call(stage.querySelectorAll('.slide'));
+  var bar=document.getElementById('bar'),counter=document.getElementById('counter');
+  var prev=document.getElementById('prev'),next=document.getElementById('next');
+  var sectionName=document.getElementById('sectionName');
+  var cur=-1,total=slides.length;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function pad(n){return (n<10?'0':'')+n}
+
+  function fit(){
+    var s=Math.min(window.innerWidth/1600,window.innerHeight/900);
+    stage.style.transform='scale('+s+')';
+  }
+  window.addEventListener('resize',fit);fit();
+
+  function fmt(n){return n.toLocaleString('fr-FR').replace(/ | /g,' ')}
+  function countUp(el){
+    var target=+el.getAttribute('data-count');
+    if(reduce){el.textContent=fmt(target);return}
+    var t0=null,dur=1400;
+    function tick(t){
+      if(!t0)t0=t;
+      var p=Math.min((t-t0)/dur,1),e=1-Math.pow(1-p,3);
+      el.textContent=fmt(Math.round(target*e));
+      if(p<1)requestAnimationFrame(tick);
+    }
+    el.textContent='0';
+    setTimeout(function(){requestAnimationFrame(tick)},350);
+  }
+
+  function go(n){
+    n=Math.max(0,Math.min(total-1,n));
+    if(n===cur)return;
+    cur=n;
+    slides.forEach(function(s,i){
+      s.classList.toggle('is-active',i===n);
+      s.classList.toggle('is-past',i<n);
+      s.setAttribute('aria-hidden',i===n?'false':'true');
+    });
+    var active=slides[n];
+    stage.classList.toggle('on-dark',active.classList.contains('dark'));
+    bar.style.width=((n+1)/total*100)+'%';
+    counter.textContent=pad(n+1)+' / '+pad(total);
+    sectionName.textContent=active.getAttribute('data-name');
+    prev.disabled=n===0;next.disabled=n===total-1;
+    [].forEach.call(active.querySelectorAll('[data-count]'),countUp);
+    try{history.replaceState(null,'','#s'+(n+1))}catch(e){}
+  }
+
+  prev.addEventListener('click',function(){go(cur-1)});
+  next.addEventListener('click',function(){go(cur+1)});
+  [].forEach.call(document.querySelectorAll('[data-go]'),function(a){
+    a.addEventListener('click',function(e){e.preventDefault();go(+a.getAttribute('data-go'))});
+  });
+
+  document.addEventListener('keydown',function(e){
+    var k=e.key;
+    if(k==='ArrowRight'||k==='PageDown'||k===' '||k==='Enter'&&e.target===document.body){e.preventDefault();go(cur+1)}
+    else if(k==='ArrowLeft'||k==='PageUp'){e.preventDefault();go(cur-1)}
+    else if(k==='Home'){go(0)}
+    else if(k==='End'){go(total-1)}
+    else if(k==='f'||k==='F'){
+      var d=document;
+      try{ if(!d.fullscreenElement){d.documentElement.requestFullscreen().catch(function(){})} else {d.exitFullscreen()} }catch(err){}
+    }
+  });
+
+  var tx=null,ty=null;
+  document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(tx===null)return;
+    var dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))go(cur+(dx<0?1:-1));
+    tx=null;
+  });
+
+  var m=/^#s(\d+)$/.exec(location.hash);
+  go(m?(+m[1]-1):0);
+  window.addEventListener('hashchange',function(){var h=/^#s(\d+)$/.exec(location.hash);if(h)go(+h[1]-1)});
+})();
+</script>
+</body>
+</html>

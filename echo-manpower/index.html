@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ÉCHO × Manpower – Recruter à l'ère de l'IA</title>
+<meta name="description" content="Projet ÉCHO pour Manpower France : cahier des charges, trajectoire et personae, et un faux documentaire sur l'intérim.">
+<meta property="og:title" content="ÉCHO × Manpower – Recruter à l'ère de l'IA">
+<meta property="og:description" content="Cahier des charges, trajectoire et personae, et un faux documentaire sur l'intérim.">
+<meta property="og:image" content="poster.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --navy:#0E2747;--navy-2:#16345C;--blue:#2F6FB7;--sky:#6AA5DC;--rose:#D2335C;--orange:#E07B3C;--green:#86A92F;
+  --bg:#F6F8FB;--ink:#1D2B40;--muted:#5D6B80;--line:rgba(14,39,71,.12);--card:#fff;
+  --display:"Barlow Condensed",sans-serif;--font:"Barlow",sans-serif;--mono:"IBM Plex Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1A30;--ink:#E6ECF4;--muted:#9AA9BE;--line:rgba(255,255,255,.12);--card:#122641}}
+:root[data-theme="dark"]{--bg:#0B1A30;--ink:#E6ECF4;--muted:#9AA9BE;--line:rgba(255,255,255,.12);--card:#122641}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5}
+.hero{background:radial-gradient(1100px 600px at 85% 0%,#1B4479 0%,var(--navy) 60%);color:#fff;padding:72px 20px 120px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+.eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--rose);margin:0}
+.hero .eyebrow{color:#FF8FA8}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(44px,8vw,96px);line-height:.95;margin:14px 0 18px;letter-spacing:-.005em}
+h1 em{font-style:normal;color:var(--orange)}
+.lead{font-size:clamp(17px,2.2vw,21px);color:rgba(255,255,255,.78);max-width:720px;margin:0}
+.tri{display:flex;gap:8px;width:220px;height:6px;margin-top:28px}
+.tri i{flex:1;border-radius:3px}
+.tri i:nth-child(1){background:var(--orange)}.tri i:nth-child(2){background:var(--blue)}.tri i:nth-child(3){background:var(--rose)}.tri i:nth-child(4){background:var(--green)}
+.film{margin-top:-80px}
+.player{position:relative;border-radius:16px;overflow:hidden;background:#05101E;box-shadow:0 40px 80px -40px rgba(6,17,31,.7);aspect-ratio:16/9}
+.player video{display:block;width:100%;height:100%}
+.meta{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:baseline;justify-content:space-between;margin:18px 2px 0}
+.meta h2{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);margin:0;line-height:1.05}
+.meta p{margin:0;color:var(--muted);font-size:15px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+section.docs{padding:64px 0 40px}
+.docs h3{font-family:var(--display);font-weight:800;font-size:clamp(26px,3.6vw,36px);margin:8px 0 26px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.card{display:flex;flex-direction:column;gap:12px;padding:28px 28px 26px;border-radius:16px;background:var(--card);border:1px solid var(--line);border-top:5px solid var(--c);text-decoration:none;color:inherit;transition:transform .25s ease,box-shadow .25s ease}
+.card:hover{transform:translateY(-4px);box-shadow:0 26px 50px -30px rgba(14,39,71,.5)}
+.card:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+.card .k{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--c)}
+.card b{font-family:var(--display);font-weight:800;font-size:30px;line-height:1.05}
+.card p{margin:0;color:var(--muted);font-size:16px}
+.card .go{margin-top:auto;font-weight:600;color:var(--c)}
+.card.o{--c:var(--orange)} .card.b{--c:var(--blue)}
+footer{padding:30px 0 50px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Projet ÉCHO × Manpower France</p>
+    <h1>Recruter à l'ère de l'<em>IA</em></h1>
+    <p class="lead">Face à l'essor de l'intelligence artificielle, quelles compétences feront la différence sur le marché du travail de demain ?</p>
+    <div class="tri"><i></i><i></i><i></i><i></i></div>
+  </div>
+</header>
+
+<main>
+  <section class="film wrap" aria-labelledby="film-title">
+    <div class="player">
+      <video controls playsinline preload="metadata" poster="poster.jpg">
+        <source src="interim-faux-documentaire.mp4" type="video/mp4">
+        Votre navigateur ne lit pas cette vidéo. <a href="interim-faux-documentaire.mp4">Télécharger la vidéo</a>.
+      </video>
+    </div>
+    <div class="meta">
+      <div>
+        <h2 id="film-title">Intérim : une vie à la mission</h2>
+        <div class="chips"><span class="chip">Faux documentaire</span><span class="chip">2 min 14</span><span class="chip">Animation 3D</span></div>
+      </div>
+      <p>Une satire des clichés de l'intérim, jusqu'au recruteur augmenté. Les personnages sont fictifs.</p>
+    </div>
+  </section>
+
+  <section class="docs wrap" aria-labelledby="docs-title">
+    <p class="eyebrow">Les présentations</p>
+    <h3 id="docs-title">Le fond du projet</h3>
+    <div class="grid">
+      <a class="card o" href="cahier-des-charges.html">
+        <span class="k">16 diapos</span>
+        <b>Cahier des charges</b>
+        <p>Le pourquoi, l'historique, le comment, les objectifs, le chemin, le quoi, puis la solution : le Parcours Recruteur augmenté.</p>
+        <span class="go">Ouvrir la présentation →</span>
+      </a>
+      <a class="card b" href="trajectoire-personae.html">
+        <span class="k">13 diapos</span>
+        <b>Trajectoire et personae</b>
+        <p>La démarche en six étapes, la trajectoire jusqu'en 2030, le cahier des charges et quatre personae.</p>
+        <span class="go">Ouvrir la présentation →</span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">Projet ÉCHO · Manpower France · 2026. Navigation dans les présentations : flèches du clavier ou balayage sur mobile.</div>
+</footer>
+</body>
+</html>

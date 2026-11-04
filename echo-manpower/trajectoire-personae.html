@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trajectoire et personae</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0E2747;--navy-2:#16345C;--blue:#2F6FB7;--sky:#6AA5DC;--rose:#D2335C;--orange:#E07B3C;--green:#86A92F;
+  --blue-t:#E3EDF8;--rose-t:#F9E3E9;--orange-t:#FBEADF;--green-t:#EDF3DF;
+  --bg:#F6F8FB;--ink:#1D2B40;--muted:#5D6B80;--line:rgba(14,39,71,.12);
+  --f-display:"Barlow Condensed",sans-serif;--f-body:"Barlow",sans-serif;--f-mono:"IBM Plex Mono",monospace;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#06111F;overflow:hidden;font-family:var(--f-body);color:var(--ink)}
+#deck{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:50% 50%}
+.slide{position:absolute;inset:0;background:var(--bg);padding:96px 120px 110px;display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:translateX(40px);transition:opacity .6s var(--ease),transform .7s var(--ease),visibility 0s .7s;overflow:hidden}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .6s var(--ease),transform .7s var(--ease)}
+.slide.past{transform:translateX(-40px)}
+.slide.dark{background:radial-gradient(1100px 650px at 85% 0%,#173a66 0%,var(--navy) 62%);color:#fff}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .6s var(--ease),transform .7s var(--ease);transition-delay:calc(var(--d,0)*90ms + 150ms)}
+.on .rv{opacity:1;transform:none}
+.o{--c:var(--orange);--t:var(--orange-t)} .b{--c:var(--blue);--t:var(--blue-t)} .ro{--c:var(--rose);--t:var(--rose-t)} .g{--c:var(--green);--t:var(--green-t)}
+
+.brand{position:absolute;left:120px;right:120px;top:40px;display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.brand b{color:var(--navy);font-weight:500}
+.dark .brand{color:rgba(255,255,255,.55)} .dark .brand b{color:#fff}
+.eyebrow{font-family:var(--f-mono);font-size:15px;letter-spacing:.22em;text-transform:uppercase;color:var(--rose);font-weight:500}
+h1,h2,h3{font-family:var(--f-display);font-weight:800;line-height:1}
+h2{font-size:64px;margin-top:10px;color:var(--navy)}
+.dark h2{color:#fff}
+h2 em,h1 em{font-style:normal;color:var(--blue)} .dark h2 em,.dark h1 em{color:var(--orange)}
+.lead{font-size:24px;line-height:1.45;color:var(--muted);max-width:1100px;margin-top:18px}
+.dark .lead{color:rgba(255,255,255,.75)}
+.grow{flex:1;min-height:0;margin-top:36px}
+.tri{display:flex;gap:8px;width:280px;height:7px;margin-top:30px}
+.tri i{flex:1;border-radius:4px;transform:scaleX(0);transform-origin:0 50%;transition:transform .8s var(--ease)}
+.on .tri i{transform:scaleX(1)}
+.tri i:nth-child(1){background:var(--orange);transition-delay:.5s}.tri i:nth-child(2){background:var(--blue);transition-delay:.6s}.tri i:nth-child(3){background:var(--rose);transition-delay:.7s}.tri i:nth-child(4){background:var(--green);transition-delay:.8s}
+
+/* cover */
+.cover{justify-content:center}
+.cover h1{font-size:132px;letter-spacing:-.005em;margin-top:18px}
+.cover .lead{font-size:28px}
+
+/* answer */
+.answer{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.qbox{border-radius:16px;padding:40px;background:#fff;box-shadow:0 30px 60px -44px rgba(14,39,71,.45)}
+.qbox .k{font-family:var(--f-mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.qbox p{font-family:var(--f-display);font-weight:700;font-size:40px;line-height:1.12;margin-top:16px;color:var(--navy)}
+.qbox.ans{background:var(--navy)} .qbox.ans .k{color:var(--sky)} .qbox.ans p{color:#fff} .qbox.ans p em{font-style:normal;color:var(--orange)}
+.pillars{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.pillar{border-radius:14px;padding:26px 30px;background:var(--t);border-left:6px solid var(--c)}
+.pillar b{display:block;font-family:var(--f-display);font-size:30px;color:var(--c)}
+.pillar span{font-size:20px;color:var(--ink)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;position:relative;align-content:center}
+.steps::before{content:"";position:absolute;left:30px;right:30px;top:calc(50% - 140px);height:4px;background:linear-gradient(90deg,var(--orange),var(--blue),var(--rose),var(--green));border-radius:2px;transform:scaleX(0);transform-origin:0 50%;transition:transform 1.4s var(--ease) .3s}
+.on .steps::before{transform:scaleX(1)}
+.step{position:relative}
+.step .dot{width:64px;height:64px;border-radius:50%;background:#fff;border:4px solid var(--c);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:28px;color:var(--c);position:relative;z-index:1}
+.step h3{font-size:36px;margin-top:22px;color:var(--navy)}
+.step .q{font-size:20px;line-height:1.4;color:var(--ink);margin-top:10px;min-height:140px}
+.step .out{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:16px;line-height:1.35;color:var(--muted)}
+.step .out b{display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);margin-bottom:4px}
+
+/* timeline */
+.years{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;align-items:end;height:100%}
+.yr{border-radius:16px 16px 0 0;padding:30px 30px 34px;color:#fff;display:flex;flex-direction:column;background:var(--c);transform-origin:50% 100%}
+.yr .y{font-family:var(--f-display);font-weight:800;font-size:72px;line-height:.9}
+.yr h3{font-size:32px;margin-top:10px}
+.yr p{font-size:19px;line-height:1.4;margin-top:12px;opacity:.92}
+.yr .kpi{margin-top:auto;padding-top:18px;border-top:1px solid rgba(255,255,255,.3);font-family:var(--f-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+.yr:nth-child(1){height:58%}.yr:nth-child(2){height:72%}.yr:nth-child(3){height:86%}.yr:nth-child(4){height:100%;background:var(--navy)}
+
+/* cdc grid */
+.cdc{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:18px;height:100%}
+.blk p{font-size:19px!important}
+.blk{border-radius:14px;padding:26px 28px;background:#fff;box-shadow:0 24px 50px -40px rgba(14,39,71,.45);border-top:5px solid var(--c)}
+.blk .n{font-family:var(--f-mono);font-size:12px;letter-spacing:.2em;color:var(--c)}
+.blk h3{font-size:30px;color:var(--navy);margin:8px 0 10px}
+.blk p{font-size:17.5px;line-height:1.42;color:var(--ink)}
+.blk.hl{background:var(--navy);border-top-color:var(--orange)} .blk.hl h3{color:#fff} .blk.hl p{color:rgba(255,255,255,.8)} .blk.hl .n{color:var(--orange)}
+
+/* divider personas */
+.divider{justify-content:center}
+.divider h2{font-size:110px}
+.faces{display:flex;gap:36px;margin-top:50px}
+.face{display:flex;flex-direction:column;align-items:center;gap:14px}
+.face .av{width:130px;height:130px;font-size:48px}
+.face span{font-family:var(--f-mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7);text-align:center;line-height:1.5}
+.face span b{display:block;color:#fff;font-family:var(--f-display);font-size:30px;letter-spacing:0;text-transform:none}
+
+.av{border-radius:50%;background:var(--t);color:var(--c);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;flex:none;box-shadow:0 0 0 6px rgba(255,255,255,.9),0 20px 40px -20px rgba(14,39,71,.5)}
+
+/* persona */
+.persona{display:grid;grid-template-columns:420px 1fr;gap:40px;height:100%}
+.id{border-radius:18px;background:var(--navy);color:#fff;padding:40px 38px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.id::before{content:"";position:absolute;left:0;top:0;right:0;height:7px;background:var(--c)}
+.id .av{width:120px;height:120px;font-size:44px}
+.id h3{font-size:54px;margin-top:26px}
+.id .role{font-size:20px;color:rgba(255,255,255,.75);margin-top:6px;line-height:1.4}
+.id .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.id .tags span{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.1)}
+.id blockquote{margin-top:auto;font-family:var(--f-display);font-weight:700;font-size:31px;line-height:1.15;color:#fff;border-left:5px solid var(--c);padding-left:20px}
+.pcols{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr auto;gap:20px}
+.pcol{background:#fff;border-radius:16px;padding:28px 28px 26px;box-shadow:0 24px 50px -40px rgba(14,39,71,.45)}
+.pcol .k{font-family:var(--f-mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);font-weight:500}
+.pcol ul{list-style:none;margin-top:16px;display:flex;flex-direction:column;gap:14px}
+.pcol li{font-size:22px;line-height:1.4;padding-left:22px;position:relative}
+.pcol li::before{content:"";position:absolute;left:0;top:.55em;width:9px;height:9px;background:var(--c);transform:rotate(45deg)}
+.pcol.bad li::before{background:var(--muted);border-radius:50%;transform:none}
+.gain{grid-column:1/-1;border-radius:16px;padding:24px 30px;background:var(--t);display:flex;gap:26px;align-items:center}
+.gain .k{font-family:var(--f-mono);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--c);font-weight:500;flex:none;width:200px;line-height:1.5}
+.gain p{font-size:21px;line-height:1.45;color:var(--navy)}
+.gain p b{font-weight:700}
+
+/* matrix */
+table{width:100%;border-collapse:separate;border-spacing:0 10px}
+th{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:center;padding:0 10px 6px;line-height:1.4}
+th:first-child{text-align:left}
+td{background:#fff;padding:18px 10px;text-align:center;font-size:18px}
+td:first-child{text-align:left;border-radius:12px 0 0 12px;padding-left:22px}
+td:last-child{border-radius:0 12px 12px 0}
+td .who{display:flex;align-items:center;gap:16px}
+td .who .av{width:52px;height:52px;font-size:20px;box-shadow:none}
+td .who b{font-family:var(--f-display);font-size:26px;color:var(--navy)}
+td .who span{display:block;font-size:15px;color:var(--muted)}
+.lv{display:inline-block;width:20px;height:20px;border-radius:50%;background:var(--c)}
+.lv.m{background:transparent;border:3px solid var(--c)}
+.lv.n{background:#E3E8EF;width:10px;height:10px}
+.legend{display:flex;gap:30px;margin-top:10px;font-size:16px;color:var(--muted);align-items:center}
+.legend span{display:flex;align-items:center;gap:10px}
+.legend .lv{--c:var(--navy)}
+
+/* reqs */
+.reqs{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;height:100%}
+.req{border-radius:16px;padding:32px 32px;background:#fff;box-shadow:0 24px 50px -40px rgba(14,39,71,.45);border-top:6px solid var(--c)}
+.req h3{font-size:34px;color:var(--navy)}
+.req .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--c)}
+.req ul{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:14px}
+.req li{font-size:19px;line-height:1.4;padding-left:22px;position:relative}
+.req li::before{content:"";position:absolute;left:0;top:.55em;width:9px;height:9px;background:var(--c);transform:rotate(45deg)}
+.req li b{font-weight:600;color:var(--navy)}
+
+/* final */
+.final{justify-content:center}
+.final h1{font-size:120px;line-height:.95;margin-top:14px}
+
+/* nav */
+#nav{position:fixed;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.08);z-index:9}
+#nav i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--orange),var(--blue),var(--rose));transition:width .6s var(--ease)}
+#num{position:fixed;right:22px;bottom:16px;font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;color:rgba(255,255,255,.55);z-index:9}
+@media (prefers-reduced-motion:reduce){.slide,.rv,.tri i,.steps::before{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- 1 -->
+<section class="slide dark cover">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>Recruter à l'ère de l'IA</span></div>
+  <p class="eyebrow rv" style="--d:0">Compléments au cahier des charges</p>
+  <h1 class="rv" style="--d:1">Trajectoire <em>&amp;</em> personae</h1>
+  <p class="lead rv" style="--d:2">Par où passer pour répondre à la problématique, et pour qui concevoir le Parcours Recruteur augmenté.</p>
+  <div class="tri"><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>La problématique</span></div>
+  <p class="eyebrow rv" style="--d:0">Rappel</p>
+  <h2 class="rv" style="--d:1">Une question, une réponse</h2>
+  <div class="answer grow">
+    <div class="qbox rv" style="--d:2"><span class="k">La problématique</span><p>Face à l'essor de l'IA, quelles compétences feront la différence sur le marché du travail de demain ?</p></div>
+    <div class="qbox ans rv" style="--d:3"><span class="k">Notre réponse</span><p>Former des <em>recruteurs augmentés</em> : l'IA prend le volume, l'humain garde la décision.</p></div>
+    <div class="pillars">
+      <div class="pillar o rv" style="--d:4"><b>Comprendre l'outil</b><span>Culture IA et données, lecture critique des scores.</span></div>
+      <div class="pillar b rv" style="--d:5"><b>Renforcer l'humain</b><span>Empathie, jugement, confiance : ce que l'IA ne fait pas.</span></div>
+      <div class="pillar ro rv" style="--d:6"><b>Encadrer l'usage</b><span>Charte « L'humain décide », transparence, équité.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>Trajectoire · la démarche</span></div>
+  <p class="eyebrow rv" style="--d:0">Quelle trajectoire adopter ?</p>
+  <h2 class="rv" style="--d:1">Six étapes, des usagers à la solution</h2>
+  <div class="steps grow">
+    <div class="step o rv" style="--d:2"><div class="dot">1</div><h3>Comprendre</h3><p class="q">Ce que l'IA fait déjà dans le recrutement, et ce que dit le règlement européen.</p><p class="out"><b>Livrable</b>Note de veille</p></div>
+    <div class="step o rv" style="--d:3"><div class="dot">2</div><h3>Écouter</h3><p class="q">Interroger recruteurs, alternants, candidats et clients sur leurs attentes.</p><p class="out"><b>Livrable</b>4 personae</p></div>
+    <div class="step b rv" style="--d:4"><div class="dot">3</div><h3>Cibler</h3><p class="q">Relier chaque besoin à une compétence : technique, relationnelle, transversale.</p><p class="out"><b>Livrable</b>Matrice besoins / réponses</p></div>
+    <div class="step b rv" style="--d:5"><div class="dot">4</div><h3>Concevoir</h3><p class="q">Construire le parcours de 12 semaines et la charte « L'humain décide ».</p><p class="out"><b>Livrable</b>Cahier des charges</p></div>
+    <div class="step ro rv" style="--d:6"><div class="dot">5</div><h3>Tester</h3><p class="q">Lancer un pilote dans quelques agences volontaires et recueillir les retours.</p><p class="out"><b>Livrable</b>Bilan du pilote</p></div>
+    <div class="step g rv" style="--d:7"><div class="dot">6</div><h3>Déployer</h3><p class="q">Ajuster, puis étendre au réseau et aux entreprises clientes.</p><p class="out"><b>Livrable</b>Plan de déploiement</p></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>Trajectoire · dans le temps</span></div>
+  <p class="eyebrow rv" style="--d:0">La trajectoire jusqu'en 2030</p>
+  <h2 class="rv" style="--d:1">Monter en puissance, <em>étape par étape</em></h2>
+  <div class="years grow">
+    <div class="yr o rv" style="--d:2"><span class="y">2026</span><h3>Diagnostic</h3><p>Veille, entretiens, personae, cahier des charges.</p><span class="kpi">Cahier des charges validé</span></div>
+    <div class="yr b rv" style="--d:3"><span class="y">2027</span><h3>Pilote</h3><p>Première promotion en binômes dans des agences volontaires.</p><span class="kpi">Première promotion certifiée</span></div>
+    <div class="yr ro rv" style="--d:4"><span class="y">2028</span><h3>Déploiement</h3><p>Extension progressive au réseau des 700 agences.</p><span class="kpi">Part des recruteurs certifiés</span></div>
+    <div class="yr rv" style="--d:5"><span class="y">2030</span><h3>Nouveau standard</h3><p>Le recruteur augmenté devient la norme. Parcours ouvert aux clients.</p><span class="kpi">Satisfaction et équité suivies</span></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>Cahier des charges</span></div>
+  <p class="eyebrow rv" style="--d:0">Le cahier des charges à mettre en place</p>
+  <h2 class="rv" style="--d:1">Huit rubriques, centrées sur les usagers</h2>
+  <div class="cdc grow">
+    <div class="blk o rv" style="--d:2"><span class="n">01</span><h3>Contexte</h3><p>L'IA automatise le tri des CV. Le métier de recruteur change.</p></div>
+    <div class="blk o rv" style="--d:3"><span class="n">02</span><h3>Objectifs</h3><p>Former à travailler avec l'IA sans perdre la main sur la décision.</p></div>
+    <div class="blk hl rv" style="--d:4"><span class="n">03</span><h3>Cibles · personae</h3><p>Recruteur expérimenté, alternant, candidat, entreprise cliente.</p></div>
+    <div class="blk b rv" style="--d:5"><span class="n">04</span><h3>Besoins</h3><p>Ce que chaque persona attend, et ce qui le freine aujourd'hui.</p></div>
+    <div class="blk b rv" style="--d:6"><span class="n">05</span><h3>Périmètre</h3><p>Parcours de 12 semaines, charte, badge. Hors périmètre : choix d'un outil d'IA.</p></div>
+    <div class="blk ro rv" style="--d:7"><span class="n">06</span><h3>Contraintes</h3><p>Règlement européen sur l'IA, RGPD, temps de formation compatible avec l'activité.</p></div>
+    <div class="blk ro rv" style="--d:8"><span class="n">07</span><h3>Livrables</h3><p>Modules, guide du binôme, grille de certification, charte.</p></div>
+    <div class="blk g rv" style="--d:9"><span class="n">08</span><h3>Indicateurs</h3><p>Recruteurs certifiés, temps réinvesti, satisfaction, équité.</p></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide dark divider">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>Personae</span></div>
+  <p class="eyebrow rv" style="--d:0">Pour qui concevoir ?</p>
+  <h2 class="rv" style="--d:1">Quatre personae</h2>
+  <p class="lead rv" style="--d:2">Des profils fictifs, construits à partir des situations types du recrutement. Ils servent de boussole pour chaque choix du cahier des charges.</p>
+  <div class="faces">
+    <div class="face o rv" style="--d:3"><div class="av">S</div><span><b>Sophie</b>Recruteuse<br>expérimentée</span></div>
+    <div class="face b rv" style="--d:4"><div class="av">L</div><span><b>Lucas</b>Alternant<br>recrutement</span></div>
+    <div class="face ro rv" style="--d:5"><div class="av">N</div><span><b>Nadia</b>Candidate en<br>reconversion</span></div>
+    <div class="face g rv" style="--d:6"><div class="av">M</div><span><b>Marc</b>DRH d'une PME<br>cliente</span></div>
+  </div>
+</section>
+
+<!-- 7 Sophie -->
+<section class="slide o">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>Persona 1 / 4</span></div>
+  <div class="persona" style="height:100%">
+    <div class="id rv" style="--d:0">
+      <div class="av">S</div>
+      <h3>Sophie, 46 ans</h3>
+      <p class="role">Chargée de recrutement en agence, 18 ans de métier</p>
+      <div class="tags"><span>Utilisatrice principale</span><span>Future tutrice</span></div>
+      <blockquote>« Si l'outil choisit à ma place, à quoi je sers ? »</blockquote>
+    </div>
+    <div class="pcols">
+      <div class="pcol rv" style="--d:1"><span class="k">Objectifs</span><ul><li>Gagner du temps sur le tri des CV</li><li>Garder le lien avec ses candidats et ses clients</li></ul></div>
+      <div class="pcol bad rv" style="--d:2"><span class="k">Frustrations</span><ul><li>Des outils imposés sans formation</li><li>La peur d'être dépassée</li><li>Trop d'administratif</li></ul></div>
+      <div class="pcol rv" style="--d:3"><span class="k">Besoins</span><ul><li>Une formation courte, sur ses vrais dossiers</li><li>Comprendre les scores de l'IA</li><li>Garder le dernier mot</li></ul></div>
+      <div class="gain rv" style="--d:4"><span class="k">Ce que le parcours lui apporte</span><p>Les modules <b>Apprendre</b> pour maîtriser l'outil, et un rôle de <b>tutrice en binôme</b> qui valorise son expérience.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 Lucas -->
+<section class="slide b">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>Persona 2 / 4</span></div>
+  <div class="persona" style="height:100%">
+    <div class="id rv" style="--d:0">
+      <div class="av">L</div>
+      <h3>Lucas, 22 ans</h3>
+      <p class="role">Alternant chargé de recrutement, bachelor RH</p>
+      <div class="tags"><span>Utilisateur principal</span><span>Natif du numérique</span></div>
+      <blockquote>« L'IA, je m'en sers tous les jours. Mener un entretien, c'est autre chose. »</blockquote>
+    </div>
+    <div class="pcols">
+      <div class="pcol rv" style="--d:1"><span class="k">Objectifs</span><ul><li>Devenir autonome rapidement</li><li>Être embauché à la fin de son alternance</li></ul></div>
+      <div class="pcol bad rv" style="--d:2"><span class="k">Frustrations</span><ul><li>Il fait trop confiance aux résultats de l'outil</li><li>Il manque d'expérience terrain</li></ul></div>
+      <div class="pcol rv" style="--d:3"><span class="k">Besoins</span><ul><li>Pratiquer l'entretien</li><li>Apprendre à repérer les biais</li><li>Un mentor</li></ul></div>
+      <div class="gain rv" style="--d:4"><span class="k">Ce que le parcours lui apporte</span><p>Le <b>binôme</b> avec une recruteuse expérimentée, des entretiens simulés et un <b>cas réel certifiant</b> qui prouve ses compétences.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 Nadia -->
+<section class="slide ro">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>Persona 3 / 4</span></div>
+  <div class="persona" style="height:100%">
+    <div class="id rv" style="--d:0">
+      <div class="av">N</div>
+      <h3>Nadia, 39 ans</h3>
+      <p class="role">Ancienne assistante administrative, vise un poste en logistique</p>
+      <div class="tags"><span>Bénéficiaire</span><span>Profil atypique</span></div>
+      <blockquote>« J'ai l'impression qu'un robot me refuse avant même qu'on me lise. »</blockquote>
+    </div>
+    <div class="pcols">
+      <div class="pcol rv" style="--d:1"><span class="k">Objectifs</span><ul><li>Changer de métier</li><li>Faire valoir ses compétences plutôt que son diplôme</li></ul></div>
+      <div class="pcol bad rv" style="--d:2"><span class="k">Frustrations</span><ul><li>Des refus automatiques sans explication</li><li>Un CV qui ne rentre pas dans les cases</li></ul></div>
+      <div class="pcol rv" style="--d:3"><span class="k">Besoins</span><ul><li>Être rencontrée par un humain</li><li>Comprendre les décisions</li><li>Des retours utiles</li></ul></div>
+      <div class="gain rv" style="--d:4"><span class="k">Ce que le parcours lui apporte</span><p>La charte <b>« L'humain décide »</b> : chaque refus est validé et expliqué par un recruteur, formé à lire les <b>compétences transférables</b>.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 Marc -->
+<section class="slide g">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>Persona 4 / 4</span></div>
+  <div class="persona" style="height:100%">
+    <div class="id rv" style="--d:0">
+      <div class="av">M</div>
+      <h3>Marc, 54 ans</h3>
+      <p class="role">DRH d'une PME industrielle, client de Manpower</p>
+      <div class="tags"><span>Client</span><span>Décideur</span></div>
+      <blockquote>« Je veux aller vite, sans prendre le risque d'un recrutement discriminatoire. »</blockquote>
+    </div>
+    <div class="pcols">
+      <div class="pcol rv" style="--d:1"><span class="k">Objectifs</span><ul><li>Pourvoir vite les postes en tension</li><li>Fidéliser les personnes recrutées</li></ul></div>
+      <div class="pcol bad rv" style="--d:2"><span class="k">Frustrations</span><ul><li>La pénurie de profils techniques</li><li>Des délais trop longs</li><li>L'incertitude juridique sur l'IA</li></ul></div>
+      <div class="pcol rv" style="--d:3"><span class="k">Besoins</span><ul><li>Des listes de candidats fiables</li><li>Une conformité au règlement européen</li><li>Un vrai conseil</li></ul></div>
+      <div class="gain rv" style="--d:4"><span class="k">Ce que le parcours lui apporte</span><p>Des <b>recruteurs certifiés</b> qui expliquent leurs choix, puis l'<b>ouverture du parcours</b> à ses propres équipes RH.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 Matrice -->
+<section class="slide">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>Besoins et réponses</span></div>
+  <p class="eyebrow rv" style="--d:0">Matrice personae × solution</p>
+  <h2 class="rv" style="--d:1">Chaque brique répond à quelqu'un</h2>
+  <div class="grow rv" style="--d:2">
+    <table>
+      <thead><tr><th></th><th>Modules<br>culture IA</th><th>Binôme<br>tuteur + alternant</th><th>Cas réel<br>certifiant</th><th>Charte<br>« L'humain décide »</th><th>Ouverture<br>aux clients</th></tr></thead>
+      <tbody>
+        <tr class="o"><td><div class="who"><div class="av">S</div><div><b>Sophie</b><span>Recruteuse expérimentée</span></div></div></td><td><i class="lv"></i></td><td><i class="lv"></i></td><td><i class="lv m"></i></td><td><i class="lv m"></i></td><td><i class="lv n"></i></td></tr>
+        <tr class="b"><td><div class="who"><div class="av">L</div><div><b>Lucas</b><span>Alternant</span></div></div></td><td><i class="lv m"></i></td><td><i class="lv"></i></td><td><i class="lv"></i></td><td><i class="lv m"></i></td><td><i class="lv n"></i></td></tr>
+        <tr class="ro"><td><div class="who"><div class="av">N</div><div><b>Nadia</b><span>Candidate en reconversion</span></div></div></td><td><i class="lv n"></i></td><td><i class="lv n"></i></td><td><i class="lv n"></i></td><td><i class="lv"></i></td><td><i class="lv n"></i></td></tr>
+        <tr class="g"><td><div class="who"><div class="av">M</div><div><b>Marc</b><span>DRH d'une PME cliente</span></div></div></td><td><i class="lv n"></i></td><td><i class="lv n"></i></td><td><i class="lv m"></i></td><td><i class="lv"></i></td><td><i class="lv"></i></td></tr>
+      </tbody>
+    </table>
+    <div class="legend"><span><i class="lv"></i>Répond directement</span><span><i class="lv m"></i>Bénéfice indirect</span><span><i class="lv n"></i>Non concerné</span></div>
+  </div>
+</section>
+
+<!-- 12 Exigences -->
+<section class="slide">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>Cahier des charges · exigences</span></div>
+  <p class="eyebrow rv" style="--d:0">Traduire les personae en exigences</p>
+  <h2 class="rv" style="--d:1">Ce que la solution doit garantir</h2>
+  <div class="reqs grow">
+    <div class="req b rv" style="--d:2"><span class="k">Fonctionnelles</span><h3>Ce que le parcours fait</h3><ul><li><b>Former</b> à lire et critiquer un score d'IA <span style="color:var(--muted)">(Sophie, Lucas)</span></li><li><b>Associer</b> chaque alternant à un tuteur <span style="color:var(--muted)">(Lucas)</span></li><li><b>Certifier</b> sur un recrutement réel <span style="color:var(--muted)">(Lucas, Marc)</span></li><li><b>Expliquer</b> chaque refus au candidat <span style="color:var(--muted)">(Nadia)</span></li></ul></div>
+    <div class="req o rv" style="--d:3"><span class="k">Qualité d'usage</span><h3>Comment il le fait</h3><ul><li>Des modules <b>courts</b>, compatibles avec l'activité en agence</li><li>Des exercices sur de <b>vrais dossiers</b></li><li>Un langage <b>simple</b>, sans jargon technique</li><li>Des retours <b>réguliers</b> des participants</li></ul></div>
+    <div class="req ro rv" style="--d:4"><span class="k">Contraintes</span><h3>Le cadre à respecter</h3><ul><li><b>Règlement européen sur l'IA</b> : recrutement classé à haut risque, contrôle humain</li><li><b>RGPD</b> : protection des données des candidats</li><li><b>Non-discrimination</b> : suivi des écarts de sélection</li><li>Un déploiement <b>progressif</b>, agence par agence</li></ul></div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide dark final">
+  <div class="brand"><span><b>ÉCHO</b> × Manpower France</span><span>Synthèse</span></div>
+  <p class="eyebrow rv" style="--d:0">En résumé</p>
+  <h1 class="rv" style="--d:1">Une trajectoire. Quatre personnes.<br><em>Une règle : l'humain décide.</em></h1>
+  <div class="tri"><i></i><i></i><i></i><i></i></div>
+</section>
+
+</div>
+<div id="nav"><i></i></div><div id="num"></div>
+<script>
+const deck=document.getElementById('deck'),S=[...document.querySelectorAll('.slide')],bar=document.querySelector('#nav i'),num=document.getElementById('num');
+let cur=0;
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);deck.style.transform=`translate(-50%,-50%) scale(${s})`}
+function go(i){cur=Math.max(0,Math.min(S.length-1,i));S.forEach((s,k)=>{s.classList.toggle('on',k===cur);s.classList.toggle('past',k<cur)});
+  bar.style.width=((cur+1)/S.length*100)+'%';num.textContent=String(cur+1).padStart(2,'0')+' / '+S.length;history.replaceState(null,'','#s'+(cur+1))}
+addEventListener('resize',fit);fit();
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1)}if(['ArrowLeft','PageUp'].includes(e.key))go(cur-1);if(e.key==='Home')go(0);if(e.key==='End')go(S.length-1);if(e.key==='f')document.documentElement.requestFullscreen?.()});
+addEventListener('click',e=>{if(e.clientX>innerWidth/2)go(cur+1);else go(cur-1)});
+let tx=null;addEventListener('touchstart',e=>tx=e.touches[0].clientX);addEventListener('touchend',e=>{if(tx==null)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)go(cur+(d<0?1:-1));tx=null});
+const fromHash=()=>{const h=parseInt((location.hash.match(/s(\d+)/)||[])[1]);if(h&&h-1!==cur||!h&&cur!==0)go(h?h-1:0)};
+cur=-1;fromHash();if(cur<0)go(0);addEventListener('hashchange',fromHash);
+</script>
+</body>
+</html>
