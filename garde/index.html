@@ -193,6 +193,11 @@ select.field.sort { width: auto; min-width: 0; flex: none; padding-right: 30px; 
 .c-id h3 { font-family: var(--display); font-weight: 600; font-size: 19px; letter-spacing: -.01em; margin: 0; line-height: 1.2; }
 .c-id p { margin: 3px 0 0; color: var(--muted); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 0 10px; }
 .c-id p b { color: var(--ink-2); font-weight: 600; }
+.dist { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; padding: 3px 10px 3px 8px; border-radius: 99px; font-size: 13px; font-weight: 700; background: var(--brand-soft); color: var(--brand); }
+.dist svg { width: 14px; height: 14px; }
+.dist span { font-weight: 500; opacity: .85; }
+.dist.far { background: var(--warn-soft); color: var(--warn); }
+.dist.none { background: var(--bg-deep); color: var(--muted); font-weight: 600; }
 .status {
   position: relative; display: inline-flex; align-items: center; gap: 7px; flex: none;
   background: color-mix(in srgb, var(--c) 14%, var(--surface)); color: color-mix(in srgb, var(--c) 70%, var(--ink));
@@ -393,8 +398,8 @@ select.field.sort { width: auto; min-width: 0; flex: none; padding-right: 30px; 
         <div class="toolbar-row">
           <div class="search"><span id="searchIcon"></span><input class="field" type="search" id="q" placeholder="Rechercher un nom, une rue…"></div>
           <select class="field sort" id="sort">
+            <option value="distance" selected>Les plus proches</option>
             <option value="compat">Les plus adaptées</option>
-            <option value="distance">Les plus proches</option>
             <option value="note">Nos mieux notées</option>
             <option value="tarif">Tarif croissant</option>
             <option value="maj">Fiches récentes</option>
@@ -661,6 +666,13 @@ function weekHtml(a) {
   }).join("")}</div>`;
 }
 
+function distHtml(a) {
+  if (a._dist == null) return S.besoins.maison ? `<span class="dist none">${ic("pin")}Distance inconnue</span>` : "";
+  const walk = Math.max(1, Math.round(a._dist * 1.3 / 4.5 * 60));
+  const bike = Math.max(1, Math.round(a._dist * 1.3 / 15 * 60));
+  return `<span class="dist ${a._dist > 1.5 ? "far" : ""}">${ic("pin")}À ${fmtDist(a._dist)} <span>· ${walk} min à pied · ${bike} min à vélo</span></span>`;
+}
+
 function factsHtml(a) {
   // Disponibilité
   let dispo;
@@ -688,7 +700,6 @@ function cardHtml(a) {
   const st = statutOf(a.id);
   const open = S.open.has(a.id);
   const meta = [];
-  if (a._dist != null) meta.push(`<b>${fmtDist(a._dist)}</b> · ${Math.max(1, Math.round(a._dist * 1.3 / 4.5 * 60))} min à pied`);
   meta.push(esc(hasRealAddress(a) ? a.adresse.replace(/, 44200 NANTES$/i, "") : "Adresse non communiquée"));
   if (a._note) meta.push(`<span style="color:var(--star)">★</span> ${a._note.toFixed(1).replace(".", ",")}`);
   return `
@@ -696,7 +707,7 @@ function cardHtml(a) {
     <div class="c-main">
       <div class="c-top">
         <div class="avatar">${esc(initials(a.nom))}${s.rang ? `<span class="rank">#${s.rang}</span>` : ""}</div>
-        <div class="c-id"><h3 data-act="toggle" style="cursor:pointer">${esc(a.nom)}</h3><p>${meta.map(m => `<span>${m}</span>`).join("")}</p></div>
+        <div class="c-id"><h3 data-act="toggle" style="cursor:pointer">${esc(a.nom)}</h3><p>${meta.map(m => `<span>${m}</span>`).join("")}</p>${distHtml(a)}</div>
         <label class="status"><span class="dot"></span>${STATUTS[st]}${ic("chev")}
           <select data-act="statut" aria-label="Statut">${Object.entries(STATUTS).map(([k, l]) => `<option value="${k}" ${k === st ? "selected" : ""}>${l}</option>`).join("")}</select>
         </label>
