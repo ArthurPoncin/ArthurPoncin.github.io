@@ -137,7 +137,9 @@ textarea.field { min-height: 76px; resize: vertical; line-height: 1.45; }
 .stat.on b { color: var(--bg); }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--muted)); flex: none; }
 .s-a_appeler { --c: #9aa19b; } .s-messagerie { --c: #e0a23c; } .s-a_rappeler { --c: #e07b2c; }
-.s-pas_dispo { --c: #c9605a; } .s-rdv { --c: #3f84d0; } .s-vue { --c: #2b9b8c; } .s-retenue { --c: #1f8f5c; } .s-ecartee { --c: #b9b2a5; }
+.s-pas_dispo { --c: #c9605a; } .s-rdv { --c: #3f84d0; } .s-vue { --c: #2b9b8c; } .s-retenue { --c: #1f8f5c; } .s-ecartee { --c: #8b5cf6; }
+.card.s-ecartee { border-color: #8b5cf6; box-shadow: 0 0 0 1px #8b5cf6, var(--shadow); }
+.card.s-ecartee .status { background: #8b5cf6; color: #fff; }
 
 /* ---------- filtres ---------- */
 .toolbar {
@@ -485,7 +487,7 @@ const STATUTS = {
   a_appeler: "À appeler", messagerie: "Messagerie", a_rappeler: "À rappeler", pas_dispo: "Pas dispo",
   rdv: "RDV visite", vue: "Visitée", retenue: "Retenue", ecartee: "Écartée",
 };
-const STATUT_COLOR = { a_appeler: "#9aa19b", messagerie: "#e0a23c", a_rappeler: "#e07b2c", pas_dispo: "#c9605a", rdv: "#3f84d0", vue: "#2b9b8c", retenue: "#1f8f5c", ecartee: "#b9b2a5" };
+const STATUT_COLOR = { a_appeler: "#9aa19b", messagerie: "#e0a23c", a_rappeler: "#e07b2c", pas_dispo: "#c9605a", rdv: "#3f84d0", vue: "#2b9b8c", retenue: "#1f8f5c", ecartee: "#8b5cf6" };
 const CALL_RESULTS = [["messagerie", "Messagerie"], ["a_rappeler", "À rappeler"], ["pas_dispo", "Pas dispo"], ["rdv", "RDV pris"]];
 const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
 const DAY_SHORT = { Lundi: "Lun", Mardi: "Mar", Mercredi: "Mer", Jeudi: "Jeu", Vendredi: "Ven" };
@@ -690,7 +692,7 @@ function cardHtml(a) {
   meta.push(esc(hasRealAddress(a) ? a.adresse.replace(/, 44200 NANTES$/i, "") : "Adresse non communiquée"));
   if (a._note) meta.push(`<span style="color:var(--star)">★</span> ${a._note.toFixed(1).replace(".", ",")}`);
   return `
-  <article class="card s-${st} ${open ? "open" : ""} ${["ecartee", "pas_dispo"].includes(st) ? "dim" : ""}" data-id="${esc(a.id)}">
+  <article class="card s-${st} ${open ? "open" : ""} ${st === "pas_dispo" ? "dim" : ""}" data-id="${esc(a.id)}">
     <div class="c-main">
       <div class="c-top">
         <div class="avatar">${esc(initials(a.nom))}${s.rang ? `<span class="rank">#${s.rang}</span>` : ""}</div>
