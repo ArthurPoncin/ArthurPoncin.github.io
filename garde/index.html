@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Recherche nounou</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root {
+  --bg: #f6f4ef; --surface: #ffffff; --surface-2: #f0ede6; --border: #e2ddd2;
+  --text: #2b2a27; --muted: #77736a; --accent: #2f6f5e; --accent-soft: #e1efe9;
+  --warn: #b5651d; --warn-soft: #fbeedd; --bad: #b23a3a; --bad-soft: #f8e3e3;
+  --star: #e0a526; --shadow: 0 1px 2px rgba(0,0,0,.05), 0 2px 8px rgba(0,0,0,.04);
+  --radius: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #171816; --surface: #21231f; --surface-2: #2a2c27; --border: #363932;
+    --text: #ecebe6; --muted: #a19e95; --accent: #6cc3a6; --accent-soft: #1f3a32;
+    --warn: #e5a05c; --warn-soft: #3b2c1c; --bad: #ec7d7d; --bad-soft: #3d2222;
+    --shadow: none;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--text); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--accent); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px 80px; }
+header.top { position: sticky; top: 0; z-index: 1000; background: var(--bg); border-bottom: 1px solid var(--border); }
+header.top .wrap { display: flex; align-items: center; gap: 12px; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; }
+h1 { font-size: 19px; margin: 0; flex: 1; }
+.who { color: var(--muted); font-size: 13px; }
+nav.tabs { display: flex; gap: 4px; overflow-x: auto; }
+nav.tabs button { border: 0; background: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; color: var(--muted); white-space: nowrap; }
+nav.tabs button.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.stats { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 8px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; font-size: 13px; cursor: pointer; }
+.stat b { font-size: 16px; margin-right: 4px; }
+.stat.on { border-color: var(--accent); background: var(--accent-soft); }
+.filters { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; margin: 8px 0 16px; box-shadow: var(--shadow); }
+.filters .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.filters .row + .row { margin-top: 8px; }
+.filters input[type=search] { flex: 1; min-width: 160px; }
+input[type=search], input[type=text], input[type=date], input[type=datetime-local], input[type=time], input[type=number], input[type=email], select, textarea {
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; }
+textarea { width: 100%; min-height: 60px; resize: vertical; }
+.chip { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); background: var(--surface-2); border-radius: 999px; padding: 4px 10px; font-size: 13px; cursor: pointer; user-select: none; }
+.chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.count { color: var(--muted); font-size: 13px; margin-left: auto; }
+.list { display: grid; gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.card.ecartee { opacity: .55; }
+.card .head { display: flex; gap: 10px; padding: 12px 14px 0; align-items: flex-start; flex-wrap: wrap; }
+.card .name { font-weight: 650; font-size: 16px; flex: 1; min-width: 180px; }
+.card .name small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
+.card .body { padding: 8px 14px 12px; display: grid; gap: 8px; }
+.line { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font-size: 14px; }
+.tag { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); }
+.tag.good { background: var(--accent-soft); color: var(--accent); border-color: transparent; font-weight: 600; }
+.tag.warn { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+.tag.bad { background: var(--bad-soft); color: var(--bad); border-color: transparent; }
+.week { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; max-width: 520px; }
+.day { background: var(--surface-2); border-radius: 6px; padding: 3px 4px; text-align: center; font-size: 12px; }
+.day b { display: block; font-size: 11px; color: var(--muted); }
+.day.off { opacity: .45; text-decoration: line-through; }
+.day.ko { background: var(--bad-soft); color: var(--bad); }
+.day.ok { background: var(--accent-soft); }
+.actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn { border: 1px solid var(--border); background: var(--surface-2); padding: 6px 10px; border-radius: 8px; cursor: pointer; text-decoration: none; color: var(--text); font-size: 14px; display: inline-flex; gap: 6px; align-items: center; }
+.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn:hover { filter: brightness(.97); }
+select.statut { font-weight: 600; }
+.st-a_appeler { color: var(--muted); } .st-messagerie, .st-a_rappeler { color: var(--warn); }
+.st-pas_dispo, .st-ecartee { color: var(--bad); } .st-rdv, .st-vue, .st-retenue { color: var(--accent); }
+.details { border-top: 1px solid var(--border); background: var(--surface-2); padding: 12px 14px; display: grid; gap: 14px; }
+.details h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 6px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+.q { display: grid; grid-template-columns: auto 1fr; gap: 6px 8px; align-items: center; padding: 4px 0; border-bottom: 1px dashed var(--border); }
+.q:last-child { border-bottom: 0; }
+.q .tri { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.q .tri button { border: 0; background: var(--surface); padding: 3px 8px; cursor: pointer; font-size: 13px; }
+.q .tri button.on[data-v=ok] { background: var(--accent); color: #fff; }
+.q .tri button.on[data-v=ko] { background: var(--bad); color: #fff; }
+.q .tri button.on[data-v="?"] { background: var(--warn); color: #fff; }
+.q label { font-size: 14px; }
+.q input { grid-column: 2; width: 100%; padding: 4px 8px; font-size: 13px; }
+.stars { display: inline-flex; gap: 2px; }
+.stars button { border: 0; background: none; cursor: pointer; font-size: 20px; line-height: 1; color: var(--border); padding: 0 1px; }
+.stars button.on { color: var(--star); }
+.avis-other { font-size: 14px; color: var(--muted); }
+.log { font-size: 13px; display: grid; gap: 4px; }
+.log div { display: flex; gap: 6px; }
+.log time { color: var(--muted); white-space: nowrap; }
+.empty { text-align: center; color: var(--muted); padding: 40px 0; }
+#map { height: 70vh; min-height: 420px; border-radius: var(--radius); border: 1px solid var(--border); }
+table.cmp { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: var(--radius); overflow: hidden; font-size: 14px; }
+table.cmp th, table.cmp td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+table.cmp th { background: var(--surface-2); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+.scroll-x { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); display: grid; gap: 12px; max-width: 640px; }
+.panel label { display: grid; gap: 4px; font-size: 14px; }
+.login { max-width: 380px; margin: 12vh auto; }
+.muted { color: var(--muted); font-size: 13px; }
+.toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 2000; }
+.toast.show { opacity: 1; }
+.hidden { display: none !important; }
+.card { transition: box-shadow .2s, opacity .2s; }
+.stats, #chips { scrollbar-width: none; }
+.stats::-webkit-scrollbar, #chips::-webkit-scrollbar { display: none; }
+.q .tri { justify-self: start; }
+.tops { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.tcard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; box-shadow: var(--shadow); display: grid; gap: 8px; }
+.tcard .t-head { display: flex; gap: 10px; align-items: center; }
+.tcard .rank { font-size: 22px; font-weight: 700; color: var(--accent); min-width: 34px; }
+.tcard .t-name { flex: 1; font-weight: 650; }
+.tcard .t-name small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
+.tcard dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 0; font-size: 14px; }
+.tcard dt { color: var(--muted); }
+.tcard dd { margin: 0; }
+h2 { font-size: 18px; }
+@keyframes fade { from { opacity: .3; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+.details { animation: fade .2s ease both; }
+.btn, .chip, .stat, nav.tabs button { transition: background .15s, color .15s, border-color .15s, transform .1s; }
+.btn:active, .chip:active, .stat:active { transform: scale(.97); }
+.map-tools { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.leaflet-popup-content { font: 14px/1.4 system-ui, sans-serif; }
+.leaflet-popup-content .btn { margin-top: 6px; color: var(--text); }
+.me-dot { width: 16px; height: 16px; border-radius: 50%; background: #2b7cff; border: 3px solid #fff; box-shadow: 0 0 0 6px rgba(43,124,255,.25); }
+@media (max-width: 720px) {
+  body { font-size: 15px; }
+  header.top .wrap { padding-top: 8px; padding-bottom: 8px; gap: 8px; }
+  h1 { font-size: 17px; }
+  nav.tabs { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1500; background: var(--surface); border-top: 1px solid var(--border);
+    justify-content: space-around; padding: 6px 6px calc(6px + env(safe-area-inset-bottom)); gap: 2px; }
+  nav.tabs button { flex: 1; padding: 10px 4px; font-size: 13px; }
+  .wrap { padding-bottom: 96px; }
+  .btn { padding: 10px 12px; }
+  .chip { padding: 7px 12px; }
+  .card .name { min-width: 0; flex-basis: 100%; }
+  select.statut { width: 100%; padding: 10px; }
+  .actions .btn.primary { flex: 1 1 100%; justify-content: center; font-size: 16px; }
+  .actions .btn { flex: 1 1 auto; justify-content: center; }
+  .week { gap: 3px; }
+  .day { font-size: 11px; padding: 3px 2px; }
+  #map { height: calc(100vh - 210px); }
+  .stats { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+  .stat { white-space: nowrap; }
+  .filters .row#chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+  .chip { white-space: nowrap; }
+  .q { grid-template-columns: 1fr; }
+  .q input { grid-column: 1; }
+}
+</style>
+</head>
+<body>
+
+<div id="login" class="wrap hidden">
+  <div class="panel login">
+    <h1>Recherche nounou</h1>
+    <p class="muted">Accès réservé.</p>
+    <form id="loginForm" style="display:grid;gap:8px">
+      <input type="email" id="loginEmail" required placeholder="email" autocomplete="username">
+      <input type="password" id="loginPw" required placeholder="mot de passe" autocomplete="current-password">
+      <button class="btn primary" type="submit">Se connecter</button>
+    </form>
+    <p id="loginMsg" class="muted"></p>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <header class="top">
+    <div class="wrap">
+      <h1>Nounou · Île de Nantes</h1>
+      <nav class="tabs" id="tabs">
+        <button data-tab="liste" class="on">Liste</button>
+        <button data-tab="carte">Carte</button>
+        <button data-tab="top">Top &amp; comparatif</button>
+        <button data-tab="reglages">Nos besoins</button>
+      </nav>
+      <span class="who" id="who"></span>
+      <button class="btn" id="logout" title="Se déconnecter">Sortir</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="tab-liste">
+      <div class="stats" id="stats"></div>
+      <div class="filters">
+        <div class="row">
+          <input type="search" id="q" placeholder="Nom, rue, téléphone…">
+          <select id="sort">
+            <option value="distance">Tri : distance</option>
+            <option value="compat">Tri : compatibilité</option>
+            <option value="note">Tri : nos notes</option>
+            <option value="tarif">Tri : tarif</option>
+            <option value="maj">Tri : fiche la plus récente</option>
+            <option value="nom">Tri : nom</option>
+          </select>
+        </div>
+        <div class="row" id="chips"></div>
+      </div>
+      <div class="list" id="list"></div>
+    </section>
+
+    <section id="tab-carte" class="hidden" style="padding-top:16px">
+      <div class="map-tools">
+        <button class="btn" id="locate">📍 Ma position</button>
+        <button class="btn" id="fitall">Tout afficher</button>
+        <button class="btn" id="kml" title="À importer dans Google My Maps">⬇️ Exporter pour Google My Maps</button>
+      </div>
+      <div id="map"></div>
+      <p class="muted">Les fiches sans adresse précise n'apparaissent pas sur la carte. Pour tout voir dans l'appli Google Maps : exporte le KML, puis sur ordinateur va sur google.com/mymaps → Créer une carte → Importer. La carte apparaît ensuite dans Google Maps › Enregistrés › Cartes.</p>
+    </section>
+
+    <section id="tab-top" class="hidden" style="padding-top:16px;display:grid;gap:16px"></section>
+
+    <section id="tab-reglages" class="hidden" style="padding-top:16px">
+      <form class="panel" id="besoins">
+        <h3 style="margin:0">Nos besoins</h3>
+        <p class="muted" style="margin:0">Partagé entre vous deux. Sert à calculer distances et compatibilités.</p>
+        <label>Adresse de la maison
+          <input type="text" name="adresse" placeholder="ex. 10 rue … 44200 Nantes">
+        </label>
+        <div class="grid2">
+          <label>Date de début de garde <input type="date" name="debut"></label>
+          <label>Âge de l'enfant à ce moment (mois) <input type="number" name="age" min="0" max="72"></label>
+          <label>Heure de dépôt (au plus tard) <input type="time" name="depot"></label>
+          <label>Heure de récupération (au plus tôt) <input type="time" name="recup"></label>
+        </div>
+        <div>
+          <div class="muted" style="margin-bottom:6px">Jours de garde</div>
+          <div class="row" id="joursBesoin" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        </div>
+        <button class="btn primary" type="submit">Enregistrer</button>
+        <p class="muted" id="besoinsMsg" style="margin:0"></p>
+      </form>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// ---- Config Supabase (la clé anon est publique par conception ; la sécurité vient de la RLS) ----
+const SUPABASE_URL = "https://noaiuclgueyxbdgzzklm.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5vYWl1Y2xndWV5eGJkZ3p6a2xtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM5MDcwMjgsImV4cCI6MjEwOTQ4MzAyOH0.z8p7WFqnGyyfHDkEJSmeiQiC0VR_4BQFIRQbwX6c5O8";
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const STATUTS = {
+  a_appeler: "À appeler", messagerie: "Messagerie", a_rappeler: "À rappeler", pas_dispo: "Pas dispo",
+  rdv: "RDV visite", vue: "Visitée", retenue: "Retenue", ecartee: "Écartée",
+};
+const CALL_RESULTS = [
+  ["messagerie", "Messagerie"], ["a_rappeler", "À rappeler"], ["pas_dispo", "Pas dispo"], ["rdv", "RDV pris"],
+];
+const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
+const DAY_SHORT = { Lundi: "Lun", Mardi: "Mar", Mercredi: "Mer", Jeudi: "Jeu", Vendredi: "Ven" };
+const QUESTIONS = [
+  ["place", "Place confirmée pour notre date de début et l'âge de l'enfant"],
+  ["horaires", "Horaires et jours compatibles (mercredi compris)"],
+  ["tarif", "Tarif horaire, indemnités d'entretien et de repas"],
+  ["formations", "Formations (CAP AEPE, secourisme PSC1/SST…)"],
+  ["enfants", "Enfants déjà accueillis (nombre, âges)"],
+  ["conges", "Congés : dates imposées ? combien de semaines ?"],
+  ["absence", "Solution si elle est malade ou absente"],
+  ["repas", "Repas, couches, produits : qui fournit ?"],
+  ["sorties", "Sorties : parc, RPE, médiathèque, à quelle fréquence"],
+  ["sommeil", "Rythme de sieste, couchage"],
+  ["adaptation", "Période d'adaptation : durée et coût"],
+  ["logement", "Logement : espace, sécurité, animaux, fumeur"],
+  ["feeling", "Feeling général"],
+];
+const FILTERS = [
+  ["compat", "Compatible nos horaires", a => a._compatH === true],
+  ["place", "Place disponible", a => a._hasPlace],
+  ["age", "Âge OK", a => a._ageOk === true],
+  ["mercredi", "Mercredi", a => a.mercredi],
+  ["vacances", "Vacances scolaires", a => a.options.some(o => o.includes("vacances"))],
+  ["remplace", "Peut se faire remplacer", a => a.options.some(o => o.includes("remplacer"))],
+  ["flex", "Horaires flexibles", a => a.options.some(o => o.includes("flexible"))],
+  ["secourisme", "Brevet de secourisme", a => a.infos.includes("Brevet de secourisme")],
+  ["rpe", "Va au RPE", a => a.infos.includes("Relais petite enfance") || a.activites.includes("Accueil jeux du RPE")],
+  ["nonfumeur", "Non fumeur", a => a.lieu.includes("Foyer non fumeur")],
+  ["sansanimaux", "Sans animaux", a => !a.lieu.includes("Présence d'animaux")],
+  ["repas", "Repas fournis", a => a.lieu.includes("Repas")],
+  ["mam", "En MAM", a => a.infos.includes("Maison d'assistantes maternelles")],
+  ["masquer", "Masquer écartées / pas dispo", a => !["ecartee", "pas_dispo"].includes(S.suivi[a.id]?.statut)],
+];
+
+const S = {
+  me: null, amats: [], suivi: {}, avis: {}, appels: {}, besoins: {},
+  tab: "liste", open: new Set(), filters: new Set(["masquer"]), statFilter: null, map: null, layer: null,
+};
+
+// ---------- utilitaires ----------
+const $ = sel => document.querySelector(sel);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const first = email => (email || "").split("@")[0];
+const fmtTel = t => t ? t.replace(/(\d\d)(?=\d)/g, "$1 ") : "";
+const toMin = hm => { const [h, m] = hm.split(":").map(Number); return h * 60 + m; };
+const fmtH = hm => hm.replace(":00", "h").replace(":", "h");
+const fmtDate = d => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
+const fmtDT = d => new Date(d).toLocaleString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+// Liens Google Maps universels : ouvrent l'appli Google Maps sur téléphone si elle est installée
+function routeUrl(a) {
+  const dest = encodeURIComponent(a.lat ? `${a.lat},${a.lon}` : (a.adresse || ""));
+  return `https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=walking`;
+}
+function kmlExport() {
+  const x = s => esc(s).replace(/&#39;/g, "'");
+  const pts = S.amats.filter(a => a.lat).map(a => {
+    const st = S.suivi[a.id]?.statut || "a_appeler";
+    const desc = [STATUTS[st], a.telephone ? "Tél : " + fmtTel(a.telephone) : "", a.email || "", a.adresse,
+      a.mercredi ? "Mercredi : oui" : "Mercredi : non", a.places.length ? "Place dispo" : "Pas de place affichée"].filter(Boolean).join("\n");
+    return `<Placemark><name>${x(a.nom)}</name><description>${x(desc)}</description><Point><coordinates>${a.lon},${a.lat},0</coordinates></Point></Placemark>`;
+  }).join("\n");
+  const kml = `<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Nounous Île de Nantes</name>\n${pts}\n</Document></kml>`;
+  const url = URL.createObjectURL(new Blob([kml], { type: "application/vnd.google-earth.kml+xml" }));
+  const link = Object.assign(document.createElement("a"), { href: url, download: "nounous-ile-de-nantes.kml" });
+  document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast("Fichier KML téléchargé");
+}
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 1800); }
+function debounce(fn, ms) { const timers = {}; return (key, ...args) => { clearTimeout(timers[key]); timers[key] = setTimeout(() => fn(key, ...args), ms); }; }
+function haversine(a, b) {
+  const R = 6371, rad = x => x * Math.PI / 180;
+  const dLat = rad(b.lat - a.lat), dLon = rad(b.lon - a.lon);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+function ageToMonths(txt) {
+  const m = txt.match(/(\d+)\s*(semaines?|mois|ans?)/);
+  if (!m) return null;
+  const n = +m[1];
+  return m[2].startsWith("semaine") ? n / 4.345 : m[2] === "mois" ? n : n * 12;
+}
+function parseFrDate(txt) {
+  const m = (txt || "").match(/(\d\d)\/(\d\d)\/(\d{4})/);
+  return m ? new Date(`${m[3]}-${m[2]}-${m[1]}`) : null;
+}
+
+// ---------- calculs dérivés ----------
+function derive(a) {
+  const b = S.besoins;
+  a._dist = (b.maison && a.lat) ? haversine(b.maison, a) : null;
+  a._hasPlace = a.places.length > 0;
+  a._ageOk = null;
+  if (b.age != null && a.places.length) {
+    a._ageOk = a.places.some(p => {
+      if (!p.age) return true;
+      const [lo, hi] = p.age.split(" à ").map(ageToMonths);
+      const okAge = lo != null && hi != null && hi > 0 ? (b.age >= lo && b.age <= hi) : true;
+      const from = parseFrDate(p.a_partir);
+      const okDate = !from || !b.debut || from <= new Date(b.debut);
+      return okAge && okDate;
+    });
+  }
+  a._dayOk = {};
+  a._compatH = null;
+  if (b.jours?.length) {
+    a._compatH = b.jours.every(d => {
+      const h = a.horaires[d];
+      let ok = !!h;
+      if (ok && b.depot) ok = toMin(h[0]) <= toMin(b.depot);
+      if (ok && b.recup) ok = toMin(h[1]) >= toMin(b.recup);
+      a._dayOk[d] = ok;
+      return ok;
+    });
+  }
+  const notes = Object.values(S.avis[a.id] || {}).map(x => x.note).filter(Boolean);
+  a._note = notes.length ? notes.reduce((x, y) => x + y, 0) / notes.length : null;
+  const ck = S.suivi[a.id]?.checklist || {};
+  a._ckOk = Object.values(ck).filter(x => x?.v === "ok").length;
+  a._ckKo = Object.values(ck).filter(x => x?.v === "ko").length;
+  a._compat = (a._compatH ? 3 : 0) + (a._ageOk ? 2 : 0) + (a._hasPlace ? 2 : 0) + (a.mercredi ? 1 : 0)
+    + (a._dist != null ? Math.max(0, 2 - a._dist) : 0) + (a._note || 0) + a._ckOk * .3 - a._ckKo * .5;
+}
+
+// ---------- rendu liste ----------
+function filtered() {
+  const q = $("#q").value.trim().toLowerCase();
+  let L = S.amats.filter(a => {
+    if (S.statFilter && (S.suivi[a.id]?.statut || "a_appeler") !== S.statFilter) return false;
+    for (const [k, , fn] of FILTERS) if (S.filters.has(k) && !(S.statFilter && k === "masquer") && !fn(a)) return false;
+    if (q && !`${a.nom} ${a.adresse} ${a.telephone} ${a.email}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  const sort = $("#sort").value;
+  const nil = (v, big = 1e9) => v == null ? big : v;
+  const cmp = {
+    distance: (x, y) => nil(x._dist) - nil(y._dist),
+    compat: (x, y) => y._compat - x._compat,
+    note: (x, y) => nil(y._note, -1) - nil(x._note, -1),
+    tarif: (x, y) => nil(x.tarif_min) - nil(y.tarif_min),
+    maj: (x, y) => (y.maj || "").localeCompare(x.maj || ""),
+    nom: (x, y) => x.nom.localeCompare(y.nom),
+  }[sort];
+  return L.sort(cmp);
+}
+
+function renderStats() {
+  const counts = {};
+  for (const a of S.amats) { const s = S.suivi[a.id]?.statut || "a_appeler"; counts[s] = (counts[s] || 0) + 1; }
+  $("#stats").innerHTML = Object.entries(STATUTS).map(([k, label]) =>
+    `<span class="stat ${S.statFilter === k ? "on" : ""}" data-stat="${k}"><b>${counts[k] || 0}</b>${label}</span>`).join("");
+}
+
+function renderChips() {
+  $("#chips").innerHTML = FILTERS.map(([k, label]) =>
+    `<span class="chip ${S.filters.has(k) ? "on" : ""}" data-filter="${k}">${label}</span>`).join("")
+    + `<span class="count" id="count"></span>`;
+}
+
+function weekHtml(a) {
+  return `<div class="week">${DAYS.map(d => {
+    const h = a.horaires[d];
+    const need = S.besoins.jours?.includes(d);
+    const cls = !h ? (need ? "ko off" : "off") : need ? (a._dayOk[d] ? "ok" : "ko") : "";
+    return `<div class="day ${cls}"><b>${DAY_SHORT[d]}</b>${h ? `${fmtH(h[0])}–${fmtH(h[1])}` : "—"}</div>`;
+  }).join("")}</div>`;
+}
+
+function placesHtml(a) {
+  if (a.places.length) return a.places.map(p =>
+    `<span class="tag good">${esc(p.nb)}${p.age ? " · " + esc(p.age) : ""}${p.a_partir && p.a_partir !== "de maintenant" ? " · " + esc(p.a_partir) : ""}</span>`).join("");
+  if (a.dispo_non_communiquee || a.premiere_dispo === "Non communiquée") return `<span class="tag warn">Dispo non communiquée</span>`;
+  if (a.premiere_dispo && !["Pas de disponibilité", "Maintenant"].includes(a.premiere_dispo))
+    return `<span class="tag warn">Dispo à partir du ${esc(a.premiere_dispo)}</span>`;
+  return `<span class="tag bad">Pas de place affichée</span>`;
+}
+
+function cardHtml(a) {
+  const s = S.suivi[a.id] || { statut: "a_appeler" };
+  const open = S.open.has(a.id);
+  const old = a.maj && (Date.now() - new Date(a.maj)) > 365 * 864e5;
+  const tags = [];
+  if (a._compatH === true) tags.push(`<span class="tag good">✓ nos horaires</span>`);
+  else if (a._compatH === false) tags.push(`<span class="tag bad">✗ nos horaires</span>`);
+  if (a._ageOk === true) tags.push(`<span class="tag good">✓ âge</span>`);
+  else if (a._ageOk === false) tags.push(`<span class="tag bad">✗ âge / date</span>`);
+  tags.push(a.mercredi ? `<span class="tag good">Mercredi</span>` : `<span class="tag bad">Pas le mercredi</span>`);
+  for (const o of a.options) tags.push(`<span class="tag">${esc(o.replace(/^(être |me |réaliser des |travailler pendant les )/, ""))}</span>`);
+  const infos = [...a.infos, ...a.lieu].filter(x => !["Formations", "Langues parlées", "Logement"].includes(x));
+  return `
+  <article class="card ${s.statut === "ecartee" ? "ecartee" : ""}" data-id="${esc(a.id)}">
+    <div class="head">
+      <div class="name">${s.rang ? `<span class="tag good">#${s.rang}</span> ` : ""}${esc(a.nom)}
+        <small>${esc(a.adresse || "Adresse non communiquée")}${a._dist != null ? ` · <b>${a._dist < 1 ? Math.round(a._dist * 1000) + " m" : a._dist.toFixed(1) + " km"}</b> (~${Math.round(a._dist * 1.3 / 4.5 * 60)} min à pied)` : ""}${a.adresse_approx ? " · adresse approximative" : ""}</small>
+      </div>
+      <select class="statut st-${s.statut}" data-act="statut">${Object.entries(STATUTS).map(([k, l]) => `<option value="${k}" ${k === s.statut ? "selected" : ""}>${l}</option>`).join("")}</select>
+    </div>
+    <div class="body">
+      <div class="actions">
+        ${a.telephone ? `<a class="btn primary" href="tel:${esc(a.telephone)}">📞 ${fmtTel(a.telephone)}</a>` : ""}
+        ${a.email ? `<a class="btn" href="mailto:${esc(a.email)}">✉️ ${a.telephone ? "Email" : esc(a.email)}</a>` : ""}
+        ${a.adresse && a.adresse.split(",")[0].trim() !== "44200 NANTES" ? `<a class="btn" href="${routeUrl(a)}" target="_blank" rel="noopener">📍 Google Maps</a>` : ""}
+        ${a.lat ? `<button class="btn" data-act="showmap">🗺️ Carte</button>` : ""}
+        <button class="btn" data-act="toggle">${open ? "Replier" : "Checklist, notes & suivi"}</button>
+      </div>
+      <div class="line">${placesHtml(a)}<span class="tag">Capacité ${a.capacite ?? "?"}</span>
+        <span class="tag">${a.tarif_min ? `${a.tarif_min.toFixed(2)}–${a.tarif_max.toFixed(2)} €/h net` : "Tarif non renseigné"}</span>
+        ${a._note ? `<span class="tag good">★ ${a._note.toFixed(1)}</span>` : ""}
+        ${a._ckOk || a._ckKo ? `<span class="tag">${a._ckOk} ✓ / ${a._ckKo} ✗</span>` : ""}
+      </div>
+      ${weekHtml(a)}
+      <div class="line">${tags.join("")}</div>
+      ${infos.length ? `<div class="line">${infos.map(x => `<span class="tag">${esc(x)}</span>`).join("")}</div>` : ""}
+      ${a.activites.length ? `<div class="line muted">Activités : ${a.activites.map(esc).join(" · ")}</div>` : ""}
+      <div class="muted">Fiche monenfant.fr mise à jour le ${a.maj ? fmtDate(a.maj) : "?"}${old ? ` <span class="tag warn">fiche ancienne</span>` : ""}</div>
+    </div>
+    ${open ? detailsHtml(a, s) : ""}
+  </article>`;
+}
+
+function detailsHtml(a, s) {
+  const ck = s.checklist || {};
+  const avis = S.avis[a.id] || {};
+  const mine = avis[S.me] || {};
+  const others = Object.entries(avis).filter(([e]) => e !== S.me);
+  const log = (S.appels[a.id] || []).slice().sort((x, y) => y.le.localeCompare(x.le));
+  return `
+  <div class="details">
+    <div>
+      <h3>Appel</h3>
+      <div class="actions">${CALL_RESULTS.map(([k, l]) => `<button class="btn" data-act="call" data-res="${k}">${l}</button>`).join("")}</div>
+      <div class="log" style="margin-top:8px">${log.length ? log.map(c =>
+        `<div><time>${fmtDT(c.le)}</time><span><b>${esc(first(c.par))}</b> : ${esc(STATUTS[c.resultat] || c.resultat)}${c.commentaire ? " · " + esc(c.commentaire) : ""}</span>${c.par === S.me ? `<button class="btn" style="padding:0 6px" data-act="delcall" data-cid="${c.id}" title="Supprimer">×</button>` : ""}</div>`).join("") : `<span class="muted">Pas encore appelée.</span>`}</div>
+    </div>
+    <div class="grid2">
+      <div>
+        <h3>Ma note</h3>
+        <div class="stars" data-act="stars">${[1, 2, 3, 4, 5].map(n => `<button data-n="${n}" class="${(mine.note || 0) >= n ? "on" : ""}">★</button>`).join("")}</div>
+        <textarea data-field="commentaire" placeholder="Mon ressenti…">${esc(mine.commentaire || "")}</textarea>
+        ${others.map(([e, o]) => `<div class="avis-other"><b>${esc(first(e))}</b> : ${o.note ? "★".repeat(o.note) : "pas de note"}${o.commentaire ? " · " + esc(o.commentaire) : ""}</div>`).join("")}
+      </div>
+      <div>
+        <h3>Suivi commun</h3>
+        <label class="muted">RDV visite <input type="datetime-local" data-field="rdv_le" value="${s.rdv_le ? new Date(s.rdv_le).toLocaleString("sv-SE").slice(0, 16) : ""}"></label>
+        <div class="actions" style="margin:6px 0">
+          ${s.rang ? `<button class="btn" data-act="untop">Retirer du top</button>` : `<button class="btn" data-act="totop">Ajouter au top</button>`}
+        </div>
+        <textarea data-field="notes" placeholder="Notes communes (infos données au téléphone, impressions de visite…)">${esc(s.notes || "")}</textarea>
+      </div>
+    </div>
+    <div>
+      <h3>Checklist des questions</h3>
+      ${QUESTIONS.map(([k, label]) => {
+        const v = ck[k] || {};
+        return `<div class="q" data-q="${k}">
+          <span class="tri">${["ok", "?", "ko"].map(x => `<button data-act="tri" data-v="${x}" class="${v.v === x ? "on" : ""}">${x === "ok" ? "✓" : x === "ko" ? "✗" : "?"}</button>`).join("")}</span>
+          <label>${label}</label>
+          <input type="text" data-field="ck" value="${esc(v.t || "")}" placeholder="Réponse…">
+        </div>`;
+      }).join("")}
+    </div>
+  </div>`;
+}
+
+function renderList() {
+  for (const a of S.amats) derive(a);
+  renderStats();
+  const L = filtered();
+  $("#count").textContent = `${L.length} / ${S.amats.length}`;
+  $("#list").innerHTML = L.length ? L.map(cardHtml).join("") : `<div class="empty">Aucune assistante maternelle ne correspond à ces filtres.</div>`;
+}
+
+function rerenderCard(id) {
+  const el = document.querySelector(`.card[data-id="${CSS.escape(id)}"]`);
+  const a = S.amats.find(x => x.id === id);
+  if (!el || !a) return;
+  if (el.contains(document.activeElement) && document.activeElement.matches("input,textarea")) return;
+  derive(a);
+  el.outerHTML = cardHtml(a);
+}
+
+function render() {
+  if (S.tab === "liste") renderList();
+  if (S.tab === "carte") renderMap();
+  if (S.tab === "top") renderTop();
+}
+
+// ---------- top & comparatif ----------
+function renderTop() {
+  for (const a of S.amats) derive(a);
+  const top = S.amats.filter(a => S.suivi[a.id]?.rang).sort((x, y) => S.suivi[x.id].rang - S.suivi[y.id].rang);
+  const cands = S.amats.filter(a => !S.suivi[a.id]?.rang && ["rdv", "vue", "retenue"].includes(S.suivi[a.id]?.statut));
+  const card = (a, i) => {
+    const s = S.suivi[a.id];
+    const avis = S.avis[a.id] || {};
+    const yn = v => v == null ? "?" : v ? "✓" : "✗";
+    return `<div class="tcard">
+      <div class="t-head">
+        <span class="rank">${i != null ? "#" + (i + 1) : "·"}</span>
+        <span class="t-name">${esc(a.nom)}<small>${STATUTS[s?.statut || "a_appeler"]}${a._dist != null ? " · " + (a._dist < 1 ? Math.round(a._dist * 1000) + " m" : a._dist.toFixed(1) + " km") : ""}</small></span>
+        ${i != null ? `<button class="btn" data-top="up" data-id="${esc(a.id)}" title="Monter">↑</button><button class="btn" data-top="down" data-id="${esc(a.id)}" title="Descendre">↓</button>`
+          : `<button class="btn" data-top="add" data-id="${esc(a.id)}">+ Top</button>`}
+      </div>
+      <dl>
+        <dt>Critères</dt><dd>${yn(a._compatH)} horaires · ${yn(a.mercredi)} mercredi · ${yn(a._ageOk)} âge</dd>
+        <dt>Tarif</dt><dd>${a.tarif_min ? a.tarif_min.toFixed(2) + "–" + a.tarif_max.toFixed(2) + " €/h" : "?"}</dd>
+        <dt>Nos notes</dt><dd>${Object.entries(avis).map(([e, o]) => `${esc(first(e))} ${o.note ? "★".repeat(o.note) : "–"}`).join(" · ") || "–"}</dd>
+        <dt>Checklist</dt><dd>${a._ckOk} ✓ · ${a._ckKo} ✗</dd>
+        ${s?.rdv_le ? `<dt>RDV</dt><dd>${fmtDT(s.rdv_le)}</dd>` : ""}
+        ${s?.notes ? `<dt>Notes</dt><dd>${esc(s.notes.slice(0, 220))}</dd>` : ""}
+      </dl>
+      <div class="actions">${a.telephone ? `<a class="btn primary" href="tel:${esc(a.telephone)}">📞 ${fmtTel(a.telephone)}</a>` : ""}<a class="btn" href="${routeUrl(a)}" target="_blank" rel="noopener">📍 Google Maps</a></div>
+    </div>`;
+  };
+  $("#tab-top").innerHTML = `
+    <div><h2 style="margin:0 0 8px">Notre top</h2>
+    ${top.length ? `<div class="tops">${top.map(card).join("")}</div>` : `<p class="muted">Ajoute des assistantes maternelles au top depuis leur fiche (bouton « Ajouter au top »).</p>`}</div>
+    <div><h2 style="margin:0 0 8px">Candidates (RDV, visitées, retenues)</h2>
+    ${cands.length ? `<div class="tops">${cands.map(a => card(a, null)).join("")}</div>` : `<p class="muted">Rien pour l'instant.</p>`}</div>`;
+}
+
+async function moveTop(id, dir) {
+  const top = S.amats.filter(a => S.suivi[a.id]?.rang).sort((x, y) => S.suivi[x.id].rang - S.suivi[y.id].rang).map(a => a.id);
+  if (dir === "add") top.push(id);
+  else if (dir === "remove") top.splice(top.indexOf(id), 1);
+  else {
+    const i = top.indexOf(id), j = dir === "up" ? i - 1 : i + 1;
+    if (j < 0 || j >= top.length) return;
+    [top[i], top[j]] = [top[j], top[i]];
+  }
+  const updates = top.map((aid, i) => ({ amat_id: aid, rang: i + 1 }));
+  if (dir === "remove") updates.push({ amat_id: id, rang: null });
+  for (const u of updates) { S.suivi[u.amat_id] = { ...(S.suivi[u.amat_id] || {}), ...u }; }
+  render();
+  for (const u of updates) await saveSuivi(u.amat_id, { rang: u.rang });
+}
+
+// ---------- carte ----------
+const STATUT_COLOR = { a_appeler: "#8a867c", messagerie: "#d38b3a", a_rappeler: "#d38b3a", pas_dispo: "#c04848", ecartee: "#c04848", rdv: "#2f8f74", vue: "#2f8f74", retenue: "#1d5f4d" };
+function renderMap() {
+  for (const a of S.amats) derive(a);
+  if (!S.map) {
+    S.map = L.map("map").setView([47.2063, -1.5470], 14);
+    const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+    L.tileLayer(`https://{s}.basemaps.cartocdn.com/${dark ? "dark_all" : "rastertiles/voyager"}/{z}/{x}/{y}{r}.png`,
+      { maxZoom: 20, subdomains: "abcd", attribution: "© OpenStreetMap · © CARTO" }).addTo(S.map);
+  }
+  setTimeout(() => S.map.invalidateSize(), 50);
+  if (S.layer) S.layer.remove();
+  S.layer = L.layerGroup().addTo(S.map);
+  S.markers = {};
+  const byPos = {};
+  for (const a of S.amats) if (a.lat) (byPos[`${a.lat},${a.lon}`] ||= []).push(a);
+  for (const group of Object.values(byPos)) {
+    group.forEach((a, i) => {
+      const st = S.suivi[a.id]?.statut || "a_appeler";
+      const off = i * 0.00006;
+      S.markers[a.id] = L.circleMarker([a.lat + off, a.lon + off], { radius: 10, color: "#fff", weight: 2, fillColor: STATUT_COLOR[st], fillOpacity: .95 })
+        .bindPopup(`<b>${esc(a.nom)}</b><br>${STATUTS[st]}${a._dist != null ? ` · ${a._dist < 1 ? Math.round(a._dist * 1000) + " m" : a._dist.toFixed(1) + " km"}` : ""}<br>${a.mercredi ? "Mercredi ✓" : "Pas le mercredi"} · ${a.places.length ? "place dispo" : "pas de place affichée"}<br>
+          ${a.telephone ? `<a class="btn" href="tel:${esc(a.telephone)}">📞 ${fmtTel(a.telephone)}</a> ` : ""}<a class="btn" href="${routeUrl(a)}" target="_blank" rel="noopener">📍 Google Maps</a>`)
+        .addTo(S.layer);
+    });
+  }
+  if (S.besoins.maison) L.marker([S.besoins.maison.lat, S.besoins.maison.lon]).bindPopup("Maison").addTo(S.layer);
+  if (S.focus && S.markers[S.focus]) {
+    const m = S.markers[S.focus]; S.focus = null;
+    S.map.setView(m.getLatLng(), 17); m.openPopup();
+  }
+}
+function fitAll() {
+  const pts = Object.values(S.markers || {}).map(m => m.getLatLng());
+  if (pts.length) S.map.fitBounds(L.latLngBounds(pts).pad(0.1));
+}
+$("#fitall").addEventListener("click", fitAll);
+$("#kml").addEventListener("click", kmlExport);
+$("#locate").addEventListener("click", () => {
+  if (!navigator.geolocation) return toast("Géolocalisation indisponible");
+  toast("Localisation…");
+  navigator.geolocation.getCurrentPosition(pos => {
+    const ll = [pos.coords.latitude, pos.coords.longitude];
+    if (S.meMarker) S.meMarker.remove();
+    S.meMarker = L.marker(ll, { icon: L.divIcon({ className: "", html: '<div class="me-dot"></div>', iconSize: [16, 16] }) }).addTo(S.map).bindPopup("Vous êtes ici");
+    S.map.setView(ll, 16);
+  }, () => toast("Position refusée ou indisponible"), { enableHighAccuracy: true, timeout: 10000 });
+});
+
+// ---------- écritures ----------
+async function saveSuivi(id, patch) {
+  S.suivi[id] = { ...(S.suivi[id] || { amat_id: id }), ...patch };
+  const { error } = await sb.from("suivi").upsert({ amat_id: id, ...patch, updated_by: S.me, updated_at: new Date().toISOString() });
+  if (error) toast("Erreur : " + error.message); else toast("Enregistré");
+}
+async function saveAvis(id, patch) {
+  S.avis[id] ||= {};
+  S.avis[id][S.me] = { ...(S.avis[id][S.me] || {}), ...patch };
+  const { error } = await sb.from("avis").upsert({ amat_id: id, email: S.me, ...patch, updated_at: new Date().toISOString() });
+  if (error) toast("Erreur : " + error.message); else toast("Enregistré");
+}
+const debounced = debounce(async (key, fn) => fn(), 600);
+
+// ---------- événements liste ----------
+document.addEventListener("click", async e => {
+  const t = e.target.closest("[data-stat],[data-filter],[data-act],[data-tab],[data-top]");
+  if (!t) return;
+  if (t.dataset.tab) return switchTab(t.dataset.tab);
+  if (t.dataset.stat) { S.statFilter = S.statFilter === t.dataset.stat ? null : t.dataset.stat; return renderList(); }
+  if (t.dataset.filter) { const k = t.dataset.filter; S.filters.has(k) ? S.filters.delete(k) : S.filters.add(k); t.classList.toggle("on"); return renderList(); }
+  if (t.dataset.top) {
+    const id = t.dataset.id;
+    return moveTop(id, t.dataset.top);
+  }
+  const card = t.closest(".card"); if (!card) return;
+  const id = card.dataset.id;
+  const act = t.dataset.act;
+  if (act === "showmap") { S.focus = id; switchTab("carte"); window.scrollTo(0, 0); return; }
+  if (act === "toggle") { S.open.has(id) ? S.open.delete(id) : S.open.add(id); rerenderCard(id); }
+  else if (act === "call") {
+    const res = t.dataset.res;
+    const { data, error } = await sb.from("appels").insert({ amat_id: id, par: S.me, resultat: res }).select().single();
+    if (error) return toast("Erreur : " + error.message);
+    (S.appels[id] ||= []).push(data);
+    await saveSuivi(id, { statut: res });
+    rerenderCard(id); renderStats();
+  }
+  else if (act === "delcall") {
+    const cid = +t.dataset.cid;
+    const { error } = await sb.from("appels").delete().eq("id", cid);
+    if (error) return toast("Erreur : " + error.message);
+    S.appels[id] = (S.appels[id] || []).filter(c => c.id !== cid);
+    rerenderCard(id);
+  }
+  else if (e.target.closest("[data-act=stars]") && e.target.dataset.n) {
+    const n = +e.target.dataset.n;
+    const cur = S.avis[id]?.[S.me]?.note;
+    await saveAvis(id, { note: cur === n ? null : n });
+    rerenderCard(id);
+  }
+  else if (act === "tri") {
+    const q = t.closest(".q").dataset.q;
+    const ck = { ...(S.suivi[id]?.checklist || {}) };
+    ck[q] = { ...(ck[q] || {}), v: ck[q]?.v === t.dataset.v ? null : t.dataset.v };
+    await saveSuivi(id, { checklist: ck });
+    rerenderCard(id);
+  }
+  else if (act === "totop") { await moveTop(id, "add"); }
+  else if (act === "untop") { await moveTop(id, "remove"); }
+});
+
+document.addEventListener("change", async e => {
+  const t = e.target;
+  const card = t.closest(".card");
+  if (t.id === "sort") return renderList();
+  if (!card) return;
+  const id = card.dataset.id;
+  if (t.dataset.act === "statut") { await saveSuivi(id, { statut: t.value }); rerenderCard(id); renderStats(); }
+  if (t.dataset.field === "rdv_le") {
+    await saveSuivi(id, { rdv_le: t.value ? new Date(t.value).toISOString() : null, ...(t.value && ["a_appeler", "messagerie", "a_rappeler"].includes(S.suivi[id]?.statut) ? { statut: "rdv" } : {}) });
+  }
+});
+
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.id === "q") return renderList();
+  const card = t.closest(".card"); if (!card) return;
+  const id = card.dataset.id;
+  if (t.dataset.field === "notes") debounced("notes" + id, () => saveSuivi(id, { notes: t.value }));
+  if (t.dataset.field === "commentaire") debounced("com" + id, () => saveAvis(id, { commentaire: t.value }));
+  if (t.dataset.field === "ck") {
+    const q = t.closest(".q").dataset.q;
+    debounced("ck" + id + q, () => {
+      const ck = { ...(S.suivi[id]?.checklist || {}) };
+      ck[q] = { ...(ck[q] || {}), t: t.value };
+      return saveSuivi(id, { checklist: ck });
+    });
+  }
+});
+
+function switchTab(tab) {
+  S.tab = tab;
+  document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+  for (const k of ["liste", "carte", "top", "reglages"]) $("#tab-" + k).classList.toggle("hidden", k !== tab);
+  if (tab === "reglages") fillBesoins();
+  render();
+  if (tab === "carte" && !S._fitted && !S.focus) { S._fitted = true; setTimeout(fitAll, 80); }
+}
+
+// ---------- besoins ----------
+function fillBesoins() {
+  const f = $("#besoins"), b = S.besoins;
+  f.adresse.value = b.maison?.label || "";
+  f.debut.value = b.debut || ""; f.age.value = b.age ?? "";
+  f.depot.value = b.depot || ""; f.recup.value = b.recup || "";
+  $("#joursBesoin").innerHTML = DAYS.map(d => `<span class="chip ${b.jours?.includes(d) ? "on" : ""}" data-jour="${d}">${d}</span>`).join("");
+}
+$("#joursBesoin").addEventListener("click", e => { const c = e.target.closest("[data-jour]"); if (c) c.classList.toggle("on"); });
+$("#besoins").addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = e.target, msg = $("#besoinsMsg");
+  const b = {
+    debut: f.debut.value || null, age: f.age.value === "" ? null : +f.age.value,
+    depot: f.depot.value || null, recup: f.recup.value || null,
+    jours: [...document.querySelectorAll("#joursBesoin .chip.on")].map(c => c.dataset.jour),
+    maison: S.besoins.maison || null,
+  };
+  const adr = f.adresse.value.trim();
+  if (adr && adr !== S.besoins.maison?.label) {
+    msg.textContent = "Recherche de l'adresse…";
+    try {
+      const r = await (await fetch("https://api-adresse.data.gouv.fr/search/?limit=1&q=" + encodeURIComponent(adr))).json();
+      const ft = r.features?.[0];
+      if (!ft) { msg.textContent = "Adresse introuvable."; return; }
+      b.maison = { label: ft.properties.label, lon: ft.geometry.coordinates[0], lat: ft.geometry.coordinates[1] };
+    } catch { msg.textContent = "Impossible de géolocaliser l'adresse."; return; }
+  } else if (!adr) b.maison = null;
+  S.besoins = b;
+  const { error } = await sb.from("reglages").upsert({ cle: "besoins", valeur: b });
+  msg.textContent = error ? "Erreur : " + error.message : `Enregistré${b.maison ? " · " + b.maison.label : ""}`;
+  fillBesoins();
+});
+
+// ---------- chargement & temps réel ----------
+async function loadAll() {
+  const [am, su, av, ap, re] = await Promise.all([
+    sb.from("amats").select("id,data"), sb.from("suivi").select("*"), sb.from("avis").select("*"),
+    sb.from("appels").select("*"), sb.from("reglages").select("*"),
+  ]);
+  const err = [am, su, av, ap, re].find(r => r.error);
+  if (err) { toast("Erreur de chargement : " + err.error.message); return false; }
+  if (!am.data.length) {
+    $("#list").innerHTML = `<div class="empty">Aucune donnée visible. Vérifie que ton email est bien dans la table allowed_users.</div>`;
+  }
+  S.amats = am.data.map(r => ({ ...r.data, id: r.id }));
+  S.suivi = Object.fromEntries(su.data.map(r => [r.amat_id, r]));
+  S.avis = {};
+  for (const r of av.data) (S.avis[r.amat_id] ||= {})[r.email] = r;
+  S.appels = {};
+  for (const r of ap.data) (S.appels[r.amat_id] ||= []).push(r);
+  S.besoins = re.data.find(r => r.cle === "besoins")?.valeur || {};
+  return true;
+}
+
+function subscribe() {
+  sb.channel("garde")
+    .on("postgres_changes", { event: "*", schema: "public", table: "suivi" }, p => {
+      if (p.new?.amat_id) { S.suivi[p.new.amat_id] = p.new; refreshFrom(p.new.amat_id); }
+    })
+    .on("postgres_changes", { event: "*", schema: "public", table: "avis" }, p => {
+      if (p.new?.amat_id && p.new.email !== S.me) { (S.avis[p.new.amat_id] ||= {})[p.new.email] = p.new; refreshFrom(p.new.amat_id); }
+    })
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "appels" }, p => {
+      const list = (S.appels[p.new.amat_id] ||= []);
+      if (!list.some(c => c.id === p.new.id)) { list.push(p.new); refreshFrom(p.new.amat_id); }
+    })
+    .on("postgres_changes", { event: "*", schema: "public", table: "reglages" }, p => {
+      if (p.new?.cle === "besoins") { S.besoins = p.new.valeur; render(); }
+    })
+    .subscribe();
+}
+function refreshFrom(id) {
+  if (S.tab === "liste") { rerenderCard(id); renderStats(); } else render();
+}
+
+// ---------- auth ----------
+$("#loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const email = $("#loginEmail").value.trim().toLowerCase();
+  $("#loginMsg").textContent = "Connexion…";
+  const { error } = await sb.auth.signInWithPassword({ email, password: $("#loginPw").value });
+  $("#loginMsg").textContent = error ? "Email ou mot de passe incorrect." : "";
+});
+$("#logout").addEventListener("click", async () => { await sb.auth.signOut(); location.reload(); });
+
+async function start(session) {
+  if (!session) { $("#login").classList.remove("hidden"); $("#app").classList.add("hidden"); return; }
+  S.me = session.user.email.toLowerCase();
+  $("#who").textContent = first(S.me);
+  $("#login").classList.add("hidden"); $("#app").classList.remove("hidden");
+  renderChips();
+  if (await loadAll()) { render(); subscribe(); }
+}
+let started = false;
+sb.auth.onAuthStateChange((_ev, session) => {
+  if (session && !started) { started = true; start(session); }
+  else if (!session) { started = false; start(null); }
+});
+</script>
+</body>
+</html>
