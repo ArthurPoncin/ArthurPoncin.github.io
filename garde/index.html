@@ -2,245 +2,450 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Recherche nounou</title>
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#151613" media="(prefers-color-scheme: dark)">
+<title>Nounou · Île de Nantes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
 :root {
-  --bg: #f6f4ef; --surface: #ffffff; --surface-2: #f0ede6; --border: #e2ddd2;
-  --text: #2b2a27; --muted: #77736a; --accent: #2f6f5e; --accent-soft: #e1efe9;
-  --warn: #b5651d; --warn-soft: #fbeedd; --bad: #b23a3a; --bad-soft: #f8e3e3;
-  --star: #e0a526; --shadow: 0 1px 2px rgba(0,0,0,.05), 0 2px 8px rgba(0,0,0,.04);
-  --radius: 12px;
+  --bg: #f6f3ec;
+  --bg-deep: #efeadf;
+  --surface: #ffffff;
+  --surface-2: #f8f6f1;
+  --line: #e7e1d5;
+  --line-strong: #d8d0c0;
+  --ink: #1d2320;
+  --ink-2: #47504b;
+  --muted: #7c837e;
+  --brand: #1f6b57;
+  --brand-ink: #ffffff;
+  --brand-soft: #e3f0eb;
+  --coral: #e0673f;
+  --coral-soft: #fbe9e2;
+  --good: #23855f; --good-soft: #e2f3ea;
+  --warn: #b7741c; --warn-soft: #fbf0dc;
+  --bad: #c24a43; --bad-soft: #fae6e4;
+  --info: #2f6db3; --info-soft: #e4eefa;
+  --star: #f0a92e;
+  --shadow-sm: 0 1px 2px rgba(29, 35, 32, .05);
+  --shadow: 0 1px 2px rgba(29, 35, 32, .04), 0 6px 20px -8px rgba(29, 35, 32, .12);
+  --shadow-lg: 0 2px 4px rgba(29, 35, 32, .04), 0 18px 40px -12px rgba(29, 35, 32, .22);
+  --r-sm: 10px; --r: 16px; --r-lg: 22px;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --font: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --display: "Fraunces", Georgia, serif;
+  color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #171816; --surface: #21231f; --surface-2: #2a2c27; --border: #363932;
-    --text: #ecebe6; --muted: #a19e95; --accent: #6cc3a6; --accent-soft: #1f3a32;
-    --warn: #e5a05c; --warn-soft: #3b2c1c; --bad: #ec7d7d; --bad-soft: #3d2222;
-    --shadow: none;
+    --bg: #151613; --bg-deep: #10110f; --surface: #1e201c; --surface-2: #252822; --line: #30332d; --line-strong: #3d413a;
+    --ink: #eeede8; --ink-2: #c9cbc4; --muted: #9a9e96;
+    --brand: #5cc4a2; --brand-ink: #0f1a16; --brand-soft: #1b3129;
+    --coral: #f08a65; --coral-soft: #3a241c;
+    --good: #5cc48f; --good-soft: #1b3226; --warn: #e9a752; --warn-soft: #3a2d18;
+    --bad: #ef7f77; --bad-soft: #3c2020; --info: #7fb0ec; --info-soft: #1c2a3b;
+    --shadow-sm: none; --shadow: 0 0 0 1px rgba(255,255,255,.02); --shadow-lg: 0 18px 40px -12px rgba(0,0,0,.6);
+    color-scheme: dark;
   }
 }
+
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--bg); color: var(--text); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-button, input, select, textarea { font: inherit; color: inherit; }
-a { color: var(--accent); }
-.wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px 80px; }
-header.top { position: sticky; top: 0; z-index: 1000; background: var(--bg); border-bottom: 1px solid var(--border); }
-header.top .wrap { display: flex; align-items: center; gap: 12px; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; }
-h1 { font-size: 19px; margin: 0; flex: 1; }
-.who { color: var(--muted); font-size: 13px; }
-nav.tabs { display: flex; gap: 4px; overflow-x: auto; }
-nav.tabs button { border: 0; background: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; color: var(--muted); white-space: nowrap; }
-nav.tabs button.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
-.stats { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 8px; }
-.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; font-size: 13px; cursor: pointer; }
-.stat b { font-size: 16px; margin-right: 4px; }
-.stat.on { border-color: var(--accent); background: var(--accent-soft); }
-.filters { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; margin: 8px 0 16px; box-shadow: var(--shadow); }
-.filters .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.filters .row + .row { margin-top: 8px; }
-.filters input[type=search] { flex: 1; min-width: 160px; }
-input[type=search], input[type=text], input[type=date], input[type=datetime-local], input[type=time], input[type=number], input[type=email], select, textarea {
-  background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; }
-textarea { width: 100%; min-height: 60px; resize: vertical; }
-.chip { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); background: var(--surface-2); border-radius: 999px; padding: 4px 10px; font-size: 13px; cursor: pointer; user-select: none; }
-.chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
-.count { color: var(--muted); font-size: 13px; margin-left: auto; }
-.list { display: grid; gap: 12px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-.card.ecartee { opacity: .55; }
-.card .head { display: flex; gap: 10px; padding: 12px 14px 0; align-items: flex-start; flex-wrap: wrap; }
-.card .name { font-weight: 650; font-size: 16px; flex: 1; min-width: 180px; }
-.card .name small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
-.card .body { padding: 8px 14px 12px; display: grid; gap: 8px; }
-.line { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font-size: 14px; }
-.tag { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); }
-.tag.good { background: var(--accent-soft); color: var(--accent); border-color: transparent; font-weight: 600; }
-.tag.warn { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
-.tag.bad { background: var(--bad-soft); color: var(--bad); border-color: transparent; }
-.week { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; max-width: 520px; }
-.day { background: var(--surface-2); border-radius: 6px; padding: 3px 4px; text-align: center; font-size: 12px; }
-.day b { display: block; font-size: 11px; color: var(--muted); }
-.day.off { opacity: .45; text-decoration: line-through; }
-.day.ko { background: var(--bad-soft); color: var(--bad); }
-.day.ok { background: var(--accent-soft); }
-.actions { display: flex; gap: 6px; flex-wrap: wrap; }
-.btn { border: 1px solid var(--border); background: var(--surface-2); padding: 6px 10px; border-radius: 8px; cursor: pointer; text-decoration: none; color: var(--text); font-size: 14px; display: inline-flex; gap: 6px; align-items: center; }
-.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-.btn:hover { filter: brightness(.97); }
-select.statut { font-weight: 600; }
-.st-a_appeler { color: var(--muted); } .st-messagerie, .st-a_rappeler { color: var(--warn); }
-.st-pas_dispo, .st-ecartee { color: var(--bad); } .st-rdv, .st-vue, .st-retenue { color: var(--accent); }
-.details { border-top: 1px solid var(--border); background: var(--surface-2); padding: 12px 14px; display: grid; gap: 14px; }
-.details h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 6px; }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
-.q { display: grid; grid-template-columns: auto 1fr; gap: 6px 8px; align-items: center; padding: 4px 0; border-bottom: 1px dashed var(--border); }
-.q:last-child { border-bottom: 0; }
-.q .tri { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-.q .tri button { border: 0; background: var(--surface); padding: 3px 8px; cursor: pointer; font-size: 13px; }
-.q .tri button.on[data-v=ok] { background: var(--accent); color: #fff; }
-.q .tri button.on[data-v=ko] { background: var(--bad); color: #fff; }
-.q .tri button.on[data-v="?"] { background: var(--warn); color: #fff; }
-.q label { font-size: 14px; }
-.q input { grid-column: 2; width: 100%; padding: 4px 8px; font-size: 13px; }
-.stars { display: inline-flex; gap: 2px; }
-.stars button { border: 0; background: none; cursor: pointer; font-size: 20px; line-height: 1; color: var(--border); padding: 0 1px; }
-.stars button.on { color: var(--star); }
-.avis-other { font-size: 14px; color: var(--muted); }
-.log { font-size: 13px; display: grid; gap: 4px; }
-.log div { display: flex; gap: 6px; }
-.log time { color: var(--muted); white-space: nowrap; }
-.empty { text-align: center; color: var(--muted); padding: 40px 0; }
-#map { height: 70vh; min-height: 420px; border-radius: var(--radius); border: 1px solid var(--border); }
-table.cmp { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: var(--radius); overflow: hidden; font-size: 14px; }
-table.cmp th, table.cmp td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
-table.cmp th { background: var(--surface-2); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
-.scroll-x { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
-.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); display: grid; gap: 12px; max-width: 640px; }
-.panel label { display: grid; gap: 4px; font-size: 14px; }
-.login { max-width: 380px; margin: 12vh auto; }
-.muted { color: var(--muted); font-size: 13px; }
-.toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 2000; }
-.toast.show { opacity: 1; }
-.hidden { display: none !important; }
-.card { transition: box-shadow .2s, opacity .2s; }
-.stats, #chips { scrollbar-width: none; }
-.stats::-webkit-scrollbar, #chips::-webkit-scrollbar { display: none; }
-.q .tri { justify-self: start; }
-.tops { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-.tcard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; box-shadow: var(--shadow); display: grid; gap: 8px; }
-.tcard .t-head { display: flex; gap: 10px; align-items: center; }
-.tcard .rank { font-size: 22px; font-weight: 700; color: var(--accent); min-width: 34px; }
-.tcard .t-name { flex: 1; font-weight: 650; }
-.tcard .t-name small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
-.tcard dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 0; font-size: 14px; }
-.tcard dt { color: var(--muted); }
-.tcard dd { margin: 0; }
-h2 { font-size: 18px; }
-@keyframes fade { from { opacity: .3; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
-.details { animation: fade .2s ease both; }
-.btn, .chip, .stat, nav.tabs button { transition: background .15s, color .15s, border-color .15s, transform .1s; }
-.btn:active, .chip:active, .stat:active { transform: scale(.97); }
-.map-tools { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-.leaflet-popup-content { font: 14px/1.4 system-ui, sans-serif; }
-.leaflet-popup-content .btn { margin-top: 6px; color: var(--text); }
-.me-dot { width: 16px; height: 16px; border-radius: 50%; background: #2b7cff; border: 3px solid #fff; box-shadow: 0 0 0 6px rgba(43,124,255,.25); }
-@media (max-width: 720px) {
-  body { font-size: 15px; }
-  header.top .wrap { padding-top: 8px; padding-bottom: 8px; gap: 8px; }
-  h1 { font-size: 17px; }
-  nav.tabs { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1500; background: var(--surface); border-top: 1px solid var(--border);
-    justify-content: space-around; padding: 6px 6px calc(6px + env(safe-area-inset-bottom)); gap: 2px; }
-  nav.tabs button { flex: 1; padding: 10px 4px; font-size: 13px; }
-  .wrap { padding-bottom: 96px; }
-  .btn { padding: 10px 12px; }
-  .chip { padding: 7px 12px; }
-  .card .name { min-width: 0; flex-basis: 100%; }
-  select.statut { width: 100%; padding: 10px; }
-  .actions .btn.primary { flex: 1 1 100%; justify-content: center; font-size: 16px; }
-  .actions .btn { flex: 1 1 auto; justify-content: center; }
-  .week { gap: 3px; }
-  .day { font-size: 11px; padding: 3px 2px; }
-  #map { height: calc(100vh - 210px); }
-  .stats { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
-  .stat { white-space: nowrap; }
-  .filters .row#chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
-  .chip { white-space: nowrap; }
-  .q { grid-template-columns: 1fr; }
-  .q input { grid-column: 1; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 15px/1.5 var(--font); -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: var(--brand); text-decoration: none; }
+svg.i { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+.hidden { display: none !important; }
+.muted { color: var(--muted); font-size: 13px; }
+
+/* ---------- header ---------- */
+header.top {
+  position: sticky; top: 0; z-index: 1000;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+}
+header.top .wrap { display: flex; align-items: center; gap: 16px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.brand-mark {
+  width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center;
+  background: var(--brand); color: var(--brand-ink); font-family: var(--display); font-weight: 700; font-size: 18px;
+}
+.brand h1 { font-family: var(--display); font-weight: 600; font-size: 20px; margin: 0; letter-spacing: -.01em; white-space: nowrap; }
+.brand h1 span { color: var(--muted); font-weight: 500; }
+nav.tabs { display: flex; gap: 2px; background: var(--bg-deep); padding: 4px; border-radius: 12px; }
+nav.tabs button {
+  border: 0; background: none; padding: 7px 14px; border-radius: 9px; color: var(--ink-2); font-weight: 600; font-size: 14px;
+  display: inline-flex; align-items: center; gap: 7px; transition: background .2s var(--ease), color .2s;
+}
+nav.tabs button svg { width: 17px; height: 17px; }
+nav.tabs button.on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); }
+nav.tabs-mob { display: none; }
+.me { display: flex; align-items: center; gap: 8px; }
+.me .avatar-sm { width: 32px; height: 32px; border-radius: 50%; background: var(--coral-soft); color: var(--coral); display: grid; place-items: center; font-weight: 700; font-size: 13px; text-transform: uppercase; }
+.icon-btn { border: 0; background: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: var(--muted); transition: background .15s; }
+.icon-btn:hover { background: var(--bg-deep); color: var(--ink); }
+
+/* ---------- boutons & champs ---------- */
+.btn {
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  padding: 9px 14px; border-radius: 11px; font-weight: 600; font-size: 14px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition: transform .12s var(--ease), background .15s, border-color .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+.btn:hover { border-color: var(--line-strong); background: var(--surface-2); }
+.btn:active { transform: scale(.97); }
+.btn.call { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); box-shadow: 0 6px 16px -8px var(--brand); }
+.btn.call:hover { filter: brightness(1.06); background: var(--brand); }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--ink-2); }
+.btn.ghost:hover { background: var(--bg-deep); }
+.btn.sm { padding: 6px 10px; font-size: 13px; border-radius: 9px; }
+.field, select.field, textarea.field {
+  width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 11px; padding: 10px 12px;
+  transition: border-color .15s, box-shadow .15s; outline: none;
+}
+.field:focus { border-color: var(--brand); box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 16%, transparent); }
+textarea.field { min-height: 76px; resize: vertical; line-height: 1.45; }
+
+/* ---------- vue liste : progression ---------- */
+.overview { display: grid; gap: 14px; margin: 26px 0 18px; }
+.overview-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.overview-head h2 { font-family: var(--display); font-weight: 600; font-size: 28px; letter-spacing: -.02em; margin: 0; }
+.overview-head h2 em { font-style: normal; color: var(--brand); }
+.pipeline { display: flex; height: 10px; border-radius: 99px; overflow: hidden; background: var(--bg-deep); gap: 2px; }
+.pipeline span { transition: flex-grow .5s var(--ease); min-width: 0; }
+.stats { display: flex; gap: 6px; flex-wrap: wrap; }
+.stat {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 5px 12px 5px 10px;
+  font-size: 13px; color: var(--ink-2); display: inline-flex; align-items: center; gap: 7px; transition: all .15s var(--ease);
+}
+.stat b { color: var(--ink); font-weight: 700; }
+.stat:hover { border-color: var(--line-strong); }
+.stat.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.stat.on b { color: var(--bg); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--muted)); flex: none; }
+.s-a_appeler { --c: #9aa19b; } .s-messagerie { --c: #e0a23c; } .s-a_rappeler { --c: #e07b2c; }
+.s-pas_dispo { --c: #c9605a; } .s-rdv { --c: #3f84d0; } .s-vue { --c: #2b9b8c; } .s-retenue { --c: #1f8f5c; } .s-ecartee { --c: #b9b2a5; }
+
+/* ---------- filtres ---------- */
+.toolbar {
+  position: sticky; top: 64px; z-index: 900; margin: 0 -20px 18px; padding: 10px 20px;
+  background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.toolbar-row { display: flex; gap: 8px; align-items: center; }
+.search { position: relative; flex: 1; min-width: 0; }
+.search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.search input { padding-left: 38px; }
+select.field.sort { width: auto; min-width: 0; flex: none; padding-right: 30px; }
+.chips { display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; align-items: center; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 6px 12px; font-size: 13px; font-weight: 600;
+  color: var(--ink-2); white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; transition: all .15s var(--ease); user-select: none;
+}
+.chip:hover { border-color: var(--line-strong); }
+.chip.on { background: var(--brand-soft); border-color: color-mix(in srgb, var(--brand) 40%, transparent); color: var(--brand); }
+.chip.on::before { content: "✓"; font-size: 11px; }
+.chip.more { border-style: dashed; }
+.chip.more .n { background: var(--brand); color: var(--brand-ink); border-radius: 99px; font-size: 11px; padding: 0 6px; }
+.more-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.switch { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); white-space: nowrap; margin-left: auto; user-select: none; cursor: pointer; padding-left: 8px; }
+.switch i { width: 34px; height: 20px; border-radius: 99px; background: var(--line-strong); position: relative; transition: background .2s; }
+.switch i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .2s var(--ease); box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.switch.on i { background: var(--brand); }
+.switch.on i::after { transform: translateX(14px); }
+.result-count { font-size: 13px; color: var(--muted); margin: 0 0 10px; }
+
+/* ---------- cartes ---------- */
+.list { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr)); align-items: start; padding-bottom: 40px; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow);
+  transition: box-shadow .25s var(--ease), transform .25s var(--ease), border-color .2s;
+  position: relative; overflow: hidden;
+}
+.card:hover { box-shadow: var(--shadow-lg); }
+.card.open { grid-column: 1 / -1; border-color: var(--line-strong); }
+.card.dim { opacity: .6; }
+.card.dim:hover { opacity: 1; }
+.c-main { padding: 18px 18px 16px; display: grid; gap: 14px; }
+.c-top { display: flex; gap: 12px; align-items: flex-start; }
+.avatar {
+  width: 46px; height: 46px; border-radius: 14px; flex: none; display: grid; place-items: center;
+  font-family: var(--display); font-weight: 600; font-size: 17px; position: relative;
+  background: color-mix(in srgb, var(--c) 18%, var(--surface)); color: color-mix(in srgb, var(--c) 75%, var(--ink));
+}
+.avatar .rank { position: absolute; top: -6px; right: -8px; background: var(--coral); color: #fff; font-family: var(--font); font-size: 11px; font-weight: 700; border-radius: 99px; padding: 1px 6px; border: 2px solid var(--surface); }
+.c-id { flex: 1; min-width: 0; }
+.c-id h3 { font-family: var(--display); font-weight: 600; font-size: 19px; letter-spacing: -.01em; margin: 0; line-height: 1.2; }
+.c-id p { margin: 3px 0 0; color: var(--muted); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 0 10px; }
+.c-id p b { color: var(--ink-2); font-weight: 600; }
+.status {
+  position: relative; display: inline-flex; align-items: center; gap: 7px; flex: none;
+  background: color-mix(in srgb, var(--c) 14%, var(--surface)); color: color-mix(in srgb, var(--c) 70%, var(--ink));
+  border-radius: 99px; padding: 6px 28px 6px 11px; font-size: 13px; font-weight: 700;
+}
+.status select { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.status svg { position: absolute; right: 8px; width: 14px; height: 14px; }
+
+.facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.fact { background: var(--surface-2); border-radius: 12px; padding: 9px 11px; min-width: 0; border: 1px solid transparent; }
+.fact small { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.fact strong { display: block; font-size: 14px; font-weight: 650; margin-top: 2px; line-height: 1.3; overflow-wrap: anywhere; }
+.fact.good { background: var(--good-soft); } .fact.good strong { color: var(--good); }
+.fact.warn { background: var(--warn-soft); } .fact.warn strong { color: var(--warn); }
+.fact.bad { background: var(--bad-soft); } .fact.bad strong { color: var(--bad); }
+
+.week { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+.day { text-align: center; padding: 6px 2px 7px; border-radius: 10px; background: var(--surface-2); font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.day b { display: block; font-size: 10.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 1px; }
+.day.off { color: var(--muted); background: repeating-linear-gradient(-45deg, var(--surface-2) 0 6px, var(--bg-deep) 6px 7px); }
+.day.ok { background: var(--good-soft); color: var(--good); }
+.day.ko { background: var(--bad-soft); color: var(--bad); }
+
+.c-actions { display: flex; gap: 8px; }
+.c-actions .btn.call { flex: 1.6; }
+.c-actions .btn { flex: 1; min-width: 0; }
+.c-actions .btn.toggle { background: var(--brand-soft); border-color: transparent; color: var(--brand); flex: 1.3; }
+.c-actions .btn.toggle svg { transition: transform .3s var(--ease); }
+.card.open .c-actions .btn.toggle svg { transform: rotate(180deg); }
+
+/* ---------- détails ---------- */
+.details { border-top: 1px solid var(--line); background: var(--surface-2); padding: 20px 18px; display: grid; gap: 22px; animation: reveal .35s var(--ease) both; }
+@keyframes reveal { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.d-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.d-grid.two { grid-template-columns: 1fr 1fr; }
+.sec h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
+.sec h4 .pill { text-transform: none; letter-spacing: 0; background: var(--bg-deep); color: var(--ink-2); padding: 1px 8px; border-radius: 99px; font-size: 12px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 12.5px; padding: 3px 10px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); }
+.tag.good { background: var(--good-soft); border-color: transparent; color: var(--good); font-weight: 600; }
+.tag.warn { background: var(--warn-soft); border-color: transparent; color: var(--warn); font-weight: 600; }
+.call-btns { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+.timeline { list-style: none; margin: 12px 0 0; padding: 0 0 0 14px; border-left: 2px solid var(--line); display: grid; gap: 8px; font-size: 13.5px; }
+.timeline li { position: relative; display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; }
+.timeline li::before { content: ""; position: absolute; left: -20px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--c); border: 2px solid var(--surface-2); }
+.timeline time { color: var(--muted); font-size: 12.5px; }
+.timeline .x { border: 0; background: none; color: var(--muted); padding: 0 4px; font-size: 15px; line-height: 1; }
+.stars { display: inline-flex; gap: 2px; margin-bottom: 8px; }
+.stars button { border: 0; background: none; padding: 0 2px; font-size: 26px; line-height: 1; color: var(--line-strong); transition: transform .15s var(--ease), color .15s; }
+.stars button:hover { transform: scale(1.15); }
+.stars button.on { color: var(--star); }
+.other-avis { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); font-size: 14px; }
+.other-avis b { text-transform: capitalize; }
+.stack { display: grid; gap: 8px; }
+.lbl { font-size: 13px; color: var(--ink-2); font-weight: 600; display: grid; gap: 5px; }
+
+.checklist { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 8px; }
+.q { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; gap: 8px; transition: border-color .2s; }
+.q.ok { border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+.q.ko { border-color: color-mix(in srgb, var(--bad) 45%, transparent); }
+.q-top { display: flex; gap: 10px; align-items: flex-start; }
+.q-top label { flex: 1; font-size: 13.5px; font-weight: 600; line-height: 1.35; }
+.tri { display: inline-flex; background: var(--surface-2); border-radius: 9px; padding: 2px; flex: none; }
+.tri button { border: 0; background: none; width: 30px; height: 26px; border-radius: 7px; font-size: 13px; font-weight: 700; color: var(--muted); transition: all .15s; }
+.tri button.on[data-v=ok] { background: var(--good); color: #fff; }
+.tri button.on[data-v="?"] { background: var(--warn); color: #fff; }
+.tri button.on[data-v=ko] { background: var(--bad); color: #fff; }
+.q input { border: 0; border-bottom: 1px dashed var(--line-strong); background: none; padding: 2px 0; font-size: 13.5px; outline: none; width: 100%; }
+.q input:focus { border-bottom-color: var(--brand); }
+.progress { height: 6px; border-radius: 99px; background: var(--bg-deep); overflow: hidden; flex: 1; max-width: 160px; }
+.progress span { display: block; height: 100%; background: var(--brand); border-radius: 99px; transition: width .4s var(--ease); }
+
+/* ---------- top ---------- */
+.page-title { font-family: var(--display); font-weight: 600; font-size: 28px; letter-spacing: -.02em; margin: 26px 0 4px; }
+.page-sub { color: var(--muted); margin: 0 0 18px; }
+.tops { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); margin-bottom: 30px; }
+.tcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 16px; box-shadow: var(--shadow); display: grid; gap: 12px; }
+.tcard .t-head { display: flex; gap: 12px; align-items: center; }
+.tcard .medal { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-family: var(--display); font-weight: 700; font-size: 18px; background: var(--coral-soft); color: var(--coral); flex: none; }
+.tcard .medal.r1 { background: #f7e6b8; color: #9a6b00; }
+.tcard .t-name { flex: 1; min-width: 0; }
+.tcard .t-name b { font-family: var(--display); font-weight: 600; font-size: 17px; display: block; }
+.tcard .t-name small { color: var(--muted); font-size: 13px; }
+.tcard dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; font-size: 14px; }
+.tcard dt { color: var(--muted); font-size: 13px; }
+.tcard dd { margin: 0; font-weight: 500; }
+.yes { color: var(--good); font-weight: 700; } .no { color: var(--bad); font-weight: 700; } .unk { color: var(--muted); }
+.empty-state { text-align: center; padding: 50px 20px; color: var(--muted); background: var(--surface); border: 1px dashed var(--line-strong); border-radius: var(--r-lg); }
+.empty-state b { display: block; font-family: var(--display); font-size: 19px; color: var(--ink); margin-bottom: 4px; font-weight: 600; }
+
+/* ---------- carte ---------- */
+.map-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 20px 0 12px; }
+#map { height: calc(100vh - 230px); min-height: 420px; border-radius: var(--r-lg); border: 1px solid var(--line); box-shadow: var(--shadow); z-index: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; font-size: 13px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.leaflet-popup-content-wrapper { border-radius: 14px; box-shadow: var(--shadow-lg); }
+.leaflet-popup-content { font: 14px/1.45 var(--font); margin: 14px 16px; min-width: 200px; }
+.leaflet-popup-content b { font-family: var(--display); font-size: 16px; font-weight: 600; }
+.pop-actions { display: flex; gap: 6px; margin-top: 10px; }
+.pop-actions .btn { flex: 1; padding: 7px 10px; font-size: 13px; }
+.pop-actions .btn.call { color: var(--brand-ink); }
+.me-dot { width: 16px; height: 16px; border-radius: 50%; background: #2b7cff; border: 3px solid #fff; box-shadow: 0 0 0 6px rgba(43,124,255,.25); }
+.home-pin { width: 30px; height: 30px; border-radius: 10px; background: var(--ink); color: var(--bg); display: grid; place-items: center; box-shadow: var(--shadow-lg); }
+
+/* ---------- besoins ---------- */
+.form-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 22px; box-shadow: var(--shadow); display: grid; gap: 18px; max-width: 680px; margin-bottom: 40px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.day-pick { display: flex; gap: 6px; flex-wrap: wrap; }
+.day-pick .chip { padding: 8px 14px; }
+
+/* ---------- login ---------- */
+.login { min-height: 100vh; display: grid; place-items: center; padding: 20px;
+  background: radial-gradient(1200px 500px at 20% -10%, var(--brand-soft), transparent 60%), radial-gradient(800px 400px at 100% 110%, var(--coral-soft), transparent 60%), var(--bg); }
+.login-card { width: min(100%, 380px); background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 30px 26px; box-shadow: var(--shadow-lg); display: grid; gap: 14px; }
+.login-card .brand-mark { width: 48px; height: 48px; border-radius: 15px; font-size: 24px; }
+.login-card h1 { font-family: var(--display); font-weight: 600; font-size: 26px; margin: 4px 0 0; letter-spacing: -.02em; }
+.login-card .btn.call { padding: 12px; font-size: 15px; }
+
+/* ---------- squelette & toast ---------- */
+.skel { height: 260px; border-radius: var(--r-lg); background: linear-gradient(90deg, var(--surface) 0%, var(--surface-2) 50%, var(--surface) 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border: 1px solid var(--line); }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; opacity: 0; transition: all .3s var(--ease); pointer-events: none; z-index: 3000; display: flex; gap: 8px; align-items: center; box-shadow: var(--shadow-lg); }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- mobile ---------- */
+@media (max-width: 760px) {
+  .wrap { padding: 0 14px; }
+  header.top .wrap { height: 56px; }
+  .brand h1 { font-size: 18px; }
+  .brand h1 span { display: none; }
+  nav.tabs-desk { display: none; }
+  nav.tabs-mob {
+    display: flex; position: fixed; left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 1500;
+    background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--line); border-radius: 20px; padding: 6px; box-shadow: var(--shadow-lg); justify-content: space-between;
+  }
+  nav.tabs button { flex: 1; flex-direction: column; gap: 2px; padding: 7px 2px; font-size: 11px; border-radius: 14px; }
+  nav.tabs button svg { width: 21px; height: 21px; }
+  nav.tabs button.on { background: var(--brand-soft); color: var(--brand); box-shadow: none; }
+  main { padding-bottom: 110px; }
+  .toolbar { top: 56px; margin: 0 -14px 14px; padding: 8px 14px; }
+  .overview { margin-top: 18px; }
+  .overview-head h2, .page-title { font-size: 24px; }
+  .facts { grid-template-columns: 1fr 1fr; }
+  .c-main { padding: 16px 14px 14px; gap: 12px; }
+  .c-id h3 { font-size: 18px; }
+  .c-top { flex-wrap: wrap; }
+  .c-id { flex: 1 1 calc(100% - 60px); }
+  .c-top .status { order: 3; margin-left: 58px; }
+  .c-actions { flex-wrap: wrap; }
+  .c-actions .btn.call { flex: 1 1 100%; padding: 13px; font-size: 16px; }
+  .c-actions .btn { padding: 11px 8px; }
+  .c-actions .btn.toggle { flex: 1.4; }
+  .d-grid, .d-grid.two, .form-grid { grid-template-columns: 1fr; }
+  .details { padding: 18px 14px; }
+  .day { font-size: 11.5px; }
+  #map { height: calc(100vh - 250px); }
+  .toast { bottom: calc(96px + env(safe-area-inset-bottom)); }
+  select.field.sort { max-width: 44%; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
 
-<div id="login" class="wrap hidden">
-  <div class="panel login">
-    <h1>Recherche nounou</h1>
-    <p class="muted">Accès réservé.</p>
-    <form id="loginForm" style="display:grid;gap:8px">
-      <input type="email" id="loginEmail" required placeholder="email" autocomplete="username">
-      <input type="password" id="loginPw" required placeholder="mot de passe" autocomplete="current-password">
-      <button class="btn primary" type="submit">Se connecter</button>
-    </form>
-    <p id="loginMsg" class="muted"></p>
-  </div>
+<!-- ============ connexion ============ -->
+<div id="login" class="login hidden">
+  <form class="login-card" id="loginForm">
+    <div class="brand-mark">n</div>
+    <h1>Bonjour 👋</h1>
+    <p class="muted" style="margin:-6px 0 4px">Notre recherche de nounou sur l'Île de Nantes. Accès réservé.</p>
+    <input class="field" type="email" id="loginEmail" required placeholder="Email" autocomplete="username">
+    <input class="field" type="password" id="loginPw" required placeholder="Mot de passe" autocomplete="current-password">
+    <button class="btn call" type="submit">Se connecter</button>
+    <p id="loginMsg" class="muted" style="margin:0;min-height:1.2em"></p>
+  </form>
 </div>
 
+<!-- ============ appli ============ -->
 <div id="app" class="hidden">
   <header class="top">
     <div class="wrap">
-      <h1>Nounou · Île de Nantes</h1>
-      <nav class="tabs" id="tabs">
-        <button data-tab="liste" class="on">Liste</button>
-        <button data-tab="carte">Carte</button>
-        <button data-tab="top">Top &amp; comparatif</button>
-        <button data-tab="reglages">Nos besoins</button>
-      </nav>
-      <span class="who" id="who"></span>
-      <button class="btn" id="logout" title="Se déconnecter">Sortir</button>
+      <div class="brand"><div class="brand-mark">n</div><h1>Nounou <span>· Île de Nantes</span></h1></div>
+      <nav class="tabs tabs-desk" id="tabs"></nav>
+      <div class="me"><span class="avatar-sm" id="who"></span><button class="icon-btn" id="logout" title="Se déconnecter"></button></div>
     </div>
   </header>
 
   <main class="wrap">
+    <!-- liste -->
     <section id="tab-liste">
-      <div class="stats" id="stats"></div>
-      <div class="filters">
-        <div class="row">
-          <input type="search" id="q" placeholder="Nom, rue, téléphone…">
-          <select id="sort">
-            <option value="distance">Tri : distance</option>
-            <option value="compat">Tri : compatibilité</option>
-            <option value="note">Tri : nos notes</option>
-            <option value="tarif">Tri : tarif</option>
-            <option value="maj">Tri : fiche la plus récente</option>
-            <option value="nom">Tri : nom</option>
+      <div class="overview">
+        <div class="overview-head"><h2 id="headline">Nos nounous</h2><span class="muted" id="subline"></span></div>
+        <div class="pipeline" id="pipeline"></div>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="toolbar">
+        <div class="toolbar-row">
+          <div class="search"><span id="searchIcon"></span><input class="field" type="search" id="q" placeholder="Rechercher un nom, une rue…"></div>
+          <select class="field sort" id="sort">
+            <option value="compat">Les plus adaptées</option>
+            <option value="distance">Les plus proches</option>
+            <option value="note">Nos mieux notées</option>
+            <option value="tarif">Tarif croissant</option>
+            <option value="maj">Fiches récentes</option>
+            <option value="nom">Nom A→Z</option>
           </select>
         </div>
-        <div class="row" id="chips"></div>
+        <div class="chips" id="chips"></div>
+        <div class="more-filters hidden" id="moreFilters"></div>
       </div>
+      <p class="result-count" id="count"></p>
       <div class="list" id="list"></div>
     </section>
 
-    <section id="tab-carte" class="hidden" style="padding-top:16px">
-      <div class="map-tools">
-        <button class="btn" id="locate">📍 Ma position</button>
-        <button class="btn" id="fitall">Tout afficher</button>
-        <button class="btn" id="kml" title="À importer dans Google My Maps">⬇️ Exporter pour Google My Maps</button>
+    <!-- carte -->
+    <section id="tab-carte" class="hidden">
+      <div class="map-bar">
+        <button class="btn" id="locate"></button>
+        <button class="btn" id="fitall"></button>
+        <button class="btn ghost" id="kml" title="Fichier à importer dans Google My Maps"></button>
       </div>
       <div id="map"></div>
-      <p class="muted">Les fiches sans adresse précise n'apparaissent pas sur la carte. Pour tout voir dans l'appli Google Maps : exporte le KML, puis sur ordinateur va sur google.com/mymaps → Créer une carte → Importer. La carte apparaît ensuite dans Google Maps › Enregistrés › Cartes.</p>
+      <div class="legend" id="legend"></div>
+      <p class="muted">Les fiches sans adresse précise n'apparaissent pas. Pour tout retrouver dans l'appli Google Maps : exporte le KML, puis sur ordinateur google.com/mymaps → Créer une carte → Importer. Elle apparaît ensuite dans Google Maps › Enregistrés › Cartes.</p>
     </section>
 
-    <section id="tab-top" class="hidden" style="padding-top:16px;display:grid;gap:16px"></section>
+    <!-- top -->
+    <section id="tab-top" class="hidden"></section>
 
-    <section id="tab-reglages" class="hidden" style="padding-top:16px">
-      <form class="panel" id="besoins">
-        <h3 style="margin:0">Nos besoins</h3>
-        <p class="muted" style="margin:0">Partagé entre vous deux. Sert à calculer distances et compatibilités.</p>
-        <label>Adresse de la maison
-          <input type="text" name="adresse" placeholder="ex. 10 rue … 44200 Nantes">
+    <!-- besoins -->
+    <section id="tab-reglages" class="hidden">
+      <h2 class="page-title">Nos besoins</h2>
+      <p class="page-sub">Partagé entre vous deux. Sert à calculer les distances et à repérer les nounous compatibles.</p>
+      <form class="form-card" id="besoins">
+        <label class="lbl">Adresse de la maison
+          <input class="field" type="text" name="adresse" placeholder="ex. 10 rue … 44200 Nantes">
         </label>
-        <div class="grid2">
-          <label>Date de début de garde <input type="date" name="debut"></label>
-          <label>Âge de l'enfant à ce moment (mois) <input type="number" name="age" min="0" max="72"></label>
-          <label>Heure de dépôt (au plus tard) <input type="time" name="depot"></label>
-          <label>Heure de récupération (au plus tôt) <input type="time" name="recup"></label>
+        <div class="form-grid">
+          <label class="lbl">Début de la garde <input class="field" type="date" name="debut"></label>
+          <label class="lbl">Âge de l'enfant à ce moment (mois) <input class="field" type="number" name="age" min="0" max="72"></label>
+          <label class="lbl">Dépôt au plus tard <input class="field" type="time" name="depot"></label>
+          <label class="lbl">Récupération au plus tôt <input class="field" type="time" name="recup"></label>
         </div>
-        <div>
-          <div class="muted" style="margin-bottom:6px">Jours de garde</div>
-          <div class="row" id="joursBesoin" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        <div class="lbl">Jours de garde <div class="day-pick" id="joursBesoin"></div></div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <button class="btn call" type="submit">Enregistrer</button>
+          <span class="muted" id="besoinsMsg"></span>
         </div>
-        <button class="btn primary" type="submit">Enregistrer</button>
-        <p class="muted" id="besoinsMsg" style="margin:0"></p>
       </form>
     </section>
   </main>
 </div>
 
+<nav class="tabs tabs-mob" id="tabsMob"></nav>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -249,20 +454,43 @@ h2 { font-size: 18px; }
 // ---- Config Supabase (la clé anon est publique par conception ; la sécurité vient de la RLS) ----
 const SUPABASE_URL = "https://noaiuclgueyxbdgzzklm.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5vYWl1Y2xndWV5eGJkZ3p6a2xtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM5MDcwMjgsImV4cCI6MjEwOTQ4MzAyOH0.z8p7WFqnGyyfHDkEJSmeiQiC0VR_4BQFIRQbwX6c5O8";
-
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// ---------- icônes ----------
+const ICONS = {
+  phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+  pin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
+  map: '<path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3z"/><path d="M9 3v15M15 6v15"/>',
+  list: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  star: '<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2L5.8 21 7 14.2 2 9.3l6.9-1z"/>',
+  sliders: '<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',
+  mail: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
+  chev: '<path d="m6 9 6 6 6-6"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  locate: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7"/>',
+  expand: '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>',
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+  out: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+  home: '<path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  euro: '<path d="M18 7a7 7 0 1 0 0 10M4 10h10M4 14h10"/>',
+  cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  baby: '<circle cx="12" cy="8" r="5"/><path d="M3 21a9 9 0 0 1 18 0"/>',
+};
+const ic = (n, cls = "i") => `<svg class="${cls}" viewBox="0 0 24 24">${ICONS[n]}</svg>`;
+
+// ---------- constantes ----------
 const STATUTS = {
   a_appeler: "À appeler", messagerie: "Messagerie", a_rappeler: "À rappeler", pas_dispo: "Pas dispo",
   rdv: "RDV visite", vue: "Visitée", retenue: "Retenue", ecartee: "Écartée",
 };
-const CALL_RESULTS = [
-  ["messagerie", "Messagerie"], ["a_rappeler", "À rappeler"], ["pas_dispo", "Pas dispo"], ["rdv", "RDV pris"],
-];
+const STATUT_COLOR = { a_appeler: "#9aa19b", messagerie: "#e0a23c", a_rappeler: "#e07b2c", pas_dispo: "#c9605a", rdv: "#3f84d0", vue: "#2b9b8c", retenue: "#1f8f5c", ecartee: "#b9b2a5" };
+const CALL_RESULTS = [["messagerie", "Messagerie"], ["a_rappeler", "À rappeler"], ["pas_dispo", "Pas dispo"], ["rdv", "RDV pris"]];
 const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
 const DAY_SHORT = { Lundi: "Lun", Mardi: "Mar", Mercredi: "Mer", Jeudi: "Jeu", Vendredi: "Ven" };
 const QUESTIONS = [
-  ["place", "Place confirmée pour notre date de début et l'âge de l'enfant"],
+  ["place", "Place confirmée pour notre date et l'âge de l'enfant"],
   ["horaires", "Horaires et jours compatibles (mercredi compris)"],
   ["tarif", "Tarif horaire, indemnités d'entretien et de repas"],
   ["formations", "Formations (CAP AEPE, secourisme PSC1/SST…)"],
@@ -270,63 +498,51 @@ const QUESTIONS = [
   ["conges", "Congés : dates imposées ? combien de semaines ?"],
   ["absence", "Solution si elle est malade ou absente"],
   ["repas", "Repas, couches, produits : qui fournit ?"],
-  ["sorties", "Sorties : parc, RPE, médiathèque, à quelle fréquence"],
+  ["sorties", "Sorties : parc, RPE, médiathèque, fréquence"],
   ["sommeil", "Rythme de sieste, couchage"],
   ["adaptation", "Période d'adaptation : durée et coût"],
   ["logement", "Logement : espace, sécurité, animaux, fumeur"],
   ["feeling", "Feeling général"],
 ];
 const FILTERS = [
-  ["compat", "Compatible nos horaires", a => a._compatH === true],
-  ["place", "Place disponible", a => a._hasPlace],
-  ["age", "Âge OK", a => a._ageOk === true],
-  ["mercredi", "Mercredi", a => a.mercredi],
+  ["compat", "Nos horaires OK", a => a._compatH === true, true],
+  ["place", "Place dispo", a => a._hasPlace, true],
+  ["mercredi", "Mercredi", a => a.mercredi, true],
+  ["age", "Âge OK", a => a._ageOk === true, true],
   ["vacances", "Vacances scolaires", a => a.options.some(o => o.includes("vacances"))],
   ["remplace", "Peut se faire remplacer", a => a.options.some(o => o.includes("remplacer"))],
   ["flex", "Horaires flexibles", a => a.options.some(o => o.includes("flexible"))],
+  ["urgence", "Accueil d'urgence", a => a.options.some(o => o.includes("urgence"))],
   ["secourisme", "Brevet de secourisme", a => a.infos.includes("Brevet de secourisme")],
   ["rpe", "Va au RPE", a => a.infos.includes("Relais petite enfance") || a.activites.includes("Accueil jeux du RPE")],
   ["nonfumeur", "Non fumeur", a => a.lieu.includes("Foyer non fumeur")],
   ["sansanimaux", "Sans animaux", a => !a.lieu.includes("Présence d'animaux")],
   ["repas", "Repas fournis", a => a.lieu.includes("Repas")],
   ["mam", "En MAM", a => a.infos.includes("Maison d'assistantes maternelles")],
-  ["masquer", "Masquer écartées / pas dispo", a => !["ecartee", "pas_dispo"].includes(S.suivi[a.id]?.statut)],
+  ["tel", "Avec téléphone", a => !!a.telephone],
 ];
+const TABS = [["liste", "Liste", "list"], ["carte", "Carte", "map"], ["top", "Top", "star"], ["reglages", "Besoins", "sliders"]];
 
 const S = {
   me: null, amats: [], suivi: {}, avis: {}, appels: {}, besoins: {},
-  tab: "liste", open: new Set(), filters: new Set(["masquer"]), statFilter: null, map: null, layer: null,
+  tab: "liste", open: new Set(), filters: new Set(), hideOut: true, more: false, statFilter: null,
+  map: null, layer: null, markers: {}, focus: null,
 };
 
 // ---------- utilitaires ----------
 const $ = sel => document.querySelector(sel);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const first = email => (email || "").split("@")[0];
+const first = email => (email || "").split("@")[0].split(/[._-]/)[0];
+const cap = s => s ? s[0].toUpperCase() + s.slice(1) : s;
 const fmtTel = t => t ? t.replace(/(\d\d)(?=\d)/g, "$1 ") : "";
 const toMin = hm => { const [h, m] = hm.split(":").map(Number); return h * 60 + m; };
-const fmtH = hm => hm.replace(":00", "h").replace(":", "h");
-const fmtDate = d => new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
-const fmtDT = d => new Date(d).toLocaleString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
-// Liens Google Maps universels : ouvrent l'appli Google Maps sur téléphone si elle est installée
-function routeUrl(a) {
-  const dest = encodeURIComponent(a.lat ? `${a.lat},${a.lon}` : (a.adresse || ""));
-  return `https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=walking`;
-}
-function kmlExport() {
-  const x = s => esc(s).replace(/&#39;/g, "'");
-  const pts = S.amats.filter(a => a.lat).map(a => {
-    const st = S.suivi[a.id]?.statut || "a_appeler";
-    const desc = [STATUTS[st], a.telephone ? "Tél : " + fmtTel(a.telephone) : "", a.email || "", a.adresse,
-      a.mercredi ? "Mercredi : oui" : "Mercredi : non", a.places.length ? "Place dispo" : "Pas de place affichée"].filter(Boolean).join("\n");
-    return `<Placemark><name>${x(a.nom)}</name><description>${x(desc)}</description><Point><coordinates>${a.lon},${a.lat},0</coordinates></Point></Placemark>`;
-  }).join("\n");
-  const kml = `<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Nounous Île de Nantes</name>\n${pts}\n</Document></kml>`;
-  const url = URL.createObjectURL(new Blob([kml], { type: "application/vnd.google-earth.kml+xml" }));
-  const link = Object.assign(document.createElement("a"), { href: url, download: "nounous-ile-de-nantes.kml" });
-  document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
-  toast("Fichier KML téléchargé");
-}
-function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 1800); }
+const fmtH = hm => hm.replace(/^0/, "").replace(":00", "h").replace(":", "h");
+const fmtDate = d => new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
+const fmtDT = d => new Date(d).toLocaleString("fr-FR", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+const fmtDist = d => d < 1 ? Math.round(d * 1000 / 10) * 10 + " m" : d.toFixed(1).replace(".", ",") + " km";
+const initials = n => n.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join("").toUpperCase();
+const statutOf = id => S.suivi[id]?.statut || "a_appeler";
+function toast(msg) { const t = $("#toast"); t.innerHTML = ic("check") + esc(msg); t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 1600); }
 function debounce(fn, ms) { const timers = {}; return (key, ...args) => { clearTimeout(timers[key]); timers[key] = setTimeout(() => fn(key, ...args), ms); }; }
 function haversine(a, b) {
   const R = 6371, rad = x => x * Math.PI / 180;
@@ -340,10 +556,12 @@ function ageToMonths(txt) {
   const n = +m[1];
   return m[2].startsWith("semaine") ? n / 4.345 : m[2] === "mois" ? n : n * 12;
 }
-function parseFrDate(txt) {
-  const m = (txt || "").match(/(\d\d)\/(\d\d)\/(\d{4})/);
-  return m ? new Date(`${m[3]}-${m[2]}-${m[1]}`) : null;
+function parseFrDate(txt) { const m = (txt || "").match(/(\d\d)\/(\d\d)\/(\d{4})/); return m ? new Date(`${m[3]}-${m[2]}-${m[1]}`) : null; }
+function routeUrl(a) {
+  const dest = encodeURIComponent(a.lat ? `${a.lat},${a.lon}` : (a.adresse || ""));
+  return `https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=walking`;
 }
+const hasRealAddress = a => a.adresse && a.adresse.split(",")[0].trim() !== "44200 NANTES";
 
 // ---------- calculs dérivés ----------
 function derive(a) {
@@ -357,41 +575,44 @@ function derive(a) {
       const [lo, hi] = p.age.split(" à ").map(ageToMonths);
       const okAge = lo != null && hi != null && hi > 0 ? (b.age >= lo && b.age <= hi) : true;
       const from = parseFrDate(p.a_partir);
-      const okDate = !from || !b.debut || from <= new Date(b.debut);
-      return okAge && okDate;
+      return okAge && (!from || !b.debut || from <= new Date(b.debut));
     });
   }
   a._dayOk = {};
   a._compatH = null;
   if (b.jours?.length) {
-    a._compatH = b.jours.every(d => {
+    a._compatH = true;
+    for (const d of b.jours) {
       const h = a.horaires[d];
       let ok = !!h;
       if (ok && b.depot) ok = toMin(h[0]) <= toMin(b.depot);
       if (ok && b.recup) ok = toMin(h[1]) >= toMin(b.recup);
       a._dayOk[d] = ok;
-      return ok;
-    });
+      if (!ok) a._compatH = false;
+    }
   }
   const notes = Object.values(S.avis[a.id] || {}).map(x => x.note).filter(Boolean);
   a._note = notes.length ? notes.reduce((x, y) => x + y, 0) / notes.length : null;
   const ck = S.suivi[a.id]?.checklist || {};
   a._ckOk = Object.values(ck).filter(x => x?.v === "ok").length;
   a._ckKo = Object.values(ck).filter(x => x?.v === "ko").length;
+  a._ckDone = Object.values(ck).filter(x => x?.v || x?.t).length;
   a._compat = (a._compatH ? 3 : 0) + (a._ageOk ? 2 : 0) + (a._hasPlace ? 2 : 0) + (a.mercredi ? 1 : 0)
-    + (a._dist != null ? Math.max(0, 2 - a._dist) : 0) + (a._note || 0) + a._ckOk * .3 - a._ckKo * .5;
+    + (a._dist != null ? Math.max(0, 2 - a._dist) : 0) + (a._note || 0) + a._ckOk * .3 - a._ckKo * .5
+    - (["pas_dispo", "ecartee"].includes(statutOf(a.id)) ? 10 : 0);
 }
 
-// ---------- rendu liste ----------
+// ---------- vue liste ----------
 function filtered() {
   const q = $("#q").value.trim().toLowerCase();
-  let L = S.amats.filter(a => {
-    if (S.statFilter && (S.suivi[a.id]?.statut || "a_appeler") !== S.statFilter) return false;
-    for (const [k, , fn] of FILTERS) if (S.filters.has(k) && !(S.statFilter && k === "masquer") && !fn(a)) return false;
+  const L = S.amats.filter(a => {
+    const st = statutOf(a.id);
+    if (S.statFilter) { if (st !== S.statFilter) return false; }
+    else if (S.hideOut && ["ecartee", "pas_dispo"].includes(st)) return false;
+    for (const [k, , fn] of FILTERS) if (S.filters.has(k) && !fn(a)) return false;
     if (q && !`${a.nom} ${a.adresse} ${a.telephone} ${a.email}`.toLowerCase().includes(q)) return false;
     return true;
   });
-  const sort = $("#sort").value;
   const nil = (v, big = 1e9) => v == null ? big : v;
   const cmp = {
     distance: (x, y) => nil(x._dist) - nil(y._dist),
@@ -400,79 +621,92 @@ function filtered() {
     tarif: (x, y) => nil(x.tarif_min) - nil(y.tarif_min),
     maj: (x, y) => (y.maj || "").localeCompare(x.maj || ""),
     nom: (x, y) => x.nom.localeCompare(y.nom),
-  }[sort];
+  }[$("#sort").value];
   return L.sort(cmp);
 }
 
-function renderStats() {
+function renderOverview() {
   const counts = {};
-  for (const a of S.amats) { const s = S.suivi[a.id]?.statut || "a_appeler"; counts[s] = (counts[s] || 0) + 1; }
+  for (const a of S.amats) { const s = statutOf(a.id); counts[s] = (counts[s] || 0) + 1; }
+  const total = S.amats.length;
+  const done = total - (counts.a_appeler || 0);
+  $("#headline").innerHTML = total ? `<em>${done}</em> contactée${done > 1 ? "s" : ""} sur ${total}` : "Nos nounous";
+  const rdv = (counts.rdv || 0) + (counts.vue || 0);
+  $("#subline").textContent = [rdv ? `${rdv} visite${rdv > 1 ? "s" : ""}` : "", counts.retenue ? `${counts.retenue} retenue${counts.retenue > 1 ? "s" : ""}` : ""].filter(Boolean).join(" · ");
+  $("#pipeline").innerHTML = Object.keys(STATUTS).filter(k => counts[k]).map(k =>
+    `<span style="flex-grow:${counts[k]};background:${STATUT_COLOR[k]}" title="${STATUTS[k]} : ${counts[k]}"></span>`).join("");
   $("#stats").innerHTML = Object.entries(STATUTS).map(([k, label]) =>
-    `<span class="stat ${S.statFilter === k ? "on" : ""}" data-stat="${k}"><b>${counts[k] || 0}</b>${label}</span>`).join("");
+    `<button class="stat s-${k} ${S.statFilter === k ? "on" : ""}" data-stat="${k}"><span class="dot"></span>${label}<b>${counts[k] || 0}</b></button>`).join("");
 }
 
 function renderChips() {
-  $("#chips").innerHTML = FILTERS.map(([k, label]) =>
-    `<span class="chip ${S.filters.has(k) ? "on" : ""}" data-filter="${k}">${label}</span>`).join("")
-    + `<span class="count" id="count"></span>`;
+  const quick = FILTERS.filter(f => f[3]);
+  const extra = FILTERS.filter(f => !f[3]);
+  const nExtra = extra.filter(f => S.filters.has(f[0])).length;
+  $("#chips").innerHTML = quick.map(([k, label]) => `<button class="chip ${S.filters.has(k) ? "on" : ""}" data-filter="${k}">${label}</button>`).join("")
+    + `<button class="chip more" data-more="1">${ic("sliders", "i")}Plus${nExtra ? ` <span class="n">${nExtra}</span>` : ""}</button>`
+    + `<span class="switch ${S.hideOut ? "on" : ""}" data-hideout="1"><i></i>Masquer écartées</span>`;
+  $("#moreFilters").classList.toggle("hidden", !S.more);
+  $("#moreFilters").innerHTML = extra.map(([k, label]) => `<button class="chip ${S.filters.has(k) ? "on" : ""}" data-filter="${k}">${label}</button>`).join("");
 }
 
 function weekHtml(a) {
   return `<div class="week">${DAYS.map(d => {
     const h = a.horaires[d];
     const need = S.besoins.jours?.includes(d);
-    const cls = !h ? (need ? "ko off" : "off") : need ? (a._dayOk[d] ? "ok" : "ko") : "";
+    const cls = !h ? (need ? "ko" : "off") : need ? (a._dayOk[d] ? "ok" : "ko") : "";
     return `<div class="day ${cls}"><b>${DAY_SHORT[d]}</b>${h ? `${fmtH(h[0])}–${fmtH(h[1])}` : "—"}</div>`;
   }).join("")}</div>`;
 }
 
-function placesHtml(a) {
-  if (a.places.length) return a.places.map(p =>
-    `<span class="tag good">${esc(p.nb)}${p.age ? " · " + esc(p.age) : ""}${p.a_partir && p.a_partir !== "de maintenant" ? " · " + esc(p.a_partir) : ""}</span>`).join("");
-  if (a.dispo_non_communiquee || a.premiere_dispo === "Non communiquée") return `<span class="tag warn">Dispo non communiquée</span>`;
-  if (a.premiere_dispo && !["Pas de disponibilité", "Maintenant"].includes(a.premiere_dispo))
-    return `<span class="tag warn">Dispo à partir du ${esc(a.premiere_dispo)}</span>`;
-  return `<span class="tag bad">Pas de place affichée</span>`;
+function factsHtml(a) {
+  // Disponibilité
+  let dispo;
+  if (a.places.length) {
+    const p = a.places[0];
+    const more = a.places.length > 1 ? ` (+${a.places.length - 1})` : "";
+    const txt = (p.age ? p.age.replace("0 semaine", "naissance") : "Place libre") + more;
+    dispo = [a._ageOk === false ? "bad" : a._ageOk ? "good" : "good", a._ageOk === false ? "Âge / date ✗" : txt];
+  } else if (a.dispo_non_communiquee || a.premiere_dispo === "Non communiquée") dispo = ["warn", "Non communiquée"];
+  else if (a.premiere_dispo && !["Pas de disponibilité", "Maintenant"].includes(a.premiere_dispo)) dispo = ["warn", "Dès le " + a.premiere_dispo];
+  else dispo = ["bad", "Aucune place"];
+  const mer = a.mercredi ? ["good", fmtH(a.horaires.Mercredi[0]) + "–" + fmtH(a.horaires.Mercredi[1])] : ["bad", "Non"];
+  let hor;
+  if (a._compatH === true) hor = ["good", "Compatibles"];
+  else if (a._compatH === false) hor = ["bad", "Incompatibles"];
+  else if (a.debut_min) hor = ["", fmtH(a.debut_min) + "–" + fmtH(a.fin_max)];
+  else hor = ["", "?"];
+  const tarif = a.tarif_min ? ["", a.tarif_min === a.tarif_max ? a.tarif_min.toFixed(2).replace(".", ",") + " €/h" : `${a.tarif_min.toFixed(2).replace(".", ",")}–${a.tarif_max.toFixed(2).replace(".", ",")} €`] : ["", "Non indiqué"];
+  const f = (icon, label, [cls, val]) => `<div class="fact ${cls}"><small>${ic(icon, "i")}${label}</small><strong>${esc(val)}</strong></div>`;
+  return `<div class="facts">${f("baby", "Place", dispo)}${f("cal", "Mercredi", mer)}${f("clock", "Horaires", hor)}${f("euro", "Tarif net", tarif)}</div>`;
 }
 
 function cardHtml(a) {
-  const s = S.suivi[a.id] || { statut: "a_appeler" };
+  const s = S.suivi[a.id] || {};
+  const st = statutOf(a.id);
   const open = S.open.has(a.id);
-  const old = a.maj && (Date.now() - new Date(a.maj)) > 365 * 864e5;
-  const tags = [];
-  if (a._compatH === true) tags.push(`<span class="tag good">✓ nos horaires</span>`);
-  else if (a._compatH === false) tags.push(`<span class="tag bad">✗ nos horaires</span>`);
-  if (a._ageOk === true) tags.push(`<span class="tag good">✓ âge</span>`);
-  else if (a._ageOk === false) tags.push(`<span class="tag bad">✗ âge / date</span>`);
-  tags.push(a.mercredi ? `<span class="tag good">Mercredi</span>` : `<span class="tag bad">Pas le mercredi</span>`);
-  for (const o of a.options) tags.push(`<span class="tag">${esc(o.replace(/^(être |me |réaliser des |travailler pendant les )/, ""))}</span>`);
-  const infos = [...a.infos, ...a.lieu].filter(x => !["Formations", "Langues parlées", "Logement"].includes(x));
+  const meta = [];
+  if (a._dist != null) meta.push(`<b>${fmtDist(a._dist)}</b> · ${Math.max(1, Math.round(a._dist * 1.3 / 4.5 * 60))} min à pied`);
+  meta.push(esc(hasRealAddress(a) ? a.adresse.replace(/, 44200 NANTES$/i, "") : "Adresse non communiquée"));
+  if (a._note) meta.push(`<span style="color:var(--star)">★</span> ${a._note.toFixed(1).replace(".", ",")}`);
   return `
-  <article class="card ${s.statut === "ecartee" ? "ecartee" : ""}" data-id="${esc(a.id)}">
-    <div class="head">
-      <div class="name">${s.rang ? `<span class="tag good">#${s.rang}</span> ` : ""}${esc(a.nom)}
-        <small>${esc(a.adresse || "Adresse non communiquée")}${a._dist != null ? ` · <b>${a._dist < 1 ? Math.round(a._dist * 1000) + " m" : a._dist.toFixed(1) + " km"}</b> (~${Math.round(a._dist * 1.3 / 4.5 * 60)} min à pied)` : ""}${a.adresse_approx ? " · adresse approximative" : ""}</small>
+  <article class="card s-${st} ${open ? "open" : ""} ${["ecartee", "pas_dispo"].includes(st) ? "dim" : ""}" data-id="${esc(a.id)}">
+    <div class="c-main">
+      <div class="c-top">
+        <div class="avatar">${esc(initials(a.nom))}${s.rang ? `<span class="rank">#${s.rang}</span>` : ""}</div>
+        <div class="c-id"><h3 data-act="toggle" style="cursor:pointer">${esc(a.nom)}</h3><p>${meta.map(m => `<span>${m}</span>`).join("")}</p></div>
+        <label class="status"><span class="dot"></span>${STATUTS[st]}${ic("chev")}
+          <select data-act="statut" aria-label="Statut">${Object.entries(STATUTS).map(([k, l]) => `<option value="${k}" ${k === st ? "selected" : ""}>${l}</option>`).join("")}</select>
+        </label>
       </div>
-      <select class="statut st-${s.statut}" data-act="statut">${Object.entries(STATUTS).map(([k, l]) => `<option value="${k}" ${k === s.statut ? "selected" : ""}>${l}</option>`).join("")}</select>
-    </div>
-    <div class="body">
-      <div class="actions">
-        ${a.telephone ? `<a class="btn primary" href="tel:${esc(a.telephone)}">📞 ${fmtTel(a.telephone)}</a>` : ""}
-        ${a.email ? `<a class="btn" href="mailto:${esc(a.email)}">✉️ ${a.telephone ? "Email" : esc(a.email)}</a>` : ""}
-        ${a.adresse && a.adresse.split(",")[0].trim() !== "44200 NANTES" ? `<a class="btn" href="${routeUrl(a)}" target="_blank" rel="noopener">📍 Google Maps</a>` : ""}
-        ${a.lat ? `<button class="btn" data-act="showmap">🗺️ Carte</button>` : ""}
-        <button class="btn" data-act="toggle">${open ? "Replier" : "Checklist, notes & suivi"}</button>
-      </div>
-      <div class="line">${placesHtml(a)}<span class="tag">Capacité ${a.capacite ?? "?"}</span>
-        <span class="tag">${a.tarif_min ? `${a.tarif_min.toFixed(2)}–${a.tarif_max.toFixed(2)} €/h net` : "Tarif non renseigné"}</span>
-        ${a._note ? `<span class="tag good">★ ${a._note.toFixed(1)}</span>` : ""}
-        ${a._ckOk || a._ckKo ? `<span class="tag">${a._ckOk} ✓ / ${a._ckKo} ✗</span>` : ""}
-      </div>
+      ${factsHtml(a)}
       ${weekHtml(a)}
-      <div class="line">${tags.join("")}</div>
-      ${infos.length ? `<div class="line">${infos.map(x => `<span class="tag">${esc(x)}</span>`).join("")}</div>` : ""}
-      ${a.activites.length ? `<div class="line muted">Activités : ${a.activites.map(esc).join(" · ")}</div>` : ""}
-      <div class="muted">Fiche monenfant.fr mise à jour le ${a.maj ? fmtDate(a.maj) : "?"}${old ? ` <span class="tag warn">fiche ancienne</span>` : ""}</div>
+      <div class="c-actions">
+        ${a.telephone ? `<a class="btn call" href="tel:${esc(a.telephone)}">${ic("phone")}${fmtTel(a.telephone)}</a>`
+          : a.email ? `<a class="btn call" href="mailto:${esc(a.email)}">${ic("mail")}Écrire</a>` : ""}
+        ${hasRealAddress(a) ? `<a class="btn" href="${routeUrl(a)}" target="_blank" rel="noopener" title="Itinéraire Google Maps">${ic("pin")}Maps</a>` : ""}
+        <button class="btn toggle" data-act="toggle">${open ? "Fermer" : "Notes & checklist"}${ic("chev")}</button>
+      </div>
     </div>
     ${open ? detailsHtml(a, s) : ""}
   </article>`;
@@ -484,50 +718,75 @@ function detailsHtml(a, s) {
   const mine = avis[S.me] || {};
   const others = Object.entries(avis).filter(([e]) => e !== S.me);
   const log = (S.appels[a.id] || []).slice().sort((x, y) => y.le.localeCompare(x.le));
+  const opts = a.options.map(o => cap(o.replace(/^(être |me |réaliser des |travailler pendant les )/, "")));
+  const infos = [...a.infos, ...a.lieu].filter(x => !["Formations", "Langues parlées", "Logement"].includes(x));
+  const old = a.maj && (Date.now() - new Date(a.maj)) > 365 * 864e5;
+  const placesTxt = a.places.map(p => `${p.nb}${p.age ? " · " + p.age : ""}${p.a_partir ? " · " + p.a_partir : ""}`);
   return `
   <div class="details">
-    <div>
-      <h3>Appel</h3>
-      <div class="actions">${CALL_RESULTS.map(([k, l]) => `<button class="btn" data-act="call" data-res="${k}">${l}</button>`).join("")}</div>
-      <div class="log" style="margin-top:8px">${log.length ? log.map(c =>
-        `<div><time>${fmtDT(c.le)}</time><span><b>${esc(first(c.par))}</b> : ${esc(STATUTS[c.resultat] || c.resultat)}${c.commentaire ? " · " + esc(c.commentaire) : ""}</span>${c.par === S.me ? `<button class="btn" style="padding:0 6px" data-act="delcall" data-cid="${c.id}" title="Supprimer">×</button>` : ""}</div>`).join("") : `<span class="muted">Pas encore appelée.</span>`}</div>
-    </div>
-    <div class="grid2">
-      <div>
-        <h3>Ma note</h3>
-        <div class="stars" data-act="stars">${[1, 2, 3, 4, 5].map(n => `<button data-n="${n}" class="${(mine.note || 0) >= n ? "on" : ""}">★</button>`).join("")}</div>
-        <textarea data-field="commentaire" placeholder="Mon ressenti…">${esc(mine.commentaire || "")}</textarea>
-        ${others.map(([e, o]) => `<div class="avis-other"><b>${esc(first(e))}</b> : ${o.note ? "★".repeat(o.note) : "pas de note"}${o.commentaire ? " · " + esc(o.commentaire) : ""}</div>`).join("")}
+    <div class="d-grid">
+      <div class="sec">
+        <h4>Après l'appel</h4>
+        <div class="call-btns">${CALL_RESULTS.map(([k, l]) => `<button class="btn sm" data-act="call" data-res="${k}"><span class="dot s-${k}"></span>${l}</button>`).join("")}</div>
+        ${log.length ? `<ul class="timeline">${log.map(c => `<li class="s-${c.resultat}"><b>${esc(cap(first(c.par)))}</b> ${esc(STATUTS[c.resultat] || c.resultat)} <time>${fmtDT(c.le)}</time>${c.par === S.me ? `<button class="x" data-act="delcall" data-cid="${c.id}" title="Supprimer">×</button>` : ""}</li>`).join("")}</ul>`
+          : `<p class="muted" style="margin:10px 0 0">Pas encore appelée.</p>`}
       </div>
-      <div>
-        <h3>Suivi commun</h3>
-        <label class="muted">RDV visite <input type="datetime-local" data-field="rdv_le" value="${s.rdv_le ? new Date(s.rdv_le).toLocaleString("sv-SE").slice(0, 16) : ""}"></label>
-        <div class="actions" style="margin:6px 0">
-          ${s.rang ? `<button class="btn" data-act="untop">Retirer du top</button>` : `<button class="btn" data-act="totop">Ajouter au top</button>`}
-        </div>
-        <textarea data-field="notes" placeholder="Notes communes (infos données au téléphone, impressions de visite…)">${esc(s.notes || "")}</textarea>
+      <div class="sec">
+        <h4>Mon avis</h4>
+        <div class="stars" data-act="stars">${[1, 2, 3, 4, 5].map(n => `<button data-n="${n}" class="${(mine.note || 0) >= n ? "on" : ""}" aria-label="${n} étoiles">★</button>`).join("")}</div>
+        <textarea class="field" data-field="commentaire" placeholder="Mon ressenti…">${esc(mine.commentaire || "")}</textarea>
+        ${others.map(([e, o]) => `<div class="other-avis"><b>${esc(first(e))}</b> <span style="color:var(--star)">${o.note ? "★".repeat(o.note) : ""}</span>${o.note ? "" : " <span class='muted'>pas encore noté</span>"}${o.commentaire ? `<div class="muted" style="font-size:13.5px;margin-top:2px">${esc(o.commentaire)}</div>` : ""}</div>`).join("")}
+      </div>
+      <div class="sec stack">
+        <h4>Suivi commun</h4>
+        <label class="lbl">RDV de visite <input class="field" type="datetime-local" data-field="rdv_le" value="${s.rdv_le ? new Date(s.rdv_le).toLocaleString("sv-SE").slice(0, 16) : ""}"></label>
+        <textarea class="field" data-field="notes" placeholder="Notes communes : infos du téléphone, impressions de visite…">${esc(s.notes || "")}</textarea>
+        ${s.rang ? `<button class="btn" data-act="untop">${ic("star")}Retirer du top (#${s.rang})</button>` : `<button class="btn" data-act="totop">${ic("star")}Ajouter à notre top</button>`}
       </div>
     </div>
-    <div>
-      <h3>Checklist des questions</h3>
-      ${QUESTIONS.map(([k, label]) => {
+    <div class="sec">
+      <h4>Questions à poser <span class="pill">${a._ckDone}/${QUESTIONS.length}</span><span class="progress"><span style="width:${a._ckDone / QUESTIONS.length * 100}%"></span></span></h4>
+      <div class="checklist">${QUESTIONS.map(([k, label]) => {
         const v = ck[k] || {};
-        return `<div class="q" data-q="${k}">
-          <span class="tri">${["ok", "?", "ko"].map(x => `<button data-act="tri" data-v="${x}" class="${v.v === x ? "on" : ""}">${x === "ok" ? "✓" : x === "ko" ? "✗" : "?"}</button>`).join("")}</span>
-          <label>${label}</label>
+        return `<div class="q ${v.v || ""}" data-q="${k}">
+          <div class="q-top"><label>${label}</label>
+            <span class="tri">${["ok", "?", "ko"].map(x => `<button data-act="tri" data-v="${x}" class="${v.v === x ? "on" : ""}">${x === "ok" ? "✓" : x === "ko" ? "✗" : "?"}</button>`).join("")}</span>
+          </div>
           <input type="text" data-field="ck" value="${esc(v.t || "")}" placeholder="Réponse…">
         </div>`;
-      }).join("")}
+      }).join("")}</div>
+    </div>
+    <div class="d-grid two">
+      <div class="sec">
+        <h4>Sur sa fiche</h4>
+        <div class="tags">
+          ${placesTxt.map(t => `<span class="tag good">${esc(t)}</span>`).join("")}
+          <span class="tag">Capacité ${a.capacite ?? "?"} enfants</span>
+          ${opts.map(o => `<span class="tag">${esc(o)}</span>`).join("")}
+          ${infos.map(x => `<span class="tag">${esc(x)}</span>`).join("")}
+        </div>
+        <p class="muted" style="margin:10px 0 0">Fiche monenfant.fr mise à jour le ${a.maj ? fmtDate(a.maj) : "?"}${old ? ` · <span class="tag warn">ancienne</span>` : ""}</p>
+      </div>
+      <div class="sec">
+        <h4>Activités</h4>
+        <div class="tags">${a.activites.length ? a.activites.map(x => `<span class="tag">${esc(x)}</span>`).join("") : `<span class="muted">Non renseignées</span>`}</div>
+        <div class="tags" style="margin-top:12px">
+          ${a.email ? `<a class="btn sm" href="mailto:${esc(a.email)}">${ic("mail")}${esc(a.email)}</a>` : ""}
+          ${a.lat ? `<button class="btn sm" data-act="showmap">${ic("map")}Voir sur la carte</button>` : ""}
+        </div>
+      </div>
     </div>
   </div>`;
 }
 
 function renderList() {
   for (const a of S.amats) derive(a);
-  renderStats();
+  renderOverview();
   const L = filtered();
-  $("#count").textContent = `${L.length} / ${S.amats.length}`;
-  $("#list").innerHTML = L.length ? L.map(cardHtml).join("") : `<div class="empty">Aucune assistante maternelle ne correspond à ces filtres.</div>`;
+  const hidden = S.amats.length - L.length;
+  $("#count").textContent = `${L.length} nounou${L.length > 1 ? "s" : ""}${hidden ? ` · ${hidden} masquée${hidden > 1 ? "s" : ""} par les filtres` : ""}`;
+  $("#list").innerHTML = L.length ? L.map(cardHtml).join("")
+    : `<div class="empty-state" style="grid-column:1/-1"><b>Aucune nounou ici</b>Essaie d'enlever un filtre.</div>`;
 }
 
 function rerenderCard(id) {
@@ -545,43 +804,46 @@ function render() {
   if (S.tab === "top") renderTop();
 }
 
-// ---------- top & comparatif ----------
+// ---------- top ----------
 function renderTop() {
   for (const a of S.amats) derive(a);
   const top = S.amats.filter(a => S.suivi[a.id]?.rang).sort((x, y) => S.suivi[x.id].rang - S.suivi[y.id].rang);
-  const cands = S.amats.filter(a => !S.suivi[a.id]?.rang && ["rdv", "vue", "retenue"].includes(S.suivi[a.id]?.statut));
+  const cands = S.amats.filter(a => !S.suivi[a.id]?.rang && ["rdv", "vue", "retenue"].includes(statutOf(a.id)))
+    .sort((x, y) => y._compat - x._compat);
+  const yn = (v, label) => `<span class="${v == null ? "unk" : v ? "yes" : "no"}">${v == null ? "?" : v ? "✓" : "✗"}</span> ${label}`;
   const card = (a, i) => {
     const s = S.suivi[a.id];
     const avis = S.avis[a.id] || {};
-    const yn = v => v == null ? "?" : v ? "✓" : "✗";
-    return `<div class="tcard">
+    return `<div class="tcard s-${statutOf(a.id)}">
       <div class="t-head">
-        <span class="rank">${i != null ? "#" + (i + 1) : "·"}</span>
-        <span class="t-name">${esc(a.nom)}<small>${STATUTS[s?.statut || "a_appeler"]}${a._dist != null ? " · " + (a._dist < 1 ? Math.round(a._dist * 1000) + " m" : a._dist.toFixed(1) + " km") : ""}</small></span>
-        ${i != null ? `<button class="btn" data-top="up" data-id="${esc(a.id)}" title="Monter">↑</button><button class="btn" data-top="down" data-id="${esc(a.id)}" title="Descendre">↓</button>`
-          : `<button class="btn" data-top="add" data-id="${esc(a.id)}">+ Top</button>`}
+        <span class="medal ${i === 0 ? "r1" : ""}">${i != null ? i + 1 : initials(a.nom)}</span>
+        <span class="t-name"><b>${esc(a.nom)}</b><small><span class="dot" style="display:inline-block;margin-right:5px"></span>${STATUTS[statutOf(a.id)]}${a._dist != null ? " · " + fmtDist(a._dist) : ""}</small></span>
+        ${i != null ? `<button class="icon-btn" data-top="up" data-id="${esc(a.id)}" title="Monter">↑</button><button class="icon-btn" data-top="down" data-id="${esc(a.id)}" title="Descendre">↓</button>`
+          : `<button class="btn sm" data-top="add" data-id="${esc(a.id)}">${ic("star")}Top</button>`}
       </div>
       <dl>
-        <dt>Critères</dt><dd>${yn(a._compatH)} horaires · ${yn(a.mercredi)} mercredi · ${yn(a._ageOk)} âge</dd>
-        <dt>Tarif</dt><dd>${a.tarif_min ? a.tarif_min.toFixed(2) + "–" + a.tarif_max.toFixed(2) + " €/h" : "?"}</dd>
-        <dt>Nos notes</dt><dd>${Object.entries(avis).map(([e, o]) => `${esc(first(e))} ${o.note ? "★".repeat(o.note) : "–"}`).join(" · ") || "–"}</dd>
-        <dt>Checklist</dt><dd>${a._ckOk} ✓ · ${a._ckKo} ✗</dd>
-        ${s?.rdv_le ? `<dt>RDV</dt><dd>${fmtDT(s.rdv_le)}</dd>` : ""}
-        ${s?.notes ? `<dt>Notes</dt><dd>${esc(s.notes.slice(0, 220))}</dd>` : ""}
+        <dt>Critères</dt><dd>${yn(a._compatH, "horaires")} &nbsp; ${yn(a.mercredi, "mercredi")} &nbsp; ${yn(a._ageOk, "âge")}</dd>
+        <dt>Tarif</dt><dd>${a.tarif_min ? a.tarif_min.toFixed(2).replace(".", ",") + " €/h" : "?"}</dd>
+        <dt>Nos notes</dt><dd>${Object.entries(avis).map(([e, o]) => `${esc(cap(first(e)))} <span style="color:var(--star)">${o.note ? "★".repeat(o.note) : "–"}</span>`).join(" · ") || "–"}</dd>
+        <dt>Questions</dt><dd><span class="yes">${a._ckOk} ✓</span> · <span class="no">${a._ckKo} ✗</span> · ${a._ckDone}/${QUESTIONS.length}</dd>
+        ${s?.rdv_le ? `<dt>Visite</dt><dd>${fmtDT(s.rdv_le)}</dd>` : ""}
+        ${s?.notes ? `<dt>Notes</dt><dd>${esc(s.notes.slice(0, 200))}</dd>` : ""}
       </dl>
-      <div class="actions">${a.telephone ? `<a class="btn primary" href="tel:${esc(a.telephone)}">📞 ${fmtTel(a.telephone)}</a>` : ""}<a class="btn" href="${routeUrl(a)}" target="_blank" rel="noopener">📍 Google Maps</a></div>
+      <div class="c-actions">${a.telephone ? `<a class="btn call" href="tel:${esc(a.telephone)}">${ic("phone")}${fmtTel(a.telephone)}</a>` : ""}${hasRealAddress(a) ? `<a class="btn" href="${routeUrl(a)}" target="_blank" rel="noopener">${ic("pin")}Maps</a>` : ""}</div>
     </div>`;
   };
   $("#tab-top").innerHTML = `
-    <div><h2 style="margin:0 0 8px">Notre top</h2>
-    ${top.length ? `<div class="tops">${top.map(card).join("")}</div>` : `<p class="muted">Ajoute des assistantes maternelles au top depuis leur fiche (bouton « Ajouter au top »).</p>`}</div>
-    <div><h2 style="margin:0 0 8px">Candidates (RDV, visitées, retenues)</h2>
-    ${cands.length ? `<div class="tops">${cands.map(a => card(a, null)).join("")}</div>` : `<p class="muted">Rien pour l'instant.</p>`}</div>`;
+    <h2 class="page-title">Notre top</h2>
+    <p class="page-sub">Classez vos favorites avec ↑ ↓. Ajoutez-en depuis le suivi d'une fiche.</p>
+    ${top.length ? `<div class="tops">${top.map(card).join("")}</div>` : `<div class="empty-state" style="margin-bottom:30px"><b>Pas encore de favorite</b>Ouvre le suivi d'une fiche puis « Ajouter à notre top ».</div>`}
+    <h2 class="page-title" style="font-size:22px">À départager</h2>
+    <p class="page-sub">Les nounous avec un RDV, déjà visitées ou retenues.</p>
+    ${cands.length ? `<div class="tops">${cands.map(a => card(a, null)).join("")}</div>` : `<div class="empty-state"><b>Rien pour l'instant</b>Elles apparaîtront ici dès qu'un RDV est pris.</div>`}`;
 }
 
 async function moveTop(id, dir) {
   const top = S.amats.filter(a => S.suivi[a.id]?.rang).sort((x, y) => S.suivi[x.id].rang - S.suivi[y.id].rang).map(a => a.id);
-  if (dir === "add") top.push(id);
+  if (dir === "add") { if (!top.includes(id)) top.push(id); }
   else if (dir === "remove") top.splice(top.indexOf(id), 1);
   else {
     const i = top.indexOf(id), j = dir === "up" ? i - 1 : i + 1;
@@ -590,17 +852,18 @@ async function moveTop(id, dir) {
   }
   const updates = top.map((aid, i) => ({ amat_id: aid, rang: i + 1 }));
   if (dir === "remove") updates.push({ amat_id: id, rang: null });
-  for (const u of updates) { S.suivi[u.amat_id] = { ...(S.suivi[u.amat_id] || {}), ...u }; }
-  render();
-  for (const u of updates) await saveSuivi(u.amat_id, { rang: u.rang });
+  for (const u of updates) S.suivi[u.amat_id] = { ...(S.suivi[u.amat_id] || {}), ...u };
+  if (S.tab === "liste") rerenderCard(id); else render();
+  for (const u of updates) await saveSuivi(u.amat_id, { rang: u.rang }, true);
+  toast(dir === "add" ? "Ajoutée au top" : dir === "remove" ? "Retirée du top" : "Classement mis à jour");
 }
 
 // ---------- carte ----------
-const STATUT_COLOR = { a_appeler: "#8a867c", messagerie: "#d38b3a", a_rappeler: "#d38b3a", pas_dispo: "#c04848", ecartee: "#c04848", rdv: "#2f8f74", vue: "#2f8f74", retenue: "#1d5f4d" };
 function renderMap() {
   for (const a of S.amats) derive(a);
   if (!S.map) {
-    S.map = L.map("map").setView([47.2063, -1.5470], 14);
+    S.map = L.map("map", { zoomControl: false }).setView([47.2063, -1.5470], 14);
+    L.control.zoom({ position: "bottomright" }).addTo(S.map);
     const dark = matchMedia("(prefers-color-scheme: dark)").matches;
     L.tileLayer(`https://{s}.basemaps.cartocdn.com/${dark ? "dark_all" : "rastertiles/voyager"}/{z}/{x}/{y}{r}.png`,
       { maxZoom: 20, subdomains: "abcd", attribution: "© OpenStreetMap · © CARTO" }).addTo(S.map);
@@ -613,42 +876,45 @@ function renderMap() {
   for (const a of S.amats) if (a.lat) (byPos[`${a.lat},${a.lon}`] ||= []).push(a);
   for (const group of Object.values(byPos)) {
     group.forEach((a, i) => {
-      const st = S.suivi[a.id]?.statut || "a_appeler";
-      const off = i * 0.00006;
-      S.markers[a.id] = L.circleMarker([a.lat + off, a.lon + off], { radius: 10, color: "#fff", weight: 2, fillColor: STATUT_COLOR[st], fillOpacity: .95 })
-        .bindPopup(`<b>${esc(a.nom)}</b><br>${STATUTS[st]}${a._dist != null ? ` · ${a._dist < 1 ? Math.round(a._dist * 1000) + " m" : a._dist.toFixed(1) + " km"}` : ""}<br>${a.mercredi ? "Mercredi ✓" : "Pas le mercredi"} · ${a.places.length ? "place dispo" : "pas de place affichée"}<br>
-          ${a.telephone ? `<a class="btn" href="tel:${esc(a.telephone)}">📞 ${fmtTel(a.telephone)}</a> ` : ""}<a class="btn" href="${routeUrl(a)}" target="_blank" rel="noopener">📍 Google Maps</a>`)
+      const st = statutOf(a.id);
+      const off = i * 0.00007;
+      S.markers[a.id] = L.circleMarker([a.lat + off, a.lon + off], { radius: 10, color: "#fff", weight: 2.5, fillColor: STATUT_COLOR[st], fillOpacity: 1 })
+        .bindPopup(`<b>${esc(a.nom)}</b><br><span style="color:${STATUT_COLOR[st]};font-weight:700">● ${STATUTS[st]}</span>${a._dist != null ? " · " + fmtDist(a._dist) : ""}<br>
+          ${a.mercredi ? "Mercredi ✓" : "Pas le mercredi"} · ${a.places.length ? "place dispo" : "pas de place affichée"}
+          <div class="pop-actions">${a.telephone ? `<a class="btn call" href="tel:${esc(a.telephone)}">${ic("phone")}Appeler</a>` : ""}<a class="btn" href="${routeUrl(a)}" target="_blank" rel="noopener">${ic("pin")}Maps</a></div>`)
         .addTo(S.layer);
     });
   }
-  if (S.besoins.maison) L.marker([S.besoins.maison.lat, S.besoins.maison.lon]).bindPopup("Maison").addTo(S.layer);
+  if (S.besoins.maison) L.marker([S.besoins.maison.lat, S.besoins.maison.lon], { icon: L.divIcon({ className: "", html: `<div class="home-pin">${ic("home")}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] }) }).bindPopup("<b>Maison</b>").addTo(S.layer);
   if (S.focus && S.markers[S.focus]) {
     const m = S.markers[S.focus]; S.focus = null;
     S.map.setView(m.getLatLng(), 17); m.openPopup();
   }
 }
 function fitAll() {
-  const pts = Object.values(S.markers || {}).map(m => m.getLatLng());
-  if (pts.length) S.map.fitBounds(L.latLngBounds(pts).pad(0.1));
+  const pts = Object.values(S.markers).map(m => m.getLatLng());
+  if (S.besoins.maison) pts.push(L.latLng(S.besoins.maison.lat, S.besoins.maison.lon));
+  if (pts.length) S.map.fitBounds(L.latLngBounds(pts).pad(0.08));
 }
-$("#fitall").addEventListener("click", fitAll);
-$("#kml").addEventListener("click", kmlExport);
-$("#locate").addEventListener("click", () => {
-  if (!navigator.geolocation) return toast("Géolocalisation indisponible");
-  toast("Localisation…");
-  navigator.geolocation.getCurrentPosition(pos => {
-    const ll = [pos.coords.latitude, pos.coords.longitude];
-    if (S.meMarker) S.meMarker.remove();
-    S.meMarker = L.marker(ll, { icon: L.divIcon({ className: "", html: '<div class="me-dot"></div>', iconSize: [16, 16] }) }).addTo(S.map).bindPopup("Vous êtes ici");
-    S.map.setView(ll, 16);
-  }, () => toast("Position refusée ou indisponible"), { enableHighAccuracy: true, timeout: 10000 });
-});
+function kmlExport() {
+  const x = s => esc(s).replace(/&#39;/g, "'");
+  const pts = S.amats.filter(a => a.lat).map(a => {
+    const desc = [STATUTS[statutOf(a.id)], a.telephone ? "Tél : " + fmtTel(a.telephone) : "", a.email || "", a.adresse,
+      a.mercredi ? "Mercredi : oui" : "Mercredi : non", a.places.length ? "Place dispo" : "Pas de place affichée"].filter(Boolean).join("\n");
+    return `<Placemark><name>${x(a.nom)}</name><description>${x(desc)}</description><Point><coordinates>${a.lon},${a.lat},0</coordinates></Point></Placemark>`;
+  }).join("\n");
+  const kml = `<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Nounous Île de Nantes</name>\n${pts}\n</Document></kml>`;
+  const url = URL.createObjectURL(new Blob([kml], { type: "application/vnd.google-earth.kml+xml" }));
+  const link = Object.assign(document.createElement("a"), { href: url, download: "nounous-ile-de-nantes.kml" });
+  document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  toast("Fichier KML téléchargé");
+}
 
 // ---------- écritures ----------
-async function saveSuivi(id, patch) {
+async function saveSuivi(id, patch, silent) {
   S.suivi[id] = { ...(S.suivi[id] || { amat_id: id }), ...patch };
   const { error } = await sb.from("suivi").upsert({ amat_id: id, ...patch, updated_by: S.me, updated_at: new Date().toISOString() });
-  if (error) toast("Erreur : " + error.message); else toast("Enregistré");
+  if (error) toast("Erreur : " + error.message); else if (!silent) toast("Enregistré");
 }
 async function saveAvis(id, patch) {
   S.avis[id] ||= {};
@@ -656,31 +922,37 @@ async function saveAvis(id, patch) {
   const { error } = await sb.from("avis").upsert({ amat_id: id, email: S.me, ...patch, updated_at: new Date().toISOString() });
   if (error) toast("Erreur : " + error.message); else toast("Enregistré");
 }
-const debounced = debounce(async (key, fn) => fn(), 600);
+const debounced = debounce(async (key, fn) => fn(), 700);
 
-// ---------- événements liste ----------
+// ---------- événements ----------
 document.addEventListener("click", async e => {
-  const t = e.target.closest("[data-stat],[data-filter],[data-act],[data-tab],[data-top]");
+  const t = e.target.closest("[data-stat],[data-filter],[data-more],[data-hideout],[data-act],[data-tab],[data-top],[data-jour]");
   if (!t) return;
   if (t.dataset.tab) return switchTab(t.dataset.tab);
+  if (t.dataset.jour) return t.classList.toggle("on");
   if (t.dataset.stat) { S.statFilter = S.statFilter === t.dataset.stat ? null : t.dataset.stat; return renderList(); }
-  if (t.dataset.filter) { const k = t.dataset.filter; S.filters.has(k) ? S.filters.delete(k) : S.filters.add(k); t.classList.toggle("on"); return renderList(); }
-  if (t.dataset.top) {
-    const id = t.dataset.id;
-    return moveTop(id, t.dataset.top);
-  }
+  if (t.dataset.filter) { const k = t.dataset.filter; S.filters.has(k) ? S.filters.delete(k) : S.filters.add(k); renderChips(); return renderList(); }
+  if (t.dataset.more) { S.more = !S.more; return renderChips(); }
+  if (t.dataset.hideout) { S.hideOut = !S.hideOut; renderChips(); return renderList(); }
+  if (t.dataset.top) return moveTop(t.dataset.id, t.dataset.top);
   const card = t.closest(".card"); if (!card) return;
   const id = card.dataset.id;
   const act = t.dataset.act;
-  if (act === "showmap") { S.focus = id; switchTab("carte"); window.scrollTo(0, 0); return; }
-  if (act === "toggle") { S.open.has(id) ? S.open.delete(id) : S.open.add(id); rerenderCard(id); }
+  if (act === "showmap") { S.focus = id; switchTab("carte"); window.scrollTo(0, 0); }
+  else if (act === "toggle") {
+    const opening = !S.open.has(id);
+    opening ? S.open.add(id) : S.open.delete(id);
+    rerenderCard(id);
+    if (opening) requestAnimationFrame(() => document.querySelector(`.card[data-id="${CSS.escape(id)}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
   else if (act === "call") {
     const res = t.dataset.res;
     const { data, error } = await sb.from("appels").insert({ amat_id: id, par: S.me, resultat: res }).select().single();
     if (error) return toast("Erreur : " + error.message);
     (S.appels[id] ||= []).push(data);
-    await saveSuivi(id, { statut: res });
-    rerenderCard(id); renderStats();
+    await saveSuivi(id, { statut: res }, true);
+    toast("Appel noté : " + STATUTS[res]);
+    rerenderCard(id); renderOverview();
   }
   else if (act === "delcall") {
     const cid = +t.dataset.cid;
@@ -699,22 +971,22 @@ document.addEventListener("click", async e => {
     const q = t.closest(".q").dataset.q;
     const ck = { ...(S.suivi[id]?.checklist || {}) };
     ck[q] = { ...(ck[q] || {}), v: ck[q]?.v === t.dataset.v ? null : t.dataset.v };
-    await saveSuivi(id, { checklist: ck });
+    await saveSuivi(id, { checklist: ck }, true);
     rerenderCard(id);
   }
-  else if (act === "totop") { await moveTop(id, "add"); }
-  else if (act === "untop") { await moveTop(id, "remove"); }
+  else if (act === "totop") moveTop(id, "add");
+  else if (act === "untop") moveTop(id, "remove");
 });
 
 document.addEventListener("change", async e => {
   const t = e.target;
-  const card = t.closest(".card");
   if (t.id === "sort") return renderList();
-  if (!card) return;
+  const card = t.closest(".card"); if (!card) return;
   const id = card.dataset.id;
-  if (t.dataset.act === "statut") { await saveSuivi(id, { statut: t.value }); rerenderCard(id); renderStats(); }
+  if (t.dataset.act === "statut") { await saveSuivi(id, { statut: t.value }); rerenderCard(id); renderOverview(); }
   if (t.dataset.field === "rdv_le") {
-    await saveSuivi(id, { rdv_le: t.value ? new Date(t.value).toISOString() : null, ...(t.value && ["a_appeler", "messagerie", "a_rappeler"].includes(S.suivi[id]?.statut) ? { statut: "rdv" } : {}) });
+    await saveSuivi(id, { rdv_le: t.value ? new Date(t.value).toISOString() : null, ...(t.value && ["a_appeler", "messagerie", "a_rappeler"].includes(statutOf(id)) ? { statut: "rdv" } : {}) });
+    renderOverview();
   }
 });
 
@@ -737,7 +1009,7 @@ document.addEventListener("input", e => {
 
 function switchTab(tab) {
   S.tab = tab;
-  document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+  document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
   for (const k of ["liste", "carte", "top", "reglages"]) $("#tab-" + k).classList.toggle("hidden", k !== tab);
   if (tab === "reglages") fillBesoins();
   render();
@@ -750,9 +1022,8 @@ function fillBesoins() {
   f.adresse.value = b.maison?.label || "";
   f.debut.value = b.debut || ""; f.age.value = b.age ?? "";
   f.depot.value = b.depot || ""; f.recup.value = b.recup || "";
-  $("#joursBesoin").innerHTML = DAYS.map(d => `<span class="chip ${b.jours?.includes(d) ? "on" : ""}" data-jour="${d}">${d}</span>`).join("");
+  $("#joursBesoin").innerHTML = DAYS.map(d => `<button type="button" class="chip ${b.jours?.includes(d) ? "on" : ""}" data-jour="${d}">${d}</button>`).join("");
 }
-$("#joursBesoin").addEventListener("click", e => { const c = e.target.closest("[data-jour]"); if (c) c.classList.toggle("on"); });
 $("#besoins").addEventListener("submit", async e => {
   e.preventDefault();
   const f = e.target, msg = $("#besoinsMsg");
@@ -774,7 +1045,8 @@ $("#besoins").addEventListener("submit", async e => {
   } else if (!adr) b.maison = null;
   S.besoins = b;
   const { error } = await sb.from("reglages").upsert({ cle: "besoins", valeur: b });
-  msg.textContent = error ? "Erreur : " + error.message : `Enregistré${b.maison ? " · " + b.maison.label : ""}`;
+  msg.textContent = error ? "Erreur : " + error.message : "";
+  if (!error) toast(b.maison ? "Enregistré · " + b.maison.label : "Enregistré");
   fillBesoins();
 });
 
@@ -786,9 +1058,6 @@ async function loadAll() {
   ]);
   const err = [am, su, av, ap, re].find(r => r.error);
   if (err) { toast("Erreur de chargement : " + err.error.message); return false; }
-  if (!am.data.length) {
-    $("#list").innerHTML = `<div class="empty">Aucune donnée visible. Vérifie que ton email est bien dans la table allowed_users.</div>`;
-  }
   S.amats = am.data.map(r => ({ ...r.data, id: r.id }));
   S.suivi = Object.fromEntries(su.data.map(r => [r.amat_id, r]));
   S.avis = {};
@@ -798,7 +1067,6 @@ async function loadAll() {
   S.besoins = re.data.find(r => r.cle === "besoins")?.valeur || {};
   return true;
 }
-
 function subscribe() {
   sb.channel("garde")
     .on("postgres_changes", { event: "*", schema: "public", table: "suivi" }, p => {
@@ -816,16 +1084,33 @@ function subscribe() {
     })
     .subscribe();
 }
-function refreshFrom(id) {
-  if (S.tab === "liste") { rerenderCard(id); renderStats(); } else render();
-}
+function refreshFrom(id) { if (S.tab === "liste") { rerenderCard(id); renderOverview(); } else render(); }
+
+// ---------- initialisation de l'interface ----------
+$("#tabs").innerHTML = $("#tabsMob").innerHTML = TABS.map(([k, label, icon]) => `<button data-tab="${k}" class="${k === "liste" ? "on" : ""}">${ic(icon)}<span>${label}</span></button>`).join("");
+$("#logout").innerHTML = ic("out");
+$("#searchIcon").innerHTML = ic("search");
+$("#locate").innerHTML = ic("locate") + "Ma position";
+$("#fitall").innerHTML = ic("expand") + "Tout voir";
+$("#kml").innerHTML = ic("download") + "Exporter pour Google My Maps";
+$("#legend").innerHTML = Object.entries(STATUTS).map(([k, l]) => `<span class="s-${k}"><span class="dot"></span>${l}</span>`).join("");
+$("#fitall").addEventListener("click", fitAll);
+$("#kml").addEventListener("click", kmlExport);
+$("#locate").addEventListener("click", () => {
+  if (!navigator.geolocation) return toast("Géolocalisation indisponible");
+  navigator.geolocation.getCurrentPosition(pos => {
+    const ll = [pos.coords.latitude, pos.coords.longitude];
+    if (S.meMarker) S.meMarker.remove();
+    S.meMarker = L.marker(ll, { icon: L.divIcon({ className: "", html: '<div class="me-dot"></div>', iconSize: [16, 16] }) }).addTo(S.map).bindPopup("Vous êtes ici");
+    S.map.setView(ll, 16);
+  }, () => toast("Position refusée ou indisponible"), { enableHighAccuracy: true, timeout: 10000 });
+});
 
 // ---------- auth ----------
 $("#loginForm").addEventListener("submit", async e => {
   e.preventDefault();
-  const email = $("#loginEmail").value.trim().toLowerCase();
   $("#loginMsg").textContent = "Connexion…";
-  const { error } = await sb.auth.signInWithPassword({ email, password: $("#loginPw").value });
+  const { error } = await sb.auth.signInWithPassword({ email: $("#loginEmail").value.trim().toLowerCase(), password: $("#loginPw").value });
   $("#loginMsg").textContent = error ? "Email ou mot de passe incorrect." : "";
 });
 $("#logout").addEventListener("click", async () => { await sb.auth.signOut(); location.reload(); });
@@ -833,9 +1118,11 @@ $("#logout").addEventListener("click", async () => { await sb.auth.signOut(); lo
 async function start(session) {
   if (!session) { $("#login").classList.remove("hidden"); $("#app").classList.add("hidden"); return; }
   S.me = session.user.email.toLowerCase();
-  $("#who").textContent = first(S.me);
+  $("#who").textContent = first(S.me).slice(0, 1);
+  $("#who").title = S.me;
   $("#login").classList.add("hidden"); $("#app").classList.remove("hidden");
   renderChips();
+  $("#list").innerHTML = '<div class="skel"></div><div class="skel"></div><div class="skel"></div>';
   if (await loadAll()) { render(); subscribe(); }
 }
 let started = false;
