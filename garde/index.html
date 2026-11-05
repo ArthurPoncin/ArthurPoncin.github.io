@@ -299,6 +299,7 @@ select.field.sort { width: auto; min-width: 0; flex: none; padding-right: 30px; 
 .pop-actions { display: flex; gap: 6px; margin-top: 10px; }
 .pop-actions .btn { flex: 1; padding: 7px 10px; font-size: 13px; }
 .pop-actions .btn.call { color: var(--brand-ink); }
+@media (prefers-color-scheme: dark) { #map .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9); } }
 .me-dot { width: 16px; height: 16px; border-radius: 50%; background: #2b7cff; border: 3px solid #fff; box-shadow: 0 0 0 6px rgba(43,124,255,.25); }
 .home-pin { width: 30px; height: 30px; border-radius: 10px; background: var(--ink); color: var(--bg); display: grid; place-items: center; box-shadow: var(--shadow-lg); }
 
@@ -877,9 +878,8 @@ function renderMap() {
   if (!S.map) {
     S.map = L.map("map", { zoomControl: false }).setView([47.2063, -1.5470], 14);
     L.control.zoom({ position: "bottomright" }).addTo(S.map);
-    const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-    L.tileLayer(`https://{s}.basemaps.cartocdn.com/${dark ? "dark_all" : "rastertiles/voyager"}/{z}/{x}/{y}{r}.png`,
-      { maxZoom: 20, subdomains: "abcd", attribution: "© OpenStreetMap · © CARTO" }).addTo(S.map);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      { maxZoom: 19, attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(S.map);
   }
   setTimeout(() => S.map.invalidateSize(), 50);
   if (S.layer) S.layer.remove();
@@ -894,7 +894,7 @@ function renderMap() {
       S.markers[a.id] = L.circleMarker([a.lat + off, a.lon + off], { radius: 10, color: "#fff", weight: 2.5, fillColor: STATUT_COLOR[st], fillOpacity: 1 })
         .bindPopup(`<b>${esc(a.nom)}</b><br><span style="color:${STATUT_COLOR[st]};font-weight:700">● ${STATUTS[st]}</span>${a._dist != null ? " · " + fmtDist(a._dist) : ""}<br>
           ${a.mercredi ? "Mercredi ✓" : "Pas le mercredi"} · ${a.places.length ? "place dispo" : "pas de place affichée"}
-          <div class="pop-actions">${a.telephone ? `<a class="btn call" href="tel:${esc(a.telephone)}">${ic("phone")}Appeler</a>` : ""}<a class="btn" href="${routeUrl(a)}" target="_blank" rel="noopener">${ic("pin")}Maps</a></div>`)
+          <div class="pop-actions">${a.telephone ? `<a class="btn call" href="tel:${esc(a.telephone)}">${ic("phone")}Appeler</a>` : ""}<a class="btn" href="${routeUrl(a)}" target="_blank" rel="noopener">${ic("pin")}Ouvrir dans Maps</a></div>`)
         .addTo(S.layer);
     });
   }
