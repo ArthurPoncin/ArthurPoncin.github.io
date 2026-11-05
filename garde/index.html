@@ -239,6 +239,14 @@ select.field.sort { width: auto; min-width: 0; flex: none; padding-right: 30px; 
 .tag { font-size: 12.5px; padding: 3px 10px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); }
 .tag.good { background: var(--good-soft); border-color: transparent; color: var(--good); font-weight: 600; }
 .tag.warn { background: var(--warn-soft); border-color: transparent; color: var(--warn); font-weight: 600; }
+.journal-input { display: grid; gap: 8px; margin-bottom: 10px; }
+.journal-input textarea { min-height: 64px; }
+.last-note { display: flex; gap: 8px; align-items: flex-start; background: var(--surface-2); border-radius: 12px; padding: 9px 12px; font-size: 13.5px; color: var(--ink-2); line-height: 1.4; cursor: pointer; }
+.last-note svg { width: 16px; height: 16px; margin-top: 2px; color: var(--muted); }
+.last-note b { color: var(--ink); }
+.last-note time { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+.timeline .com { flex-basis: 100%; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; margin-top: 2px; white-space: pre-wrap; }
+.s-note { --c: #6b7f99; }
 .call-btns { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
 .timeline { list-style: none; margin: 12px 0 0; padding: 0 0 0 14px; border-left: 2px solid var(--line); display: grid; gap: 8px; font-size: 13.5px; }
 .timeline li { position: relative; display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; }
@@ -484,6 +492,7 @@ const ICONS = {
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   euro: '<path d="M18 7a7 7 0 1 0 0 10M4 10h10M4 14h10"/>',
   cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  note: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   baby: '<circle cx="12" cy="8" r="5"/><path d="M3 21a9 9 0 0 1 18 0"/>',
 };
 const ic = (n, cls = "i") => `<svg class="${cls}" viewBox="0 0 24 24">${ICONS[n]}</svg>`;
@@ -493,6 +502,7 @@ const STATUTS = {
   a_appeler: "À appeler", messagerie: "Messagerie", a_rappeler: "À rappeler", pas_dispo: "Pas dispo",
   rdv: "RDV visite", vue: "Visitée", retenue: "Retenue", ecartee: "Écartée",
 };
+const LOG_LABEL = r => r === "note" ? "Note" : (STATUTS[r] || r);
 const STATUT_COLOR = { a_appeler: "#9aa19b", messagerie: "#e0a23c", a_rappeler: "#e07b2c", pas_dispo: "#c9605a", rdv: "#3f84d0", vue: "#2b9b8c", retenue: "#1f8f5c", ecartee: "#8b5cf6" };
 const CALL_RESULTS = [["messagerie", "Messagerie"], ["a_rappeler", "À rappeler"], ["pas_dispo", "Pas dispo"], ["rdv", "RDV pris"]];
 const DAYS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
@@ -667,11 +677,18 @@ function weekHtml(a) {
   }).join("")}</div>`;
 }
 
+function lastNoteHtml(a) {
+  const log = S.appels[a.id] || [];
+  if (!log.length) return "";
+  const c = log.reduce((x, y) => (y.le > x.le ? y : x));
+  return `<div class="last-note" data-act="toggle">${ic("note")}<div><b>${esc(cap(first(c.par)))}</b> · ${esc(LOG_LABEL(c.resultat))} <time>${fmtDT(c.le)}</time>${c.commentaire ? `<br>${esc(c.commentaire.length > 140 ? c.commentaire.slice(0, 140) + "…" : c.commentaire)}` : ""}${log.length > 1 ? ` <span class="muted">(+${log.length - 1})</span>` : ""}</div></div>`;
+}
+
 function distHtml(a) {
   if (a._dist == null) return S.besoins.maison ? `<span class="dist none">${ic("pin")}Distance inconnue</span>` : "";
   const walk = Math.max(1, Math.round(a._dist * 1.3 / 4.5 * 60));
   const bike = Math.max(1, Math.round(a._dist * 1.3 / 15 * 60));
-  return `<span class="dist ${a._dist > 1.5 ? "far" : ""}">${ic("pin")}À ${fmtDist(a._dist)} <span>· ${walk} min à pied · ${bike} min à vélo</span></span>`;
+  return `<span class="dist ${a._dist > 1.5 ? "far" : ""}">${ic("pin")}<b style="white-space:nowrap">À ${fmtDist(a._dist)}</b><span style="white-space:nowrap">· 🚶 ${walk} min · 🚲 ${bike} min</span></span>`;
 }
 
 function factsHtml(a) {
@@ -715,6 +732,7 @@ function cardHtml(a) {
       </div>
       ${factsHtml(a)}
       ${weekHtml(a)}
+      ${lastNoteHtml(a)}
       <div class="c-actions">
         ${a.telephone ? `<a class="btn call" href="tel:${esc(a.telephone)}">${ic("phone")}${fmtTel(a.telephone)}</a>`
           : a.email ? `<a class="btn call" href="mailto:${esc(a.email)}">${ic("mail")}Écrire</a>` : ""}
@@ -740,10 +758,15 @@ function detailsHtml(a, s) {
   <div class="details">
     <div class="d-grid">
       <div class="sec">
-        <h4>Après l'appel</h4>
+        <h4>Journal</h4>
+        <div class="journal-input">
+          <textarea class="field" data-journal placeholder="Ex : appelée ce matin, rappeler jeudi après 17h…"></textarea>
+          <button class="btn sm" data-act="note">${ic("note")}Ajouter la note</button>
+        </div>
+        <p class="muted" style="margin:0 0 6px">Ou noter le résultat d'un appel (avec le texte ci-dessus) :</p>
         <div class="call-btns">${CALL_RESULTS.map(([k, l]) => `<button class="btn sm" data-act="call" data-res="${k}"><span class="dot s-${k}"></span>${l}</button>`).join("")}</div>
-        ${log.length ? `<ul class="timeline">${log.map(c => `<li class="s-${c.resultat}"><b>${esc(cap(first(c.par)))}</b> ${esc(STATUTS[c.resultat] || c.resultat)} <time>${fmtDT(c.le)}</time>${c.par === S.me ? `<button class="x" data-act="delcall" data-cid="${c.id}" title="Supprimer">×</button>` : ""}</li>`).join("")}</ul>`
-          : `<p class="muted" style="margin:10px 0 0">Pas encore appelée.</p>`}
+        ${log.length ? `<ul class="timeline">${log.map(c => `<li class="s-${c.resultat}"><b>${esc(cap(first(c.par)))}</b> ${esc(LOG_LABEL(c.resultat))} <time>${fmtDT(c.le)}</time>${c.par === S.me ? `<button class="x" data-act="delcall" data-cid="${c.id}" title="Supprimer">×</button>` : ""}${c.commentaire ? `<div class="com">${esc(c.commentaire)}</div>` : ""}</li>`).join("")}</ul>`
+          : `<p class="muted" style="margin:10px 0 0">Rien dans le journal pour l'instant.</p>`}
       </div>
       <div class="sec">
         <h4>Mon avis</h4>
@@ -958,13 +981,18 @@ document.addEventListener("click", async e => {
     rerenderCard(id);
     if (opening) requestAnimationFrame(() => document.querySelector(`.card[data-id="${CSS.escape(id)}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }
-  else if (act === "call") {
-    const res = t.dataset.res;
-    const { data, error } = await sb.from("appels").insert({ amat_id: id, par: S.me, resultat: res }).select().single();
+  else if (act === "call" || act === "note") {
+    const res = act === "note" ? "note" : t.dataset.res;
+    const com = card.querySelector("[data-journal]")?.value.trim() || null;
+    if (res === "note" && !com) return toast("Écris d'abord la note");
+    t.disabled = true;
+    const { data, error } = await sb.from("appels").insert({ amat_id: id, par: S.me, resultat: res, commentaire: com }).select().single();
+    t.disabled = false;
     if (error) return toast("Erreur : " + error.message);
     (S.appels[id] ||= []).push(data);
-    await saveSuivi(id, { statut: res }, true);
-    toast("Appel noté : " + STATUTS[res]);
+    if (res !== "note") await saveSuivi(id, { statut: res }, true);
+    toast(res === "note" ? "Note ajoutée" : "Appel noté : " + STATUTS[res]);
+    if (document.activeElement) document.activeElement.blur();
     rerenderCard(id); renderOverview();
   }
   else if (act === "delcall") {
