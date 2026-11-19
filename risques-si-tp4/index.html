@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Péage flux libre, Groupe 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --stage:#E6E9EE;
+  --paper:#FBFBFC;
+  --card:#F2F4F7;
+  --ink:#14171C;
+  --ink2:#3A3F47;
+  --muted:#6B717B;
+  --faint:#A0A6AF;
+  --line:#E2E5EA;
+  --accent:#1F4E8C;
+  --accent-soft:#E4ECF7;
+  --red:#B42318;     --red-soft:#FBE5E2;
+  --orange:#B5531A;  --orange-soft:#FCEADD;
+  --amber:#8A5F0C;   --amber-soft:#FBF1DC;
+  --green:#2E7A4E;   --green-soft:#E2F1E7;
+  --violet:#5B3E96;  --violet-soft:#ECE6F7;
+  --display:"Inter Tight","Inter","Segoe UI",Arial,sans-serif;
+  --font:"Inter","Segoe UI",Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+html,body{height:100%;margin:0}
+body{background:var(--stage);color:var(--ink);font-family:var(--font);overflow:hidden;-webkit-font-smoothing:antialiased}
+.stage{position:fixed;inset:0;display:grid;place-items:center}
+.deck{width:1280px;height:720px;position:relative;flex:none}
+.slide{position:absolute;inset:0;background:var(--paper);border-radius:16px;box-shadow:0 40px 90px -40px rgba(20,23,28,.32),0 0 0 1px rgba(20,23,28,.04);padding:44px 80px 72px;display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:translateX(36px);transition:opacity .5s ease,transform .65s cubic-bezier(.2,.7,.2,1),visibility .5s;overflow:hidden}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.slide.past{transform:translateX(-36px)}
+h1,h2,h3{margin:0;font-family:var(--display);letter-spacing:-.025em;text-wrap:balance}
+h2{font-size:40px;line-height:1.08;font-weight:700;max-width:24ch}
+h2 em,h1 em{font-style:normal;color:var(--accent)}
+p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+b,strong{font-weight:600;color:var(--ink)}
+
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:22px;height:2px;background:var(--accent)}
+.secs{display:flex;gap:4px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.secs span{padding:5px 9px;border-radius:99px}
+.secs span.on{background:var(--ink);color:#fff}
+.lead{font-size:17px;color:var(--muted);line-height:1.5}
+.foot{position:absolute;left:80px;right:80px;bottom:28px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.08em;text-transform:uppercase}
+.body{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
+
+.slide.active .r{animation:up .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms + 180ms)}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.slide.active .w{animation:wide .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms + 350ms);transform-origin:left}
+@keyframes wide{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+.lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block}
+.card{background:var(--card);border-radius:14px;padding:20px 22px}
+.card p,.card li{font-size:16px;line-height:1.5;color:var(--ink2)}
+.box{border:1px solid var(--line);border-radius:14px;padding:20px 22px;background:#fff}
+.c-red{background:var(--red-soft)} .c-red .lbl{color:var(--red)}
+.c-orange{background:var(--orange-soft)} .c-orange .lbl{color:var(--orange)}
+.c-amber{background:var(--amber-soft)} .c-amber .lbl{color:var(--amber)}
+.c-green{background:var(--green-soft)} .c-green .lbl{color:var(--green)}
+.c-blue{background:var(--accent-soft)} .c-blue .lbl{color:var(--accent)}
+.dots li{position:relative;padding-left:16px;margin-bottom:8px}
+.dots li:last-child{margin-bottom:0}
+.dots li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:2px;background:var(--accent)}
+.pill{display:inline-flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;flex:none;letter-spacing:.02em}
+.k4{background:var(--red-soft);color:var(--red)} .k3{background:var(--orange-soft);color:var(--orange)}
+.k2{background:var(--amber-soft);color:var(--amber)} .k1{background:var(--green-soft);color:var(--green)}
+.tT{background:var(--accent-soft);color:var(--accent)} .tO{background:var(--amber-soft);color:var(--amber)}
+.tJ{background:var(--violet-soft);color:var(--violet)} .tH{background:var(--green-soft);color:var(--green)}
+.num{font-variant-numeric:tabular-nums}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+
+/* 01 couverture */
+.cover{padding:56px 80px}
+.cover .grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(20,23,28,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(20,23,28,.045) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at 78% 45%,#000 10%,transparent 68%)}
+.cover .brand{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);position:relative}
+.cover .brand b{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:#fff;font-family:var(--display);font-size:14px;letter-spacing:0}
+.cover h1{font-size:68px;line-height:1;font-weight:800;margin-top:92px;position:relative;letter-spacing:-.035em;max-width:13ch}
+.cover .sub{font-size:19px;color:var(--muted);margin-top:24px;max-width:40ch;line-height:1.45;position:relative}
+.cover .names{position:absolute;left:80px;bottom:72px;display:flex;gap:8px;flex-wrap:wrap}
+.cover .names span{font-size:13.5px;color:var(--ink2);border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px}
+.road{position:absolute;right:72px;top:120px;width:470px;height:400px}
+.road .lane{stroke:#C9CED6;stroke-width:2;stroke-dasharray:10 12}
+.road .edge{stroke:#AEB4BD;stroke-width:2}
+.road .gantry{stroke:var(--ink2);stroke-width:5;stroke-linecap:round}
+.road .cam{fill:var(--accent)}
+.road .scan{fill:var(--accent);opacity:.08}
+.slide.active .road .scan{animation:scan 3.2s ease-in-out infinite}
+@keyframes scan{0%,100%{opacity:.04}50%{opacity:.14}}
+.veh{fill:var(--ink2)}
+.slide.active .veh{animation:drive 4.8s linear infinite;animation-delay:var(--d)}
+@keyframes drive{from{transform:translateY(-60px);opacity:0}8%{opacity:1}92%{opacity:1}to{transform:translateY(400px);opacity:0}}
+.ping{fill:none;stroke:var(--accent);stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center}
+.slide.active .ping{animation:ping 4.8s ease-out infinite;animation-delay:var(--d)}
+@keyframes ping{0%,38%{opacity:0;transform:scale(.4)}42%{opacity:.8}60%,100%{opacity:0;transform:scale(2.2)}}
+
+/* contexte */
+.inc{border-radius:14px;padding:18px 20px;background:var(--red-soft)}
+.inc .lbl{color:var(--red)}
+.inc p{font-size:15.5px;line-height:1.45;color:var(--ink2)}
+
+/* hypothèses */
+.hyp{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 20px}
+.h{display:grid;grid-template-columns:38px 1fr;gap:14px;align-items:center;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.h .pill{background:var(--ink);color:#fff}
+.h p{font-size:15.5px;line-height:1.4;color:var(--ink2)}
+
+/* données */
+.lvl{border-radius:14px;padding:20px 22px}
+.lvl li{font-size:16px;color:var(--ink);margin-bottom:12px}
+.lvl li:last-child{margin-bottom:0}
+.lvl li span{display:block;font-size:13px;color:var(--muted);margin-top:1px}
+.trips{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.trip{font-family:var(--mono);font-size:12px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 10px;color:var(--ink2)}
+.trip b{color:var(--accent);font-weight:600}
+.trip.odd{border-color:#EDB8B1;background:var(--red-soft)}
+.trip.odd b{color:var(--red)}
+
+/* actifs */
+.chain{display:flex;align-items:stretch}
+.node{flex:1;border:1px solid var(--line);background:#fff;border-radius:14px;padding:16px 16px}
+.node .lbl{margin-bottom:6px}
+.node b{display:block;font-family:var(--display);font-size:17px;letter-spacing:-.01em}
+.node span{font-size:13px;color:var(--muted);line-height:1.4;display:block;margin-top:4px}
+.node.core{background:var(--accent-soft);border-color:#C3D3EA}
+.node.core .lbl{color:var(--accent)}
+.link{width:26px;display:flex;align-items:center}
+.link i{display:block;height:2px;width:100%;background:var(--accent);opacity:.5}
+.side .node{background:var(--card);border-color:transparent}
+.dl{font-size:15.5px;line-height:1.45;color:var(--ink)}
+.forgot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+.fp{font-size:13.5px;color:var(--ink2);background:var(--card);border-radius:99px;padding:7px 14px}
+
+/* matrice + liste */
+.mx{display:grid;grid-template-columns:24px repeat(4,1fr);grid-template-rows:repeat(4,78px) 24px;gap:6px}
+.mc{border-radius:10px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:6px}
+.ml{display:grid;place-items:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.chip{background:var(--ink);color:#fff;font-family:var(--mono);font-size:12px;font-weight:600;border-radius:99px;padding:4px 10px}
+.slide.active .chip{animation:up .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*90ms + 400ms)}
+.f1{background:var(--green-soft)} .f2{background:var(--amber-soft)} .f3{background:var(--orange-soft)} .f4{background:var(--red-soft)}
+.rlist{display:flex;flex-direction:column}
+.ri{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:15.5px;color:var(--ink2)}
+.ri:last-child{border-bottom:0}
+.ri .rid{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.ri.hi{color:var(--ink);font-weight:600}
+.sep{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:12px 0 4px}
+
+/* fiches risque */
+.rk{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:stretch}
+.rk .stack{display:flex;flex-direction:column;gap:14px}
+.sheet{border:1px solid var(--line);border-radius:14px;padding:20px 22px;background:#fff;display:flex;flex-direction:column}
+.sheet .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.score{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:8px;margin-bottom:14px}
+.score div{border-radius:10px;background:var(--card);padding:9px 11px}
+.score span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.score b{font-family:var(--display);font-size:28px;font-weight:700;line-height:1.1}
+.score .tot.k4{background:var(--red-soft)} .score .tot.k4 b,.score .tot.k4 span{color:var(--red)}
+.score .tot.k3{background:var(--orange-soft)} .score .tot.k3 b,.score .tot.k3 span{color:var(--orange)}
+.kv{display:flex;justify-content:space-between;gap:14px;font-size:13.5px;padding:8px 0;border-bottom:1px solid var(--line)}
+.kv span{color:var(--muted);white-space:nowrap} .kv b{text-align:right}
+.mock{margin-top:14px;border-radius:10px;background:var(--card);padding:14px;flex:1;display:flex;flex-direction:column;justify-content:center}
+.ui{background:#fff;border:1px solid var(--line);border-radius:8px;font-size:12.5px;overflow:hidden}
+.ui .bar{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted);padding:6px 10px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between}
+.ui .ln{display:flex;justify-content:space-between;padding:6px 10px;border-bottom:1px solid var(--line);color:var(--ink2)}
+.ui .ln:last-child{border-bottom:0}
+.ui .ln span{color:var(--muted)}
+.ok{color:var(--green);font-weight:600} .ko{color:var(--red);font-weight:600}
+.sms{background:#fff;border:1px solid var(--line);border-radius:12px 12px 12px 3px;padding:10px 12px;font-size:12.5px;line-height:1.45;color:var(--ink2)}
+.sms small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
+.sms u{color:var(--accent)}
+.flag{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;color:var(--red);background:var(--red-soft);border-radius:6px;padding:3px 8px;align-self:flex-start}
+.flow{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11.5px}
+.flow span{background:#fff;border:1px solid var(--line);border-radius:6px;padding:5px 8px;color:var(--ink2)}
+.flow i{flex:1;height:2px;background:var(--red);opacity:.35;position:relative}
+.packet{position:absolute;top:-4px;left:0;width:10px;height:10px;border-radius:3px;background:var(--red)}
+.slide.active .packet{animation:pkt 2.2s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes pkt{from{left:0;opacity:0}15%{opacity:1}85%{opacity:1}to{left:calc(100% - 10px);opacity:0}}
+.meter{height:8px;border-radius:99px;background:#fff;border:1px solid var(--line);overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%;width:100%;background:var(--red);opacity:.65}
+.big{font-family:var(--display);font-size:26px;font-weight:700;color:var(--red);letter-spacing:-.02em}
+
+/* plan d'actions */
+.tl{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:20px;align-items:stretch}
+.ph{border-radius:14px;padding:20px 22px;background:#fff;border:1px solid var(--line);position:relative}
+.ph.now{background:var(--accent-soft);border-color:#C3D3EA}
+.ph .lbl{color:var(--accent);display:flex;justify-content:space-between;align-items:center}
+.ph h3{font-size:20px;margin:2px 0 14px}
+.act{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;padding:9px 0;border-top:1px solid var(--line);font-size:14.5px;line-height:1.4;color:var(--ink2)}
+.ph.now .act{border-top-color:#C9D7EC}
+.act .tags{display:flex;gap:4px;padding-top:1px}
+.clock{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--red);background:#fff;border-radius:99px;padding:3px 9px}
+.legend{display:flex;gap:8px;align-items:center;margin-top:18px;font-size:13px;color:var(--muted)}
+.legend .pill{margin-left:8px} .legend .pill:first-child{margin-left:0}
+
+/* conclusion */
+.res{display:grid;grid-template-columns:150px 1fr;gap:16px 16px;align-items:center}
+.res .nm{font-family:var(--display);font-size:16px;font-weight:600}
+.track{position:relative;height:26px;border-radius:8px;background:var(--card)}
+.track .bf{position:absolute;inset:0 auto 0 0;border-radius:8px;background:repeating-linear-gradient(135deg,#F3CFCA 0 6px,var(--red-soft) 6px 12px)}
+.track .af{position:absolute;inset:0 auto 0 0;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:flex-end;padding-right:9px;color:#fff;font-family:var(--mono);font-size:12px;font-weight:600}
+.slide.active .track .af{animation:shrink 1.2s cubic-bezier(.6,0,.3,1) both;animation-delay:calc(var(--i,0)*120ms + 500ms)}
+@keyframes shrink{from{width:var(--from)}}
+.sw{width:14px;height:14px;border-radius:4px;flex:none;display:inline-block}
+.msg{border-radius:14px;padding:18px 20px}
+.msg b{display:block;font-family:var(--display);font-size:18px;letter-spacing:-.015em;margin-bottom:4px}
+.msg p{font-size:14.5px;color:var(--ink2);line-height:1.45}
+.thanks{display:flex;justify-content:space-between;align-items:flex-end;margin-top:34px}
+.thanks h3{font-size:30px;letter-spacing:-.03em}
+.thanks h3 em{font-style:normal;color:var(--accent)}
+
+.hint{position:fixed;right:16px;bottom:12px;font-family:var(--mono);font-size:11px;color:#8C929B;letter-spacing:.06em}
+
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{overflow:visible;background:#fff}
+  .stage{position:static;display:block}
+  .deck{width:1280px;height:auto;transform:none!important}
+  .slide{position:relative;opacity:1!important;visibility:visible!important;transform:none!important;border-radius:0;box-shadow:none;height:720px;page-break-after:always;transition:none}
+  .slide *{animation:none!important}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+<div class="stage"><div class="deck" id="deck">
+
+  <!-- 01 Couverture -->
+  <section class="slide cover" data-sec="">
+    <div class="grid-bg"></div>
+    <div class="brand r"><b>G1</b>Stratégie des risques IT · EPSI M1</div>
+    <h1 class="r" style="--i:1">Péage en flux libre : <em>les données personnelles</em> à risque</h1>
+    <p class="sub r" style="--i:2">Première analyse des risques et plan d'actions pour le comité de direction.</p>
+    <svg class="road" viewBox="0 0 470 400" aria-hidden="true">
+      <line class="edge" x1="120" y1="0" x2="80" y2="400"/><line class="edge" x1="350" y1="0" x2="390" y2="400"/>
+      <line class="lane" x1="197" y1="0" x2="183" y2="400"/><line class="lane" x1="273" y1="0" x2="287" y2="400"/>
+      <polygon class="scan" points="150,150 320,150 360,260 110,260"/>
+      <line class="gantry" x1="90" y1="150" x2="380" y2="150"/>
+      <line class="gantry" x1="96" y1="150" x2="96" y2="200"/><line class="gantry" x1="374" y1="150" x2="374" y2="200"/>
+      <rect class="cam" x="152" y="142" width="18" height="12" rx="3"/><rect class="cam" x="226" y="142" width="18" height="12" rx="3"/><rect class="cam" x="300" y="142" width="18" height="12" rx="3"/>
+      <rect class="veh" x="146" y="0" width="26" height="42" rx="7" style="--d:0s"/>
+      <rect class="veh" x="222" y="0" width="26" height="42" rx="7" style="--d:1.6s"/>
+      <rect class="veh" x="298" y="0" width="26" height="42" rx="7" style="--d:3.2s"/>
+      <circle class="ping" cx="161" cy="190" r="16" style="--d:0s"/>
+      <circle class="ping" cx="237" cy="190" r="16" style="--d:1.6s"/>
+      <circle class="ping" cx="313" cy="190" r="16" style="--d:3.2s"/>
+    </svg>
+    <div class="names r" style="--i:3"><span>Arthur Poncin</span><span>Nathan Chavaudra</span><span>Amen Ahouandogbo</span><span>Habibou Halirou</span><span>Jihad Mabsout</span></div>
+    <div class="foot"><span>Groupe 1 · TP 4</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 02 Contexte -->
+  <section class="slide" data-sec="Contexte">
+    <div class="top"><span class="kicker">Contexte et mission</span><div class="secs"></div></div>
+    <h2 class="r">Des portiques à la place des barrières, <em>et quatre alertes</em></h2>
+    <div class="body">
+      <div class="g2" style="grid-template-columns:1.3fr 1fr">
+        <div class="card r" style="--i:1"><span class="lbl">Le système</span>
+          <ul class="dots">
+            <li>Caméras de <b>lecture de plaques</b> sur chaque portique</li>
+            <li>Paiement par badge, application ou <b>en ligne avec la plaque</b></li>
+            <li>Impayé : titulaire identifié via le <b>SIV</b> de l'État</li>
+          </ul>
+        </div>
+        <div class="card c-blue r" style="--i:2"><span class="lbl">Notre mission</span>
+          <p>Cabinet de conseil mandaté après une demande d'audit des autorités : <b>évaluer les risques</b> et proposer un <b>plan d'actions</b> au comité.</p>
+        </div>
+      </div>
+      <div class="g4" style="margin-top:20px">
+        <div class="inc r" style="--i:3"><span class="lbl">Usagers</span><p>Offres commerciales ciblées après leur passage</p></div>
+        <div class="inc r" style="--i:4"><span class="lbl">Ancien salarié</span><p>A consulté les trajets de personnalités</p></div>
+        <div class="inc r" style="--i:5"><span class="lbl">Hacker</span><p>Détient une copie partielle de la base</p></div>
+        <div class="inc r" style="--i:6"><span class="lbl">Association</span><p>Dénonce une surveillance généralisée</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Péage en flux libre</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 03 Hypothèses -->
+  <section class="slide" data-sec="Contexte">
+    <div class="top"><span class="kicker">Hypothèses</span><div class="secs"></div></div>
+    <h2 class="r">Ce que nous supposons, <em>faute d'information</em></h2>
+    <div class="body">
+      <div class="hyp">
+        <div class="h r" style="--i:1"><span class="pill">H1</span><p>Tous les véhicules sont photographiés, <b>rien n'est purgé</b></p></div>
+        <div class="h r" style="--i:2"><span class="pill">H2</span><p>Les agents peuvent <b>rechercher n'importe quelle plaque</b></p></div>
+        <div class="h r" style="--i:3"><span class="pill">H3</span><p>Les consultations <b>ne sont pas journalisées</b></p></div>
+        <div class="h r" style="--i:4"><span class="pill">H4</span><p>Les comptes des partis <b>restent actifs</b></p></div>
+        <div class="h r" style="--i:5"><span class="pill">H5</span><p>Plusieurs <b>sous-traitants</b> accèdent aux données</p></div>
+        <div class="h r" style="--i:6"><span class="pill">H6</span><p>Des <b>extractions</b> partent vers des partenaires</p></div>
+        <div class="h r" style="--i:7"><span class="pill">H7</span><p>Base <b>non chiffrée</b>, copies en environnement de test</p></div>
+        <div class="h r" style="--i:8"><span class="pill">H8</span><p><b>Aucune AIPD</b> avant la mise en service</p></div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Péage en flux libre</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 04 Données et actifs -->
+  <section class="slide" data-sec="Données">
+    <div class="top"><span class="kicker">Données et actifs</span><div class="secs"></div></div>
+    <h2 class="r">Quelles données, <em>et où elles circulent</em></h2>
+    <div class="body">
+      <div class="g3" style="grid-template-columns:1.2fr 1fr 1fr;gap:16px">
+        <div class="lvl c-red r" style="--i:1;padding:16px 20px"><span class="lbl">Très sensibles</span><p class="dl">Historique des passages, photos des véhicules, données SIV, carte bancaire</p></div>
+        <div class="lvl c-amber r" style="--i:2;padding:16px 20px"><span class="lbl">Sensibles</span><p class="dl">Impayés, coordonnées, plaque et badge, géolocalisation</p></div>
+        <div class="lvl c-green r" style="--i:3;padding:16px 20px"><span class="lbl">Courantes</span><p class="dl">Catégorie du véhicule, factures, journaux techniques</p></div>
+      </div>
+      <span class="lbl r" style="--i:4;margin:30px 0 10px">Le chemin d'une donnée de passage</span>
+      <div class="chain">
+        <div class="node r" style="--i:4"><span class="lbl">A6</span><b>Portiques</b><span>caméras et capteurs</span></div>
+        <div class="link"><i class="w" style="--i:5"></i></div>
+        <div class="node core r" style="--i:5"><span class="lbl">A1 · central</span><b>Base des passages</b><span>plaque, photo, horodatage</span></div>
+        <div class="link"><i class="w" style="--i:6"></i></div>
+        <div class="node r" style="--i:6"><span class="lbl">A2 · A3</span><b>Clients et paiement</b><span>badges, site, application</span></div>
+        <div class="link"><i class="w" style="--i:7"></i></div>
+        <div class="node r" style="--i:7"><span class="lbl">A4</span><b>Impayés</b><span>relances, recouvrement</span></div>
+        <div class="link"><i class="w" style="--i:8"></i></div>
+        <div class="node r" style="--i:8"><span class="lbl">A5</span><b>Interface SIV</b><span>accès réglementé</span></div>
+      </div>
+      <div class="forgot r" style="--i:9"><span class="lbl" style="margin:0">Souvent oubliés</span><span class="fp">A7 · Back office des agents</span><span class="fp">A8 · Copies et extractions</span><span class="fp">A9 · Habilitations</span><span class="fp">Sous-traitants</span></div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Péage en flux libre</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 06 Risques : matrice et liste -->
+  <section class="slide" data-sec="Risques">
+    <div class="top"><span class="kicker">Dix risques · criticité = probabilité × impact</span><div class="secs"></div></div>
+    <h2 class="r">Les quatre risques critiques <em>sont déjà des incidents</em></h2>
+    <div class="body">
+      <div style="display:grid;grid-template-columns:500px 1fr;gap:56px;align-items:center">
+        <div class="r" style="--i:1">
+          <div class="mx">
+            <div class="ml">4</div><div class="mc f2"></div><div class="mc f3"></div><div class="mc f4"></div><div class="mc f4"><span class="chip" style="--i:0">R1</span><span class="chip" style="--i:1">R2</span></div>
+            <div class="ml">3</div><div class="mc f1"></div><div class="mc f2"><span class="chip" style="--i:6">R7</span></div><div class="mc f3"><span class="chip" style="--i:4">R5</span></div><div class="mc f4"><span class="chip" style="--i:2">R3</span><span class="chip" style="--i:3">R4</span></div>
+            <div class="ml">2</div><div class="mc f1"></div><div class="mc f2"><span class="chip" style="--i:9">R10</span></div><div class="mc f2"><span class="chip" style="--i:7">R8</span><span class="chip" style="--i:8">R9</span></div><div class="mc f3"><span class="chip" style="--i:5">R6</span></div>
+            <div class="ml">1</div><div class="mc f1"></div><div class="mc f1"></div><div class="mc f1"></div><div class="mc f2"></div>
+            <div></div><div class="ml">1</div><div class="ml">2</div><div class="ml">3</div><div class="ml">4</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;padding-left:30px"><span class="lbl">↑ Probabilité</span><span class="lbl">Impact →</span></div>
+        </div>
+        <div class="rlist r" style="--i:2">
+          <span class="sep" style="padding-top:0">Présentés au comité</span>
+          <div class="ri hi"><span class="rid">R1</span><span>Fuite de la base des passages</span><span class="pill k4">16</span></div>
+          <div class="ri hi"><span class="rid">R2</span><span>Consultation abusive des trajets</span><span class="pill k4">16</span></div>
+          <div class="ri hi"><span class="rid">R3</span><span>Usage commercial des données</span><span class="pill k4">12</span></div>
+          <div class="ri hi"><span class="rid">R4</span><span>Surveillance disproportionnée</span><span class="pill k4">12</span></div>
+          <div class="ri hi"><span class="rid">R5</span><span>Faux sites de paiement</span><span class="pill k3">9</span></div>
+          <span class="sep">Suivis dans le plan</span>
+          <div class="ri"><span class="rid">R6</span><span>Accès SIV détourné</span><span class="pill k3">8</span></div>
+          <div class="ri"><span class="rid">R7</span><span>Plaque mal lue, innocent facturé</span><span class="pill k2">6</span></div>
+          <div class="ri"><span class="rid">R8</span><span>Sous-traitants non encadrés</span><span class="pill k2">6</span></div>
+          <div class="ri"><span class="rid">R9</span><span>Collecte ou paiement à l'arrêt</span><span class="pill k2">6</span></div>
+          <div class="ri"><span class="rid">R10</span><span>Droits des usagers mal gérés</span><span class="pill k2">4</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Péage en flux libre</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 07 R1 -->
+  <section class="slide" data-sec="Risques">
+    <div class="top"><span class="kicker">Risque 1 sur 5</span><div class="secs"></div></div>
+    <h2 class="r">Fuite massive : <em>la base des passages copiée</em></h2>
+    <div class="body">
+      <div class="rk">
+        <div class="stack">
+          <div class="card r" style="--i:1"><span class="lbl">Cause et menace</span><p>Base <b>non chiffrée</b>, copies en test, aucune purge. Un cybercriminel <b>revendique déjà</b> une copie.</p></div>
+          <div class="card c-red r" style="--i:2"><span class="lbl">Conséquences</span><p>Trajets de millions d'usagers revendus : chantage, hameçonnage, cambriolages. <b>Notification CNIL sous 72 h</b>, amende jusqu'à 4 % du CA mondial.</p></div>
+        </div>
+        <div class="sheet r" style="--i:2">
+          <div class="hd"><span class="lbl" style="margin:0">Fiche risque</span><span class="pill k4">Critique</span></div>
+          <div class="score"><div><span>Probabilité</span><b>4</b></div><div><span>Impact</span><b>4</b></div><div class="tot k4"><span>Criticité</span><b>16</b></div></div>
+          <div class="kv"><span>Actif</span><b>A1 · Base des passages</b></div>
+          <div class="mock"><span class="lbl">Flux sortant détecté</span>
+            <div class="flow"><span>A1</span><i><span class="packet"></span><span class="packet" style="--d:.7s"></span><span class="packet" style="--d:1.4s"></span></i><span>serveur inconnu</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Péage en flux libre</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 08 R2 -->
+  <section class="slide" data-sec="Risques">
+    <div class="top"><span class="kicker">Risque 2 sur 5</span><div class="secs"></div></div>
+    <h2 class="r">Consultation abusive : <em>suivre un ministre depuis le back office</em></h2>
+    <div class="body">
+      <div class="rk">
+        <div class="stack">
+          <div class="card r" style="--i:1"><span class="lbl">Cause et menace</span><p><b>Recherche libre par plaque</b>, aucun journal, compte jamais fermé. Un ancien salarié <b>affirme l'avoir fait</b>.</p></div>
+          <div class="card c-red r" style="--i:2"><span class="lbl">Conséquences</span><p>Pistage de personnalités, donc <b>risque pour leur sécurité</b>. Un seul cas suffit à faire la une et engage la responsabilité de l'entreprise.</p></div>
+        </div>
+        <div class="sheet r" style="--i:2">
+          <div class="hd"><span class="lbl" style="margin:0">Fiche risque</span><span class="pill k4">Critique</span></div>
+          <div class="score"><div><span>Probabilité</span><b>4</b></div><div><span>Impact</span><b>4</b></div><div class="tot k4"><span>Criticité</span><b>16</b></div></div>
+          <div class="kv"><span>Actifs</span><b>A7 · Back office, A9</b></div>
+          <div class="mock">
+            <div class="ui">
+              <div class="bar"><span>BACK OFFICE · CONNEXION</span><span>22:47</span></div>
+              <div class="ln"><span>Utilisateur</span>m.durand</div>
+              <div class="ln"><span>Statut RH</span><span class="ko">parti en mars</span></div>
+              <div class="ln"><span>Accès</span><span class="ok">autorisé</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Péage en flux libre</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 09 R3 -->
+  <section class="slide" data-sec="Risques">
+    <div class="top"><span class="kicker">Risque 3 sur 5</span><div class="secs"></div></div>
+    <h2 class="r">Usage commercial : <em>des données sorties de leur finalité</em></h2>
+    <div class="body">
+      <div class="rk">
+        <div class="stack">
+          <div class="card r" style="--i:1"><span class="lbl">Cause et menace</span><p>Extractions vers des <b>partenaires</b>, usage marketing ou sous-traitant qui réutilise les données.</p></div>
+          <div class="card c-red r" style="--i:2"><span class="lbl">Conséquences</span><p>Les données SIV servent <b>uniquement au péage</b>. Les détourner peut coûter <b>l'habilitation SIV</b>, donc le recouvrement des impayés.</p></div>
+        </div>
+        <div class="sheet r" style="--i:2">
+          <div class="hd"><span class="lbl" style="margin:0">Fiche risque</span><span class="pill k4">Critique</span></div>
+          <div class="score"><div><span>Probabilité</span><b>3</b></div><div><span>Impact</span><b>4</b></div><div class="tot k4"><span>Criticité</span><b>12</b></div></div>
+          <div class="kv"><span>Actif</span><b>A8 · Extractions</b></div>
+          <div class="mock"><span class="lbl">Reçu deux jours après un passage</span>
+            <div class="sms"><small>VENDREDI · 17:58</small>Vous partez souvent vers Caen le vendredi. Un week-end à Deauville ? -20 % ce soir.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Péage en flux libre</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 10 R4 -->
+  <section class="slide" data-sec="Risques">
+    <div class="top"><span class="kicker">Risque 4 sur 5</span><div class="secs"></div></div>
+    <h2 class="r">Surveillance : <em>tout collecter, tout garder</em></h2>
+    <div class="body">
+      <div class="rk">
+        <div class="stack">
+          <div class="card r" style="--i:1"><span class="lbl">Cause et menace</span><p>Photos de <b>tous</b> les véhicules, <b>aucune durée de conservation</b>, aucune AIPD. L'association alerte, un contrôle CNIL est probable.</p></div>
+          <div class="card c-red r" style="--i:2"><span class="lbl">Conséquences</span><p>Surveillance à grande échelle d'un espace public : <b>AIPD obligatoire</b> (article 35 du RGPD). Sans elle, la CNIL peut <b>suspendre le péage</b>.</p></div>
+        </div>
+        <div class="sheet r" style="--i:2">
+          <div class="hd"><span class="lbl" style="margin:0">Fiche risque</span><span class="pill k4">Critique</span></div>
+          <div class="score"><div><span>Probabilité</span><b>3</b></div><div><span>Impact</span><b>4</b></div><div class="tot k4"><span>Criticité</span><b>12</b></div></div>
+          <div class="kv"><span>Actifs</span><b>A1 · Passages, A6 · Portiques</b></div>
+          <div class="mock"><span class="lbl">Photos conservées</span>
+            <span class="big num" id="cnt">48 213 907</span>
+            <div class="meter"><i></i></div>
+            <div style="display:flex;justify-content:space-between;margin-top:8px;font-family:var(--mono);font-size:10.5px;color:var(--muted)"><span>durée de conservation</span><span class="ko">non définie</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Péage en flux libre</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 11 R5 -->
+  <section class="slide" data-sec="Risques">
+    <div class="top"><span class="kicker">Risque 5 sur 5</span><div class="secs"></div></div>
+    <h2 class="r">Hameçonnage : <em>de faux sites de paiement crédibles</em></h2>
+    <div class="body">
+      <div class="rk">
+        <div class="stack">
+          <div class="card r" style="--i:1"><span class="lbl">Cause et menace</span><p>Le paiement différé <b>habitue les usagers</b> aux demandes de paiement. Des escrocs en profitent, aidés par la fuite.</p></div>
+          <div class="card c-orange r" style="--i:2"><span class="lbl">Conséquences</span><p>Cartes bancaires volées, réclamations massives, <b>image du concessionnaire associée à l'arnaque</b>.</p></div>
+        </div>
+        <div class="sheet r" style="--i:2">
+          <div class="hd"><span class="lbl" style="margin:0">Fiche risque</span><span class="pill k3">Élevée</span></div>
+          <div class="score"><div><span>Probabilité</span><b>3</b></div><div><span>Impact</span><b>3</b></div><div class="tot k3"><span>Criticité</span><b>9</b></div></div>
+          <div class="kv"><span>Actif</span><b>A3 · Paiement en ligne</b></div>
+          <div class="mock">
+            <div class="sms"><small>EXPÉDITEUR INCONNU</small>Passage impayé du véhicule <b>AB-123-CD</b>. Réglez 1,90 € sous 24 h : <u>peage-a13-paiement.xyz</u></div>
+            <span class="flag">Domaine non officiel</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Péage en flux libre</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 12 Plan d'actions -->
+  <section class="slide" data-sec="Plan">
+    <div class="top"><span class="kicker">Plan d'actions</span><div class="secs"></div></div>
+    <h2 class="r">Agir cette semaine, <em>puis garder moins et contrôler mieux</em></h2>
+    <div class="body">
+      <div class="tl">
+        <div class="ph now r" style="--i:1"><span class="lbl">Cette semaine<span class="clock">CNIL · 72 h</span></span><h3>Décisions immédiates</h3>
+          <div class="act"><span>Cellule de crise, <b>notification CNIL</b>, plainte</span><span class="tags"><span class="pill tO">O</span><span class="pill tJ">J</span></span></div>
+          <div class="act"><span><b>Enquête technique</b> sur la fuite</span><span class="tags"><span class="pill tT">T</span></span></div>
+          <div class="act"><span><b>Fermer les comptes</b> des partis, MFA</span><span class="tags"><span class="pill tT">T</span></span></div>
+          <div class="act"><span>Bloquer la <b>recherche libre</b>, geler les extractions</span><span class="tags"><span class="pill tT">T</span><span class="pill tO">O</span></span></div>
+          <div class="act"><span>Prévenir les personnalités et les usagers</span><span class="tags"><span class="pill tH">H</span></span></div>
+        </div>
+        <div class="ph r" style="--i:2"><span class="lbl">1 à 3 mois</span><h3>Réduire l'exposition</h3>
+          <div class="act"><span><b>AIPD</b> avec le DPO</span><span class="tags"><span class="pill tJ">J</span></span></div>
+          <div class="act"><span><b>Purger</b> photos et passages payés</span><span class="tags"><span class="pill tT">T</span></span></div>
+          <div class="act"><span><b>Chiffrer</b>, journaliser chaque consultation</span><span class="tags"><span class="pill tT">T</span></span></div>
+          <div class="act"><span>Encadrer le <b>SIV</b> et les sous-traitants</span><span class="tags"><span class="pill tJ">J</span><span class="pill tO">O</span></span></div>
+        </div>
+        <div class="ph r" style="--i:3"><span class="lbl">3 à 12 mois</span><h3>Tenir dans la durée</h3>
+          <div class="act"><span>Revue trimestrielle des <b>habilitations</b></span><span class="tags"><span class="pill tO">O</span></span></div>
+          <div class="act"><span>Former les agents, charte signée</span><span class="tags"><span class="pill tH">H</span></span></div>
+          <div class="act"><span>Tests d'intrusion, supervision, PRA</span><span class="tags"><span class="pill tT">T</span></span></div>
+          <div class="act"><span>Informer les usagers, comité données</span><span class="tags"><span class="pill tJ">J</span><span class="pill tO">O</span></span></div>
+        </div>
+      </div>
+      <div class="legend r" style="--i:4"><span class="pill tT">T</span>technique <span class="pill tO">O</span>organisationnelle <span class="pill tJ">J</span>juridique <span class="pill tH">H</span>humaine</div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Péage en flux libre</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 13 Conclusion -->
+  <section class="slide" data-sec="Fin">
+    <div class="top"><span class="kicker">Conclusion</span><div class="secs"></div></div>
+    <h2 class="r">Moins on garde, <em>moins on peut perdre</em></h2>
+    <div class="body">
+      <div class="g2" style="grid-template-columns:1.1fr 1fr;gap:40px;align-items:center">
+        <div class="r" style="--i:1">
+          <span class="lbl">Criticité avant et après le plan</span>
+          <div class="res" style="margin-top:10px">
+            <span class="nm">R1 · Fuite</span><div class="track"><div class="bf" style="width:100%"></div><div class="af" style="width:37.5%;--from:100%;--i:1">6</div></div>
+            <span class="nm">R2 · Consultation</span><div class="track"><div class="bf" style="width:100%"></div><div class="af" style="width:25%;--from:100%;--i:2">4</div></div>
+            <span class="nm">R3 · Commercial</span><div class="track"><div class="bf" style="width:75%"></div><div class="af" style="width:25%;--from:75%;--i:3">4</div></div>
+            <span class="nm">R4 · Surveillance</span><div class="track"><div class="bf" style="width:75%"></div><div class="af" style="width:25%;--from:75%;--i:4">4</div></div>
+            <span class="nm">R5 · Hameçonnage</span><div class="track"><div class="bf" style="width:56.25%"></div><div class="af" style="width:37.5%;--from:56.25%;--i:5">6</div></div>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:14px;font-size:12.5px;color:var(--muted)"><span style="display:flex;gap:6px;align-items:center"><span class="sw" style="background:repeating-linear-gradient(135deg,#F3CFCA 0 5px,var(--red-soft) 5px 10px)"></span>avant</span><span style="display:flex;gap:6px;align-items:center"><span class="sw" style="background:var(--accent)"></span>après, sur 16</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="msg c-red r" style="--i:2"><b>Deux risques déjà avérés</b><p>Des décisions cette semaine, pas un projet.</p></div>
+          <div class="msg c-blue r" style="--i:3"><b>Une seule finalité</b><p>Chaque donnée de passage sert au péage, et seulement le temps nécessaire.</p></div>
+          <div class="msg c-amber r" style="--i:4"><b>L'AIPD n'est pas une formalité</b><p>Sans elle, le flux libre peut être suspendu.</p></div>
+        </div>
+      </div>
+      <div class="thanks r" style="--i:5"><h3>Merci. <em>Des questions ?</em></h3><span class="lbl" style="margin:0">Risque résiduel à accepter par le comité</span></div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Péage en flux libre</span><span class="pg"></span></div>
+  </section>
+
+</div></div>
+<div class="hint">← → naviguer · F plein écran</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const SECS = ['Contexte', 'Données', 'Risques', 'Plan', 'Fin'];
+  const total = String(slides.length).padStart(2, '0');
+  slides.forEach((s, n) => {
+    const pg = s.querySelector('.pg');
+    if (pg) pg.textContent = `${String(n + 1).padStart(2, '0')} / ${total}`;
+    const secs = s.querySelector('.secs');
+    if (secs) secs.innerHTML = SECS.map(x => `<span class="${x === s.dataset.sec ? 'on' : ''}">${x}</span>`).join('');
+  });
+
+  const deck = document.getElementById('deck');
+  function fit() {
+    const k = Math.min(innerWidth / 1360, innerHeight / 790);
+    deck.style.transform = `scale(${k})`;
+  }
+
+  const cnt = document.getElementById('cnt');
+  let timer;
+  function counter() {
+    clearInterval(timer);
+    let v = 48213907;
+    timer = setInterval(() => { v += 2 + Math.floor(Math.random() * 7); cnt.textContent = v.toLocaleString('fr-FR'); }, 160);
+  }
+
+  let i = 0;
+  function show(n) {
+    i = Math.max(0, Math.min(n, slides.length - 1));
+    slides.forEach((s, x) => { s.classList.toggle('active', x === i); s.classList.toggle('past', x < i); });
+    clearInterval(timer);
+    if (slides[i].contains(cnt)) counter();
+    history.replaceState(null, '', '#' + (i + 1));
+  }
+  addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); show(i + 1); }
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); show(i - 1); }
+    if (e.key === 'f' || e.key === 'F') document.documentElement.requestFullscreen?.();
+  });
+  addEventListener('click', e => show(i + (e.clientX < innerWidth / 4 ? -1 : 1)));
+  addEventListener('resize', fit);
+  fit();
+  show((parseInt(location.hash.slice(1), 10) || 1) - 1);
+</script>
+</body>
+</html>
