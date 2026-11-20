@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audit IT PACKSOLUTIONS, Groupe 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --stage:#E6E9EE;
+  --paper:#FBFBFC;
+  --card:#F2F4F7;
+  --ink:#14171C;
+  --ink2:#3A3F47;
+  --muted:#6B717B;
+  --faint:#A0A6AF;
+  --line:#E2E5EA;
+  --accent:#1F4E8C;
+  --accent-soft:#E4ECF7;
+  --red:#B42318;     --red-soft:#FBE5E2;
+  --orange:#B5531A;  --orange-soft:#FCEADD;
+  --amber:#8A5F0C;   --amber-soft:#FBF1DC;
+  --green:#2E7A4E;   --green-soft:#E2F1E7;
+  --violet:#5B3E96;  --violet-soft:#ECE6F7;
+  --display:"Inter Tight","Inter","Segoe UI",Arial,sans-serif;
+  --font:"Inter","Segoe UI",Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+html,body{height:100%;margin:0}
+body{background:var(--stage);color:var(--ink);font-family:var(--font);overflow:hidden;-webkit-font-smoothing:antialiased}
+.stage{position:fixed;inset:0;display:grid;place-items:center}
+.deck{width:1280px;height:720px;position:relative;flex:none}
+.slide{position:absolute;inset:0;background:var(--paper);border-radius:16px;box-shadow:0 40px 90px -40px rgba(20,23,28,.32),0 0 0 1px rgba(20,23,28,.04);padding:44px 80px 72px;display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:translateX(36px);transition:opacity .5s ease,transform .65s cubic-bezier(.2,.7,.2,1),visibility .5s;overflow:hidden}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.slide.past{transform:translateX(-36px)}
+h1,h2,h3{margin:0;font-family:var(--display);letter-spacing:-.025em;text-wrap:balance}
+h2{font-size:38px;line-height:1.08;font-weight:700;max-width:26ch}
+h2 em,h1 em{font-style:normal;color:var(--accent)}
+p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+b,strong{font-weight:600;color:var(--ink)}
+
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:22px;height:2px;background:var(--accent)}
+.secs{display:flex;gap:4px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+.secs span{padding:5px 9px;border-radius:99px}
+.secs span.on{background:var(--ink);color:#fff}
+.lead{font-size:17px;color:var(--muted);line-height:1.5}
+.foot{position:absolute;left:80px;right:80px;bottom:28px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.08em;text-transform:uppercase}
+.body{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
+
+.slide.active .r{animation:up .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*80ms + 180ms)}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+.lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block}
+.card{background:var(--card);border-radius:14px;padding:18px 20px}
+.card p,.card li{font-size:15px;line-height:1.45;color:var(--ink2)}
+.box{border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:#fff}
+.c-red{background:var(--red-soft)} .c-red .lbl{color:var(--red)}
+.c-orange{background:var(--orange-soft)} .c-orange .lbl{color:var(--orange)}
+.c-amber{background:var(--amber-soft)} .c-amber .lbl{color:var(--amber)}
+.c-green{background:var(--green-soft)} .c-green .lbl{color:var(--green)}
+.c-blue{background:var(--accent-soft)} .c-blue .lbl{color:var(--accent)}
+.dots li{position:relative;padding-left:16px;margin-bottom:6px}
+.dots li:last-child{margin-bottom:0}
+.dots li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:2px;background:var(--accent)}
+.c-red .dots li::before{background:var(--red)} .c-green .dots li::before{background:var(--green)}
+.pill{display:inline-flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;flex:none;letter-spacing:.02em}
+.k4{background:var(--red-soft);color:var(--red)} .k3{background:var(--orange-soft);color:var(--orange)}
+.k2{background:var(--amber-soft);color:var(--amber)} .k1{background:var(--green-soft);color:var(--green)}
+.rt{background:var(--ink);color:#fff}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+
+/* 01 couverture */
+.cover{padding:56px 80px}
+.cover .grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(20,23,28,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(20,23,28,.045) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at 78% 45%,#000 10%,transparent 68%)}
+.cover .brand{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);position:relative}
+.cover .brand b{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:#fff;font-family:var(--display);font-size:14px;letter-spacing:0}
+.cover h1{font-size:60px;line-height:1.02;font-weight:800;margin-top:92px;position:relative;letter-spacing:-.035em;max-width:13.5ch}
+.cover .sub{font-size:19px;color:var(--muted);margin-top:24px;max-width:36ch;line-height:1.45;position:relative}
+.cover .names{position:absolute;left:80px;bottom:72px;display:flex;gap:8px;flex-wrap:wrap}
+.cover .names span{font-size:13.5px;color:var(--ink2);border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px}
+.growth{position:absolute;right:64px;top:118px;width:500px;height:400px}
+.growth .ax{stroke:#C9CED6;stroke-width:1.5}
+.growth .gl{stroke:#E2E5EA;stroke-width:1;stroke-dasharray:4 6}
+.growth .biz{fill:none;stroke:var(--accent);stroke-width:4;stroke-linecap:round}
+.growth .org{fill:none;stroke:var(--ink2);stroke-width:3;stroke-linecap:round;stroke-dasharray:2 0}
+.growth .gap{fill:var(--red);opacity:.09}
+.growth text{font-family:var(--mono);font-size:11px;fill:var(--muted);letter-spacing:.06em}
+.growth .tb{fill:var(--accent);font-weight:600}
+.growth .to{fill:var(--ink2);font-weight:600}
+.growth .tg{fill:var(--red);font-weight:600}
+.draw{stroke-dasharray:700;stroke-dashoffset:700}
+.slide.active .draw{animation:draw 2.2s cubic-bezier(.4,0,.2,1) .5s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.slide.active .gap{animation:fade 1.2s ease 2.2s both}
+@keyframes fade{from{opacity:0}to{opacity:.09}}
+.slide.active .growth .lab{animation:up .6s ease both;animation-delay:2.4s}
+
+/* contexte */
+.quote{border-left:3px solid var(--accent);padding:4px 0 4px 20px;font-family:var(--display);font-size:22px;line-height:1.35;letter-spacing:-.01em;color:var(--ink)}
+.quote small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:10px}
+.stat{border:1px solid var(--line);background:#fff;border-radius:14px;padding:16px 18px}
+.stat b{display:block;font-family:var(--display);font-size:34px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.stat b em{font-style:normal;color:var(--accent)}
+.stat span b{display:inline;font-family:inherit;font-size:inherit;font-weight:600;letter-spacing:0;line-height:inherit}
+.stat span{display:block;font-size:13.5px;color:var(--muted);margin-top:6px;line-height:1.35}
+.mission{display:flex;gap:16px;align-items:center;border-radius:14px;background:var(--accent-soft);padding:16px 20px}
+.mission .pill{background:var(--accent);color:#fff;font-size:12px;padding:6px 10px}
+.mission p{font-size:15.5px;line-height:1.45;color:var(--ink2)}
+
+/* DSI + SI */
+.pole{border:1px solid var(--line);background:#fff;border-radius:14px;padding:16px 18px}
+.pole h3{font-size:17px;letter-spacing:-.01em;margin-bottom:4px}
+.pole p{font-size:13px;color:var(--muted);margin-bottom:12px}
+.ppl{display:flex;flex-wrap:wrap;gap:6px}
+.pp{width:26px;height:26px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-family:var(--mono);font-size:9px;font-weight:600;color:#fff}
+.pp.ext{background:#fff;border:2px dashed var(--orange);color:var(--orange)}
+.slide.active .pp{animation:pop .45s cubic-bezier(.2,.8,.3,1.4) both;animation-delay:calc(var(--j,0)*35ms + 400ms)}
+@keyframes pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+.dsi{display:flex;align-items:center;gap:14px;border-radius:14px;background:var(--ink);color:#fff;padding:14px 18px}
+.dsi .pp{width:34px;height:34px;font-size:11px;background:#fff;color:var(--ink)}
+.dsi b{color:#fff;font-family:var(--display);font-size:16px}
+.dsi span{font-size:13px;color:#C9CED6;display:block}
+.leg{display:flex;gap:16px;align-items:center;font-size:12.5px;color:var(--muted)}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:12px;height:12px;border-radius:50%;background:var(--accent);display:inline-block}
+.leg i.ext{background:#fff;border:2px dashed var(--orange)}
+.brick{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px 16px}
+.brick b{font-family:var(--display);font-size:15.5px}
+.brick span{grid-column:1;font-size:13px;color:var(--muted);line-height:1.35}
+.brick .pill{grid-row:1 / span 2;grid-column:2}
+.brick.crit{background:var(--red-soft);border-color:#F1C7C1}
+.loc{background:var(--card);color:var(--ink2)} .loc.us{background:var(--orange-soft);color:var(--orange)}
+
+/* synthèse */
+.op{border-radius:16px;background:var(--ink);color:#fff;padding:26px 28px}
+.op .lbl{color:#9FB6D8}
+.op p{font-family:var(--display);font-size:26px;line-height:1.25;letter-spacing:-.02em;color:#fff}
+.op p em{font-style:normal;color:#9FC1EE}
+.vs{display:grid;grid-template-columns:140px 1fr;gap:10px 14px;align-items:center;margin-top:18px}
+.vs .nm{font-size:13.5px;color:var(--ink2)}
+.bar{height:22px;border-radius:7px;background:var(--card);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:7px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-style:normal;font-family:var(--mono);font-size:11px;font-weight:600;color:#fff}
+.slide.active .bar i{animation:grow 1.3s cubic-bezier(.6,0,.3,1) both;animation-delay:calc(var(--i,0)*150ms + 600ms)}
+@keyframes grow{from{width:0}}
+
+/* matrice */
+.mx{display:grid;grid-template-columns:24px repeat(4,1fr);grid-template-rows:repeat(4,76px) 24px;gap:6px}
+.mc{border-radius:10px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:6px}
+.ml{display:grid;place-items:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.chip{background:var(--ink);color:#fff;font-family:var(--mono);font-size:12px;font-weight:600;border-radius:99px;padding:4px 10px}
+.slide.active .chip{animation:up .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*90ms + 400ms)}
+.f1{background:var(--green-soft)} .f2{background:var(--amber-soft)} .f3{background:var(--orange-soft)} .f4{background:var(--red-soft)}
+.rlist{display:flex;flex-direction:column}
+.ri{display:grid;grid-template-columns:36px 1fr 34px 40px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:15px;color:var(--ink2)}
+.ri:last-child{border-bottom:0}
+.ri .rid{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.ri .q{font-family:var(--mono);font-size:11px;color:var(--faint)}
+.ri.hi{color:var(--ink);font-weight:600}
+.sep{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:12px 0 4px}
+
+/* fiches risque */
+.rk{margin-top:10px;display:grid;grid-template-columns:1fr 410px;gap:22px;align-items:stretch;flex:1;min-height:0}
+.rk .stack{display:flex;flex-direction:column;gap:12px;min-height:0}
+.said{border-radius:14px;background:#fff;border:1px solid var(--line);padding:14px 18px}
+.said p{font-size:15px;line-height:1.45;color:var(--ink2)}
+.said q{quotes:"« " " »";font-style:italic;color:var(--ink)}
+.rk .card{padding:14px 18px}
+.rk .card li{font-size:14px;line-height:1.4}
+.ctl{display:grid;grid-template-columns:1fr 26px 1fr;align-items:stretch}
+.ctl .card p{font-size:14px;line-height:1.4}
+.ctl .arr{display:grid;place-items:center;color:var(--faint);font-size:18px}
+.sheet{border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:#fff;display:flex;flex-direction:column}
+.sheet .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sheet .hd b{font-family:var(--display);font-size:17px}
+.score{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:8px;margin-bottom:14px}
+.score div{border-radius:10px;background:var(--card);padding:8px 11px}
+.score span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.score b{font-family:var(--display);font-size:26px;font-weight:700;line-height:1.1}
+.score .tot.k4{background:var(--red-soft)} .score .tot.k4 b,.score .tot.k4 span{color:var(--red)}
+.score .tot.k3{background:var(--orange-soft)} .score .tot.k3 b,.score .tot.k3 span{color:var(--orange)}
+.steps{counter-reset:s;display:flex;flex-direction:column;gap:7px}
+.steps li{counter-increment:s;position:relative;padding-left:30px;font-size:13.5px;line-height:1.38;color:var(--ink2)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:20px;height:20px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-family:var(--mono);font-size:11px;font-weight:600;display:grid;place-items:center}
+.goal{margin-top:auto;border-radius:10px;background:var(--accent);color:#fff;padding:10px 14px;font-size:13.5px;line-height:1.35}
+.goal b{color:#fff}
+.goal small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#BCD0EC;margin-bottom:2px}
+
+/* trois risques */
+.mini{border:1px solid var(--line);background:#fff;border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.mini .hd{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.mini .hd b{font-family:var(--display);font-size:17px;letter-spacing:-.01em}
+.mini .q{font-size:14px;line-height:1.4;color:var(--ink2);border-left:2px solid var(--line);padding-left:10px}
+.mini .q q{quotes:"« " " »";font-style:italic}
+.mini .lim{font-size:13.5px;line-height:1.4;color:var(--orange);background:var(--orange-soft);border-radius:8px;padding:8px 10px}
+.mini .steps li{font-size:13.5px}
+
+/* plan */
+.tl{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:20px;align-items:stretch}
+.ph{border-radius:14px;padding:18px 20px;background:#fff;border:1px solid var(--line);position:relative}
+.ph.now{background:var(--accent-soft);border-color:#C3D3EA}
+.ph .lbl{color:var(--accent);display:flex;justify-content:space-between;align-items:center}
+.ph h3{font-size:20px;margin:2px 0 12px}
+.act{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;padding:9px 0;border-top:1px solid var(--line);font-size:14.5px;line-height:1.4;color:var(--ink2)}
+.ph.now .act{border-top-color:#C9D7EC}
+.act .tags{display:flex;gap:4px;padding-top:1px}
+.act .tags .pill{background:var(--ink);color:#fff;font-size:10.5px;padding:2px 6px}
+.clock{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--red);background:#fff;border-radius:99px;padding:3px 9px}
+.track{height:6px;border-radius:99px;background:var(--line);margin-top:18px;position:relative;overflow:hidden}
+.track i{position:absolute;inset:0 auto 0 0;background:var(--accent);border-radius:99px}
+.slide.active .track i{animation:grow 2.4s cubic-bezier(.4,0,.2,1) .5s both}
+
+/* décisions */
+.dec{counter-reset:d;display:flex;flex-direction:column;gap:9px}
+.dec li{counter-increment:d;display:grid;grid-template-columns:34px 1fr;gap:14px;align-items:center;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 16px;font-size:15.5px;line-height:1.35;color:var(--ink2)}
+.dec li::before{content:counter(d);width:30px;height:30px;border-radius:8px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:13px;font-weight:600;display:grid;place-items:center}
+.msg{border-radius:14px;padding:16px 20px}
+.msg b{display:block;font-family:var(--display);font-size:18px;letter-spacing:-.015em;margin-bottom:4px}
+.msg p{font-size:14.5px;color:var(--ink2);line-height:1.45}
+.thanks{display:flex;justify-content:space-between;align-items:flex-end;margin-top:26px}
+.thanks h3{font-size:30px;letter-spacing:-.03em}
+.thanks h3 em{font-style:normal;color:var(--accent)}
+
+.hint{position:fixed;right:16px;bottom:12px;font-family:var(--mono);font-size:11px;color:#8C929B;letter-spacing:.06em}
+
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{overflow:visible;background:#fff}
+  .stage{position:static;display:block}
+  .deck{width:1280px;height:auto;transform:none!important}
+  .slide{position:relative;opacity:1!important;visibility:visible!important;transform:none!important;border-radius:0;box-shadow:none;height:720px;page-break-after:always;transition:none}
+  .slide *{animation:none!important}
+  .draw{stroke-dashoffset:0}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+<div class="stage"><div class="deck" id="deck">
+
+  <!-- 01 Couverture -->
+  <section class="slide cover" data-sec="">
+    <div class="grid-bg"></div>
+    <div class="brand r"><b>G1</b>Stratégie des risques IT · EPSI M1</div>
+    <h1 class="r" style="--i:1">PACKSOLUTIONS&nbsp;: <em>une DSI à la taille</em> de l'entreprise ?</h1>
+    <p class="sub r" style="--i:2">Audit IT, restitution de l'entretien avec le DSI à la Direction Générale.</p>
+    <svg class="growth" viewBox="0 0 500 400" aria-hidden="true">
+      <line class="gl" x1="40" y1="90" x2="480" y2="90"/><line class="gl" x1="40" y1="180" x2="480" y2="180"/><line class="gl" x1="40" y1="270" x2="480" y2="270"/>
+      <line class="ax" x1="40" y1="340" x2="480" y2="340"/><line class="ax" x1="40" y1="40" x2="40" y2="340"/>
+      <path class="gap" d="M40,336 C150,330 240,250 300,180 S420,70 470,54 L470,250 C400,262 320,286 240,306 S120,330 40,336 Z"/>
+      <path class="biz draw" d="M40,336 C150,330 240,250 300,180 S420,70 470,54"/>
+      <path class="org draw" d="M40,336 C120,330 160,320 240,306 S400,262 470,250"/>
+      <text x="40" y="362">AN 1</text><text x="436" y="362">AN 5</text>
+      <g class="lab">
+        <text class="tb" x="330" y="44">1 500 salariés</text>
+        <text class="to" x="372" y="236">Organisation IT</text>
+        <text class="tg" x="392" y="160">Écart</text>
+        <text x="44" y="324">10</text>
+      </g>
+    </svg>
+    <div class="names r" style="--i:3"><span>Arthur Poncin</span><span>Nathan Chavaudra</span><span>Amen Ahouandogbo</span><span>Habibou Halirou</span><span>Jihad Mabsout</span></div>
+    <div class="foot"><span>Groupe 1 · TP 5</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 02 Contexte -->
+  <section class="slide" data-sec="Contexte">
+    <div class="top"><span class="kicker">Contexte et mission</span><div class="secs"></div></div>
+    <h2 class="r">Une entreprise qui a grandi <em>plus vite que son organisation</em></h2>
+    <div class="body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center">
+        <div style="display:flex;flex-direction:column;gap:22px">
+          <div class="quote r" style="--i:1">« Notre informatique fonctionne. Mais nous avons grandi très vite. Certaines pratiques ont peut-être été conçues pour une entreprise beaucoup plus petite. »<small>Le Directeur Général</small></div>
+          <div class="mission r" style="--i:2"><span class="pill">Mission</span><p>Vérifier que les <b>risques du SI sont réellement maîtrisés</b> et que l'organisation est adaptée à la taille de l'entreprise. Notre angle : <b>l'entretien avec le DSI</b>, 8 questions.</p></div>
+        </div>
+        <div class="g2" style="gap:14px">
+          <div class="stat r" style="--i:2"><b>10 <em>→</em> 1 500</b><span>salariés en 5 ans</span></div>
+          <div class="stat r" style="--i:3"><b>25</b><span>personnes à la DSI, dont <b>10 externes</b></span></div>
+          <div class="stat r" style="--i:4"><b>1</b><span>application métier critique : achats, ventes, production</span></div>
+          <div class="stat r" style="--i:5"><b>1</b><span>seul membre de la DSI présent depuis la création : <b>le DSI</b></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 03 DSI et SI -->
+  <section class="slide" data-sec="Contexte">
+    <div class="top"><span class="kicker">Périmètre audité</span><div class="secs"></div></div>
+    <h2 class="r">Le cœur du SI repose <em>en grande partie sur des externes</em></h2>
+    <div class="body">
+      <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:36px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="dsi r" style="--i:1"><div><b>DSI</b><span>Seul présent depuis la création, impliqué dans les décisions importantes</span></div></div>
+          <div class="g2 r" style="--i:2;gap:12px">
+            <div class="pole"><h3>Pôle Études</h3><p>Projets et vie courante applicative</p>
+              <div class="ppl">
+                <span class="pp" style="--j:0">RE</span><span class="pp" style="--j:1">AF</span><span class="pp" style="--j:2">CP</span><span class="pp" style="--j:3">CP</span><span class="pp" style="--j:4">CP</span><span class="pp" style="--j:5">CP</span><span class="pp" style="--j:6">DEV</span><span class="pp" style="--j:7">DEV</span>
+                <span class="pp ext" style="--j:8">JAV</span><span class="pp ext" style="--j:9">JAV</span><span class="pp ext" style="--j:10">JAV</span><span class="pp ext" style="--j:11">JAV</span><span class="pp ext" style="--j:12">JAV</span><span class="pp ext" style="--j:13">JAV</span><span class="pp ext" style="--j:14">CRM</span><span class="pp ext" style="--j:15">CRM</span>
+              </div></div>
+            <div class="pole"><h3>Pôle Infra, Réseaux, Cyber</h3><p>Exploitation et technique</p>
+              <div class="ppl">
+                <span class="pp" style="--j:3">RI</span><span class="pp" style="--j:4">AT</span><span class="pp" style="--j:5">INF</span><span class="pp" style="--j:6">BDD</span><span class="pp" style="--j:7">CYB</span><span class="pp" style="--j:8">WEB</span>
+                <span class="pp ext" style="--j:9">SLP</span><span class="pp ext" style="--j:10">EXP</span>
+              </div></div>
+          </div>
+          <div class="leg r" style="--i:3"><span><i></i>15 internes</span><span><i class="ext"></i>10 externes</span><span style="margin-left:auto">8 des 16 personnes du pôle Études sont externes</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <span class="lbl r" style="--i:2;margin-bottom:0">Les quatre briques du SI</span>
+          <div class="brick crit r" style="--i:3"><b>Application métier</b><span>Java / Oracle spécifique, évoluée surtout par les 6 externes</span><span class="pill loc">On premise</span></div>
+          <div class="brick r" style="--i:4"><b>CRM Oracle On Demand</b><span>Données tarifaires et commerciales sensibles, 2 consultants externes</span><span class="pill loc us">Cloud USA</span></div>
+          <div class="brick r" style="--i:5"><b>SAP R3 et SAP BW</b><span>Comptabilité, finance, reporting, maintenu en interne</span><span class="pill loc">On premise</span></div>
+          <div class="brick r" style="--i:6"><b>Applications RH</b><span>Service clé en main d'un fournisseur extérieur</span><span class="pill loc">Externalisé FR</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 04 Synthèse -->
+  <section class="slide" data-sec="Synthèse">
+    <div class="top"><span class="kicker">Notre opinion d'audit</span><div class="secs"></div></div>
+    <h2 class="r">Le SI fonctionne, <em>mais il repose sur des personnes</em></h2>
+    <div class="body">
+      <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:32px;align-items:stretch">
+        <div class="card c-green r" style="--i:1"><span class="lbl">Ce qui fonctionne</span>
+          <ul class="dots">
+            <li>Un <b>seuil de décision</b> à 50 K€ et un reporting renforcé au-delà de 100 K€</li>
+            <li>Une <b>feuille de route précise à 12 mois</b></li>
+            <li>Un <b>dispositif de crise cyber</b>, renforcé après la tentative d'intrusion</li>
+            <li>Des <b>procédures de restauration</b> pour les applications sensibles</li>
+            <li>De la documentation sur l'<b>exploitation et la sécurité</b></li>
+            <li>Un DSI <b>lucide</b>, qui reconnaît lui-même ses fragilités</li>
+          </ul>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="op r" style="--i:2"><span class="lbl">En une phrase</span><p>La DSI fonctionne grâce <em>aux personnes et à la confiance</em>, pas encore grâce à une organisation.</p></div>
+          <div class="box r" style="--i:3"><span class="lbl">Pensé pour 10, utilisé par 1 500</span>
+            <div class="vs" style="margin-top:6px">
+              <span class="nm">Salariés</span><div class="bar"><i style="width:100%;background:var(--accent);--i:1">1 500</i></div>
+              <span class="nm">Décision projet</span><div class="bar"><i style="width:22%;background:var(--orange);--i:2">échange</i></div>
+              <span class="nm">Reprise testée</span><div class="bar"><i style="width:30%;background:var(--orange);--i:3">partielle</i></div>
+              <span class="nm">Savoir écrit</span><div class="bar"><i style="width:26%;background:var(--orange);--i:4">inégal</i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 05 Cartographie -->
+  <section class="slide" data-sec="Risques">
+    <div class="top"><span class="kicker">Sept risques · criticité = probabilité × impact</span><div class="secs"></div></div>
+    <h2 class="r">Deux risques à traiter <em>dans les trois mois</em></h2>
+    <div class="body">
+      <div style="display:grid;grid-template-columns:480px 1fr;gap:52px;align-items:center">
+        <div class="r" style="--i:1">
+          <div class="mx">
+            <div class="ml">4</div><div class="mc f2"></div><div class="mc f3"><span class="chip" style="--i:3">R4</span></div><div class="mc f4"></div><div class="mc f4"></div>
+            <div class="ml">3</div><div class="mc f1"></div><div class="mc f2"><span class="chip" style="--i:4">R5</span><span class="chip" style="--i:6">R7</span></div><div class="mc f3"><span class="chip" style="--i:2">R3</span></div><div class="mc f4"><span class="chip" style="--i:0">R1</span><span class="chip" style="--i:1">R2</span></div>
+            <div class="ml">2</div><div class="mc f1"></div><div class="mc f2"></div><div class="mc f2"><span class="chip" style="--i:5">R6</span></div><div class="mc f3"></div>
+            <div class="ml">1</div><div class="mc f1"></div><div class="mc f1"></div><div class="mc f1"></div><div class="mc f2"></div>
+            <div></div><div class="ml">1</div><div class="ml">2</div><div class="ml">3</div><div class="ml">4</div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;padding-left:30px"><span class="lbl">↑ Probabilité</span><span class="lbl">Impact →</span></div>
+        </div>
+        <div class="rlist r" style="--i:2">
+          <span class="sep" style="padding-top:0">P1 · sous 3 mois</span>
+          <div class="ri hi"><span class="rid">R1</span><span>Perte d'une personne clé</span><span class="q">Q8</span><span class="pill k4">12</span></div>
+          <div class="ri hi"><span class="rid">R2</span><span>Interruption longue, reprise non testée</span><span class="q">Q5</span><span class="pill k4">12</span></div>
+          <span class="sep">P2 · sous 6 mois</span>
+          <div class="ri hi"><span class="rid">R3</span><span>Prestataires peu contrôlés</span><span class="q">Q6</span><span class="pill k3">9</span></div>
+          <div class="ri hi"><span class="rid">R4</span><span>Projets engagés sans arbitrage</span><span class="q">Q1·2</span><span class="pill k3">8</span></div>
+          <span class="sep">P3 · sous 12 mois</span>
+          <div class="ri"><span class="rid">R5</span><span>Dérives détectées trop tard</span><span class="q">Q4</span><span class="pill k2">6</span></div>
+          <div class="ri"><span class="rid">R6</span><span>Pas de trajectoire à 3 ans</span><span class="q">Q3</span><span class="pill k2">6</span></div>
+          <div class="ri"><span class="rid">R7</span><span>Pratiques non formalisées</span><span class="q">Q7</span><span class="pill k2">6</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 06 R1 -->
+  <section class="slide" data-sec="Risques">
+    <div class="top"><span class="kicker">R1 · Personnes clés · Q8</span><div class="secs"></div></div>
+    <h2 class="r">Si le DSI part, <em>l'histoire du SI part avec lui</em></h2>
+    <div class="body">
+      <div class="rk">
+        <div class="stack">
+          <div class="said r" style="--i:1"><span class="lbl">Constat</span><p>Le DSI conserve <q>une connaissance assez large de l'historique et de certains choix qui ne sont pas forcément écrits</q>. Les 2 consultants CRM externes détiennent l'expertise CRM. Binômes <q>lorsque c'est possible</q>.</p></div>
+          <div class="g2 r" style="--i:2;gap:12px">
+            <div class="card"><span class="lbl">Causes</span><ul class="dots"><li>Croissance sans transfert organisé</li><li>Choix d'architecture jamais écrits</li><li>Expertise CRM 100 % externe</li></ul></div>
+            <div class="card c-red"><span class="lbl">Conséquences</span><ul class="dots"><li>Incident sur l'application cœur non résolu</li><li>Projets bloqués, CRM sans support</li><li>Dépendance face aux prestataires</li></ul></div>
+          </div>
+          <div class="ctl r" style="--i:3">
+            <div class="card c-green"><span class="lbl">Maîtrise existante</span><p>Binômes ponctuels, volonté de réduire la dépendance externe</p></div>
+            <span class="arr">→</span>
+            <div class="card c-orange"><span class="lbl">Limite</span><p>Ni systématique ni pilotée, aucun suppléant désigné pour le DSI</p></div>
+          </div>
+        </div>
+        <div class="sheet r" style="--i:2">
+          <div class="hd"><b>Préconisation</b><span class="pill k4">P1</span></div>
+          <div class="score"><div><span>Probabilité</span><b>3</b></div><div><span>Impact</span><b>4</b></div><div class="tot k4"><span>Criticité</span><b>12</b></div></div>
+          <ol class="steps">
+            <li>Cartographier les <b>compétences × composants critiques</b></li>
+            <li>Désigner un <b>suppléant</b> par poste critique, dont un <b>adjoint au DSI</b> avec délégation écrite</li>
+            <li>Écrire le <b>dossier d'architecture</b> et l'historique des choix de l'application métier</li>
+            <li>Inscrire au contrat un <b>transfert de compétences CRM</b> vers un interne</li>
+            <li>Rendre le <b>binôme obligatoire</b> sur chaque composant critique</li>
+          </ol>
+          <div class="goal" style="margin-top:14px"><small>Objectif à 12 mois</small><b>Aucun composant critique maîtrisé par une seule personne</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 07 R2 -->
+  <section class="slide" data-sec="Risques">
+    <div class="top"><span class="kicker">R2 · Continuité d'activité · Q5</span><div class="secs"></div></div>
+    <h2 class="r">Personne ne sait <em>en combien de temps</em> le SI redémarrerait</h2>
+    <div class="body">
+      <div class="rk">
+        <div class="stack">
+          <div class="said r" style="--i:1"><span class="lbl">Constat</span><p>Crise cyber renforcée après une <b>tentative d'intrusion récente</b>. <q>Certaines applications disposent de dispositifs de sauvegarde et de reprise plus complets que d'autres.</q> <q>Je ne prétendrai pas que nous avons testé toutes les situations possibles.</q></p></div>
+          <div class="g2 r" style="--i:2;gap:12px">
+            <div class="card"><span class="lbl">Causes</span><ul class="dots"><li>Délais de reprise jamais fixés avec les métiers</li><li>Plan de crise centré sur la cyber</li><li>Tests partiels, scénarios choisis par la DSI seule</li></ul></div>
+            <div class="card c-red"><span class="lbl">Conséquences</span><ul class="dots"><li>Achats, ventes, production à l'arrêt</li><li>Perte de chiffre d'affaires et de données</li><li>Pénalités clients, atteinte à l'image</li></ul></div>
+          </div>
+          <div class="ctl r" style="--i:3">
+            <div class="card c-green"><span class="lbl">Maîtrise existante</span><p>Cellule de crise cyber, restauration des applications sensibles</p></div>
+            <span class="arr">→</span>
+            <div class="card c-orange"><span class="lbl">Limite</span><p>Reprise de bout en bout jamais démontrée, panne ou perte d'un fournisseur non couverte</p></div>
+          </div>
+        </div>
+        <div class="sheet r" style="--i:2">
+          <div class="hd"><b>Préconisation</b><span class="pill k4">P1</span></div>
+          <div class="score"><div><span>Probabilité</span><b>3</b></div><div><span>Impact</span><b>4</b></div><div class="tot k4"><span>Criticité</span><b>12</b></div></div>
+          <ol class="steps">
+            <li>Fixer avec chaque métier la <b>durée d'interruption</b> et la <b>perte de données admissibles</b> par application</li>
+            <li>Aligner sauvegardes et reprise sur ces objectifs, d'abord <b>application métier et SAP</b></li>
+            <li>Étendre la cellule de crise à <b>tous les scénarios</b>, dont la défaillance d'un fournisseur Cloud</li>
+            <li>Chaque année : <b>restauration complète</b> de l'application métier et <b>exercice de crise</b> avec la DG</li>
+          </ol>
+          <div class="goal" style="margin-top:14px"><small>Objectif à 12 mois</small><b>Une reprise testée et un résultat présenté au comité de direction</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 08 R3 -->
+  <section class="slide" data-sec="Risques">
+    <div class="top"><span class="kicker">R3 · Prestataires · Q6</span><div class="secs"></div></div>
+    <h2 class="r">La confiance est là, <em>le contrôle ne l'est pas</em></h2>
+    <div class="body">
+      <div class="rk">
+        <div class="stack">
+          <div class="said r" style="--i:1"><span class="lbl">Constat</span><p>10 externes sur 25, dont ceux qui font évoluer l'application critique et le CRM. <q>Notre fonctionnement repose beaucoup sur la connaissance que nous avons de nos prestataires.</q> Certains sont gérés <q>comme nos collaborateurs internes</q>.</p></div>
+          <div class="g2 r" style="--i:2;gap:12px">
+            <div class="card"><span class="lbl">Causes</span><ul class="dots"><li>Relations historiques fondées sur la confiance</li><li>Aucun engagement de service mesuré</li><li>Frontière floue entre internes et externes</li></ul></div>
+            <div class="card c-red"><span class="lbl">Conséquences</span><ul class="dots"><li>Qualité du code critique non vérifiée</li><li>Accès aux données sensibles non maîtrisés</li><li>Dérive des coûts, risque de délit de marchandage</li></ul></div>
+          </div>
+          <div class="ctl r" style="--i:3">
+            <div class="card c-green"><span class="lbl">Maîtrise existante</span><p>Points avec les chargés d'affaires, suivi des travaux importants</p></div>
+            <span class="arr">→</span>
+            <div class="card c-orange"><span class="lbl">Limite</span><p>On parle ressources, pas performance : aucun indicateur, aucune clause d'audit</p></div>
+          </div>
+        </div>
+        <div class="sheet r" style="--i:2">
+          <div class="hd"><b>Préconisation</b><span class="pill k3">P2</span></div>
+          <div class="score"><div><span>Probabilité</span><b>3</b></div><div><span>Impact</span><b>3</b></div><div class="tot k3"><span>Criticité</span><b>9</b></div></div>
+          <ol class="steps">
+            <li><b>Inventorier les contrats</b> : périmètre, coût, échéance</li>
+            <li>Ajouter <b>engagements de service</b>, clauses d'<b>audit</b>, de <b>sécurité</b> et de <b>réversibilité</b></li>
+            <li><b>Comité de pilotage trimestriel</b> par prestataire important, sur indicateurs</li>
+            <li>Toute livraison de l'application métier <b>validée par un interne</b> avant production</li>
+            <li><b>Comptes nominatifs</b> revus chaque trimestre, fermés en fin de mission</li>
+          </ol>
+          <div class="goal" style="margin-top:14px"><small>Point d'attention</small><b>Vérifier la protection des données commerciales du CRM hébergé aux États-Unis</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 09 R4 -->
+  <section class="slide" data-sec="Risques">
+    <div class="top"><span class="kicker">R4 · Engagement des projets · Q1 et Q2</span><div class="secs"></div></div>
+    <h2 class="r">Les projets se décident par <em>échange, pas par arbitrage</em></h2>
+    <div class="body">
+      <div class="rk">
+        <div class="stack">
+          <div class="said r" style="--i:1"><span class="lbl">Constat</span><p>Sous 50 K€, les responsables décident seuls. Au-delà, <q>nous organisons un échange</q> avec le métier. Pas de comité d'investissement, pas de business case systématique. Les mêmes équipes portent projets, maintenance et incidents.</p></div>
+          <div class="g2 r" style="--i:2;gap:12px">
+            <div class="card"><span class="lbl">Causes</span><ul class="dots"><li>Processus pensé pour une petite structure</li><li>Aucune instance transverse</li><li>Capacité des équipes jamais mesurée</li></ul></div>
+            <div class="card c-red"><span class="lbl">Conséquences</span><ul class="dots"><li>Budget dispersé en petites demandes</li><li>Projets stratégiques retardés par les incidents</li><li>Aucune vision du retour sur investissement</li></ul></div>
+          </div>
+          <div class="ctl r" style="--i:3">
+            <div class="card c-green"><span class="lbl">Maîtrise existante</span><p>Seuil de 50 K€, accord du métier, budget identifié</p></div>
+            <span class="arr">→</span>
+            <div class="card c-orange"><span class="lbl">Limite</span><p>Dix projets à 49 K€ échappent à tout arbitrage, la décision n'est pas tracée</p></div>
+          </div>
+        </div>
+        <div class="sheet r" style="--i:2">
+          <div class="hd"><b>Préconisation</b><span class="pill k3">P2</span></div>
+          <div class="score"><div><span>Probabilité</span><b>4</b></div><div><span>Impact</span><b>2</b></div><div class="tot k3"><span>Criticité</span><b>8</b></div></div>
+          <ol class="steps">
+            <li>Une <b>fiche de demande unique</b> : besoin, bénéfice, charge, budget</li>
+            <li>Un <b>portefeuille unique</b> de toutes les demandes, même sous 50 K€</li>
+            <li>Un <b>comité de gouvernance IT mensuel</b> (DG, métiers, DSI) qui valide et arbitre sur critères écrits</li>
+            <li>Un <b>business case avec ROI</b> au-delà de 100 K€, simplifié en dessous</li>
+            <li>Une <b>évaluation de capacité</b> avant lancement, avec une part réservée au run</li>
+          </ol>
+          <div class="goal" style="margin-top:14px"><small>Objectif à 6 mois</small><b>Chaque projet engagé a un responsable et une décision tracée</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 10 R5 R6 R7 -->
+  <section class="slide" data-sec="Risques">
+    <div class="top"><span class="kicker">R5 · R6 · R7 · Priorité 3</span><div class="secs"></div></div>
+    <h2 class="r">Moins urgents, mais <em>ce sont eux qui feront tenir le reste</em></h2>
+    <div class="body">
+      <div class="g3" style="gap:18px">
+        <div class="mini r" style="--i:1">
+          <div class="hd"><b>R5 · Pilotage</b><span class="pill k2">6</span></div>
+          <p class="q">Q4 : <q>Nous n'avons pas encore construit un tableau de bord unique.</q> Les métiers signalent les incidents.</p>
+          <p class="lim">Projets de 50 à 100 K€ sans alerte, aucun indicateur production ni prestataires</p>
+          <ol class="steps"><li><b>Tableau de bord DSI mensuel</b> : projets, production, sécurité, prestataires</li><li>Présenté au <b>comité de gouvernance IT</b></li><li><b>Supervision</b> qui alerte la DSI avant les utilisateurs</li></ol>
+        </div>
+        <div class="mini r" style="--i:2">
+          <div class="hd"><b>R6 · Trajectoire</b><span class="pill k2">6</span></div>
+          <p class="q">Q3 : <q>je ne parlerais pas d'un plan détaillé à cinq ans.</q> Feuille de route à 12 mois seulement.</p>
+          <p class="lim">Orientations ni écrites, ni validées, ni budgétées par la DG</p>
+          <ol class="steps"><li><b>Schéma directeur à 3 ans glissant</b>, revu chaque année</li><li>Des <b>trajectoires</b>, pas des choix techniques figés</li><li><b>Budget pluriannuel</b> validé en comité de direction</li></ol>
+        </div>
+        <div class="mini r" style="--i:3">
+          <div class="hd"><b>R7 · Processus</b><span class="pill k2">6</span></div>
+          <p class="q">Q7 : <q>tout n'est certainement pas documenté au même niveau.</q> Des pratiques de l'époque des 10 salariés.</p>
+          <p class="lim">Aucun inventaire, aucun propriétaire, aucune revue des processus</p>
+          <ol class="steps"><li><b>Dix processus prioritaires</b> : changements, incidents, accès, sauvegardes</li><li>Un <b>propriétaire</b> par processus, inspiré d'ITIL</li><li><b>Une à deux pages</b> chacun, revues une fois par an</li></ol>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 11 Plan -->
+  <section class="slide" data-sec="Plan">
+    <div class="top"><span class="kicker">Plan de remédiation</span><div class="secs"></div></div>
+    <h2 class="r">Sécuriser d'abord, <em>gouverner ensuite, structurer enfin</em></h2>
+    <div class="body">
+      <div class="tl">
+        <div class="ph now r" style="--i:1"><span class="lbl">0 à 3 mois<span class="clock">P1</span></span><h3>Sécuriser</h3>
+          <div class="act"><span>Cartographie des compétences, <b>adjoint au DSI</b></span><span class="tags"><span class="pill">R1</span></span></div>
+          <div class="act"><span><b>Délais de reprise</b> fixés avec les métiers</span><span class="tags"><span class="pill">R2</span></span></div>
+          <div class="act"><span><b>Test de restauration</b> de l'application métier</span><span class="tags"><span class="pill">R2</span></span></div>
+          <div class="act"><span>Revue des <b>comptes des externes</b></span><span class="tags"><span class="pill">R3</span></span></div>
+          <div class="act"><span>Premier <b>tableau de bord</b> DSI</span><span class="tags"><span class="pill">R5</span></span></div>
+        </div>
+        <div class="ph r" style="--i:2"><span class="lbl">3 à 6 mois</span><h3>Gouverner</h3>
+          <div class="act"><span><b>Comité de gouvernance IT</b> et portefeuille unique</span><span class="tags"><span class="pill">R4</span></span></div>
+          <div class="act"><span><b>Avenants</b> aux contrats prestataires</span><span class="tags"><span class="pill">R3</span></span></div>
+          <div class="act"><span><b>Transfert CRM</b> vers un interne</span><span class="tags"><span class="pill">R1</span><span class="pill">R3</span></span></div>
+          <div class="act"><span><b>Exercice de crise</b> avec la DG</span><span class="tags"><span class="pill">R2</span></span></div>
+        </div>
+        <div class="ph r" style="--i:3"><span class="lbl">6 à 12 mois</span><h3>Structurer</h3>
+          <div class="act"><span><b>Schéma directeur</b> à 3 ans validé</span><span class="tags"><span class="pill">R6</span></span></div>
+          <div class="act"><span><b>Dix processus</b> formalisés</span><span class="tags"><span class="pill">R7</span></span></div>
+          <div class="act"><span><b>Dossier d'architecture</b> de l'application métier</span><span class="tags"><span class="pill">R1</span><span class="pill">R7</span></span></div>
+          <div class="act"><span><b>Test annuel de reprise</b>, bilan en comité</span><span class="tags"><span class="pill">R2</span></span></div>
+        </div>
+      </div>
+      <div class="track r" style="--i:4"><i style="width:100%"></i></div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
+  </section>
+
+  <!-- 12 Décisions -->
+  <section class="slide" data-sec="Décisions">
+    <div class="top"><span class="kicker">Décisions attendues</span><div class="secs"></div></div>
+    <h2 class="r">Ce que nous vous demandons <em>de décider aujourd'hui</em></h2>
+    <div class="body">
+      <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:36px;align-items:center">
+        <ol class="dec r" style="--i:1">
+          <li><span>Valider le <b>plan de remédiation</b> sur 12 mois</span></li>
+          <li><span>Créer le <b>comité de gouvernance IT</b> et y siéger</span></li>
+          <li><span>Désigner un <b>adjoint au DSI</b> avec délégation écrite</span></li>
+          <li><span>Demander aux métiers leurs <b>délais de reprise</b> acceptables</span></li>
+          <li><span>Mandater Achats et Juridique sur les <b>contrats prestataires</b></span></li>
+          <li><span>Recevoir chaque mois le <b>tableau de bord</b> de la DSI</span></li>
+        </ol>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="msg c-green r" style="--i:2"><b>Ce n'est pas un désaveu</b><p>Le SI fonctionne grâce à l'équipe et à son DSI. L'audit ne remet pas en cause leur travail.</p></div>
+          <div class="msg c-blue r" style="--i:3"><b>Pas de bureaucratie</b><p>Formaliser l'essentiel, au niveau de risque de chaque sujet, pas tout documenter.</p></div>
+          <div class="msg c-red r" style="--i:4"><b>Un objectif simple</b><p>Le SI doit continuer à fonctionner si une personne part ou si un incident majeur survient.</p></div>
+        </div>
+      </div>
+      <div class="thanks r" style="--i:5"><h3>Merci. <em>Des questions ?</em></h3><span class="lbl" style="margin:0">Analyse détaillée remise par écrit</span></div>
+    </div>
+    <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
+  </section>
+
+</div></div>
+<div class="hint">← → naviguer · F plein écran</div>
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const SECS = ['Contexte', 'Synthèse', 'Risques', 'Plan', 'Décisions'];
+  const total = String(slides.length).padStart(2, '0');
+  slides.forEach((s, n) => {
+    const pg = s.querySelector('.pg');
+    if (pg) pg.textContent = `${String(n + 1).padStart(2, '0')} / ${total}`;
+    const secs = s.querySelector('.secs');
+    if (secs) secs.innerHTML = SECS.map(x => `<span class="${x === s.dataset.sec ? 'on' : ''}">${x}</span>`).join('');
+  });
+
+  const deck = document.getElementById('deck');
+  function fit() {
+    const k = Math.min(innerWidth / 1360, innerHeight / 790);
+    deck.style.transform = `scale(${k})`;
+  }
+
+  let i = 0;
+  function show(n) {
+    i = Math.max(0, Math.min(n, slides.length - 1));
+    slides.forEach((s, x) => { s.classList.toggle('active', x === i); s.classList.toggle('past', x < i); });
+    history.replaceState(null, '', '#' + (i + 1));
+  }
+  addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); show(i + 1); }
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); show(i - 1); }
+    if (e.key === 'f' || e.key === 'F') document.documentElement.requestFullscreen?.();
+  });
+  addEventListener('click', e => show(i + (e.clientX < innerWidth / 4 ? -1 : 1)));
+  addEventListener('resize', fit);
+  fit();
+  show((parseInt(location.hash.slice(1), 10) || 1) - 1);
+</script>
+</body>
+</html>
