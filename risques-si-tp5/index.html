@@ -493,6 +493,51 @@ b,strong{font-weight:600;color:var(--ink)}
 .ph2 li:last-child{border-bottom:0}
 .ph2 li em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted);padding-top:2px}
 
+/* conclusion v6 */
+.fin h1{font-size:50px;line-height:1.04;max-width:14ch;margin-top:84px}
+.fin .sub{font-size:17.5px;max-width:38ch}
+.thx{position:absolute;left:80px;bottom:72px;padding-top:20px;border-top:1px solid var(--line);width:440px}
+.thx h3{font-size:30px;letter-spacing:-.03em}
+.thx h3 em{font-style:normal;color:var(--accent)}
+.fin-net .tri{fill:var(--accent);fill-opacity:.07;stroke:var(--accent);stroke-width:2;stroke-opacity:.5}
+.fin-net .hub2{fill:var(--accent)}
+.fin-net .hub-t{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.06em;fill:#fff;text-anchor:middle;dominant-baseline:central}
+.fin-net .ring2 circle{transform-box:fill-box;transform-origin:center}
+.slide.active .fin-net .ring2 circle{animation:pop .5s cubic-bezier(.2,.8,.3,1.4) both;animation-delay:calc(var(--j)*40ms + 700ms)}
+.slide.active .fin-net .tri{animation:fade2 1s ease .4s both}
+@keyframes fade2{from{opacity:0}to{opacity:1}}
+
+/* risques v6 : lisibilité */
+.hrow{display:flex;justify-content:space-between;align-items:flex-end;gap:28px}
+.slide.rsk .hrow h2{font-size:32px;max-width:780px}
+.pbadge{display:flex;gap:14px;align-items:center;flex:none}
+.pbadge .st{margin-bottom:4px}
+.pbadge b{display:flex;gap:10px;align-items:center;font-family:var(--display);font-size:19px;letter-spacing:-.015em}
+.pbadge .pill{font-size:12px;padding:4px 9px}
+.pbadge small{display:block;font-size:12.5px;color:var(--muted);margin-top:4px}
+.rsk .rv{margin-top:22px}
+.rsk .cst .fq{font-size:21px}
+.rsk .cst .fq small{display:block;margin:6px 0 0}
+.bt5{grid-template-columns:1fr 80px 300px 80px 1fr;margin-top:30px;row-gap:12px}
+.bt5 > .st{font-size:11.5px}
+.bt5 > .st.lr{justify-content:flex-end}
+.bt5 .bi{font-size:18px;padding:8px 0}
+.bt5 .bcol{gap:26px}
+.bt5 .cn path{stroke:#B8BFC9;stroke-width:2}
+.bt5 .cn.rd path{stroke:#E3A59E}
+.bt5 .bn{font-size:22px;padding:24px 22px}
+.bar3{grid-column:1 / -1;display:flex;justify-content:center;gap:44px;margin:22px 0 24px}
+.bb3{display:flex;align-items:center;gap:10px;font-size:16px}
+.bb3 .ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.bb3.ok .ic{background:var(--green-soft);color:var(--green)} .bb3.no .ic{background:var(--orange-soft);color:var(--orange)}
+.bb3 .st{margin:0}
+.bb3.ok .st i{color:var(--green)} .bb3.no .st i{color:var(--orange)}
+.bb3 b{font-weight:600;color:var(--ink)}
+.rcs2{margin-top:auto;border-top:1px solid var(--line);padding-top:22px;display:grid;grid-template-columns:290px 1fr;gap:40px;align-items:start}
+.rcs2 h3{font-size:22px;letter-spacing:-.018em;line-height:1.15}
+.rcs2 .ob{font-size:13.5px;color:var(--accent);margin-top:6px;line-height:1.35;font-weight:500}
+.rcs2 .hs li{font-size:16px}
+
 .hint{position:fixed;right:16px;bottom:12px;font-family:var(--mono);font-size:11px;color:#8C929B;letter-spacing:.06em}
 
 @media print{
@@ -658,24 +703,23 @@ b,strong{font-weight:600;color:var(--ink)}
   <!-- 06 R1 -->
   <section class="slide rsk" data-sec="Risques">
     <div class="top"><span class="kicker">R1 · Personnes clés · Q8</span><div class="secs"></div></div>
-    <h2 class="r">Si le DSI part, <em>l'histoire du SI part avec lui</em></h2>
+    <div class="hrow"><h2 class="r">Si le DSI part, <em>l'histoire du SI part avec lui</em></h2>
+      <div class="pbadge r" style="--i:1"><div class="mm" data-p="3" data-i="4"></div><div><span class="st"><i>08</i>Priorité</span><b><span class="pill k4">P1</span>Criticité 12</b><small>3 × 4 · à lancer sous 3 mois</small></div></div>
+    </div>
     <div class="rv">
       <div class="cst r" style="--i:1"><div class="st"><i>01</i>Constat</div><p class="fq">« Je conserve une connaissance […] de certains choix qui ne sont pas forcément écrits. »<small>Le DSI · Q8</small></p></div>
-      <div class="bt r" style="--i:2">
-        <div class="st"><i>03</i>Causes</div><span></span><div class="st c"><i>02</i>Risque</div><span></span><div class="st"><i>04</i>Conséquences</div>
+      <div class="bt bt5 r" style="--i:2">
+        <div class="st lr"><i>03</i>Causes</div><span></span><div class="st c"><i>02</i>Risque</div><span></span><div class="st"><i>04</i>Conséquences</div>
         <div class="bcol cz"><div class="bi">Savoir historique non écrit</div><div class="bi">Expertise CRM 100 % externe</div></div>
-        <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 25 C35 25 35 50 70 50"/><path d="M0 75 C35 75 35 50 70 50"/></svg>
+        <svg class="cn" viewBox="0 0 80 100" preserveAspectRatio="none"><path d="M0 25 C40 25 40 50 80 50"/><path d="M0 75 C40 75 40 50 80 50"/></svg>
         <div class="bn">Perte brutale de compétences clés</div>
-        <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 50 C35 50 35 25 70 25"/><path d="M0 50 C35 50 35 75 70 75"/></svg>
-        <div class="bcol"><div class="bi bad">Incident sur l'application cœur non résolu</div><div class="bi bad">CRM sans support</div></div>
-        <span></span><span></span>
-        <div class="bar2"><div class="bb ok"><span class="st"><i>05</i>Maîtrise</span><b>Binômes ponctuels</b></div><div class="bb no"><span class="st"><i>06</i>Limite</span><b>Aucun suppléant pour le DSI</b></div></div>
-        <span></span><span></span>
+        <svg class="cn rd" viewBox="0 0 80 100" preserveAspectRatio="none"><path d="M0 50 C40 50 40 25 80 25"/><path d="M0 50 C40 50 40 75 80 75"/></svg>
+        <div class="bcol"><div class="bi bad">Incident critique non résolu</div><div class="bi bad">CRM sans support</div></div>
+        <div class="bar3"><div class="bb3 ok"><span class="ic">✓</span><span class="st"><i>05</i>Maîtrise</span><b>Binômes ponctuels</b></div><div class="bb3 no"><span class="ic">!</span><span class="st"><i>06</i>Limite</span><b>Aucun suppléant pour le DSI</b></div></div>
       </div>
-      <div class="rcs r" style="--i:3">
+      <div class="rcs2 r" style="--i:3">
         <div><div class="st"><i>07</i>Préconisation</div><h3>Réduire la dépendance aux personnes</h3><p class="ob">À 12 mois : aucun composant tenu par une seule personne</p></div>
         <ol class="hs"><li>Nommer un <b>adjoint au DSI</b> avec délégation écrite</li><li><b>Cartographier</b> les compétences critiques</li><li><b>Transférer le CRM</b> vers un interne</li></ol>
-        <div class="pr"><div class="mm" data-p="3" data-i="4"></div><div><div class="st"><i>08</i>Priorité</div><div class="pv"><span class="pill k4">P1</span><b>3 × 4 = 12</b></div><span class="dl2">sous 3 mois</span></div></div>
       </div>
     </div>
     <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
@@ -684,24 +728,23 @@ b,strong{font-weight:600;color:var(--ink)}
   <!-- 07 R2 -->
   <section class="slide rsk" data-sec="Risques">
     <div class="top"><span class="kicker">R2 · Continuité d'activité · Q5</span><div class="secs"></div></div>
-    <h2 class="r">Personne ne sait <em>en combien de temps</em> le SI redémarrerait</h2>
+    <div class="hrow"><h2 class="r">Personne ne sait <em>en combien de temps</em> le SI redémarrerait</h2>
+      <div class="pbadge r" style="--i:1"><div class="mm" data-p="3" data-i="4"></div><div><span class="st"><i>08</i>Priorité</span><b><span class="pill k4">P1</span>Criticité 12</b><small>3 × 4 · à lancer sous 3 mois</small></div></div>
+    </div>
     <div class="rv">
       <div class="cst r" style="--i:1"><div class="st"><i>01</i>Constat</div><p class="fq">« Je ne prétendrai pas que nous avons testé toutes les situations possibles. »<small>Le DSI · Q5</small></p></div>
-      <div class="bt r" style="--i:2">
-        <div class="st"><i>03</i>Causes</div><span></span><div class="st c"><i>02</i>Risque</div><span></span><div class="st"><i>04</i>Conséquences</div>
+      <div class="bt bt5 r" style="--i:2">
+        <div class="st lr"><i>03</i>Causes</div><span></span><div class="st c"><i>02</i>Risque</div><span></span><div class="st"><i>04</i>Conséquences</div>
         <div class="bcol cz"><div class="bi">Délais de reprise jamais fixés</div><div class="bi">Crise pensée pour la cyber</div></div>
-        <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 25 C35 25 35 50 70 50"/><path d="M0 75 C35 75 35 50 70 50"/></svg>
+        <svg class="cn" viewBox="0 0 80 100" preserveAspectRatio="none"><path d="M0 25 C40 25 40 50 80 50"/><path d="M0 75 C40 75 40 50 80 50"/></svg>
         <div class="bn">SI impossible à redémarrer à temps</div>
-        <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 50 C35 50 35 25 70 25"/><path d="M0 50 C35 50 35 75 70 75"/></svg>
+        <svg class="cn rd" viewBox="0 0 80 100" preserveAspectRatio="none"><path d="M0 50 C40 50 40 25 80 25"/><path d="M0 50 C40 50 40 75 80 75"/></svg>
         <div class="bcol"><div class="bi bad">Achats, ventes, production à l'arrêt</div><div class="bi bad">Pertes financières et de données</div></div>
-        <span></span><span></span>
-        <div class="bar2"><div class="bb ok"><span class="st"><i>05</i>Maîtrise</span><b>Cellule de crise cyber</b></div><div class="bb no"><span class="st"><i>06</i>Limite</span><b>Reprise globale jamais testée</b></div></div>
-        <span></span><span></span>
+        <div class="bar3"><div class="bb3 ok"><span class="ic">✓</span><span class="st"><i>05</i>Maîtrise</span><b>Cellule de crise cyber</b></div><div class="bb3 no"><span class="ic">!</span><span class="st"><i>06</i>Limite</span><b>Reprise globale jamais testée</b></div></div>
       </div>
-      <div class="rcs r" style="--i:3">
+      <div class="rcs2 r" style="--i:3">
         <div><div class="st"><i>07</i>Préconisation</div><h3>Un plan de reprise testé</h3><p class="ob">À 12 mois : une reprise testée, présentée au comité</p></div>
         <ol class="hs"><li>Fixer les <b>délais de reprise</b> avec chaque métier</li><li><b>Aligner les sauvegardes</b>, application métier et SAP d'abord</li><li><b>Tester chaque année</b> avec un exercice de crise</li></ol>
-        <div class="pr"><div class="mm" data-p="3" data-i="4"></div><div><div class="st"><i>08</i>Priorité</div><div class="pv"><span class="pill k4">P1</span><b>3 × 4 = 12</b></div><span class="dl2">sous 3 mois</span></div></div>
       </div>
     </div>
     <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
@@ -710,24 +753,23 @@ b,strong{font-weight:600;color:var(--ink)}
   <!-- 08 R3 -->
   <section class="slide rsk" data-sec="Risques">
     <div class="top"><span class="kicker">R3 · Prestataires · Q6</span><div class="secs"></div></div>
-    <h2 class="r">La confiance est là, <em>le contrôle ne l'est pas</em></h2>
+    <div class="hrow"><h2 class="r">La confiance est là, <em>le contrôle ne l'est pas</em></h2>
+      <div class="pbadge r" style="--i:1"><div class="mm" data-p="3" data-i="3"></div><div><span class="st"><i>08</i>Priorité</span><b><span class="pill k3">P2</span>Criticité 9</b><small>3 × 3 · à lancer sous 6 mois</small></div></div>
+    </div>
     <div class="rv">
       <div class="cst r" style="--i:1"><div class="st"><i>01</i>Constat</div><p class="fq">« Notre fonctionnement repose beaucoup sur la connaissance que nous avons de nos prestataires. »<small>Le DSI · Q6</small></p></div>
-      <div class="bt r" style="--i:2">
-        <div class="st"><i>03</i>Causes</div><span></span><div class="st c"><i>02</i>Risque</div><span></span><div class="st"><i>04</i>Conséquences</div>
+      <div class="bt bt5 r" style="--i:2">
+        <div class="st lr"><i>03</i>Causes</div><span></span><div class="st c"><i>02</i>Risque</div><span></span><div class="st"><i>04</i>Conséquences</div>
         <div class="bcol cz"><div class="bi">Relation fondée sur la confiance</div><div class="bi">Aucun indicateur de service</div></div>
-        <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 25 C35 25 35 50 70 50"/><path d="M0 75 C35 75 35 50 70 50"/></svg>
+        <svg class="cn" viewBox="0 0 80 100" preserveAspectRatio="none"><path d="M0 25 C40 25 40 50 80 50"/><path d="M0 75 C40 75 40 50 80 50"/></svg>
         <div class="bn">Prestations critiques non contrôlées</div>
-        <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 50 C35 50 35 25 70 25"/><path d="M0 50 C35 50 35 75 70 75"/></svg>
+        <svg class="cn rd" viewBox="0 0 80 100" preserveAspectRatio="none"><path d="M0 50 C40 50 40 25 80 25"/><path d="M0 50 C40 50 40 75 80 75"/></svg>
         <div class="bcol"><div class="bi bad">Code critique non vérifié</div><div class="bi bad">Coûts et accès non maîtrisés</div></div>
-        <span></span><span></span>
-        <div class="bar2"><div class="bb ok"><span class="st"><i>05</i>Maîtrise</span><b>Points avec les chargés d'affaires</b></div><div class="bb no"><span class="st"><i>06</i>Limite</span><b>La performance n'est pas suivie</b></div></div>
-        <span></span><span></span>
+        <div class="bar3"><div class="bb3 ok"><span class="ic">✓</span><span class="st"><i>05</i>Maîtrise</span><b>Points avec les chargés d'affaires</b></div><div class="bb3 no"><span class="ic">!</span><span class="st"><i>06</i>Limite</span><b>La performance n'est pas suivie</b></div></div>
       </div>
-      <div class="rcs r" style="--i:3">
+      <div class="rcs2 r" style="--i:3">
         <div><div class="st"><i>07</i>Préconisation</div><h3>Piloter les prestataires</h3><p class="ob">Point d'attention : données du CRM hébergé aux États-Unis</p></div>
         <ol class="hs"><li><b>Contrats</b> : engagements de service, audit, réversibilité</li><li><b>Comité trimestriel</b> sur indicateurs</li><li><b>Livraisons validées</b> par un interne</li></ol>
-        <div class="pr"><div class="mm" data-p="3" data-i="3"></div><div><div class="st"><i>08</i>Priorité</div><div class="pv"><span class="pill k3">P2</span><b>3 × 3 = 9</b></div><span class="dl2">sous 6 mois</span></div></div>
       </div>
     </div>
     <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
@@ -736,24 +778,23 @@ b,strong{font-weight:600;color:var(--ink)}
   <!-- 09 R4 -->
   <section class="slide rsk" data-sec="Risques">
     <div class="top"><span class="kicker">R4 · Engagement des projets · Q1 et Q2</span><div class="secs"></div></div>
-    <h2 class="r">Les projets se décident par <em>échange, pas par arbitrage</em></h2>
+    <div class="hrow"><h2 class="r">Les projets se décident par <em>échange, pas par arbitrage</em></h2>
+      <div class="pbadge r" style="--i:1"><div class="mm" data-p="4" data-i="2"></div><div><span class="st"><i>08</i>Priorité</span><b><span class="pill k3">P2</span>Criticité 8</b><small>4 × 2 · à lancer sous 6 mois</small></div></div>
+    </div>
     <div class="rv">
       <div class="cst r" style="--i:1"><div class="st"><i>01</i>Constat</div><p class="fq">« Au-delà de 50 K€, nous organisons un échange avec la direction du métier concerné. »<small>Le DSI · Q1</small></p></div>
-      <div class="bt r" style="--i:2">
-        <div class="st"><i>03</i>Causes</div><span></span><div class="st c"><i>02</i>Risque</div><span></span><div class="st"><i>04</i>Conséquences</div>
+      <div class="bt bt5 r" style="--i:2">
+        <div class="st lr"><i>03</i>Causes</div><span></span><div class="st c"><i>02</i>Risque</div><span></span><div class="st"><i>04</i>Conséquences</div>
         <div class="bcol cz"><div class="bi">Pas de comité d'investissement</div><div class="bi">Capacité des équipes non mesurée</div></div>
-        <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 25 C35 25 35 50 70 50"/><path d="M0 75 C35 75 35 50 70 50"/></svg>
+        <svg class="cn" viewBox="0 0 80 100" preserveAspectRatio="none"><path d="M0 25 C40 25 40 50 80 50"/><path d="M0 75 C40 75 40 50 80 50"/></svg>
         <div class="bn">Projets engagés sans arbitrage</div>
-        <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 50 C35 50 35 25 70 25"/><path d="M0 50 C35 50 35 75 70 75"/></svg>
+        <svg class="cn rd" viewBox="0 0 80 100" preserveAspectRatio="none"><path d="M0 50 C40 50 40 25 80 25"/><path d="M0 50 C40 50 40 75 80 75"/></svg>
         <div class="bcol"><div class="bi bad">Budget dispersé</div><div class="bi bad">Projets stratégiques retardés</div></div>
-        <span></span><span></span>
-        <div class="bar2"><div class="bb ok"><span class="st"><i>05</i>Maîtrise</span><b>Seuil de 50 K€</b></div><div class="bb no"><span class="st"><i>06</i>Limite</span><b>Décision ni tracée ni arbitrée</b></div></div>
-        <span></span><span></span>
+        <div class="bar3"><div class="bb3 ok"><span class="ic">✓</span><span class="st"><i>05</i>Maîtrise</span><b>Seuil de 50 K€</b></div><div class="bb3 no"><span class="ic">!</span><span class="st"><i>06</i>Limite</span><b>Décision ni tracée ni arbitrée</b></div></div>
       </div>
-      <div class="rcs r" style="--i:3">
+      <div class="rcs2 r" style="--i:3">
         <div><div class="st"><i>07</i>Préconisation</div><h3>Formaliser l'engagement</h3><p class="ob">À 6 mois : chaque projet a un responsable et une décision tracée</p></div>
         <ol class="hs"><li>Un <b>portefeuille unique</b> de toutes les demandes</li><li>Un <b>comité IT mensuel</b> qui arbitre</li><li>Un <b>business case</b> avant lancement</li></ol>
-        <div class="pr"><div class="mm" data-p="4" data-i="2"></div><div><div class="st"><i>08</i>Priorité</div><div class="pv"><span class="pill k3">P2</span><b>4 × 2 = 8</b></div><span class="dl2">sous 6 mois</span></div></div>
       </div>
     </div>
     <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
@@ -805,23 +846,27 @@ b,strong{font-weight:600;color:var(--ink)}
   </section>
 
   <!-- 12 Décisions -->
-  <section class="slide fin" data-sec="Décisions">
-    <div class="top"><span class="kicker">Conclusion</span><div class="secs"></div></div>
-    <div class="fg">
-      <div class="fl">
-        <h2 class="big r" style="--i:1">Le SI fonctionne. <em>Il doit maintenant tenir sans reposer sur une seule personne.</em></h2>
-        <p class="lede r" style="--i:2">Ce n'est pas un désaveu de l'équipe : c'est elle qui a construit ce qui marche. Nous proposons de formaliser l'essentiel, pas de tout documenter.</p>
-        <div class="qs r" style="--i:8"><h3>Merci. <em>Des questions ?</em></h3></div>
-      </div>
-      <div class="sheet2 r" style="--i:2">
-        <div class="stamp">À valider</div>
-        <div class="sh"><span class="lbl">Relevé de décisions</span><b>Direction Générale · PACKSOLUTIONS</b></div>
-        <ol class="dl3">
-          <li class="r" style="--i:2"><span class="cb"></span><span class="tx">Valider le <b>plan de remédiation</b> sur 12 mois</span><span class="ow">Comité de direction</span><span class="wh">Aujourd'hui</span></li><li class="r" style="--i:3"><span class="cb"></span><span class="tx">Nommer un <b>adjoint au DSI</b> avec délégation écrite</span><span class="ow">DG · DSI</span><span class="wh">0 à 3 mois</span></li><li class="r" style="--i:4"><span class="cb"></span><span class="tx">Faire fixer les <b>délais de reprise</b> par les métiers</span><span class="ow">Directions métier</span><span class="wh">0 à 3 mois</span></li><li class="r" style="--i:5"><span class="cb"></span><span class="tx">Créer le <b>comité de gouvernance IT</b> et y siéger</span><span class="ow">DG</span><span class="wh">3 à 6 mois</span></li><li class="r" style="--i:6"><span class="cb"></span><span class="tx">Revoir les <b>contrats prestataires</b></span><span class="ow">Achats · Juridique</span><span class="wh">3 à 6 mois</span></li><li class="r" style="--i:7"><span class="cb"></span><span class="tx">Recevoir le <b>tableau de bord</b> de la DSI</span><span class="ow">DG</span><span class="wh">Chaque mois</span></li>
-        </ol>
-        <div class="sig"><div><span>Validé par</span><i></i></div><div><span>Date</span><i></i></div></div>
-      </div>
-    </div>
+  <section class="slide cover fin" data-sec="Décisions">
+    <div class="grid-bg"></div>
+    <div class="brand r"><b>G1</b>Conclusion · Restitution à la Direction Générale</div>
+    <h1 class="r" style="--i:1">Le SI fonctionne. <em>Il doit maintenant tenir sans reposer sur une seule personne.</em></h1>
+    <p class="sub r" style="--i:2">Ce n'est pas un désaveu de l'équipe : c'est elle qui a construit ce qui marche. Nous proposons de formaliser l'essentiel, pas de tout documenter.</p>
+    <svg class="net fin-net" viewBox="0 0 560 480" aria-hidden="true">
+      <defs><radialGradient id="hb2"><stop offset="0" stop-color="#DCE7F6"/><stop offset=".55" stop-color="#EEF3FA" stop-opacity=".7"/><stop offset="1" stop-color="#FBFBFC" stop-opacity="0"/></radialGradient></defs>
+      <circle cx="280" cy="240" r="240" fill="url(#hb2)"/>
+      <circle class="orb" cx="280" cy="240" r="205"/><circle class="orb" cx="280" cy="240" r="125"/>
+      <g class="ring2"><line class="sp" x1="280" y1="196" x2="280.0" y2="35.0"/><line class="sp" x1="280" y1="196" x2="331.0" y2="41.4"/><line class="sp" x1="280" y1="196" x2="378.8" y2="60.4"/><line class="sp" x1="280" y1="196" x2="420.3" y2="90.6"/><line class="sp" x1="280" y1="196" x2="453.1" y2="130.2"/><line class="sp" x1="320" y1="266" x2="475.0" y2="176.7"/><line class="sp" x1="320" y1="266" x2="484.6" y2="227.1"/><line class="sp" x1="320" y1="266" x2="481.4" y2="278.4"/><line class="sp" x1="320" y1="266" x2="465.5" y2="327.3"/><line class="sp" x1="320" y1="266" x2="438.0" y2="370.7"/><line class="sp" x1="320" y1="266" x2="400.5" y2="405.8"/><line class="sp" x1="320" y1="266" x2="355.5" y2="430.6"/><line class="sp" x1="320" y1="266" x2="305.7" y2="443.4"/><line class="sp" x1="240" y1="266" x2="254.3" y2="443.4"/><line class="sp" x1="240" y1="266" x2="204.5" y2="430.6"/><line class="sp" x1="240" y1="266" x2="159.5" y2="405.8"/><line class="sp" x1="240" y1="266" x2="122.0" y2="370.7"/><line class="sp" x1="240" y1="266" x2="94.5" y2="327.3"/><line class="sp" x1="240" y1="266" x2="78.6" y2="278.4"/><line class="sp" x1="240" y1="266" x2="75.4" y2="227.1"/><line class="sp" x1="240" y1="266" x2="85.0" y2="176.7"/><line class="sp" x1="280" y1="196" x2="106.9" y2="130.2"/><line class="sp" x1="280" y1="196" x2="139.7" y2="90.6"/><line class="sp" x1="280" y1="196" x2="181.2" y2="60.4"/><line class="sp" x1="280" y1="196" x2="229.0" y2="41.4"/><circle class="pi" cx="280.0" cy="35.0" r="6.5" style="--j:0"/><circle class="pe" cx="331.0" cy="41.4" r="6.5" style="--j:1"/><circle class="pi" cx="378.8" cy="60.4" r="6.5" style="--j:2"/><circle class="pe" cx="420.3" cy="90.6" r="6.5" style="--j:3"/><circle class="pi" cx="453.1" cy="130.2" r="6.5" style="--j:4"/><circle class="pi" cx="475.0" cy="176.7" r="6.5" style="--j:5"/><circle class="pe" cx="484.6" cy="227.1" r="6.5" style="--j:6"/><circle class="pi" cx="481.4" cy="278.4" r="6.5" style="--j:7"/><circle class="pe" cx="465.5" cy="327.3" r="6.5" style="--j:8"/><circle class="pi" cx="438.0" cy="370.7" r="6.5" style="--j:9"/><circle class="pi" cx="400.5" cy="405.8" r="6.5" style="--j:10"/><circle class="pe" cx="355.5" cy="430.6" r="6.5" style="--j:11"/><circle class="pi" cx="305.7" cy="443.4" r="6.5" style="--j:12"/><circle class="pe" cx="254.3" cy="443.4" r="6.5" style="--j:13"/><circle class="pi" cx="204.5" cy="430.6" r="6.5" style="--j:14"/><circle class="pi" cx="159.5" cy="405.8" r="6.5" style="--j:15"/><circle class="pe" cx="122.0" cy="370.7" r="6.5" style="--j:16"/><circle class="pi" cx="94.5" cy="327.3" r="6.5" style="--j:17"/><circle class="pe" cx="78.6" cy="278.4" r="6.5" style="--j:18"/><circle class="pi" cx="75.4" cy="227.1" r="6.5" style="--j:19"/><circle class="pi" cx="85.0" cy="176.7" r="6.5" style="--j:20"/><circle class="pe" cx="106.9" cy="130.2" r="6.5" style="--j:21"/><circle class="pi" cx="139.7" cy="90.6" r="6.5" style="--j:22"/><circle class="pe" cx="181.2" cy="60.4" r="6.5" style="--j:23"/><circle class="pi" cx="229.0" cy="41.4" r="6.5" style="--j:24"/></g>
+      <line class="br" x1="280" y1="196" x2="280" y2="115"/><line class="br" x1="280" y1="196" x2="388" y2="178"/><line class="br" x1="320" y1="266" x2="388" y2="178"/><line class="br" x1="320" y1="266" x2="388" y2="302"/><line class="br" x1="320" y1="266" x2="280" y2="365"/><line class="br" x1="240" y1="266" x2="280" y2="365"/><line class="br" x1="240" y1="266" x2="172" y2="302"/><line class="br" x1="280" y1="196" x2="172" y2="178"/><line class="br" x1="240" y1="266" x2="172" y2="178"/><path class="tri" d="M280 196 L240 266 L320 266 Z"/>
+      <g class="nd crit" style="--j:0"><rect x="226" y="102" width="108" height="26" rx="13"/><text x="280" y="115">APP. MÉTIER</text></g>
+      <g class="nd ext" style="--j:1"><rect x="346" y="165" width="84" height="26" rx="13"/><text x="388" y="178">CRM · USA</text></g>
+      <g class="nd" style="--j:2"><rect x="362" y="289" width="52" height="26" rx="13"/><text x="388" y="302">SAP</text></g>
+      <g class="nd" style="--j:3"><rect x="256" y="352" width="48" height="26" rx="13"/><text x="280" y="365">RH</text></g>
+      <g class="nd" style="--j:4"><rect x="140" y="289" width="64" height="26" rx="13"/><text x="172" y="302">INFRA</text></g>
+      <g class="nd" style="--j:5"><rect x="136" y="165" width="72" height="26" rx="13"/><text x="172" y="178">ÉTUDES</text></g>
+      <circle class="pulse" cx="280" cy="196" r="27" style="--d:0s"/><circle class="core" cx="280" cy="196" r="27"/><text class="hub-t" x="280" y="196">DSI</text><circle class="pulse" cx="240" cy="266" r="27" style="--d:1s"/><circle class="hub2" cx="240" cy="266" r="27"/><text class="hub-t dk" x="240" y="266">ADJOINT</text><circle class="pulse" cx="320" cy="266" r="27" style="--d:2s"/><circle class="hub2" cx="320" cy="266" r="27"/><text class="hub-t dk" x="320" y="266">COMITÉ</text>
+      <text class="lg" x="280" y="472" text-anchor="middle">APRÈS LE PLAN · TROIS POINTS D'APPUI</text>
+    </svg>
+    <div class="thx r" style="--i:4"><h3>Merci. <em>Des questions ?</em></h3></div>
     <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
   </section>
 
