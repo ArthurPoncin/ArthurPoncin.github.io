@@ -417,6 +417,82 @@ b,strong{font-weight:600;color:var(--ink)}
 .slide.active .stamp{animation:stamp .5s cubic-bezier(.2,.8,.3,1.3) 1.3s both}
 @keyframes stamp{from{opacity:0;transform:rotate(-8deg) scale(1.8)}to{opacity:.85;transform:rotate(-8deg) scale(1)}}
 
+/* v5 : moins de cadres, plus de typographie */
+.ctx{display:grid;grid-template-columns:1.15fr 1fr;gap:72px;align-items:center}
+.pq{margin:0;position:relative;font-family:var(--display);font-size:27px;line-height:1.3;letter-spacing:-.02em;color:var(--ink);padding-top:34px}
+.pq .qm{position:absolute;left:-6px;top:-44px;font-size:88px;line-height:1;color:var(--accent);opacity:.18;font-weight:800}
+.pq cite{display:block;font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:16px}
+.mis{margin-top:40px}
+.mis .lbl{color:var(--accent)}
+.mis p{font-size:16.5px;line-height:1.5;color:var(--ink2);max-width:46ch}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:34px 36px}
+.kpi div{border-top:1px solid var(--line);padding-top:16px}
+.kpi b{display:block;font-family:var(--display);font-size:46px;font-weight:700;letter-spacing:-.04em;line-height:1}
+.kpi b em{font-style:normal;color:var(--accent);font-weight:500}
+.kpi span{display:block;font-size:14.5px;color:var(--muted);margin-top:10px;line-height:1.4;max-width:24ch}
+
+.per{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+.per .lbl{margin-bottom:18px}
+.pd{width:26px;height:26px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-family:var(--mono);font-size:9px;font-weight:600;color:#fff;flex:none}
+.pd.x{background:transparent;border:2px dashed var(--orange);color:var(--orange)}
+.pd.d{width:40px;height:40px;font-size:11px;background:var(--ink)}
+.slide.active .pd{animation:pop .45s cubic-bezier(.2,.8,.3,1.4) both;animation-delay:calc(var(--j,0)*35ms + 400ms)}
+.dsi2{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+.dsi2 p{font-size:15.5px;color:var(--ink2)}
+.pole2{margin-bottom:24px}
+.pole2 p{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.pole2 p b{font-family:var(--display);font-size:17px}
+.pole2 p span{font-size:13px;color:var(--muted)}
+.dots{display:flex;flex-wrap:wrap;gap:5px}
+.leg2{display:flex;gap:18px;align-items:center;font-size:13px;color:var(--muted);margin-top:4px}
+.leg2 span{display:flex;gap:6px;align-items:center}
+.leg2 i{width:12px;height:12px;border-radius:50%;background:var(--accent)}
+.leg2 i.x{background:transparent;border:2px dashed var(--orange)}
+.leg2 .hl{margin-left:auto;color:var(--orange);font-weight:600}
+.sis li{display:grid;grid-template-columns:12px 1fr auto;gap:16px;align-items:start;padding:16px 0;border-bottom:1px solid var(--line)}
+.sis li:first-child{border-top:1px solid var(--line)}
+.sis li > i{width:10px;height:10px;border-radius:50%;background:var(--faint);margin-top:6px}
+.sis li.crit > i{background:var(--red)} .sis li.us > i{background:var(--orange)}
+.sis b{display:block;font-family:var(--display);font-size:17px;letter-spacing:-.01em}
+.sis span{display:block;font-size:13.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.sis em{font-style:normal;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px;white-space:nowrap}
+.sis li.crit em{color:var(--red)} .sis li.us em{color:var(--orange)}
+
+.syn{display:grid;grid-template-columns:1fr 1.25fr;gap:80px;align-items:center}
+.lbl.ok{color:var(--green)}
+.chk li{position:relative;padding:12px 0 12px 32px;font-size:16.5px;line-height:1.4;color:var(--ink2);border-bottom:1px solid var(--line)}
+.chk li:last-child{border-bottom:0}
+.chk li::before{content:"✓";position:absolute;left:0;top:12px;width:20px;height:20px;border-radius:50%;background:var(--green-soft);color:var(--green);font-size:11px;font-weight:700;display:grid;place-items:center}
+.opi{font-family:var(--display);font-size:34px;line-height:1.18;letter-spacing:-.03em;font-weight:700;color:var(--ink)}
+.opi em{font-style:normal;color:var(--accent)}
+.syn .vs{margin-top:10px}
+
+.rgrp,.rgrp.p1,.rgrp.p2,.rgrp.p3{border-left:0;padding-left:0;margin-bottom:18px}
+
+.bi,.bi.bad{background:none;border:0;border-radius:0;padding:9px 0;font-size:17px;font-weight:500}
+.cz .bi{text-align:right}
+.bcol{gap:22px}
+.bi.bad{display:flex;gap:10px;align-items:baseline}
+.bi.bad::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red);flex:none;transform:translateY(-2px)}
+.cn path{stroke:#C9CED6}
+
+.mc3{border:0;background:none;padding:0;box-shadow:none}
+.m3{gap:56px}
+
+.tl2{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:48px;padding-top:6px}
+.rail{position:absolute;left:0;right:0;top:12px;height:2px;background:var(--line)}
+.rail i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--accent),var(--accent-soft));transform-origin:left}
+.slide.active .rail i{animation:wide 1.6s cubic-bezier(.4,0,.2,1) .4s both}
+@keyframes wide{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.ph2{position:relative;padding-top:34px}
+.nd2{position:absolute;top:0;left:0;width:14px;height:14px;border-radius:50%;background:var(--paper);border:3px solid var(--accent)}
+.ph2.now .nd2{background:var(--accent);box-shadow:0 0 0 6px var(--accent-soft)}
+.ph2 .lbl{color:var(--accent)}
+.ph2 h3{font-size:26px;letter-spacing:-.025em;margin:2px 0 14px}
+.ph2 li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15.5px;line-height:1.35;color:var(--ink2)}
+.ph2 li:last-child{border-bottom:0}
+.ph2 li em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted);padding-top:2px}
+
 .hint{position:fixed;right:16px;bottom:12px;font-family:var(--mono);font-size:11px;color:#8C929B;letter-spacing:.06em}
 
 @media print{
@@ -467,16 +543,16 @@ b,strong{font-weight:600;color:var(--ink)}
     <div class="top"><span class="kicker">Contexte et mission</span><div class="secs"></div></div>
     <h2 class="r">Une entreprise qui a grandi <em>plus vite que son organisation</em></h2>
     <div class="body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center">
-        <div style="display:flex;flex-direction:column;gap:22px">
-          <div class="quote r" style="--i:1">« Notre informatique fonctionne. Mais nous avons grandi très vite. Certaines pratiques ont peut-être été conçues pour une entreprise beaucoup plus petite. »<small>Le Directeur Général</small></div>
-          <div class="mission r" style="--i:2"><span class="pill">Mission</span><p>Vérifier que les <b>risques du SI sont réellement maîtrisés</b> et que l'organisation est adaptée à la taille de l'entreprise. Notre angle : <b>l'entretien avec le DSI</b>, 8 questions.</p></div>
+      <div class="ctx">
+        <div>
+          <blockquote class="pq r" style="--i:1"><span class="qm">«</span>Notre informatique fonctionne. Mais nous avons grandi très vite. Certaines pratiques ont peut-être été conçues pour une entreprise beaucoup plus petite.<cite>Le Directeur Général</cite></blockquote>
+          <div class="mis r" style="--i:2"><span class="lbl">Notre mission</span><p>Vérifier que les risques du SI sont <b>réellement maîtrisés</b> et que l'organisation est <b>adaptée à la taille</b> de l'entreprise, à partir de l'entretien avec le DSI.</p></div>
         </div>
-        <div class="g2" style="gap:14px">
-          <div class="stat r" style="--i:2"><b>10 <em>→</em> 1 500</b><span>salariés en 5 ans</span></div>
-          <div class="stat r" style="--i:3"><b>25</b><span>personnes à la DSI, dont <b>10 externes</b></span></div>
-          <div class="stat r" style="--i:4"><b>1</b><span>application métier critique : achats, ventes, production</span></div>
-          <div class="stat r" style="--i:5"><b>1</b><span>seul membre de la DSI présent depuis la création : <b>le DSI</b></span></div>
+        <div class="kpi">
+          <div class="r" style="--i:2"><b>10 <em>→</em> 1 500</b><span>salariés en cinq ans</span></div>
+          <div class="r" style="--i:3"><b>25</b><span>personnes à la DSI</span></div>
+          <div class="r" style="--i:4"><b>10</b><span>externes, dont ceux de l'application critique</span></div>
+          <div class="r" style="--i:5"><b>1</b><span>seul membre présent depuis la création : le DSI</span></div>
         </div>
       </div>
     </div>
@@ -488,29 +564,22 @@ b,strong{font-weight:600;color:var(--ink)}
     <div class="top"><span class="kicker">Périmètre audité</span><div class="secs"></div></div>
     <h2 class="r">Le cœur du SI repose <em>en grande partie sur des externes</em></h2>
     <div class="body">
-      <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:36px;align-items:start">
-        <div style="display:flex;flex-direction:column;gap:12px">
-          <div class="dsi r" style="--i:1"><div><b>DSI</b><span>Seul présent depuis la création, impliqué dans les décisions importantes</span></div></div>
-          <div class="g2 r" style="--i:2;gap:12px">
-            <div class="pole"><h3>Pôle Études</h3><p>Projets et vie courante applicative</p>
-              <div class="ppl">
-                <span class="pp" style="--j:0">RE</span><span class="pp" style="--j:1">AF</span><span class="pp" style="--j:2">CP</span><span class="pp" style="--j:3">CP</span><span class="pp" style="--j:4">CP</span><span class="pp" style="--j:5">CP</span><span class="pp" style="--j:6">DEV</span><span class="pp" style="--j:7">DEV</span>
-                <span class="pp ext" style="--j:8">JAV</span><span class="pp ext" style="--j:9">JAV</span><span class="pp ext" style="--j:10">JAV</span><span class="pp ext" style="--j:11">JAV</span><span class="pp ext" style="--j:12">JAV</span><span class="pp ext" style="--j:13">JAV</span><span class="pp ext" style="--j:14">CRM</span><span class="pp ext" style="--j:15">CRM</span>
-              </div></div>
-            <div class="pole"><h3>Pôle Infra, Réseaux, Cyber</h3><p>Exploitation et technique</p>
-              <div class="ppl">
-                <span class="pp" style="--j:3">RI</span><span class="pp" style="--j:4">AT</span><span class="pp" style="--j:5">INF</span><span class="pp" style="--j:6">BDD</span><span class="pp" style="--j:7">CYB</span><span class="pp" style="--j:8">WEB</span>
-                <span class="pp ext" style="--j:9">SLP</span><span class="pp ext" style="--j:10">EXP</span>
-              </div></div>
-          </div>
-          <div class="leg r" style="--i:3"><span><i></i>15 internes</span><span><i class="ext"></i>10 externes</span><span style="margin-left:auto">8 des 16 personnes du pôle Études sont externes</span></div>
+      <div class="per">
+        <div>
+          <span class="lbl r" style="--i:1">La DSI · 25 personnes</span>
+          <div class="dsi2 r" style="--i:1"><span class="pd d">DSI</span><p><b>Le DSI</b>, seul présent depuis la création</p></div>
+          <div class="pole2 r" style="--i:2"><p><b>Pôle Études</b><span>16 personnes · projets et applications</span></p><div class="dots"><span class="pd" style="--j:0">RE</span><span class="pd" style="--j:1">AF</span><span class="pd" style="--j:2">CP</span><span class="pd" style="--j:3">CP</span><span class="pd" style="--j:4">CP</span><span class="pd" style="--j:5">CP</span><span class="pd" style="--j:6">DEV</span><span class="pd" style="--j:7">DEV</span><span class="pd x" style="--j:8">JAV</span><span class="pd x" style="--j:9">JAV</span><span class="pd x" style="--j:10">JAV</span><span class="pd x" style="--j:11">JAV</span><span class="pd x" style="--j:12">JAV</span><span class="pd x" style="--j:13">JAV</span><span class="pd x" style="--j:14">CRM</span><span class="pd x" style="--j:15">CRM</span></div></div>
+          <div class="pole2 r" style="--i:3"><p><b>Pôle Infra, Réseaux, Cyber</b><span>8 personnes · exploitation</span></p><div class="dots"><span class="pd" style="--j:4">RI</span><span class="pd" style="--j:5">AT</span><span class="pd" style="--j:6">INF</span><span class="pd" style="--j:7">BDD</span><span class="pd" style="--j:8">CYB</span><span class="pd" style="--j:9">WEB</span><span class="pd x" style="--j:10">SLP</span><span class="pd x" style="--j:11">EXP</span></div></div>
+          <div class="leg2 r" style="--i:4"><span><i></i>Interne</span><span><i class="x"></i>Externe</span><span class="hl">La moitié du pôle Études est externe</span></div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <span class="lbl r" style="--i:2;margin-bottom:0">Les quatre briques du SI</span>
-          <div class="brick crit r" style="--i:3"><b>Application métier</b><span>Java / Oracle spécifique, évoluée surtout par les 6 externes</span><span class="pill loc">On premise</span></div>
-          <div class="brick r" style="--i:4"><b>CRM Oracle On Demand</b><span>Données tarifaires et commerciales sensibles, 2 consultants externes</span><span class="pill loc us">Cloud USA</span></div>
-          <div class="brick r" style="--i:5"><b>SAP R3 et SAP BW</b><span>Comptabilité, finance, reporting, maintenu en interne</span><span class="pill loc">On premise</span></div>
-          <div class="brick r" style="--i:6"><b>Applications RH</b><span>Service clé en main d'un fournisseur extérieur</span><span class="pill loc">Externalisé FR</span></div>
+        <div>
+          <span class="lbl r" style="--i:2">Le SI · quatre briques</span>
+          <ul class="sis">
+            <li class="r crit" style="--i:3"><i></i><div><b>Application métier</b><span>Achats, ventes, production · évoluée surtout par 6 externes</span></div><em>Critique · on premise</em></li>
+            <li class="r us" style="--i:4"><i></i><div><b>CRM Oracle On Demand</b><span>Données commerciales sensibles · 2 consultants externes</span></div><em>Cloud · USA</em></li>
+            <li class="r" style="--i:5"><i></i><div><b>SAP R3 et SAP BW</b><span>Finance et reporting · maintenu en interne</span></div><em>On premise</em></li>
+            <li class="r" style="--i:6"><i></i><div><b>Applications RH</b><span>Service clé en main d'un fournisseur</span></div><em>Externalisé · France</em></li>
+          </ul>
         </div>
       </div>
     </div>
@@ -522,21 +591,22 @@ b,strong{font-weight:600;color:var(--ink)}
     <div class="top"><span class="kicker">Notre opinion d'audit</span><div class="secs"></div></div>
     <h2 class="r">Le SI fonctionne, <em>mais il repose sur des personnes</em></h2>
     <div class="body">
-      <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:32px;align-items:stretch">
-        <div class="card c-green r" style="--i:1"><span class="lbl">Ce qui fonctionne</span>
-          <ul class="dots">
-            <li>Un <b>seuil de décision</b> à 50 K€ et un reporting renforcé au-delà de 100 K€</li>
-            <li>Une <b>feuille de route précise à 12 mois</b></li>
-            <li>Un <b>dispositif de crise cyber</b>, renforcé après la tentative d'intrusion</li>
-            <li>Des <b>procédures de restauration</b> pour les applications sensibles</li>
-            <li>De la documentation sur l'<b>exploitation et la sécurité</b></li>
-            <li>Un DSI <b>lucide</b>, qui reconnaît lui-même ses fragilités</li>
+      <div class="syn">
+        <div class="r" style="--i:1">
+          <span class="lbl ok">Ce qui fonctionne</span>
+          <ul class="chk">
+            <li>Un <b>seuil de décision</b> projet à 50 K€</li>
+            <li>Une <b>feuille de route</b> précise à 12 mois</li>
+            <li>Une <b>crise cyber</b> renforcée après l'intrusion</li>
+            <li>Des <b>restaurations</b> prévues pour les applications sensibles</li>
+            <li>Un DSI <b>lucide</b> sur ses propres fragilités</li>
           </ul>
         </div>
-        <div style="display:flex;flex-direction:column;gap:16px">
-          <div class="op r" style="--i:2"><span class="lbl">En une phrase</span><p>La DSI fonctionne grâce <em>aux personnes et à la confiance</em>, pas encore grâce à une organisation.</p></div>
-          <div class="box r" style="--i:3"><span class="lbl">Pensé pour 10, utilisé par 1 500</span>
-            <div class="vs" style="margin-top:6px">
+        <div>
+          <p class="opi r" style="--i:2">La DSI fonctionne grâce <em>aux personnes et à la confiance</em>, pas encore grâce à une organisation.</p>
+          <div class="r" style="--i:3;margin-top:34px">
+            <span class="lbl">Pensé pour 10, utilisé par 1 500</span>
+            <div class="vs">
               <span class="nm">Salariés</span><div class="bar"><i style="width:100%;background:var(--accent);--i:1">1 500</i></div>
               <span class="nm">Décision projet</span><div class="bar"><i style="width:22%;background:var(--orange);--i:2">échange</i></div>
               <span class="nm">Reprise testée</span><div class="bar"><i style="width:30%;background:var(--orange);--i:3">partielle</i></div>
@@ -593,7 +663,7 @@ b,strong{font-weight:600;color:var(--ink)}
       <div class="cst r" style="--i:1"><div class="st"><i>01</i>Constat</div><p class="fq">« Je conserve une connaissance […] de certains choix qui ne sont pas forcément écrits. »<small>Le DSI · Q8</small></p></div>
       <div class="bt r" style="--i:2">
         <div class="st"><i>03</i>Causes</div><span></span><div class="st c"><i>02</i>Risque</div><span></span><div class="st"><i>04</i>Conséquences</div>
-        <div class="bcol"><div class="bi">Savoir historique non écrit</div><div class="bi">Expertise CRM 100 % externe</div></div>
+        <div class="bcol cz"><div class="bi">Savoir historique non écrit</div><div class="bi">Expertise CRM 100 % externe</div></div>
         <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 25 C35 25 35 50 70 50"/><path d="M0 75 C35 75 35 50 70 50"/></svg>
         <div class="bn">Perte brutale de compétences clés</div>
         <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 50 C35 50 35 25 70 25"/><path d="M0 50 C35 50 35 75 70 75"/></svg>
@@ -619,7 +689,7 @@ b,strong{font-weight:600;color:var(--ink)}
       <div class="cst r" style="--i:1"><div class="st"><i>01</i>Constat</div><p class="fq">« Je ne prétendrai pas que nous avons testé toutes les situations possibles. »<small>Le DSI · Q5</small></p></div>
       <div class="bt r" style="--i:2">
         <div class="st"><i>03</i>Causes</div><span></span><div class="st c"><i>02</i>Risque</div><span></span><div class="st"><i>04</i>Conséquences</div>
-        <div class="bcol"><div class="bi">Délais de reprise jamais fixés</div><div class="bi">Crise pensée pour la cyber</div></div>
+        <div class="bcol cz"><div class="bi">Délais de reprise jamais fixés</div><div class="bi">Crise pensée pour la cyber</div></div>
         <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 25 C35 25 35 50 70 50"/><path d="M0 75 C35 75 35 50 70 50"/></svg>
         <div class="bn">SI impossible à redémarrer à temps</div>
         <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 50 C35 50 35 25 70 25"/><path d="M0 50 C35 50 35 75 70 75"/></svg>
@@ -645,7 +715,7 @@ b,strong{font-weight:600;color:var(--ink)}
       <div class="cst r" style="--i:1"><div class="st"><i>01</i>Constat</div><p class="fq">« Notre fonctionnement repose beaucoup sur la connaissance que nous avons de nos prestataires. »<small>Le DSI · Q6</small></p></div>
       <div class="bt r" style="--i:2">
         <div class="st"><i>03</i>Causes</div><span></span><div class="st c"><i>02</i>Risque</div><span></span><div class="st"><i>04</i>Conséquences</div>
-        <div class="bcol"><div class="bi">Relation fondée sur la confiance</div><div class="bi">Aucun indicateur de service</div></div>
+        <div class="bcol cz"><div class="bi">Relation fondée sur la confiance</div><div class="bi">Aucun indicateur de service</div></div>
         <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 25 C35 25 35 50 70 50"/><path d="M0 75 C35 75 35 50 70 50"/></svg>
         <div class="bn">Prestations critiques non contrôlées</div>
         <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 50 C35 50 35 25 70 25"/><path d="M0 50 C35 50 35 75 70 75"/></svg>
@@ -671,7 +741,7 @@ b,strong{font-weight:600;color:var(--ink)}
       <div class="cst r" style="--i:1"><div class="st"><i>01</i>Constat</div><p class="fq">« Au-delà de 50 K€, nous organisons un échange avec la direction du métier concerné. »<small>Le DSI · Q1</small></p></div>
       <div class="bt r" style="--i:2">
         <div class="st"><i>03</i>Causes</div><span></span><div class="st c"><i>02</i>Risque</div><span></span><div class="st"><i>04</i>Conséquences</div>
-        <div class="bcol"><div class="bi">Pas de comité d'investissement</div><div class="bi">Capacité des équipes non mesurée</div></div>
+        <div class="bcol cz"><div class="bi">Pas de comité d'investissement</div><div class="bi">Capacité des équipes non mesurée</div></div>
         <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 25 C35 25 35 50 70 50"/><path d="M0 75 C35 75 35 50 70 50"/></svg>
         <div class="bn">Projets engagés sans arbitrage</div>
         <svg class="cn" viewBox="0 0 70 100" preserveAspectRatio="none"><path d="M0 50 C35 50 35 25 70 25"/><path d="M0 50 C35 50 35 75 70 75"/></svg>
@@ -721,28 +791,15 @@ b,strong{font-weight:600;color:var(--ink)}
     <div class="top"><span class="kicker">Plan de remédiation</span><div class="secs"></div></div>
     <h2 class="r">Sécuriser d'abord, <em>gouverner ensuite, structurer enfin</em></h2>
     <div class="body">
-      <div class="tl">
-        <div class="ph now r" style="--i:1"><span class="lbl">0 à 3 mois<span class="clock">P1</span></span><h3>Sécuriser</h3>
-          <div class="act"><span>Cartographie des compétences, <b>adjoint au DSI</b></span><span class="tags"><span class="pill">R1</span></span></div>
-          <div class="act"><span><b>Délais de reprise</b> fixés avec les métiers</span><span class="tags"><span class="pill">R2</span></span></div>
-          <div class="act"><span><b>Test de restauration</b> de l'application métier</span><span class="tags"><span class="pill">R2</span></span></div>
-          <div class="act"><span>Revue des <b>comptes des externes</b></span><span class="tags"><span class="pill">R3</span></span></div>
-          <div class="act"><span>Premier <b>tableau de bord</b> DSI</span><span class="tags"><span class="pill">R5</span></span></div>
-        </div>
-        <div class="ph r" style="--i:2"><span class="lbl">3 à 6 mois</span><h3>Gouverner</h3>
-          <div class="act"><span><b>Comité de gouvernance IT</b> et portefeuille unique</span><span class="tags"><span class="pill">R4</span></span></div>
-          <div class="act"><span><b>Avenants</b> aux contrats prestataires</span><span class="tags"><span class="pill">R3</span></span></div>
-          <div class="act"><span><b>Transfert CRM</b> vers un interne</span><span class="tags"><span class="pill">R1</span><span class="pill">R3</span></span></div>
-          <div class="act"><span><b>Exercice de crise</b> avec la DG</span><span class="tags"><span class="pill">R2</span></span></div>
-        </div>
-        <div class="ph r" style="--i:3"><span class="lbl">6 à 12 mois</span><h3>Structurer</h3>
-          <div class="act"><span><b>Schéma directeur</b> à 3 ans validé</span><span class="tags"><span class="pill">R6</span></span></div>
-          <div class="act"><span><b>Dix processus</b> formalisés</span><span class="tags"><span class="pill">R7</span></span></div>
-          <div class="act"><span><b>Dossier d'architecture</b> de l'application métier</span><span class="tags"><span class="pill">R1</span><span class="pill">R7</span></span></div>
-          <div class="act"><span><b>Test annuel de reprise</b>, bilan en comité</span><span class="tags"><span class="pill">R2</span></span></div>
-        </div>
+      <div class="tl2">
+        <div class="rail r" style="--i:1"><i></i></div>
+        <div class="ph2 now r" style="--i:2"><span class="nd2"></span><span class="lbl">0 à 3 mois · P1</span><h3>Sécuriser</h3><ul>
+          <li><span>Nommer un <b>adjoint au DSI</b></span><em>R1</em></li><li><span>Fixer les <b>délais de reprise</b></span><em>R2</em></li><li><span>Tester la <b>restauration</b> de l'application métier</span><em>R2</em></li><li><span>Revoir les <b>comptes des externes</b></span><em>R3</em></li><li><span>Premier <b>tableau de bord</b></span><em>R5</em></li></ul></div>
+        <div class="ph2 r" style="--i:3"><span class="nd2"></span><span class="lbl">3 à 6 mois · P2</span><h3>Gouverner</h3><ul>
+          <li><span>Créer le <b>comité de gouvernance IT</b></span><em>R4</em></li><li><span>Avenants aux <b>contrats prestataires</b></span><em>R3</em></li><li><span><b>Transfert CRM</b> vers un interne</span><em>R1</em></li><li><span><b>Exercice de crise</b> avec la DG</span><em>R2</em></li></ul></div>
+        <div class="ph2 r" style="--i:4"><span class="nd2"></span><span class="lbl">6 à 12 mois · P3</span><h3>Structurer</h3><ul>
+          <li><span><b>Schéma directeur</b> à 3 ans</span><em>R6</em></li><li><span><b>Dix processus</b> formalisés</span><em>R7</em></li><li><span><b>Dossier d'architecture</b></span><em>R1</em></li><li><span><b>Test annuel</b> de reprise</span><em>R2</em></li></ul></div>
       </div>
-      <div class="track r" style="--i:4"><i style="width:100%"></i></div>
     </div>
     <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
   </section>
