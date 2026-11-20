@@ -321,6 +321,45 @@ b,strong{font-weight:600;color:var(--ink)}
 .band li{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;line-height:1.35;color:#D5DCE6;max-width:240px}
 .band li::before{content:"✓";color:#9FC1EE;font-weight:700}
 
+/* v3 : fil de la chaîne, aéré */
+.rs{gap:56px;margin-top:30px;grid-template-columns:1fr 420px}
+.flow{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:20px;min-height:0;padding:2px 0 4px}
+.flow::before{content:"";position:absolute;left:6px;top:10px;bottom:22px;width:2px;background:var(--line)}
+.fr{display:grid;grid-template-columns:14px 1fr;gap:20px;align-items:start}
+.fr .st{margin-bottom:6px}
+.dot{width:14px;height:14px;border-radius:50%;background:var(--paper);border:3px solid var(--faint);position:relative;z-index:1;margin-top:-1px}
+.dot.c{border-color:var(--accent)} .dot.k{border-color:var(--red);background:var(--red)} .dot.g{border-color:var(--ink2)} .dot.m{border-color:var(--green)}
+.slide.active .dot{animation:pop .45s cubic-bezier(.2,.8,.3,1.4) both;animation-delay:calc(var(--i,0)*80ms + 260ms)}
+.fq{font-family:var(--display);font-size:21px;line-height:1.38;letter-spacing:-.012em;color:var(--ink)}
+.fq q{quotes:"« " " »"}
+.fs{display:block;margin-top:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.frisk{font-family:var(--display);font-size:23px;font-weight:700;letter-spacing:-.018em;line-height:1.2;color:var(--red)}
+.fr:has(.frisk) .st, .fr:has(.frisk) .st i{color:var(--red)}
+.pair{display:grid;grid-template-columns:1fr 22px 1fr;gap:14px}
+.to{color:var(--faint);font-size:17px;padding-top:21px;text-align:center}
+.flow .dl li{font-size:16px;margin-bottom:6px}
+.fok,.fno{position:relative;padding-left:28px;font-size:16px;line-height:1.4;color:var(--ink2)}
+.fok::before,.fno::before{position:absolute;left:0;top:1px;width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700}
+.fok::before{content:"✓";background:var(--green-soft);color:var(--green)}
+.fno::before{content:"!";background:var(--orange-soft);color:var(--orange)}
+.fr:has(.fok) .pair > div:first-child .st i{color:var(--green)}
+.fr:has(.fno) .pair > div:last-child .st i{color:var(--orange)}
+.reco{padding:26px 28px}
+.reco h3{font-size:23px;margin:2px 0 20px}
+.reco .steps{gap:16px}
+.reco .steps li{font-size:16px;line-height:1.4;padding-left:34px}
+.reco .steps li::before{width:24px;height:24px;font-size:12px;top:-1px}
+.pv b{font-size:22px}
+.obj{font-size:14.5px;margin-top:14px}
+.m3{gap:22px}
+.mc3{padding:24px 26px;gap:18px}
+.mc3 .hd b{font-size:22px}
+.fq.sm{font-size:17px}
+.mc3 .fno{font-size:15px}
+.mc3 .rc{padding-top:16px}
+.mc3 .steps{gap:10px}
+.mc3 .steps li{font-size:15px}
+
 .hint{position:fixed;right:16px;bottom:12px;font-family:var(--mono);font-size:11px;color:#8C929B;letter-spacing:.06em}
 
 @media print{
@@ -499,27 +538,21 @@ b,strong{font-weight:600;color:var(--ink)}
     <div class="top"><span class="kicker">R1 · Personnes clés · Q8</span><div class="secs"></div></div>
     <h2 class="r">Si le DSI part, <em>l'histoire du SI part avec lui</em></h2>
     <div class="rs">
-      <div class="lft">
-        <div class="r" style="--i:1"><div class="st"><i>01</i>Constat</div><div class="cq"><p>Je conserve <q>une connaissance assez large de l'historique et de certains choix qui ne sont pas forcément écrits</q>. Nous travaillons en binôme <q>lorsque c'est possible</q>.</p><small>Le DSI · Question 8 · les 2 consultants CRM externes sont aussi cités</small></div></div>
-        <div class="rl r" style="--i:2"><span class="st"><i>02</i>Risque</span><b>Perte brutale de compétences indispensables au SI</b></div>
-        <div class="cc r" style="--i:3">
-          <div><div class="st"><i>03</i>Causes</div><ul class="dl"><li>Croissance sans transfert organisé</li><li>Choix d'architecture jamais écrits</li><li>Expertise CRM 100 % externe</li></ul></div>
-          <div><div class="st"><i>04</i>Conséquences</div><ul class="dl bad"><li>Incident sur l'application cœur non résolu</li><li>Projets bloqués, CRM sans support</li><li>Dépendance face aux prestataires</li></ul></div>
-        </div>
-        <div class="mlr r" style="--i:4">
-          <div class="mi ok"><span class="ic">✓</span><div><div class="st"><i>05</i>Maîtrise existante</div><p>Binômes ponctuels, volonté de réduire la dépendance externe</p></div></div>
-          <div class="mi no"><span class="ic">!</span><div><div class="st"><i>06</i>Limite</div><p>Ni systématiques ni pilotés, aucun suppléant pour le DSI</p></div></div>
-        </div>
+      <div class="flow">
+        <div class="fr r" style="--i:1"><span class="dot c"></span><div><div class="st"><i>01</i>Constat</div><p class="fq">Je conserve <q>une connaissance […] de certains choix qui ne sont pas forcément écrits</q>.</p><small class="fs">Le DSI · Question 8</small></div></div>
+        <div class="fr r" style="--i:2"><span class="dot k"></span><div><div class="st"><i>02</i>Risque</div><p class="frisk">Perte brutale de compétences clés</p></div></div>
+        <div class="fr r" style="--i:3"><span class="dot g"></span><div class="pair"><div><div class="st"><i>03</i>Causes</div><ul class="dl"><li>Savoir historique non écrit</li><li>Expertise CRM 100 % externe</li></ul></div><span class="to">→</span><div><div class="st"><i>04</i>Conséquences</div><ul class="dl bad"><li>Incident sur l'application cœur non résolu</li><li>CRM sans support</li></ul></div></div></div>
+        <div class="fr r" style="--i:4"><span class="dot m"></span><div class="pair"><div><div class="st"><i>05</i>Maîtrise existante</div><p class="fok">Binômes quand c'est possible</p></div><span class="to">→</span><div><div class="st"><i>06</i>Limite</div><p class="fno">Aucun suppléant pour le DSI</p></div></div></div>
       </div>
       <div class="reco r" style="--i:2">
         <div class="st"><i>07</i>Préconisation</div>
-        <h3>Plan de réduction de la dépendance aux personnes clés</h3>
-        <ol class="steps"><li>Cartographier les <b>compétences × composants critiques</b></li><li>Désigner un <b>suppléant</b> par poste critique, dont un <b>adjoint au DSI</b> avec délégation écrite</li><li>Écrire le <b>dossier d'architecture</b> et l'historique des choix</li><li>Inscrire au contrat un <b>transfert de compétences CRM</b> vers un interne</li><li>Rendre le <b>binôme obligatoire</b> sur chaque composant critique</li></ol>
+        <h3>Réduire la dépendance aux personnes</h3>
+        <ol class="steps"><li><b>Un adjoint au DSI</b> avec délégation écrite</li><li><b>Cartographier</b> les compétences critiques</li><li><b>Transférer le CRM</b> vers un interne, inscrit au contrat</li></ol>
         <div class="prio">
           <div class="mm" data-p="3" data-i="4"></div>
-          <div><div class="st"><i>08</i>Priorité</div><div class="pv"><span class="pill k4">P1</span><b>P 3 × I 4 = 12</b><span>sous 3 mois</span></div></div>
+          <div><div class="st"><i>08</i>Priorité</div><div class="pv"><span class="pill k4">P1</span><b>3 × 4 = 12</b><span>sous 3 mois</span></div></div>
         </div>
-        <div class="obj">À 12 mois : aucun composant critique maîtrisé par une seule personne</div>
+        <div class="obj">À 12 mois : aucun composant critique tenu par une seule personne</div>
       </div>
     </div>
     <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
@@ -530,25 +563,19 @@ b,strong{font-weight:600;color:var(--ink)}
     <div class="top"><span class="kicker">R2 · Continuité d'activité · Q5</span><div class="secs"></div></div>
     <h2 class="r">Personne ne sait <em>en combien de temps</em> le SI redémarrerait</h2>
     <div class="rs">
-      <div class="lft">
-        <div class="r" style="--i:1"><div class="st"><i>01</i>Constat</div><div class="cq"><p><q>Certaines applications disposent de dispositifs de sauvegarde et de reprise plus complets que d'autres. […] Je ne prétendrai pas que nous avons testé toutes les situations possibles.</q></p><small>Le DSI · Question 5 · après une tentative d'intrusion récente</small></div></div>
-        <div class="rl r" style="--i:2"><span class="st"><i>02</i>Risque</span><b>SI impossible à redémarrer dans un délai acceptable</b></div>
-        <div class="cc r" style="--i:3">
-          <div><div class="st"><i>03</i>Causes</div><ul class="dl"><li>Délais de reprise jamais fixés avec les métiers</li><li>Plan de crise centré sur la cyber</li><li>Scénarios choisis par la DSI seule</li></ul></div>
-          <div><div class="st"><i>04</i>Conséquences</div><ul class="dl bad"><li>Achats, ventes, production à l'arrêt</li><li>Perte de chiffre d'affaires et de données</li><li>Pénalités clients, atteinte à l'image</li></ul></div>
-        </div>
-        <div class="mlr r" style="--i:4">
-          <div class="mi ok"><span class="ic">✓</span><div><div class="st"><i>05</i>Maîtrise existante</div><p>Cellule de crise cyber, restauration des applications sensibles</p></div></div>
-          <div class="mi no"><span class="ic">!</span><div><div class="st"><i>06</i>Limite</div><p>Reprise de bout en bout jamais démontrée, perte d'un fournisseur non couverte</p></div></div>
-        </div>
+      <div class="flow">
+        <div class="fr r" style="--i:1"><span class="dot c"></span><div><div class="st"><i>01</i>Constat</div><p class="fq"><q>Je ne prétendrai pas que nous avons testé toutes les situations possibles.</q></p><small class="fs">Le DSI · Question 5</small></div></div>
+        <div class="fr r" style="--i:2"><span class="dot k"></span><div><div class="st"><i>02</i>Risque</div><p class="frisk">SI impossible à redémarrer à temps</p></div></div>
+        <div class="fr r" style="--i:3"><span class="dot g"></span><div class="pair"><div><div class="st"><i>03</i>Causes</div><ul class="dl"><li>Délais de reprise jamais fixés avec les métiers</li><li>Crise pensée surtout pour la cyber</li></ul></div><span class="to">→</span><div><div class="st"><i>04</i>Conséquences</div><ul class="dl bad"><li>Achats, ventes, production à l'arrêt</li><li>Pertes financières et de données</li></ul></div></div></div>
+        <div class="fr r" style="--i:4"><span class="dot m"></span><div class="pair"><div><div class="st"><i>05</i>Maîtrise existante</div><p class="fok">Cellule de crise cyber</p></div><span class="to">→</span><div><div class="st"><i>06</i>Limite</div><p class="fno">Reprise globale jamais testée</p></div></div></div>
       </div>
       <div class="reco r" style="--i:2">
         <div class="st"><i>07</i>Préconisation</div>
-        <h3>Plan de continuité et de reprise formalisé et testé</h3>
-        <ol class="steps"><li>Fixer avec chaque métier la <b>durée d'interruption</b> et la <b>perte de données admissibles</b></li><li>Aligner sauvegardes et reprise, d'abord <b>application métier et SAP</b></li><li>Étendre la cellule de crise à <b>tous les scénarios</b>, dont un fournisseur Cloud défaillant</li><li>Chaque année : <b>restauration complète</b> et <b>exercice de crise</b> avec la DG</li></ol>
+        <h3>Un plan de reprise testé</h3>
+        <ol class="steps"><li><b>Délais de reprise</b> fixés par chaque métier</li><li><b>Sauvegardes alignées</b>, d'abord application métier et SAP</li><li><b>Test annuel</b> et exercice de crise avec la DG</li></ol>
         <div class="prio">
           <div class="mm" data-p="3" data-i="4"></div>
-          <div><div class="st"><i>08</i>Priorité</div><div class="pv"><span class="pill k4">P1</span><b>P 3 × I 4 = 12</b><span>sous 3 mois</span></div></div>
+          <div><div class="st"><i>08</i>Priorité</div><div class="pv"><span class="pill k4">P1</span><b>3 × 4 = 12</b><span>sous 3 mois</span></div></div>
         </div>
         <div class="obj">À 12 mois : une reprise testée, présentée au comité de direction</div>
       </div>
@@ -561,27 +588,21 @@ b,strong{font-weight:600;color:var(--ink)}
     <div class="top"><span class="kicker">R3 · Prestataires · Q6</span><div class="secs"></div></div>
     <h2 class="r">La confiance est là, <em>le contrôle ne l'est pas</em></h2>
     <div class="rs">
-      <div class="lft">
-        <div class="r" style="--i:1"><div class="st"><i>01</i>Constat</div><div class="cq"><p><q>Notre fonctionnement repose beaucoup sur la connaissance que nous avons de nos prestataires.</q> Avec certains, <q>la relation est devenue assez proche de celle que nous avons avec nos collaborateurs internes</q>.</p><small>Le DSI · Question 6 · 10 externes sur 25, dont ceux de l'application critique</small></div></div>
-        <div class="rl r" style="--i:2"><span class="st"><i>02</i>Risque</span><b>Qualité, sécurité et coûts des prestations non maîtrisés</b></div>
-        <div class="cc r" style="--i:3">
-          <div><div class="st"><i>03</i>Causes</div><ul class="dl"><li>Relations historiques fondées sur la confiance</li><li>Aucun engagement de service mesuré</li><li>Frontière floue entre internes et externes</li></ul></div>
-          <div><div class="st"><i>04</i>Conséquences</div><ul class="dl bad"><li>Qualité du code critique non vérifiée</li><li>Accès aux données sensibles non maîtrisés</li><li>Dérive des coûts, risque de délit de marchandage</li></ul></div>
-        </div>
-        <div class="mlr r" style="--i:4">
-          <div class="mi ok"><span class="ic">✓</span><div><div class="st"><i>05</i>Maîtrise existante</div><p>Points avec les chargés d'affaires, suivi des travaux importants</p></div></div>
-          <div class="mi no"><span class="ic">!</span><div><div class="st"><i>06</i>Limite</div><p>On parle ressources, pas performance : aucun indicateur, aucune clause d'audit</p></div></div>
-        </div>
+      <div class="flow">
+        <div class="fr r" style="--i:1"><span class="dot c"></span><div><div class="st"><i>01</i>Constat</div><p class="fq"><q>Notre fonctionnement repose beaucoup sur la connaissance que nous avons de nos prestataires.</q></p><small class="fs">Le DSI · Question 6</small></div></div>
+        <div class="fr r" style="--i:2"><span class="dot k"></span><div><div class="st"><i>02</i>Risque</div><p class="frisk">Prestations critiques non contrôlées</p></div></div>
+        <div class="fr r" style="--i:3"><span class="dot g"></span><div class="pair"><div><div class="st"><i>03</i>Causes</div><ul class="dl"><li>Relation fondée sur la confiance</li><li>Aucun indicateur de service</li></ul></div><span class="to">→</span><div><div class="st"><i>04</i>Conséquences</div><ul class="dl bad"><li>Qualité du code critique non vérifiée</li><li>Coûts et accès non maîtrisés</li></ul></div></div></div>
+        <div class="fr r" style="--i:4"><span class="dot m"></span><div class="pair"><div><div class="st"><i>05</i>Maîtrise existante</div><p class="fok">Points avec les chargés d'affaires</p></div><span class="to">→</span><div><div class="st"><i>06</i>Limite</div><p class="fno">On parle ressources, pas performance</p></div></div></div>
       </div>
       <div class="reco r" style="--i:2">
         <div class="st"><i>07</i>Préconisation</div>
-        <h3>Cadre de pilotage des prestataires</h3>
-        <ol class="steps"><li><b>Inventorier les contrats</b> : périmètre, coût, échéance</li><li>Ajouter <b>engagements de service</b>, clauses d'<b>audit</b>, de <b>sécurité</b> et de <b>réversibilité</b></li><li><b>Comité trimestriel</b> par prestataire important, sur indicateurs</li><li>Toute livraison de l'application métier <b>validée par un interne</b></li><li><b>Comptes nominatifs</b>, revus chaque trimestre</li></ol>
+        <h3>Piloter les prestataires</h3>
+        <ol class="steps"><li><b>Contrats</b> : engagements de service, audit, réversibilité</li><li><b>Comité trimestriel</b> sur indicateurs</li><li><b>Livraisons validées</b> par un interne, comptes revus</li></ol>
         <div class="prio">
           <div class="mm" data-p="3" data-i="3"></div>
-          <div><div class="st"><i>08</i>Priorité</div><div class="pv"><span class="pill k3">P2</span><b>P 3 × I 3 = 9</b><span>sous 6 mois</span></div></div>
+          <div><div class="st"><i>08</i>Priorité</div><div class="pv"><span class="pill k3">P2</span><b>3 × 3 = 9</b><span>sous 6 mois</span></div></div>
         </div>
-        <div class="obj">Vérifier la protection des données commerciales du CRM hébergé aux États-Unis</div>
+        <div class="obj">Vérifier la protection des données du CRM hébergé aux États-Unis</div>
       </div>
     </div>
     <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
@@ -592,25 +613,19 @@ b,strong{font-weight:600;color:var(--ink)}
     <div class="top"><span class="kicker">R4 · Engagement des projets · Q1 et Q2</span><div class="secs"></div></div>
     <h2 class="r">Les projets se décident par <em>échange, pas par arbitrage</em></h2>
     <div class="rs">
-      <div class="lft">
-        <div class="r" style="--i:1"><div class="st"><i>01</i>Constat</div><div class="cq"><p>Sous 50 K€, les responsables décident seuls. Au-delà, <q>nous organisons un échange avec la direction du métier</q>. <q>Nous ne faisons pas systématiquement un business case complet.</q></p><small>Le DSI · Questions 1 et 2 · pas de comité d'investissement IT</small></div></div>
-        <div class="rl r" style="--i:2"><span class="st"><i>02</i>Risque</span><b>Projets engagés sans arbitrage, budget dispersé, équipes saturées</b></div>
-        <div class="cc r" style="--i:3">
-          <div><div class="st"><i>03</i>Causes</div><ul class="dl"><li>Processus pensé pour une petite structure</li><li>Aucune instance transverse</li><li>Capacité des équipes jamais mesurée</li></ul></div>
-          <div><div class="st"><i>04</i>Conséquences</div><ul class="dl bad"><li>Budget dispersé en petites demandes</li><li>Projets stratégiques retardés par les incidents</li><li>Aucune vision du retour sur investissement</li></ul></div>
-        </div>
-        <div class="mlr r" style="--i:4">
-          <div class="mi ok"><span class="ic">✓</span><div><div class="st"><i>05</i>Maîtrise existante</div><p>Seuil de 50 K€, accord du métier, budget identifié</p></div></div>
-          <div class="mi no"><span class="ic">!</span><div><div class="st"><i>06</i>Limite</div><p>Dix projets à 49 K€ échappent à tout arbitrage, aucune décision tracée</p></div></div>
-        </div>
+      <div class="flow">
+        <div class="fr r" style="--i:1"><span class="dot c"></span><div><div class="st"><i>01</i>Constat</div><p class="fq">Au-delà de 50 K€, <q>nous organisons un échange avec la direction du métier</q>.</p><small class="fs">Le DSI · Questions 1 et 2</small></div></div>
+        <div class="fr r" style="--i:2"><span class="dot k"></span><div><div class="st"><i>02</i>Risque</div><p class="frisk">Projets engagés sans arbitrage</p></div></div>
+        <div class="fr r" style="--i:3"><span class="dot g"></span><div class="pair"><div><div class="st"><i>03</i>Causes</div><ul class="dl"><li>Pas de comité d'investissement</li><li>Capacité des équipes non mesurée</li></ul></div><span class="to">→</span><div><div class="st"><i>04</i>Conséquences</div><ul class="dl bad"><li>Budget dispersé</li><li>Projets stratégiques retardés</li></ul></div></div></div>
+        <div class="fr r" style="--i:4"><span class="dot m"></span><div class="pair"><div><div class="st"><i>05</i>Maîtrise existante</div><p class="fok">Seuil de 50 K€, accord du métier</p></div><span class="to">→</span><div><div class="st"><i>06</i>Limite</div><p class="fno">Décision ni tracée ni arbitrée</p></div></div></div>
       </div>
       <div class="reco r" style="--i:2">
         <div class="st"><i>07</i>Préconisation</div>
-        <h3>Processus formalisé d'engagement des projets</h3>
-        <ol class="steps"><li>Une <b>fiche de demande unique</b> : besoin, bénéfice, charge, budget</li><li>Un <b>portefeuille unique</b> de toutes les demandes</li><li>Un <b>comité de gouvernance IT mensuel</b> (DG, métiers, DSI) qui arbitre sur critères écrits</li><li>Un <b>business case avec ROI</b> au-delà de 100 K€</li><li>Une <b>évaluation de capacité</b> avant lancement, part réservée au run</li></ol>
+        <h3>Formaliser l'engagement des projets</h3>
+        <ol class="steps"><li><b>Portefeuille unique</b> de toutes les demandes</li><li><b>Comité IT mensuel</b> qui arbitre sur critères écrits</li><li><b>Business case</b> et capacité vérifiés avant lancement</li></ol>
         <div class="prio">
           <div class="mm" data-p="4" data-i="2"></div>
-          <div><div class="st"><i>08</i>Priorité</div><div class="pv"><span class="pill k3">P2</span><b>P 4 × I 2 = 8</b><span>sous 6 mois</span></div></div>
+          <div><div class="st"><i>08</i>Priorité</div><div class="pv"><span class="pill k3">P2</span><b>4 × 2 = 8</b><span>sous 6 mois</span></div></div>
         </div>
         <div class="obj">À 6 mois : chaque projet a un responsable et une décision tracée</div>
       </div>
@@ -625,21 +640,21 @@ b,strong{font-weight:600;color:var(--ink)}
     <div class="m3">
         <div class="mc3 r" style="--i:1">
           <div class="hd"><div><small>R5 · Q4</small><b>Pilotage</b></div><span class="pill k2">P3 · 6</span></div>
-          <div class="cq"><p><q>Nous n'avons pas encore construit un tableau de bord unique.</q></p></div>
-          <div class="lim"><span class="ic">!</span><span>Les métiers signalent les incidents, aucun suivi des projets de 50 à 100 K€</span></div>
-          <div class="rc"><div class="st"><i>→</i>Tableau de bord DSI</div><ol class="steps"><li><b>Mensuel</b> : projets, production, sécurité, prestataires</li><li>Présenté au <b>comité de gouvernance IT</b></li><li><b>Supervision</b> qui alerte avant les utilisateurs</li></ol></div>
+          <p class="fq sm"><q>Nous n'avons pas encore construit un tableau de bord unique.</q></p>
+          <p class="fno">Les métiers signalent les incidents avant la DSI</p>
+          <div class="rc"><div class="st"><i>→</i>Tableau de bord DSI</div><ol class="steps"><li><b>Mensuel</b> : projets, production, sécurité</li><li>Présenté au <b>comité IT</b></li></ol></div>
         </div>
         <div class="mc3 r" style="--i:2">
           <div class="hd"><div><small>R6 · Q3</small><b>Trajectoire</b></div><span class="pill k2">P3 · 6</span></div>
-          <div class="cq"><p><q>Je ne parlerais pas d'un plan détaillé à cinq ans.</q></p></div>
-          <div class="lim"><span class="ic">!</span><span>Feuille de route à 12 mois, orientations ni écrites ni validées par la DG</span></div>
-          <div class="rc"><div class="st"><i>→</i>Schéma directeur</div><ol class="steps"><li><b>3 ans glissants</b>, revu chaque année</li><li>Des <b>trajectoires</b>, pas des choix techniques figés</li><li><b>Budget pluriannuel</b> validé en comité de direction</li></ol></div>
+          <p class="fq sm"><q>Je ne parlerais pas d'un plan détaillé à cinq ans.</q></p>
+          <p class="fno">Orientations ni écrites ni validées par la DG</p>
+          <div class="rc"><div class="st"><i>→</i>Schéma directeur</div><ol class="steps"><li><b>3 ans glissants</b>, revu chaque année</li><li><b>Trajectoires</b>, pas de choix figés</li></ol></div>
         </div>
         <div class="mc3 r" style="--i:3">
           <div class="hd"><div><small>R7 · Q7</small><b>Processus</b></div><span class="pill k2">P3 · 6</span></div>
-          <div class="cq"><p><q>Tout n'est certainement pas documenté au même niveau.</q></p></div>
-          <div class="lim"><span class="ic">!</span><span>Des pratiques de l'époque des 10 salariés, sans propriétaire ni revue</span></div>
-          <div class="rc"><div class="st"><i>→</i>Formalisation ciblée</div><ol class="steps"><li><b>Dix processus</b> : changements, incidents, accès, sauvegardes</li><li>Un <b>propriétaire</b> par processus, inspiré d'ITIL</li><li><b>Une à deux pages</b> chacun, revues chaque année</li></ol></div>
+          <p class="fq sm"><q>Tout n'est certainement pas documenté au même niveau.</q></p>
+          <p class="fno">Pratiques de l'époque des 10 salariés</p>
+          <div class="rc"><div class="st"><i>→</i>Formalisation ciblée</div><ol class="steps"><li><b>Dix processus</b> prioritaires</li><li><b>Un propriétaire</b> et une revue par an</li></ol></div>
         </div>
     </div>
     <div class="foot"><span>Groupe 1 · Audit IT PACKSOLUTIONS</span><span class="pg"></span></div>
