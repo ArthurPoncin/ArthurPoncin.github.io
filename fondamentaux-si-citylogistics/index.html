@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CityLogistics – Présentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#111;--muted:#777;--line:#e5e5e5;--accent:#0f9d58;--red:#dc2626;--amber:#d97706;--hand:"Caveat",cursive}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#fff;overflow:hidden}
+  body{font-family:Inter,system-ui,Arial,sans-serif;color:var(--ink)}
+  .stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center;background:#fff}
+  .slide{position:absolute;inset:0;padding:100px 140px;opacity:0;pointer-events:none;transition:opacity .5s ease}
+  .slide.active{opacity:1;pointer-events:auto}
+  .kicker{font-size:22px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:22px}
+  h1{font-size:88px;font-weight:900;line-height:1.02;letter-spacing:-.03em}
+  h2{font-size:60px;font-weight:800;line-height:1.05;letter-spacing:-.02em;margin-bottom:40px}
+  p.lead{font-size:30px;color:var(--muted);line-height:1.4;max-width:1150px}
+  .center{display:flex;flex-direction:column;justify-content:center;height:100%}
+  .footer{position:absolute;left:140px;right:140px;bottom:44px;display:flex;justify-content:space-between;font-size:18px;color:var(--muted)}
+  .progress{position:fixed;left:0;bottom:0;height:4px;background:var(--accent);transition:width .4s ease;z-index:10}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:.88em;background:#f3f3f3;padding:2px 8px;border-radius:6px}
+  b.a{color:var(--accent)}
+
+  /* cartes */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:34px}
+  .card{border:2px solid var(--line);border-radius:24px;padding:36px 34px}
+  .card .tag{font-size:17px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .card h3{font-size:40px;font-weight:800;margin:12px 0 16px;letter-spacing:-.02em}
+  .card p{font-size:23px;line-height:1.45;color:#444}
+  .card.hl{border-color:var(--ink)}
+  .big{font-size:120px;font-weight:900;letter-spacing:-.04em;line-height:1}
+  .big.r{color:var(--red)}
+
+  /* besoins -> systèmes */
+  .map{display:grid;grid-template-columns:1fr 60px 300px;row-gap:12px;align-items:center;font-size:24px}
+  .map .need{padding:12px 0;border-bottom:1px solid var(--line);color:#333}
+  .map .arr{text-align:center;color:var(--muted);font-size:26px}
+  .map .sys{font-weight:800;border:2px solid var(--ink);border-radius:14px;padding:10px 18px;text-align:center}
+  .map .sys small{display:block;font-weight:500;font-size:15px;color:var(--muted)}
+
+  /* figures */
+  figure.fig{display:flex;justify-content:center}
+  figure.fig img{display:block;max-width:100%;max-height:100%}
+  .side{display:grid;grid-template-columns:1fr 400px;gap:50px;align-items:center}
+  .note{font-family:var(--hand);font-size:34px;line-height:1.2;color:var(--accent)}
+  .callouts{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:30px}
+  .callout{display:flex;gap:16px;font-size:21px;line-height:1.45;color:#333}
+  .callout .num{flex:none;width:40px;height:40px;border-radius:50%;background:var(--ink);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:19px}
+  .points{display:flex;flex-direction:column;gap:26px}
+
+  /* risques */
+  .risk-card{border:2px solid var(--line);border-radius:24px;padding:30px 30px;display:flex;flex-direction:column;gap:14px}
+  .risk-card h3{font-size:31px;font-weight:800;letter-spacing:-.01em;line-height:1.15}
+  .lvl{align-self:flex-start;font-size:15px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:999px;color:#fff}
+  .lvl.crit{background:var(--red)}.lvl.high{background:var(--amber)}
+  .risk-card .lab{font-size:15px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .risk-card p{font-size:20px;line-height:1.45;color:#444}
+  .risk-card ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .risk-card li{font-size:20px;line-height:1.4;padding-left:26px;position:relative}
+  .risk-card li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:900}
+
+  /* ITIL */
+  .levels{display:grid;grid-template-columns:repeat(3,1fr);gap:56px;margin-top:10px}
+  .level{position:relative;border:2px solid var(--ink);border-radius:22px;padding:30px 30px}
+  .level:not(:last-child)::after{content:"→";position:absolute;right:-46px;top:46%;font-size:34px;color:var(--muted)}
+  .level .n{font-size:17px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+  .level h3{font-size:34px;font-weight:800;margin:8px 0 16px}
+  .level p{font-size:21px;line-height:1.5;color:#444}
+
+  /* choix */
+  .reco{display:grid;grid-template-columns:70px 1fr;gap:26px;margin-bottom:32px}
+  .reco .n{width:64px;height:64px;border-radius:50%;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900}
+  .reco h3{font-size:34px;font-weight:800;margin-bottom:6px}
+  .reco p{font-size:23px;line-height:1.45;color:#555;max-width:1150px}
+
+  /* ---------- INTRO ---------- */
+  #intro{padding:0}
+  .tool{position:absolute;width:300px;height:220px;border:3px solid var(--ink);border-radius:18px;background:#fff;opacity:0;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.07)}
+  .tool .t{font-family:var(--hand);font-size:40px;font-weight:700}
+  .tool .s{font-size:17px;color:var(--muted);margin-top:4px}
+  #tBoard{left:200px;top:220px}
+  #tBinder{left:650px;top:280px}
+  #tExcel{left:1100px;top:220px}
+  .scribble{position:absolute;left:22px;right:22px;bottom:22px;height:80px}
+  .grid{position:absolute;left:22px;right:22px;bottom:22px;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #bbb;border-left:1px solid #bbb}
+  .grid i{height:20px;border-right:1px solid #bbb;border-bottom:1px solid #bbb;font-style:normal;font-size:12px;color:var(--red);text-align:center;line-height:20px}
+  #growth{position:absolute;left:0;right:0;top:110px;text-align:center;font-size:30px;font-weight:700;color:var(--muted);opacity:0}
+  #growth b{color:var(--ink);font-size:44px;font-weight:900}
+  #stamp{position:absolute;left:450px;top:330px;width:700px;text-align:center;border:10px solid var(--red);color:var(--red);border-radius:24px;padding:16px 0 20px;font-size:110px;font-weight:900;opacity:0;z-index:6;background:rgba(255,255,255,.94)}
+  #stamp small{display:block;font-size:28px;font-weight:700;margin-top:2px}
+  .punch{position:absolute;left:0;right:0;text-align:center;opacity:0}
+  #p1{top:320px;font-size:78px;font-weight:900;letter-spacing:-.03em}
+  #p2{top:440px;font-size:38px;font-weight:500;color:var(--muted)}
+  #p2 b{color:var(--ink)}
+  #start{position:absolute;left:0;right:0;top:420px;text-align:center;font-size:26px;color:var(--muted);animation:blink 1.6s ease-in-out infinite}
+  #hint{position:absolute;right:60px;bottom:40px;font-size:18px;color:var(--muted);opacity:0}
+  @keyframes blink{50%{opacity:.35}}
+
+  /* ---------- OUTRO ---------- */
+  #outro{padding:0}
+  .node{position:absolute;top:330px;width:270px;height:140px;border:3px solid var(--ink);border-radius:18px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:border-color .3s,background .3s}
+  .node b{font-family:var(--hand);font-size:44px;line-height:1}
+  .node span{font-size:17px;color:var(--muted);margin-top:6px}
+  #nApp{left:120px}
+  #nMq{left:665px;width:270px}
+  #nErp{left:1210px}
+  #nErp.down{border-color:var(--red);background:#fef2f2}
+  #nErp.down b{color:var(--red)}
+  #nErp.up{border-color:var(--accent);background:#f0fdf4}
+  .wire{position:absolute;top:399px;height:3px;background:var(--ink)}
+  #w1{left:390px;width:275px}
+  #w2{left:935px;width:275px}
+  .msg{position:absolute;left:0;top:0;width:44px;height:32px;border-radius:7px;background:var(--accent);color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;opacity:0;z-index:3}
+  #queueCount{position:absolute;left:665px;width:270px;top:490px;text-align:center;font-size:24px;font-weight:800;color:var(--amber);opacity:0}
+  #erpStatus{position:absolute;left:1210px;width:270px;top:490px;text-align:center;font-size:22px;font-weight:800;opacity:0}
+  #outroText{position:absolute;left:0;right:0;top:620px;text-align:center;opacity:0}
+  #outroText h1{font-size:72px}
+  #outroText p{font-size:28px;color:var(--muted);margin-top:14px}
+  #outroTitle{position:absolute;left:0;right:0;top:120px;text-align:center;font-size:22px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <!-- 0. INTRO -->
+  <section class="slide active" id="intro">
+    <div id="start">Appuyez sur une touche pour commencer</div>
+    <div id="growth">CityLogistics, 2 ans d'existence : <b>+300 %</b> en un an</div>
+    <div class="tool" id="tBoard"><div class="t">Tableau blanc</div><div class="s">les tournées du jour</div>
+      <svg class="scribble" viewBox="0 0 256 80"><path d="M5 20 Q40 5 70 22 T140 18 T220 26" stroke="#2563eb" stroke-width="3" fill="none"/><path d="M8 50 Q60 35 110 55 T240 45" stroke="#dc2626" stroke-width="3" fill="none"/><path d="M150 5 L200 70 M200 5 L150 70" stroke="#111" stroke-width="2.5"/></svg></div>
+    <div class="tool" id="tBinder"><div class="t">Classeur papier</div><div class="s">contrats des livreurs</div>
+      <svg class="scribble" viewBox="0 0 256 80"><rect x="10" y="8" width="70" height="66" rx="4" fill="none" stroke="#111" stroke-width="2.5"/><rect x="92" y="14" width="70" height="60" rx="4" fill="none" stroke="#111" stroke-width="2.5" transform="rotate(6 127 44)"/><rect x="176" y="10" width="70" height="64" rx="4" fill="none" stroke="#111" stroke-width="2.5" transform="rotate(-5 211 42)"/></svg></div>
+    <div class="tool" id="tExcel"><div class="t">Excel partagé</div><div class="s">colis, factures, tout le reste</div>
+      <div class="grid"><i></i><i>#REF!</i><i></i><i></i><i></i><i></i><i>??</i><i></i><i>#N/A</i><i></i><i></i><i></i></div></div>
+    <div id="stamp">15 %<small>d'erreurs de livraison</small></div>
+    <div class="punch" id="p1">Le SI n'a pas suivi la croissance.</div>
+    <div class="punch" id="p2">Il faut le <b>reconstruire</b>, sans arrêter les livraisons.</div>
+    <div id="hint">→ pour continuer · R pour rejouer · F plein écran</div>
+  </section>
+
+  <!-- 1. TITRE -->
+  <section class="slide">
+    <div class="center">
+      <div class="kicker">Fondamentaux du SI · TP CityLogistics</div>
+      <h1>CityLogistics</h1>
+      <h1 style="color:var(--muted);font-weight:800">Du tableau blanc<br>à cinq systèmes.</h1>
+      <p class="lead" style="margin-top:40px">Quel système d'information pour une start-up de livraison urbaine qui a triplé en un an ?</p>
+    </div>
+    <div class="footer"><span>Arthur Poncin, Nathan Chevaudra</span><span>EPSI · M1</span></div>
+  </section>
+
+  <!-- 2. CONSTAT -->
+  <section class="slide">
+    <div class="kicker">1 · Le constat</div>
+    <h2>Une croissance gérée à la main</h2>
+    <div class="cards">
+      <div class="card"><div class="tag">Croissance</div><div class="big">+300 %</div><p style="margin-top:18px">d'activité en un an, pour une entreprise de deux ans.</p></div>
+      <div class="card"><div class="tag">Outils</div><h3>3 outils bricolés</h3><p>Un tableau blanc pour les tournées, un classeur papier pour les contrats et un Excel partagé pour tout le reste.</p></div>
+      <div class="card hl"><div class="tag">Résultat</div><div class="big r">15 %</div><p style="margin-top:18px">d'erreurs de livraison.</p></div>
+    </div>
+  </section>
+
+  <!-- 3. BESOINS -> SYSTÈMES -->
+  <section class="slide">
+    <div class="kicker">2 · Des besoins aux systèmes</div>
+    <h2 style="margin-bottom:28px">7 besoins, 5 systèmes</h2>
+    <div class="map">
+      <div class="need">Tournées optimisées par GPS selon le véhicule (vélo-cargo ou fourgonnette)</div><div class="arr">→</div><div class="sys">SIG<small>SI géographique</small></div>
+      <div class="need">Suivi des colis en temps réel et carte du dispatcheur</div><div class="arr">→</div><div class="sys">SIG<small>SI géographique</small></div>
+      <div class="need">Contrats, rémunération, export des heures pour les déclarations sociales</div><div class="arr">→</div><div class="sys">SIRH</div>
+      <div class="need">Facturation des clients et comptabilité</div><div class="arr">→</div><div class="sys">SI de Gestion<small>ERP</small></div>
+      <div class="need">Suivi du stock de colis</div><div class="arr">→</div><div class="sys">SI de Gestion<small>module WMS</small></div>
+      <div class="need">Maintenance des véhicules électriques (batterie, pneus, pannes)</div><div class="arr">→</div><div class="sys">GMAO</div>
+      <div class="need">Portail client B2B (commandes en lot, Factur-X) et API bancaire</div><div class="arr">→</div><div class="sys">SII<small>SI interorganisationnel</small></div>
+    </div>
+  </section>
+
+  <!-- 4. SI CIBLE -->
+  <section class="slide">
+    <div class="kicker">3 · Le SI cible</div>
+    <h2 style="margin-bottom:24px">Le SI de Gestion au centre</h2>
+    <div class="side">
+      <figure class="fig" style="height:600px"><img src="schemas/citylogistics-si-cible.png" alt="SI cible : cinq systèmes"></figure>
+      <div class="points">
+        <div class="callout"><span class="num">1</span><span>Le <b>SII</b> reçoit les commandes des clients B2B et paie via la banque.</span></div>
+        <div class="callout"><span class="num">2</span><span>Le <b>SI de Gestion</b> envoie les colis au SIG, facture et calcule les primes pour le SIRH.</span></div>
+        <div class="callout"><span class="num">3</span><span>Le <b>SIG</b> signale les pannes à la <b>GMAO</b>, qui libère les véhicules réparés.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. ÉCHANGE DE DONNÉES -->
+  <section class="slide">
+    <div class="kicker">4 · Échange de données</div>
+    <h2 style="margin-bottom:24px">Un colis livré, un message</h2>
+    <figure class="fig" style="height:470px"><img src="schemas/citylogistics-echange-sig-erp.png" alt="Échange de données SIG vers ERP"></figure>
+    <div class="callouts">
+      <div class="callout"><span class="num">1</span><span>Le livreur valide la livraison. Le SIG publie un message <code>ColisLivre</code> dans RabbitMQ.</span></div>
+      <div class="callout"><span class="num">2</span><span>Le connecteur le lit et met à jour la commande, le stock et la facture dans l'ERP, qui alimente le SIRH.</span></div>
+      <div class="callout"><span class="num">3</span><span>Si l'ERP est indisponible, le message attend. Après plusieurs échecs, il part dans une file d'erreurs surveillée.</span></div>
+    </div>
+  </section>
+
+  <!-- 6. DÉPLOIEMENT -->
+  <section class="slide">
+    <div class="kicker">5 · Déploiement</div>
+    <h2 style="margin-bottom:24px">Où tourne chaque brique</h2>
+    <div class="side" style="grid-template-columns:1fr 380px">
+      <figure class="fig" style="height:620px"><img src="schemas/citylogistics-deploiement.png" alt="Diagramme de déploiement"></figure>
+      <div class="points">
+        <div class="callout"><span class="num">1</span><span>Pare-feu applicatif, puis API Gateway devant <b>4 microservices</b>.</span></div>
+        <div class="callout"><span class="num">2</span><span>Cluster Kubernetes <b>managé</b>, réparti sur 2 zones.</span></div>
+        <div class="callout"><span class="num">3</span><span>Connecteurs vers l'ERP et le SIRH en SaaS, l'API bancaire, et la GMAO locale par VPN.</span></div>
+        <div class="callout"><span class="num">4</span><span>Seconde région en veille : reprise en <b>moins de 15 min</b>.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. SÉCURITÉ -->
+  <section class="slide">
+    <div class="kicker">6 · Sécurité · ISO 27001</div>
+    <h2 style="margin-bottom:30px">3 risques, 2 contrôles chacun</h2>
+    <div class="cards" style="gap:28px">
+      <div class="risk-card"><span class="lvl high">Criticité élevée</span><h3>Fuite des adresses clients (SIG)</h3>
+        <div class="lab">Scénarios</div><p>Compte dispatcheur piraté par hameçonnage. Téléphone de livreur perdu.</p>
+        <div class="lab">Contrôles</div><ul><li>Chiffrement AES-256 de la base et du stockage local</li><li>Accès par rôle à l'API Gateway, accès journalisés</li></ul></div>
+      <div class="risk-card" style="border-color:var(--ink)"><span class="lvl crit">Criticité critique</span><h3>Suivi indisponible (SLA &lt; 99,9 %)</h3>
+        <div class="lab">Scénarios</div><p>Pic du Black Friday qui sature le service Suivi. Panne d'une zone cloud.</p>
+        <div class="lab">Contrôles</div><ul><li>Mise à l'échelle automatique sur 2 zones</li><li>Supervision, alertes et bascule de région en &lt; 15 min</li></ul></div>
+      <div class="risk-card"><span class="lvl high">Criticité élevée</span><h3>Perte des données de paie (SIRH)</h3>
+        <div class="lab">Scénarios</div><p>Rançongiciel ou compte administrateur compromis. Suppression par erreur.</p>
+        <div class="lab">Contrôles</div><ul><li>Sauvegarde quotidienne chiffrée, hors du SaaS</li><li>MFA sur les comptes administrateurs</li></ul></div>
+    </div>
+  </section>
+
+  <!-- 8. ITIL -->
+  <section class="slide">
+    <div class="kicker">7 · Incident · ITIL</div>
+    <h2 style="margin-bottom:16px">Le serveur de facturation tombe</h2>
+    <p class="lead" style="font-size:26px;margin-bottom:44px">Trois niveaux de support, et la file de messages comme solution de contournement.</p>
+    <div class="levels">
+      <div class="level"><div class="n">Niveau 1</div><h3>Helpdesk</h3><p>Ouvre un ticket et qualifie l'incident : qui est touché, depuis quand. Rassure : les livraisons continuent, les factures partiront au rétablissement.</p></div>
+      <div class="level"><div class="n">Niveau 2</div><h3>Support technique</h3><p>Vérifie le connecteur ERP, la file RabbitMQ et le statut du fournisseur. Ouvre un ticket chez l'éditeur, escalade si le délai est dépassé.</p></div>
+      <div class="level"><div class="n">Niveau 3</div><h3>Développeur / Archi</h3><p>Suspend le connecteur : les messages « colis livré » attendent. Au retour de l'ERP, rejoue la file et vérifie l'absence de facture en double.</p></div>
+    </div>
+  </section>
+
+  <!-- 9. NOS CHOIX -->
+  <section class="slide">
+    <div class="kicker">8 · Nos choix</div>
+    <h2>Ce que nous assumons</h2>
+    <div class="reco"><div class="n">1</div><div><h3>Développer seulement le cœur de métier</h3><p>Quatre microservices pour les commandes, les tournées, le suivi et les notifications. L'ERP et le SIRH sont pris en SaaS.</p></div></div>
+    <div class="reco"><div class="n">2</div><div><h3>Découpler par les messages</h3><p>API REST entre les systèmes, RabbitMQ pour les événements. Le suivi GPS peut monter en charge au Black Friday sans toucher à la facturation.</p></div></div>
+    <div class="reco"><div class="n">3</div><div><h3>Une architecture lourde, mais exigée</h3><p>Kubernetes et une seconde région, c'est beaucoup pour une start-up de deux ans. La direction exige 99,99 % de disponibilité et une reprise en moins de 15 min. Le cluster est managé pour limiter la charge. Sans ces exigences, nous aurions proposé plus simple.</p></div></div>
+  </section>
+
+  <!-- 10. OUTRO -->
+  <section class="slide" id="outro">
+    <div id="outroTitle">Et si l'ERP tombe ?</div>
+    <div class="node" id="nApp"><b>App livreur</b><span>via le SIG</span></div>
+    <div class="wire" id="w1"></div>
+    <div class="node" id="nMq"><b>RabbitMQ</b><span>file de messages</span></div>
+    <div class="wire" id="w2"></div>
+    <div class="node" id="nErp"><b>ERP</b><span>SI de Gestion</span></div>
+    <div id="queueCount"></div>
+    <div id="erpStatus"></div>
+    <div id="msgs"></div>
+    <div id="outroText"><h1>Les livraisons continuent.</h1><p>Merci. Des questions ?</p></div>
+  </section>
+
+  <div class="progress" id="progress"></div>
+</div>
+
+<script>
+const stage=document.getElementById('stage');
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`translate(-50%,-50%) scale(${s})`}
+addEventListener('resize',fit);fit();
+
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const anim=(el,kf,o)=>el.animate(kf,Object.assign({fill:'forwards',easing:'cubic-bezier(.2,.8,.2,1)'},o)).finished;
+
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0,started=false;
+function show(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  $('progress').style.width=(cur/(slides.length-1)*100)+'%';
+  if(cur===0&&started) playIntro(); else introRun++;
+  if(slides[cur].id==='outro') playOutro(); else outroRun++;
+}
+function start(){started=true;$('start').style.display='none';playIntro()}
+
+addEventListener('keydown',e=>{
+  if(!started&&cur===0){e.preventDefault();start();return}
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();show(cur+1)}
+  else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();show(cur-1)}
+  else if(e.key==='Home')show(0);
+  else if(e.key==='End')show(slides.length-1);
+  else if(e.key.toLowerCase()==='r'&&cur===0)playIntro();
+  else if(e.key.toLowerCase()==='r'&&slides[cur].id==='outro')playOutro();
+  else if(e.key.toLowerCase()==='f'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+});
+addEventListener('click',e=>{if(!started&&cur===0){start();return} if(e.clientX>innerWidth*0.15)show(cur+1);else show(cur-1)});
+
+/* ---------- INTRO : le bricolage, puis le tampon ---------- */
+let introRun=0;
+async function playIntro(){
+  const id=++introRun, alive=()=>id===introRun&&cur===0;
+  const els=['growth','tBoard','tBinder','tExcel','stamp','p1','p2','hint'];
+  els.forEach(k=>{$(k).getAnimations().forEach(a=>a.cancel())});
+  await sleep(300); if(!alive())return;
+  await anim($('growth'),[{opacity:0,transform:'translateY(-20px)'},{opacity:1,transform:'none'}],{duration:600});
+  const rots={tBoard:-4,tBinder:3,tExcel:-2};
+  for(const k of ['tBoard','tBinder','tExcel']){
+    anim($(k),[{opacity:0,transform:'translateY(-260px) rotate(0)'},{opacity:1,transform:`rotate(${rots[k]}deg)`}],{duration:650,easing:'cubic-bezier(.3,1.5,.5,1)'});
+    await sleep(380); if(!alive())return;
+  }
+  await sleep(700); if(!alive())return;
+  // ça tremble : trop de colis
+  ['tBoard','tBinder','tExcel'].forEach(k=>anim($(k),[{transform:`rotate(${rots[k]}deg)`},{transform:`rotate(${rots[k]+3}deg) translateX(6px)`},{transform:`rotate(${rots[k]-3}deg) translateX(-6px)`},{transform:`rotate(${rots[k]}deg)`}],{duration:220,iterations:4,fill:'none'}));
+  await sleep(1000); if(!alive())return;
+  await anim($('stamp'),[{opacity:0,transform:'scale(2.6) rotate(-14deg)'},{opacity:1,transform:'scale(1) rotate(-6deg)'}],{duration:380,easing:'cubic-bezier(.3,1.4,.5,1)'});
+  anim(stage,[{transform:stage.style.transform+' translate(0,0)'},{transform:stage.style.transform+' translate(-8px,6px)'},{transform:stage.style.transform+' translate(6px,-4px)'},{transform:stage.style.transform+' translate(0,0)'}],{duration:260,fill:'none'});
+  await sleep(2400); if(!alive())return;
+  ['growth','tBoard','tBinder','tExcel','stamp'].forEach(k=>anim($(k),[{opacity:1},{opacity:0}],{duration:500}));
+  await sleep(600); if(!alive())return;
+  await anim($('p1'),[{opacity:0,transform:'translateY(30px)'},{opacity:1,transform:'none'}],{duration:700});
+  await sleep(1200); if(!alive())return;
+  await anim($('p2'),[{opacity:0,transform:'translateY(30px)'},{opacity:1,transform:'none'}],{duration:700});
+  await sleep(800); if(!alive())return;
+  anim($('hint'),[{opacity:0},{opacity:1}],{duration:600});
+}
+
+/* ---------- OUTRO : l'ERP tombe, la file absorbe ---------- */
+let outroRun=0;
+const APP_X=390-22, MQ_X=800-22, ERP_X=1345-22, Y=384;
+function newMsg(n){const m=document.createElement('div');m.className='msg';m.textContent='#'+n;$('msgs').appendChild(m);return m}
+async function playOutro(){
+  const id=++outroRun, alive=()=>id===outroRun&&slides[cur].id==='outro';
+  $('msgs').innerHTML='';
+  const erp=$('nErp'); erp.classList.remove('down','up');
+  ['queueCount','erpStatus','outroText'].forEach(k=>{$(k).getAnimations().forEach(a=>a.cancel());$(k).style.opacity=0});
+  const q=$('queueCount'), st=$('erpStatus'); q.style.color='';
+  await sleep(700); if(!alive())return;
+
+  // 1. fonctionnement normal : 2 messages passent
+  for(let n=1;n<=2;n++){
+    const m=newMsg(n);
+    await anim(m,[{opacity:1,transform:`translate(${APP_X}px,${Y}px)`},{opacity:1,transform:`translate(${MQ_X}px,${Y}px)`}],{duration:650}); if(!alive())return;
+    await anim(m,[{opacity:1,transform:`translate(${MQ_X}px,${Y}px)`},{opacity:0,transform:`translate(${ERP_X}px,${Y}px)`}],{duration:650}); if(!alive())return;
+    m.remove();
+  }
+  // 2. l'ERP tombe
+  erp.classList.add('down'); st.textContent='indisponible'; st.style.color='var(--red)';
+  anim(st,[{opacity:0},{opacity:1}],{duration:300});
+  anim(erp,[{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:200,iterations:2,fill:'none'});
+  await sleep(700); if(!alive())return;
+
+  // 3. les messages s'empilent dans la file
+  const queued=[];
+  anim(q,[{opacity:0},{opacity:1}],{duration:300});
+  for(let n=3;n<=8;n++){
+    const m=newMsg(n), k=queued.length, qy=Y-52-k*38;
+    await anim(m,[{opacity:1,transform:`translate(${APP_X}px,${Y}px)`},{opacity:1,transform:`translate(${MQ_X}px,${Y}px)`},{opacity:1,transform:`translate(${MQ_X}px,${qy}px)`}],{duration:700}); if(!alive())return;
+    queued.push(m); q.textContent=queued.length+' message'+(queued.length>1?'s':'')+' en attente';
+  }
+  await sleep(900); if(!alive())return;
+
+  // 4. l'ERP revient, on rejoue la file
+  erp.classList.remove('down'); erp.classList.add('up'); st.textContent='rétabli : on rejoue la file'; st.style.color='var(--accent)';
+  await sleep(700); if(!alive())return;
+  while(queued.length){
+    const m=queued.shift();
+    await anim(m,[{opacity:1},{opacity:0,transform:`translate(${ERP_X}px,${Y}px)`}],{duration:380}); if(!alive())return;
+    m.remove();
+    queued.forEach((o,k)=>anim(o,[{},{transform:`translate(${MQ_X}px,${Y-52-k*38}px)`}],{duration:200}));
+    q.textContent=queued.length?queued.length+' en attente':'0 perdu, 0 doublon';
+    q.style.color=queued.length?'var(--amber)':'var(--accent)';
+  }
+  await sleep(900); if(!alive())return;
+  await anim($('outroText'),[{opacity:0,transform:'translateY(30px)'},{opacity:1,transform:'none'}],{duration:700});
+}
+{const h=parseInt(location.hash.slice(1));if(h>0){started=true;$("start").style.display="none"}show(isNaN(h)?0:h)}
+</script>
+</body>
+</html>
