@@ -141,6 +141,17 @@
   .gs p{font-size:20px;line-height:1.45;color:#b8c0cf;margin-top:22px}
 
   /* ---------- CAUSES ---------- */
+  .ex{font:500 15px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+  .ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:44px}
+  .step{padding:20px 20px 22px;font-size:20px;line-height:1.4;color:#b8c0cf;min-height:178px}
+  .step .k{display:block;font:500 13px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+  .step+.step::after{content:"→";position:absolute;left:-36px;top:50%;transform:translateY(-50%);font:500 26px var(--mono);color:var(--cyan)}
+  .step.sym{border-color:rgba(248,113,113,.5)}.step.sym .k{color:var(--red)}
+  .step.root{border-color:rgba(103,232,249,.7);background:rgba(103,232,249,.07);color:var(--ink);font-weight:600}.step.root .k{color:var(--cyan)}
+  .others{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:34px}
+  .other{padding:20px 24px;font-size:19px;line-height:1.45;color:var(--muted)}
+  .other h3{font-size:24px;font-weight:600;margin:0 0 8px;color:var(--ink)}
+  .other b{color:var(--cyan);font-weight:600}
   .why{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
   .why .card{padding:30px}
   .why .card h3{font-size:34px;margin:12px 0 18px}
@@ -284,12 +295,20 @@
   <!-- 7. CAUSES -->
   <section class="slide">
     <div class="kicker rv">II · Causes racines · méthode des 5 pourquoi</div>
-    <h2 class="rv" style="margin-bottom:36px;animation-delay:.08s">Remonter à la cause, pas au symptôme</h2>
-    <div class="why">
-      <div class="card panel rv" style="animation-delay:.15s"><div class="tag">Collecte + gouvernance</div><h3>Horloge JP3</h3><div class="chain"><span>L'horloge perd le GPS</span><span>La perte n'est pas remontée comme panne</span><span>Le statut ne regarde que le réseau</span><span class="root">Aucune règle ne définit le statut</span></div></div>
-      <div class="card panel rv" style="animation-delay:.25s"><div class="tag">Intégration + gouvernance</div><h3>AU4 fantôme</h3><div class="chain"><span>Les mesures ne viennent pas d'un équipement actif</span><span>Le pipeline remplit les vides (hypothèse)</span><span>Firmware 9.8 jamais mis à jour</span><span class="root">Pas de référentiel firmware</span></div></div>
-      <div class="card panel rv" style="animation-delay:.35s"><div class="tag">Saisie + référentiel</div><h3>Calibration</h3><div class="chain"><span>La date varie d'un relevé à l'autre</span><span>Elle est recopiée, pas lue à la source</span><span>Satellite ou station ? Non défini</span><span class="root">Pas de source de vérité maintenance</span></div></div>
+    <h2 class="rv" style="margin-bottom:30px;animation-delay:.08s">Remonter à la cause, pas au symptôme</h2>
+    <div class="ex rv" style="animation-delay:.12s">Exemple déroulé : l'horloge de GS-JP3</div>
+    <div class="ladder">
+      <div class="step panel sym rv" style="animation-delay:.16s"><span class="k">Symptôme</span>JP3 affichée « nominal » avec une horloge en dérive</div>
+      <div class="step panel rv" style="animation-delay:.26s"><span class="k">Pourquoi ? 1</span>L'horloge a perdu le signal GPS</div>
+      <div class="step panel rv" style="animation-delay:.36s"><span class="k">Pourquoi ? 2</span>Cette perte n'est pas remontée comme une panne</div>
+      <div class="step panel rv" style="animation-delay:.46s"><span class="k">Pourquoi ? 3</span>Le statut ne regarde que les mesures réseau</div>
+      <div class="step panel root rv" style="animation-delay:.56s"><span class="k">Cause racine</span>Aucune règle écrite ne définit le statut</div>
     </div>
+    <div class="others">
+      <div class="other panel rv" style="animation-delay:.66s"><h3>AU4 fantôme</h3>Mesures sans équipement actif → pipeline qui comble les vides (hypothèse) → firmware 9.8 jamais mis à jour → <b>pas de référentiel firmware</b></div>
+      <div class="other panel rv" style="animation-delay:.74s"><h3>Calibration</h3>Date qui change d'un relevé à l'autre → recopiée au lieu d'être lue à la source → satellite ou station, non défini → <b>pas de source de vérité maintenance</b></div>
+    </div>
+    <div class="footer"><span>Les trois causes racines sont un manque de règle ou de référentiel : la réponse est d'abord organisationnelle.</span><span></span></div>
   </section>
 
   <!-- 8. PLAN -->
