@@ -210,7 +210,7 @@
       <h1 class="rv" style="color:var(--muted);font-weight:500;animation-delay:.2s">Quand la télémétrie<br>cesse d'être fiable.</h1>
       <p class="lead rv" style="margin-top:44px;animation-delay:.35s">À partir de quel niveau d'anomalie une donnée de télémétrie cesse-t-elle d'être fiable pour piloter un service critique ?</p>
     </div>
-    <div class="footer"><span>Arthur, Nathan, Jihad, Amen, Abibou</span><span>03_Starlink.xlsx · 30 relevés · 4 stations sol · données fictives</span></div>
+    <div class="footer"><span>Arthur, Nathan, Jihad, Amen, Habibou</span><span>03_Starlink.xlsx · 30 relevés · 4 stations sol · données fictives</span></div>
   </section>
 
   <!-- 2. LE PARADOXE -->
@@ -317,7 +317,7 @@
     <div id="outroText">
       <div class="kicker">Fin de transmission</div>
       <h1>Merci.<br><span style="color:var(--cyan)">Des questions ?</span></h1>
-      <p>Arthur · Nathan · Jihad · Amen · Abibou</p>
+      <p>Arthur · Nathan · Jihad · Amen · Habibou</p>
     </div>
   </section>
 
@@ -596,17 +596,19 @@ function pop(at=0){tone(420,.12,'sine',.18,at,900)}
 
 /* ================= Salle : le groupe derrière les PC ================= */
 const PEOPLE=[
-  {name:'Arthur', x:250, hair:'#3b2a1e',style:'short', skin:'#e8c1a0',shirt:'#2b3a55'},
-  {name:'Nathan', x:530, hair:'#1f1a17',style:'curly', skin:'#c99a74',shirt:'#5a2d3a'},
-  {name:'Jihad',  x:800, hair:'#15110f',style:'short', skin:'#b98563',shirt:'#24443a'},
-  {name:'Amen',   x:1070,hair:'#120e0c',style:'buzz',  skin:'#7a5038',shirt:'#3e3a5c'},
-  {name:'Abibou', x:1350,hair:'#0f0c0a',style:'curly', skin:'#6b4430',shirt:'#5c4a2a'},
+  {name:'Arthur', x:250, hair:'#3b2a1e',style:'short', skin:'#f1cfb4',shirt:'#2b3a55'},
+  {name:'Nathan', x:530, hair:'#4a3322',style:'curly', skin:'#efc9ab',shirt:'#5a2d3a'},
+  {name:'Jihad',  x:800, hair:'#15110f',style:'long',  skin:'#c99a74',shirt:'#24443a'},
+  {name:'Amen',   x:1070,hair:'#120e0c',style:'buzz',  skin:'#5e3a26',shirt:'#3e3a5c'},
+  {name:'Habibou',x:1350,hair:'#0f0c0a',style:'curly', skin:'#4f3020',shirt:'#5c4a2a'},
 ];
 function hairBack(p){
+  if(p.style==='long')return `<path d="M-56,-196 C-62,-266 62,-266 56,-196 L66,-104 Q0,-90 -66,-104Z" fill="${p.hair}"/>`;
   if(p.style==='curly')return `<g fill="${p.hair}">${[[-40,-205],[0,-222],[40,-205],[-48,-170],[48,-170],[-28,-150],[28,-150],[0,-160]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="34"/>`).join('')}</g>`;
   if(p.style==='buzz')return `<ellipse cx="0" cy="-188" rx="50" ry="58" fill="${p.skin}"/><ellipse cx="0" cy="-192" rx="50" ry="56" fill="${p.hair}" opacity=".82"/>`;
   return `<ellipse cx="0" cy="-188" rx="53" ry="60" fill="${p.hair}"/><path d="M-50,-170 Q0,-140 50,-170 L48,-150 Q0,-128 -48,-150Z" fill="${p.hair}"/>`}
 function hairFront(p){
+  if(p.style==='long')return `<g fill="${p.hair}"><path d="M-56,-192 C-62,-268 62,-268 56,-192 C40,-238 -40,-238 -56,-192Z"/><path d="M-57,-196 C-68,-160 -66,-122 -62,-100 L-44,-106 C-50,-140 -50,-172 -46,-200Z"/><path d="M57,-196 C68,-160 66,-122 62,-100 L44,-106 C50,-140 50,-172 46,-200Z"/></g>`;
   if(p.style==='curly')return `<g fill="${p.hair}">${[[-44,-218],[-14,-236],[18,-236],[46,-218],[-58,-188],[58,-188]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="28"/>`).join('')}</g>`;
   if(p.style==='buzz')return `<path d="M-50,-200 C-50,-252 50,-252 50,-200 C38,-226 -38,-226 -50,-200Z" fill="${p.hair}" opacity=".85"/>`;
   return `<path d="M-54,-190 C-60,-262 58,-264 54,-192 C44,-222 10,-232 -20,-222 C-36,-216 -48,-206 -54,-190Z" fill="${p.hair}"/>`}
