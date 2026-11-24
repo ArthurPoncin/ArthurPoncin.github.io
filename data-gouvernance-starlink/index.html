@@ -104,6 +104,10 @@
   .dim h3{font-size:29px;font-weight:600;margin:10px 0 8px}
   .dim p{font-size:19px;line-height:1.45;color:var(--muted)}
   .dim .n{position:absolute;right:24px;top:18px;font:500 38px var(--mono);color:var(--ink)}
+  .dim.crit{border-color:rgba(248,113,113,.55);background:rgba(248,113,113,.06)}
+  .dim.crit::before{border-color:var(--red)}
+  .dim.crit .n{color:var(--red)}
+  .dim .flag{display:inline-block;margin-left:10px;font:500 12px var(--mono);letter-spacing:.14em;color:var(--red);border:1px solid rgba(248,113,113,.5);padding:1px 7px;border-radius:3px;vertical-align:1px}
 
   /* ---------- CARDS ---------- */
   .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
@@ -231,25 +235,25 @@
     <h2 class="rv" style="margin-bottom:34px;animation-delay:.08s">14 anomalies, 6 dimensions</h2>
     <div class="dims">
       <div class="dim panel rv" style="animation-delay:.15s"><span class="n">2</span><div class="tag">Validité</div><h3>Valeurs impossibles</h3><p>Latence de <code>-15 ms</code> (STL-0008), perte de <code>130 %</code> (STL-0014).</p></div>
-      <div class="dim panel rv" style="animation-delay:.22s"><span class="n">4</span><div class="tag">Cohérence</div><h3>Statuts contradictoires</h3><p>Station <code>offline</code> qui mesure une latence. US2 « dégradée » avec les meilleures mesures.</p></div>
-      <div class="dim panel rv" style="animation-delay:.29s"><span class="n">2</span><div class="tag">Fiabilité · Actualité</div><h3>Horloge en dérive</h3><p>GS-JP3 en <code>drift</code> sur 8 relevés sur 8, affichée « nominal ».</p></div>
-      <div class="dim panel rv" style="animation-delay:.36s"><span class="n">2</span><div class="tag">Exactitude</div><h3>Calibration qui recule</h3><p>SAT-101 calibré le 30/09, puis « le 18/09 » quatre heures plus tard.</p></div>
+      <div class="dim panel crit rv" style="animation-delay:.22s"><span class="n">4</span><div class="tag">Cohérence<span class="flag">CRITIQUE</span></div><h3>Statuts contradictoires</h3><p>Station <code>offline</code> qui mesure une latence. US2 « dégradée » avec les meilleures mesures.</p></div>
+      <div class="dim panel crit rv" style="animation-delay:.29s"><span class="n">2</span><div class="tag">Fiabilité · Actualité<span class="flag">CRITIQUE</span></div><h3>Horloge en dérive</h3><p>GS-JP3 en <code>drift</code> sur 8 relevés sur 8, affichée « nominal ».</p></div>
+      <div class="dim panel crit rv" style="animation-delay:.36s"><span class="n">2</span><div class="tag">Exactitude<span class="flag">CRITIQUE</span></div><h3>Calibration qui recule</h3><p>SAT-101 calibré le 30/09, puis « le 18/09 » quatre heures plus tard.</p></div>
       <div class="dim panel rv" style="animation-delay:.43s"><span class="n">2</span><div class="tag">Complétude</div><h3>Trous</h3><p>180 min sans données (STL-0027). Une mesure par station toutes les 84 min.</p></div>
       <div class="dim panel rv" style="animation-delay:.5s"><span class="n">3</span><div class="tag">Conformité</div><h3>Formats, référentiels</h3><p>Pas de fuseau horaire, région mal normalisée, firmware 9.8 non référencé, 6 champs documentés sur 15.</p></div>
     </div>
-    <div class="footer"><span>Erreurs certaines : 7 · Situations suspectes à faire confirmer : 7</span><span></span></div>
+    <div class="footer"><span>Erreurs certaines : 7 · Situations suspectes à faire confirmer : 7</span><span>En rouge : les 3 anomalies à plus fort impact</span></div>
   </section>
 
   <!-- 4. LES 3 CRITIQUES -->
   <section class="slide">
-    <div class="kicker rv">I · Les trois anomalies qui comptent</div>
-    <h2 class="rv" style="animation-delay:.08s">Le danger, c'est ce qui a l'air normal</h2>
+    <div class="kicker rv">I · Impact métier</div>
+    <h2 class="rv" style="animation-delay:.08s">Pourquoi ces trois-là sont les plus graves</h2>
     <div class="cards">
-      <div class="card panel rv" style="animation-delay:.18s"><div class="tag">Fiabilité · 8 relevés</div><h3>Horloge JP3</h3><p>Horloge non synchronisée, mais voyant vert. L'heure sert à relier les événements entre stations : sans elle, impossible de suivre une panne.</p><span class="alert">STATUS = NOMINAL</span></div>
-      <div class="card panel rv" style="animation-delay:.28s"><div class="tag">Cohérence · 7 relevés</div><h3>AU4 fantôme</h3><p>Station hors ligne, capteur en panne, et pourtant des latences « mesurées ». Un algorithme de routage enverrait du trafic vers une station morte.</p><span class="alert">OFFLINE + 41 MS</span></div>
-      <div class="card panel rv" style="animation-delay:.38s"><div class="tag">Exactitude · 13 relevés</div><h3>Calibration</h3><p>La « dernière calibration » recule dans le temps. Le seul champ qui dit si on peut croire la mesure est lui-même faux.</p><span class="alert">30/09 → 18/09</span></div>
+      <div class="card panel rv" style="animation-delay:.18s"><div class="tag">Horloge JP3 · 8 relevés</div><h3>Une panne qu'on ne suit plus</h3><p>Sans heure fiable, on ne peut ni ordonner les événements ni les relier entre stations. Et le voyant vert empêche de donner l'alerte.</p><span class="alert">ALERTE MASQUÉE</span></div>
+      <div class="card panel rv" style="animation-delay:.28s"><div class="tag">AU4 fantôme · 7 relevés</div><h3>Un routage qui se trompe</h3><p>Ses mesures ont l'air valides : un algorithme de routage enverrait du trafic vers une station hors service.</p><span class="alert">TRAFIC MAL ROUTÉ</span></div>
+      <div class="card panel rv" style="animation-delay:.38s"><div class="tag">Calibration · 13 relevés</div><h3>Des mesures sans garantie</h3><p>Le seul champ qui dit si l'on peut croire une mesure est faux. On ne sait plus quelles valeurs sont justes.</p><span class="alert">CONFIANCE PERDUE</span></div>
     </div>
-    <div class="footer"><span>-15 ms et 130 % sont faux, mais visibles et isolés : une règle de plage suffit.</span><span></span></div>
+    <div class="footer"><span>Point commun : elles ont l'air normales. -15 ms et 130 % sont faux, mais visibles : une règle de plage suffit.</span><span></span></div>
   </section>
 
   <!-- 5. TABLEAU DE BORD -->
@@ -268,14 +272,13 @@
   <!-- 6. PAR STATION -->
   <section class="slide">
     <div class="kicker rv">II · Le même score, par station</div>
-    <h2 class="rv" style="animation-delay:.08s">Un score global cache deux pannes</h2>
-    <div class="stations">
-      <div class="gs panel rv" style="animation-delay:.15s"><div class="code"><span class="led"></span>GS-US2</div><div class="score">75%</div><div class="of">6 / 8 relevés</div><p>Calibration ancienne, un <code>offline</code> isolé. Statut « dégradé » inexpliqué.</p></div>
-      <div class="gs panel rv" style="animation-delay:.22s"><div class="code"><span class="led"></span>GS-FR1</div><div class="score">71%</div><div class="of">5 / 7 relevés</div><p>La latence de -15 ms et une calibration de 16 jours.</p></div>
-      <div class="gs panel down rv" style="animation-delay:.29s"><div class="code"><span class="led"></span>GS-JP3</div><div class="score">0%</div><div class="of">0 / 8 relevés</div><p>Horloge GPS en dérive sur tous les relevés.</p></div>
-      <div class="gs panel down rv" style="animation-delay:.36s"><div class="code"><span class="led"></span>GS-AU4</div><div class="score">0%</div><div class="of">0 / 7 relevés</div><p>Capteur en panne, station hors ligne, firmware 9.8.</p></div>
-    </div>
-    <div class="footer"><span>Deux défaillances d'équipement d'un côté, des erreurs isolées de l'autre : les actions ne sont pas les mêmes.</span><span></span></div>
+    <h2 class="rv" style="margin-bottom:40px;animation-delay:.08s">Un score global cache deux pannes</h2>
+    <div class="bar rv" style="animation-delay:.15s"><div>GS-US2<span class="ev">6 / 8 relevés · erreurs isolées</span></div><div class="track"><div class="fill" data-w="75"></div></div><div class="s">75%</div></div>
+    <div class="bar rv" style="animation-delay:.2s"><div>GS-FR1<span class="ev">5 / 7 relevés · erreurs isolées</span></div><div class="track"><div class="fill" data-w="71.4"></div></div><div class="s">71%</div></div>
+    <div class="bar ko rv" style="animation-delay:.25s"><div>GS-JP3<span class="ev">0 / 8 relevés · horloge GPS en panne</span></div><div class="track"><div class="fill" data-w="0"></div></div><div class="s">0%</div></div>
+    <div class="bar ko rv" style="animation-delay:.3s"><div>GS-AU4<span class="ev">0 / 7 relevés · station hors service</span></div><div class="track"><div class="fill" data-w="0"></div></div><div class="s">0%</div></div>
+    <div class="bar total rv" style="animation-delay:.4s"><div>Les 4 stations<span class="ev">11 / 30 relevés</span></div><div class="track"><div class="fill" data-w="36.7"></div></div><div class="s">36,7%</div></div>
+    <div class="footer"><span>Pointillés verts : seuil cible de 95 %</span><span>Erreurs isolées d'un côté, pannes d'équipement de l'autre : pas les mêmes actions.</span></div>
   </section>
 
   <!-- 7. CAUSES -->
@@ -723,7 +726,7 @@ function show(i){
   $('progress').style.width=(cur/(slides.length-1)*100)+'%';
   $('hud').classList.toggle('off',cur===0||s.id==='outro');
   $('slideNo').textContent=String(cur).padStart(2,'0');
-  document.querySelectorAll('#bars .fill').forEach(f=>{f.style.width='0';if(s.id==='bars')setTimeout(()=>f.style.width=f.dataset.w+'%',350)});
+  document.querySelectorAll('.bar .fill').forEach(f=>{f.style.width='0';if(s.contains(f))setTimeout(()=>f.style.width=f.dataset.w+'%',350)});
   if(s.id==='answer')$('marker').animate([{left:'100%'},{left:'36.7%'}],{duration:1600,delay:500,easing:'cubic-bezier(.2,.8,.2,1)',fill:'both'});
   meters(s);
   if(cur!==0){roomRun++;$('roomVideo').pause()}
