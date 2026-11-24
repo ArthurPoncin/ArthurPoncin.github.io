@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Starlink – Présentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="assets/three.min.js"></script>
+<script src="assets/textures.js"></script>
+<style>
+  :root{
+    --bg:#04060b;--ink:#e8edf5;--muted:#8a94a8;--dim:#4b5468;--line:rgba(160,190,255,.16);--panel:rgba(120,160,255,.04);
+    --cyan:#67e8f9;--amber:#fbbf24;--red:#f87171;--green:#4ade80;
+    --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;--sans:"Space Grotesk",Inter,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#000;overflow:hidden}
+  body{font-family:var(--sans);color:var(--ink)}
+  .stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center;background:var(--bg);overflow:hidden}
+  #gl{position:absolute;inset:0;width:1600px;height:900px;display:block;z-index:0;transition:opacity .6s}
+  #stars{position:absolute;inset:0;z-index:0;opacity:0;transition:opacity .6s}
+  .slide{position:absolute;inset:0;padding:120px 140px 100px;visibility:hidden;z-index:2}
+  .slide.active{visibility:visible}
+  .slide.enter{animation:wipe .75s cubic-bezier(.7,0,.2,1) both}
+  @keyframes wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+  .slide.enter .rv{animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(24px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+
+  /* HUD commun */
+  .hud{position:absolute;inset:0;z-index:5;pointer-events:none;transition:opacity .6s}
+  .hud i{position:absolute;width:34px;height:34px;border-color:rgba(160,200,255,.35);border-style:solid}
+  .hud i:nth-child(1){left:36px;top:36px;border-width:2px 0 0 2px}
+  .hud i:nth-child(2){right:36px;top:36px;border-width:2px 2px 0 0}
+  .hud i:nth-child(3){left:36px;bottom:36px;border-width:0 0 2px 2px}
+  .hud i:nth-child(4){right:36px;bottom:36px;border-width:0 2px 2px 0}
+  .hud .top{position:absolute;left:86px;right:86px;top:44px;display:flex;justify-content:space-between;font:500 15px var(--mono);letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+  .hud .top b{color:var(--cyan);font-weight:500}
+  .hud .rec{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:10px;vertical-align:1px;animation:rec 1.4s infinite}
+  @keyframes rec{50%{opacity:.2}}
+  .hud.off{opacity:0}
+
+  .kicker{font:500 18px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:22px}
+  .kicker::before{content:"";display:inline-block;width:28px;height:2px;background:var(--cyan);vertical-align:5px;margin-right:14px}
+  h1{font-size:96px;font-weight:700;line-height:1;letter-spacing:-.035em}
+  h2{font-size:62px;font-weight:600;line-height:1.05;letter-spacing:-.025em;margin-bottom:44px}
+  p.lead{font-size:28px;color:var(--muted);line-height:1.45;max-width:1150px}
+  .footer{position:absolute;left:140px;right:140px;bottom:62px;display:flex;justify-content:space-between;font:400 16px var(--mono);color:var(--dim);letter-spacing:.02em}
+  code{font-family:var(--mono);font-size:.85em;color:var(--cyan);background:rgba(103,232,249,.08);padding:1px 7px;border-radius:4px}
+  .center{display:flex;flex-direction:column;justify-content:center;height:100%}
+  .progress{position:absolute;left:0;bottom:0;height:3px;background:var(--cyan);box-shadow:0 0 12px var(--cyan);transition:width .5s;z-index:6}
+  .panel{border:1px solid var(--line);background:var(--panel);border-radius:6px;position:relative}
+  .panel::before{content:"";position:absolute;left:-1px;top:-1px;width:14px;height:14px;border-left:2px solid var(--cyan);border-top:2px solid var(--cyan)}
+  .ko{color:var(--red)}.warn{color:var(--amber)}.ok{color:var(--green)}
+
+  /* ---------- INTRO 3D ---------- */
+  #intro{padding:0}
+  #pressStart{position:absolute;left:140px;bottom:130px}
+  #pressStart h1{font-size:110px;margin-bottom:34px}
+  #pressStart p{font:500 18px var(--mono);letter-spacing:.24em;color:var(--ink);text-transform:uppercase;animation:blink 1.8s ease-in-out infinite}
+  #pressStart small{display:block;margin-top:14px;font:400 14px var(--mono);letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+  @keyframes blink{50%{opacity:.3}}
+  .tele{position:absolute;font:500 16px var(--mono);letter-spacing:.12em;color:var(--ink);text-transform:uppercase;text-shadow:0 0 12px rgba(0,0,0,.9)}
+  #teleL{left:90px;top:96px;line-height:2}
+  #teleL div{opacity:0}
+  #teleL span{color:var(--cyan)}
+  #teleR{right:90px;bottom:90px;text-align:right;line-height:1.9;color:var(--muted);opacity:0}
+  #teleR b{color:var(--ink);font-weight:500}
+  .reticle{position:absolute;width:70px;height:70px;margin:-35px 0 0 -35px;border:1.5px solid var(--cyan);opacity:0;pointer-events:none;transition:opacity .4s}
+  .reticle::after{content:attr(data-l);position:absolute;left:84px;top:22px;white-space:nowrap;font:500 14px var(--mono);letter-spacing:.14em;color:var(--cyan)}
+  #flash{position:absolute;inset:0;background:#fff;opacity:0;z-index:3;pointer-events:none}
+
+  /* ---------- SALLE ---------- */
+  #room{position:absolute;inset:0;z-index:4;opacity:0;pointer-events:none}
+  #room svg{position:absolute;inset:0;width:1600px;height:900px}
+  .p-turn{transform-box:fill-box;transform-origin:50% 100%}
+  .arm{transform-box:fill-box;transform-origin:15% 95%}
+  .bubble{position:absolute;padding:12px 22px;background:#fff;color:#0b0f17;border-radius:18px;font:700 30px var(--sans);opacity:0;white-space:nowrap;transform-origin:50% 100%}
+  .bubble::after{content:"";position:absolute;left:50%;bottom:-10px;margin-left:-10px;width:20px;height:20px;background:#fff;transform:rotate(45deg);border-radius:3px}
+  .nametag{position:absolute;bottom:40px;font:500 18px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);opacity:0;transform:translateX(-50%)}
+  #roomTitle{position:absolute;left:0;right:0;top:70px;text-align:center;opacity:0}
+  #roomTitle .kicker{margin-bottom:10px}
+  #roomTitle .kicker::before{display:none}
+  #roomTitle h1{font-size:64px}
+  #hint{position:absolute;right:70px;bottom:46px;font:400 15px var(--mono);letter-spacing:.1em;color:var(--muted);opacity:0}
+  #roomVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+
+  /* ---------- BIG NUMBERS ---------- */
+  .vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:60px;margin-top:20px}
+  .vs .big{font:500 168px var(--mono);letter-spacing:-.06em;line-height:1;white-space:nowrap}
+  .vs .big.a{color:var(--red);text-shadow:0 0 40px rgba(248,113,113,.35)}
+  .vs .lbl{font-size:26px;color:var(--muted);margin-top:18px;line-height:1.4}
+  .vs .lbl b{color:var(--ink)}
+  .vs .sep{font:400 24px var(--mono);color:var(--dim);writing-mode:vertical-rl;letter-spacing:.4em}
+  .meter{display:flex;gap:4px;margin-top:26px}
+  .meter i{flex:1;height:14px;background:rgba(255,255,255,.08)}
+  .meter.full i{background:var(--ink)}
+  .meter i.on{background:var(--red)}
+
+  /* ---------- DIMENSIONS ---------- */
+  .dims{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .dim{padding:24px 28px}
+  .dim .tag{font:500 14px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+  .dim h3{font-size:29px;font-weight:600;margin:10px 0 8px}
+  .dim p{font-size:19px;line-height:1.45;color:var(--muted)}
+  .dim .n{position:absolute;right:24px;top:18px;font:500 38px var(--mono);color:var(--ink)}
+
+  /* ---------- CARDS ---------- */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+  .card{padding:34px 34px}
+  .card .tag{font:500 14px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .card h3{font-size:40px;font-weight:600;margin:16px 0 16px;letter-spacing:-.02em}
+  .card p{font-size:22px;line-height:1.5;color:#b8c0cf}
+  .card .alert{display:inline-block;margin-top:20px;font:500 14px var(--mono);letter-spacing:.14em;color:var(--red);border:1px solid rgba(248,113,113,.5);padding:4px 10px;border-radius:3px}
+
+  /* ---------- BARS ---------- */
+  .bar{display:grid;grid-template-columns:430px 1fr 130px;align-items:center;gap:30px;margin-bottom:20px;font-size:25px}
+  .bar .ev{display:block;font:400 15px var(--mono);color:var(--dim);margin-top:3px;letter-spacing:.06em}
+  .bar .track{position:relative;height:22px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 10px,transparent 10px 13px)}
+  .bar .fill{position:absolute;inset:0 auto 0 0;width:0;background:repeating-linear-gradient(90deg,var(--amber) 0 10px,transparent 10px 13px);transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+  .bar.ko .fill{background:repeating-linear-gradient(90deg,var(--red) 0 10px,transparent 10px 13px)}
+  .bar.total{margin-top:34px;font-weight:600}
+  .bar.total .fill{background:repeating-linear-gradient(90deg,var(--ink) 0 10px,transparent 10px 13px)}
+  .bar .s{font:500 30px var(--mono);text-align:right}
+  .bar .track::after{content:"";position:absolute;left:95%;top:-10px;bottom:-10px;border-left:2px dashed var(--green)}
+
+  /* ---------- STATIONS ---------- */
+  .stations{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+  .gs{padding:30px 28px}
+  .gs .code{font:500 22px var(--mono);display:flex;align-items:center;gap:12px}
+  .gs .led{width:12px;height:12px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px var(--amber)}
+  .gs.down .led{background:var(--red);box-shadow:0 0 14px var(--red);animation:rec 1s infinite}
+  .gs .score{font:500 92px var(--mono);letter-spacing:-.05em;line-height:1;margin:26px 0 6px;color:var(--amber)}
+  .gs.down{border-color:rgba(248,113,113,.5)}
+  .gs.down .score{color:var(--red)}
+  .gs .of{font:400 17px var(--mono);color:var(--dim)}
+  .gs p{font-size:20px;line-height:1.45;color:#b8c0cf;margin-top:22px}
+
+  /* ---------- CAUSES ---------- */
+  .why{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .why .card{padding:30px}
+  .why .card h3{font-size:34px;margin:12px 0 18px}
+  .chain{font-size:19px;line-height:1.45;color:#b8c0cf;counter-reset:w}
+  .chain span{display:block;position:relative;padding:7px 0 7px 46px}
+  .chain span::before{counter-increment:w;content:"0" counter(w);position:absolute;left:0;top:8px;font:500 14px var(--mono);color:var(--dim)}
+  .chain span.root{color:var(--ink);font-weight:600}
+  .chain span.root::before{content:"ROOT";color:var(--cyan)}
+
+  /* ---------- RECOS ---------- */
+  .reco{display:grid;grid-template-columns:90px 1fr;gap:20px;padding:24px 0;border-top:1px solid var(--line)}
+  .reco:last-of-type{border-bottom:1px solid var(--line)}
+  .reco .n{font:500 46px var(--mono);color:var(--cyan);line-height:1}
+  .reco h3{font-size:34px;font-weight:600;margin-bottom:8px}
+  .reco p{font-size:22px;color:var(--muted);line-height:1.45}
+
+  /* ---------- SEUILS ---------- */
+  .gauge{position:relative;margin:70px 0 18px;height:70px;display:grid;grid-template-columns:80fr 15fr 5fr;gap:4px}
+  .gauge div{display:flex;align-items:center;padding:0 22px;font:500 17px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+  .gauge .r{background:rgba(248,113,113,.18);border:1px solid rgba(248,113,113,.6);color:var(--red);justify-content:flex-end}
+  .gauge .o{background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.6);color:var(--amber);justify-content:center;padding:0;text-align:center;font-size:13px}
+  .gauge .g{background:rgba(74,222,128,.18);border:1px solid rgba(74,222,128,.6);color:var(--green);justify-content:center;padding:0;font-size:13px}
+  .ticks{position:relative;height:26px;font:400 17px var(--mono);color:var(--dim)}
+  .ticks span{position:absolute;transform:translateX(-50%)}
+  #marker{position:absolute;left:0;top:-140px;transform:translateX(-50%);font:500 22px var(--mono);color:var(--ink);white-space:nowrap;text-align:center}
+  #marker::after{content:"";display:block;width:2px;height:120px;background:var(--ink);margin:8px auto 0;box-shadow:0 0 10px #fff}
+  .rule2{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:44px}
+  .rule2 div{font-size:24px;line-height:1.45;color:#b8c0cf;padding:26px 30px}
+  .rule2 b{display:block;font-size:30px;margin-bottom:8px;color:var(--ink);font-weight:600}
+
+  /* ---------- OUTRO ---------- */
+  #outro{padding:0}
+  #outroText{position:absolute;left:140px;bottom:130px;opacity:0}
+  #outroText h1{font-size:84px}
+  #outroText p{font:500 20px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:24px}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <canvas id="gl" width="1600" height="900"></canvas>
+  <canvas id="stars" width="1600" height="900"></canvas>
+
+  <!-- 0. INTRO : de l'orbite jusqu'au groupe -->
+  <section class="slide active" id="intro">
+    <div id="pressStart"><div class="kicker">Data gouvernance · Session 2</div><h1>Starlink</h1><p>Appuyez sur Espace pour établir la liaison</p><small>F plein écran · flèches pour naviguer</small></div>
+    <div class="tele" id="teleL">
+      <div>Orbite basse · <span>550 km</span></div>
+      <div>Starlink · <span>SAT-101</span> · FW-10.3</div>
+      <div>Liaison descendante → <span>GS-FR1</span></div>
+      <div>Latence <span>27 ms</span> · Perte <span>0,8 %</span></div>
+    </div>
+    <div class="tele" id="teleR">ALT <b id="alt">—</b> KM<br>VIT <b>7,59</b> KM/S<br>UTC <b id="utc">—</b></div>
+    <div class="reticle" id="retSat" data-l="SAT-101"></div>
+    <div class="reticle" id="retGs" data-l="CIBLE · FRANCE"></div>
+    <div id="flash"></div>
+
+    <div id="room">
+      <svg id="roomSvg" viewBox="0 0 1600 900"></svg>
+      <video id="roomVideo" playsinline preload="auto"></video>
+      <div id="roomTitle"><div class="kicker">Signal reçu · 27 ms</div><h1>Bonjour&nbsp;!</h1></div>
+      <div id="bubbles"></div>
+      <div id="hint">→ continuer · R rejouer</div>
+    </div>
+  </section>
+
+  <!-- 1. TITRE -->
+  <section class="slide" id="title">
+    <div class="center">
+      <div class="kicker rv">Data gouvernance · Session 2 · Contexte 3</div>
+      <h1 class="rv" style="animation-delay:.1s">SpaceX Starlink</h1>
+      <h1 class="rv" style="color:var(--muted);font-weight:500;animation-delay:.2s">Quand la télémétrie<br>cesse d'être fiable.</h1>
+      <p class="lead rv" style="margin-top:44px;animation-delay:.35s">À partir de quel niveau d'anomalie une donnée de télémétrie cesse-t-elle d'être fiable pour piloter un service critique ?</p>
+    </div>
+    <div class="footer"><span>Arthur, Nathan, Jihad, Amen, Abibou</span><span>03_Starlink.xlsx · 30 relevés · 4 stations sol · données fictives</span></div>
+  </section>
+
+  <!-- 2. LE PARADOXE -->
+  <section class="slide">
+    <div class="kicker rv">Le constat</div>
+    <h2 class="rv" style="animation-delay:.08s">Tout est rempli.<br>Presque rien n'est utilisable.</h2>
+    <div class="vs">
+      <div class="rv" style="animation-delay:.2s"><div class="big">100%</div><div class="meter full" id="m100"></div><div class="lbl">des cellules sont <b>renseignées</b> : aucune valeur manquante</div></div>
+      <div class="sep rv" style="animation-delay:.3s">VERSUS</div>
+      <div class="rv" style="animation-delay:.4s"><div class="big a">11/30</div><div class="meter" id="m30"></div><div class="lbl">relevés passent toutes les règles bloquantes, soit <b>36,7 %</b> exploitables</div></div>
+    </div>
+    <div class="footer"><span>Un champ rempli n'est pas une donnée de qualité.</span><span></span></div>
+  </section>
+
+  <!-- 3. DIAGNOSTIC -->
+  <section class="slide">
+    <div class="kicker rv">I · Diagnostic</div>
+    <h2 class="rv" style="margin-bottom:34px;animation-delay:.08s">14 anomalies, 6 dimensions</h2>
+    <div class="dims">
+      <div class="dim panel rv" style="animation-delay:.15s"><span class="n">2</span><div class="tag">Validité</div><h3>Valeurs impossibles</h3><p>Latence de <code>-15 ms</code> (STL-0008), perte de <code>130 %</code> (STL-0014).</p></div>
+      <div class="dim panel rv" style="animation-delay:.22s"><span class="n">4</span><div class="tag">Cohérence</div><h3>Statuts contradictoires</h3><p>Station <code>offline</code> qui mesure une latence. US2 « dégradée » avec les meilleures mesures.</p></div>
+      <div class="dim panel rv" style="animation-delay:.29s"><span class="n">2</span><div class="tag">Fiabilité · Actualité</div><h3>Horloge en dérive</h3><p>GS-JP3 en <code>drift</code> sur 8 relevés sur 8, affichée « nominal ».</p></div>
+      <div class="dim panel rv" style="animation-delay:.36s"><span class="n">2</span><div class="tag">Exactitude</div><h3>Calibration qui recule</h3><p>SAT-101 calibré le 30/09, puis « le 18/09 » quatre heures plus tard.</p></div>
+      <div class="dim panel rv" style="animation-delay:.43s"><span class="n">2</span><div class="tag">Complétude</div><h3>Trous</h3><p>180 min sans données (STL-0027). Une mesure par station toutes les 84 min.</p></div>
+      <div class="dim panel rv" style="animation-delay:.5s"><span class="n">3</span><div class="tag">Conformité</div><h3>Formats, référentiels</h3><p>Pas de fuseau horaire, région mal normalisée, firmware 9.8 non référencé, 6 champs documentés sur 15.</p></div>
+    </div>
+    <div class="footer"><span>Erreurs certaines : 7 · Situations suspectes à faire confirmer : 7</span><span></span></div>
+  </section>
+
+  <!-- 4. LES 3 CRITIQUES -->
+  <section class="slide">
+    <div class="kicker rv">I · Les trois anomalies qui comptent</div>
+    <h2 class="rv" style="animation-delay:.08s">Le danger, c'est ce qui a l'air normal</h2>
+    <div class="cards">
+      <div class="card panel rv" style="animation-delay:.18s"><div class="tag">Fiabilité · 8 relevés</div><h3>Horloge JP3</h3><p>Horloge non synchronisée, mais voyant vert. L'heure sert à relier les événements entre stations : sans elle, impossible de suivre une panne.</p><span class="alert">STATUS = NOMINAL</span></div>
+      <div class="card panel rv" style="animation-delay:.28s"><div class="tag">Cohérence · 7 relevés</div><h3>AU4 fantôme</h3><p>Station hors ligne, capteur en panne, et pourtant des latences « mesurées ». Un algorithme de routage enverrait du trafic vers une station morte.</p><span class="alert">OFFLINE + 41 MS</span></div>
+      <div class="card panel rv" style="animation-delay:.38s"><div class="tag">Exactitude · 13 relevés</div><h3>Calibration</h3><p>La « dernière calibration » recule dans le temps. Le seul champ qui dit si on peut croire la mesure est lui-même faux.</p><span class="alert">30/09 → 18/09</span></div>
+    </div>
+    <div class="footer"><span>-15 ms et 130 % sont faux, mais visibles et isolés : une règle de plage suffit.</span><span></span></div>
+  </section>
+
+  <!-- 5. TABLEAU DE BORD -->
+  <section class="slide" id="bars">
+    <div class="kicker rv">II · Mesure</div>
+    <h2 class="rv" style="margin-bottom:40px;animation-delay:.08s">7 règles bloquantes, un verdict</h2>
+    <div class="bar rv" style="animation-delay:.15s"><div>Latence valide<span class="ev">R1 · ≥ 0 ms</span></div><div class="track"><div class="fill" data-w="96.7"></div></div><div class="s">96,7%</div></div>
+    <div class="bar rv" style="animation-delay:.2s"><div>Perte de paquets valide<span class="ev">R2 · 0 à 100 %</span></div><div class="track"><div class="fill" data-w="96.7"></div></div><div class="s">96,7%</div></div>
+    <div class="bar rv" style="animation-delay:.25s"><div>Trou ≤ 15 min<span class="ev">R4</span></div><div class="track"><div class="fill" data-w="96.7"></div></div><div class="s">96,7%</div></div>
+    <div class="bar rv" style="animation-delay:.3s"><div>Calibration &lt; 14 j<span class="ev">R5</span></div><div class="track"><div class="fill" data-w="80"></div></div><div class="s">80,0%</div></div>
+    <div class="bar ko rv" style="animation-delay:.35s"><div>GPS · capteur · statut<span class="ev">R3, R6, R7</span></div><div class="track"><div class="fill" data-w="73.3"></div></div><div class="s">73,3%</div></div>
+    <div class="bar total rv" style="animation-delay:.4s"><div>Relevé exploitable<span class="ev">passe les 7 règles</span></div><div class="track"><div class="fill" data-w="36.7"></div></div><div class="s">36,7%</div></div>
+    <div class="footer"><span>Pointillés verts : seuil cible de 95 %</span><span>Chaque règle seule semble correcte. Combinées, non.</span></div>
+  </section>
+
+  <!-- 6. PAR STATION -->
+  <section class="slide">
+    <div class="kicker rv">II · Le même score, par station</div>
+    <h2 class="rv" style="animation-delay:.08s">Un score global cache deux pannes</h2>
+    <div class="stations">
+      <div class="gs panel rv" style="animation-delay:.15s"><div class="code"><span class="led"></span>GS-US2</div><div class="score">75%</div><div class="of">6 / 8 relevés</div><p>Calibration ancienne, un <code>offline</code> isolé. Statut « dégradé » inexpliqué.</p></div>
+      <div class="gs panel rv" style="animation-delay:.22s"><div class="code"><span class="led"></span>GS-FR1</div><div class="score">71%</div><div class="of">5 / 7 relevés</div><p>La latence de -15 ms et une calibration de 16 jours.</p></div>
+      <div class="gs panel down rv" style="animation-delay:.29s"><div class="code"><span class="led"></span>GS-JP3</div><div class="score">0%</div><div class="of">0 / 8 relevés</div><p>Horloge GPS en dérive sur tous les relevés.</p></div>
+      <div class="gs panel down rv" style="animation-delay:.36s"><div class="code"><span class="led"></span>GS-AU4</div><div class="score">0%</div><div class="of">0 / 7 relevés</div><p>Capteur en panne, station hors ligne, firmware 9.8.</p></div>
+    </div>
+    <div class="footer"><span>Deux défaillances d'équipement d'un côté, des erreurs isolées de l'autre : les actions ne sont pas les mêmes.</span><span></span></div>
+  </section>
+
+  <!-- 7. CAUSES -->
+  <section class="slide">
+    <div class="kicker rv">II · Causes racines</div>
+    <h2 class="rv" style="margin-bottom:36px;animation-delay:.08s">Pourquoi, cinq fois</h2>
+    <div class="why">
+      <div class="card panel rv" style="animation-delay:.15s"><div class="tag">Collecte + gouvernance</div><h3>Horloge JP3</h3><div class="chain"><span>L'horloge perd le GPS</span><span>La perte n'est pas remontée comme panne</span><span>Le statut ne regarde que le réseau</span><span class="root">Aucune règle ne définit le statut</span></div></div>
+      <div class="card panel rv" style="animation-delay:.25s"><div class="tag">Intégration + gouvernance</div><h3>AU4 fantôme</h3><div class="chain"><span>Les mesures ne viennent pas d'un équipement actif</span><span>Le pipeline remplit les vides (hypothèse)</span><span>Firmware 9.8 jamais mis à jour</span><span class="root">Pas de référentiel firmware</span></div></div>
+      <div class="card panel rv" style="animation-delay:.35s"><div class="tag">Saisie + référentiel</div><h3>Calibration</h3><div class="chain"><span>La date varie d'un relevé à l'autre</span><span>Elle est recopiée, pas lue à la source</span><span>Satellite ou station ? Non défini</span><span class="root">Pas de source de vérité maintenance</span></div></div>
+    </div>
+  </section>
+
+  <!-- 8. PLAN -->
+  <section class="slide">
+    <div class="kicker rv">III · Plan d'amélioration</div>
+    <h2 class="rv" style="margin-bottom:28px;animation-delay:.08s">Trois règles</h2>
+    <div class="reco rv" style="animation-delay:.15s"><div class="n">01</div><div><h3>Quarantaine, jamais de zéro à la place</h3><p>Un relevé qui échoue une règle bloquante sort du pilotage, mais il est gardé et chaque correction est tracée. Pas de 0 ni de moyenne à la place d'une valeur fausse.</p></div></div>
+    <div class="reco rv" style="animation-delay:.25s"><div class="n">02</div><div><h3>Un statut calculé, pas déclaré</h3><p><code>service_status</code> dérive des mesures, du capteur et de la synchro GPS, selon une règle écrite. Plus de « nominal » sur une horloge en dérive.</p></div></div>
+    <div class="reco rv" style="animation-delay:.35s"><div class="n">03</div><div><h3>Des référentiels et des responsables</h3><p>Stations, firmware, journal de maintenance. Data Owner : direction des opérations réseau. Un Data Steward télémétrie, un responsable par station.</p></div></div>
+    <div class="footer"><span>Alerte N1 : 80–95 %, analyse sous 4 h · N2 : &lt; 80 % ou synchro perdue, prise en charge sous 15 min</span><span></span></div>
+  </section>
+
+  <!-- 9. RÉPONSE -->
+  <section class="slide" id="answer">
+    <div class="kicker rv">Réponse à la question directrice</div>
+    <h2 class="rv" style="margin-bottom:0;animation-delay:.08s">Où passe la limite ?</h2>
+    <div class="gauge rv" style="animation-delay:.2s"><div class="r">Non fiable · hors pilotage automatique</div><div class="o">Validation<br>humaine</div><div class="g">Auto</div></div>
+    <div class="ticks rv" style="animation-delay:.2s"><span style="left:0;transform:none">0 %</span><span style="left:80%">80 %</span><span style="left:95%">95 %</span>
+      <div id="marker">NOUS · 36,7 %</div></div>
+    <div class="rule2">
+      <div class="panel rv" style="animation-delay:.35s"><b>Pour un relevé</b>Une seule anomalie bloquante suffit. Une horloge en dérive ou un capteur en panne rendent tout le relevé inutilisable.</div>
+      <div class="panel rv" style="animation-delay:.45s"><b>Pour un flux</b>C'est un taux : au moins 95 % de relevés exploitables sur une heure pour piloter seul. Sous 80 %, on ne pilote plus.</div>
+    </div>
+  </section>
+
+  <!-- 10. OUTRO -->
+  <section class="slide" id="outro">
+    <div id="outroText">
+      <div class="kicker">Fin de transmission</div>
+      <h1>Merci.<br><span style="color:var(--cyan)">Des questions ?</span></h1>
+      <p>Arthur · Nathan · Jihad · Amen · Abibou</p>
+    </div>
+  </section>
+
+  <div class="hud off" id="hud"><i></i><i></i><i></i><i></i>
+    <div class="top"><span><span class="rec"></span>Starlink // Qualité des données</span><span><b id="slideNo">01</b> / <span id="slideTot">10</span></span></div>
+  </div>
+  <div class="progress" id="progress"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const stage=$('stage');
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`translate(-50%,-50%) scale(${s})`}
+addEventListener('resize',fit);fit();
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const easeIn=t=>t*t*t;
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+
+/* ================= Fond étoilé statique (slides de contenu) ================= */
+(()=>{const c=$('stars'),x=c.getContext('2d');x.fillStyle='#04060b';x.fillRect(0,0,1600,900);
+  const g=x.createRadialGradient(1300,-100,0,1300,-100,900);g.addColorStop(0,'rgba(60,110,200,.18)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,1600,900);
+  for(let i=0;i<420;i++){const r=Math.random();x.fillStyle=`rgba(220,230,255,${.15+r*.5})`;x.beginPath();x.arc(Math.random()*1600,Math.random()*900,r<.95?.7:1.4,0,7);x.fill()}})();
+
+/* ================= Scène 3D ================= */
+const R_SAT=1+550/6371;
+function ll(lat,lon,r){const phi=(lon+180)/360*Math.PI*2,th=(90-lat)*Math.PI/180;
+  return new THREE.Vector3(-Math.cos(phi)*Math.sin(th),Math.cos(th),Math.sin(phi)*Math.sin(th)).multiplyScalar(r)}
+const G=ll(46.6,2.4,1);                 // cible : la France
+const S=ll(43.2,-3.2,R_SAT);            // satellite, un peu au sud-ouest
+const UP=S.clone().normalize();
+const EAST=new THREE.Vector3(0,1,0).cross(UP).normalize();
+const NORTH=UP.clone().cross(EAST).normalize();
+const SUN=UP.clone().multiplyScalar(.55).add(EAST.clone().multiplyScalar(-.55)).add(NORTH.clone().multiplyScalar(-.62)).normalize();
+
+const renderer=new THREE.WebGLRenderer({canvas:$('gl'),antialias:true,logarithmicDepthBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));
+renderer.setSize(1600,900,false);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(42,16/9,1e-5,200);
+const loader=new THREE.TextureLoader();
+const tex=k=>{const t=loader.load(TEX[k]);t.anisotropy=renderer.capabilities.getMaxAnisotropy();return t};
+const dayT=tex('day'),nightT=tex('night'),specT=tex('spec'),cloudT=tex('clouds');
+cloudT.wrapS=THREE.RepeatWrapping;
+
+const earthMat=new THREE.ShaderMaterial({
+  uniforms:{day:{value:dayT},night:{value:nightT},spec:{value:specT},sun:{value:SUN}},
+  vertexShader:`varying vec2 vUv;varying vec3 vN;varying vec3 vW;
+    #include <common>
+    #include <logdepthbuf_pars_vertex>
+    void main(){vUv=uv;vN=normalize(mat3(modelMatrix)*normal);vec4 w=modelMatrix*vec4(position,1.);vW=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;
+    #include <logdepthbuf_vertex>
+    }`,
+  fragmentShader:`uniform sampler2D day,night,spec;uniform vec3 sun;varying vec2 vUv;varying vec3 vN;varying vec3 vW;
+    #include <logdepthbuf_pars_fragment>
+    void main(){
+    #include <logdepthbuf_fragment>
+      vec3 n=normalize(vN);vec3 v=normalize(cameraPosition-vW);float d=dot(n,sun);
+      float dayAmt=smoothstep(-.10,.25,d);
+      vec3 dc=pow(texture2D(day,vUv).rgb,vec3(1.15));
+      vec3 lit=dc*(.03+1.35*max(d,0.));
+      float s=texture2D(spec,vUv).r;vec3 h=normalize(sun+v);
+      lit+=vec3(1.,.93,.8)*pow(max(dot(n,h),0.),45.)*s*.75*smoothstep(0.,.1,d);
+      vec3 nc=pow(texture2D(night,vUv).rgb,vec3(1.4))*vec3(1.,.72,.38)*2.2;
+      vec3 col=mix(nc,lit,dayAmt);
+      float fr=pow(1.-max(dot(n,v),0.),3.);
+      col+=vec3(.28,.52,1.)*fr*smoothstep(-.25,.45,d)*.9;
+      col=mix(col,col*vec3(1.,.55,.35),smoothstep(.25,0.,abs(d-.02))*.35);
+      gl_FragColor=vec4(col,1.);}`
+});
+const earth=new THREE.Mesh(new THREE.SphereGeometry(1,192,96),earthMat);scene.add(earth);
+
+const cloudMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,
+  uniforms:{clouds:{value:cloudT},sun:{value:SUN},shift:{value:0}},
+  vertexShader:`varying vec2 vUv;varying vec3 vN;
+    #include <common>
+    #include <logdepthbuf_pars_vertex>
+    void main(){vUv=uv;vN=normalize(mat3(modelMatrix)*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);
+    #include <logdepthbuf_vertex>
+    }`,
+  fragmentShader:`uniform sampler2D clouds;uniform vec3 sun;uniform float shift;varying vec2 vUv;varying vec3 vN;
+    #include <logdepthbuf_pars_fragment>
+    void main(){
+    #include <logdepthbuf_fragment>
+      float a=texture2D(clouds,vUv+vec2(shift,0.)).a;float d=dot(normalize(vN),sun);
+      vec3 c=vec3(1.)*(.02+1.2*max(d,0.));gl_FragColor=vec4(c,a*.85*smoothstep(-.2,.1,d)+a*.05);}`
+});
+const clouds=new THREE.Mesh(new THREE.SphereGeometry(1.005,160,80),cloudMat);scene.add(clouds);
+
+const atmoMat=new THREE.ShaderMaterial({side:THREE.BackSide,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+  uniforms:{sun:{value:SUN}},
+  vertexShader:`varying vec3 vN;varying vec3 vW;
+    #include <common>
+    #include <logdepthbuf_pars_vertex>
+    void main(){vN=normalize(mat3(modelMatrix)*normal);vec4 w=modelMatrix*vec4(position,1.);vW=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;
+    #include <logdepthbuf_vertex>
+    }`,
+  fragmentShader:`uniform vec3 sun;varying vec3 vN;varying vec3 vW;
+    #include <logdepthbuf_pars_fragment>
+    void main(){
+    #include <logdepthbuf_fragment>
+      vec3 n=normalize(vN);vec3 v=normalize(cameraPosition-vW);float x=-dot(n,v);
+      float g=pow(smoothstep(0.,.21,x),2.2);float l=smoothstep(-.35,.5,dot(n,sun));
+      gl_FragColor=vec4(vec3(.35,.62,1.)*g*l*1.3,1.);}`
+});
+const atmo=new THREE.Mesh(new THREE.SphereGeometry(1.025,128,64),atmoMat);scene.add(atmo);
+
+// étoiles
+{const n=5000,p=new Float32Array(n*3),c=new Float32Array(n*3);
+  for(let i=0;i<n;i++){const v=new THREE.Vector3().randomDirection().multiplyScalar(90);p.set([v.x,v.y,v.z],i*3);const b=.35+Math.pow(Math.random(),3)*.9;const t=Math.random();c.set([b*(.85+t*.15),b*.92,b*(1-t*.1+.1)],i*3)}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(p,3));g.setAttribute('color',new THREE.BufferAttribute(c,3));
+  scene.add(new THREE.Points(g,new THREE.PointsMaterial({size:1.6,sizeAttenuation:false,vertexColors:true,depthWrite:false})))}
+
+// glow (texture radiale)
+function glowTex(inner='rgba(255,255,255,1)',mid='rgba(120,220,255,.5)'){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');
+  const g=x.createRadialGradient(64,64,0,64,64,64);g.addColorStop(0,inner);g.addColorStop(.18,mid);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,128,128);return new THREE.CanvasTexture(c)}
+const sunSprite=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex('rgba(255,255,250,1)','rgba(255,240,210,.35)'),blending:THREE.AdditiveBlending,depthWrite:false}));
+sunSprite.position.copy(SUN).multiplyScalar(80);sunSprite.scale.setScalar(9);scene.add(sunSprite);
+
+// constellation (orbites inclinées à 53°)
+const constel=new THREE.Group();{
+  const planes=36,per=40,pos=new Float32Array(planes*per*3);let k=0;
+  for(let p=0;p<planes;p++){const q=new THREE.Quaternion().setFromEuler(new THREE.Euler(53*Math.PI/180,0,0)).premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),p/planes*Math.PI*2));
+    for(let i=0;i<per;i++){const a=i/per*Math.PI*2+p*.37;const v=new THREE.Vector3(Math.cos(a),0,Math.sin(a)).multiplyScalar(R_SAT).applyQuaternion(q);pos.set([v.x,v.y,v.z],k);k+=3}}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  constel.add(new THREE.Points(g,new THREE.PointsMaterial({size:2.2,sizeAttenuation:false,color:0xcfe6ff,transparent:true,opacity:.85,depthWrite:false})));
+  scene.add(constel)}
+
+// lumières
+const sunLight=new THREE.DirectionalLight(0xfff4e6,2.6);sunLight.position.copy(SUN);scene.add(sunLight);
+const earthShine=new THREE.DirectionalLight(0x3d6fd1,.9);earthShine.position.copy(UP).negate();scene.add(earthShine);
+scene.add(new THREE.AmbientLight(0x1a2233,.6));
+
+// satellite Starlink (bus plat + grand panneau solaire)
+const sat=new THREE.Group();{
+  const panelTex=(()=>{const c=document.createElement('canvas');c.width=1024;c.height=256;const x=c.getContext('2d');
+    x.fillStyle='#0a1430';x.fillRect(0,0,1024,256);
+    for(let i=0;i<64;i++)for(let j=0;j<16;j++){const l=18+Math.random()*10;x.fillStyle=`hsl(225,55%,${l}%)`;x.fillRect(i*16+1,j*16+1,14,14)}
+    x.strokeStyle='rgba(200,210,230,.55)';x.lineWidth=2;for(let i=0;i<=8;i++){x.beginPath();x.moveTo(i*128,0);x.lineTo(i*128,256);x.stroke()}
+    x.beginPath();x.moveTo(0,128);x.lineTo(1024,128);x.stroke();return new THREE.CanvasTexture(c)})();
+  const metal=new THREE.MeshStandardMaterial({color:0xc3c8d0,metalness:.75,roughness:.32});
+  const dark=new THREE.MeshStandardMaterial({color:0x2a2e36,metalness:.5,roughness:.5});
+  const white=new THREE.MeshStandardMaterial({color:0xe9ebef,metalness:.1,roughness:.6});
+  const bus=new THREE.Mesh(new THREE.BoxGeometry(1.4,.1,.7),metal);sat.add(bus);
+  const top=new THREE.Mesh(new THREE.BoxGeometry(1.3,.02,.62),dark);top.position.y=.06;sat.add(top);
+  for(let i=0;i<4;i++){const a=new THREE.Mesh(new THREE.BoxGeometry(.28,.02,.28),white);a.position.set(-.45+i*.3,-.06,0);sat.add(a)}
+  const boom=new THREE.Mesh(new THREE.CylinderGeometry(.015,.015,.5,8),metal);boom.rotation.z=Math.PI/2;boom.position.set(.95,.05,0);sat.add(boom);
+  const panelMat=new THREE.MeshStandardMaterial({map:panelTex,metalness:.45,roughness:.22,emissive:0x0a1430,emissiveIntensity:.4});
+  const panel=new THREE.Mesh(new THREE.BoxGeometry(3.6,.015,.85),[white,white,panelMat,white,white,white]);
+  panel.position.set(2.95,.12,0);panel.rotation.z=-.12;panel.rotation.x=.35;sat.add(panel);
+  const beacon=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex('rgba(255,255,255,1)','rgba(255,80,80,.6)'),blending:THREE.AdditiveBlending,depthWrite:false}));
+  beacon.position.set(-.7,.08,.35);beacon.scale.setScalar(.25);sat.add(beacon);sat.userData.beacon=beacon;
+  sat.scale.setScalar(.00055);
+  sat.position.copy(S);
+  sat.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),UP);
+  sat.rotateY(.9);
+  scene.add(sat)}
+
+// signal
+const beamMat=new THREE.MeshBasicMaterial({color:0x7fe9ff,transparent:true,opacity:.9,blending:THREE.AdditiveBlending,depthWrite:false});
+const beam=new THREE.Mesh(new THREE.CylinderGeometry(1,1,1,12,1,true),beamMat);beam.visible=false;scene.add(beam);
+const beamHalo=new THREE.Mesh(new THREE.CylinderGeometry(1,1,1,12,1,true),new THREE.MeshBasicMaterial({color:0x2aa8ff,transparent:true,opacity:.18,blending:THREE.AdditiveBlending,depthWrite:false}));beamHalo.visible=false;scene.add(beamHalo);
+const pulse=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(),blending:THREE.AdditiveBlending,depthWrite:false,color:0xbff4ff}));pulse.visible=false;scene.add(pulse);
+
+function setBeam(a,b,r){const d=b.clone().sub(a),L=d.length();
+  [beam,beamHalo].forEach((m,i)=>{m.position.copy(a).add(b).multiplyScalar(.5);m.scale.set(r*(i?5:1),L,r*(i?5:1));m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize())})}
+
+/* ---------- caméra ---------- */
+const V=(e,n,u)=>EAST.clone().multiplyScalar(e).add(NORTH.clone().multiplyScalar(n)).add(UP.clone().multiplyScalar(u));
+const FAR_POS=S.clone().normalize().add(EAST.clone().multiplyScalar(.25)).normalize().multiplyScalar(3.4).add(NORTH.clone().multiplyScalar(-.6));
+const K0P=S.clone().add(V(-.0042,-.0030,.0011)), K0L=S.clone().add(V(.0006,.0004,-.0016));
+const K1P=S.clone().add(V(.0018,-.0046,.0009)), K1L=S.clone().add(V(-.0002,.0008,-.0018));
+const BEAM_DIR=S.clone().sub(G).normalize();
+const SIDE=BEAM_DIR.clone().cross(UP).normalize();
+function pulseAt(f){return S.clone().lerp(G,f)}
+function followCam(f){const p=pulseAt(f);const back=.032-.012*f;
+  return {pos:p.clone().add(BEAM_DIR.clone().multiplyScalar(back)).add(SIDE.clone().multiplyScalar(.006*(1-f*.6))).add(UP.clone().multiplyScalar(.004)),look:p.clone().lerp(G,.6)}}
+const lerpV=(a,b,t)=>a.clone().lerp(b,t);
+const OUT_POS=FAR_POS.clone().multiplyScalar(1.12);
+const OUT_LOOK=(()=>{const dir=OUT_POS.clone().negate().normalize();const right=dir.clone().cross(OUT_POS.clone().normalize()).normalize();
+  const r2=dir.clone().cross(new THREE.Vector3(0,1,0)).normalize();return r2.multiplyScalar(-1.15)})();
+
+/* timeline de l'intro (secondes) */
+const T={fly:[0,4.2],orb:[4.2,8.2],sig:[8.2,14.4],flash:[13.1,14.4]};
+function introState(t){
+  let pos,look;
+  if(t<T.fly[1]){const k=ease(seg(t,...T.fly));pos=lerpV(OUT_POS,K0P,k);
+    const r=pos.length(),minR=1+(1-k)*1.2+k*(R_SAT-1);if(r<minR)pos.setLength(minR);
+    look=lerpV(OUT_LOOK,K0L,Math.pow(k,.6))}
+  else if(t<T.orb[1]){const k=ease(seg(t,...T.orb));pos=lerpV(K0P,K1P,k);look=lerpV(K0L,K1L,k)}
+  else{const f=easeIn(seg(t,T.sig[0]+.4,T.sig[1]));const fc=followCam(f);const k=ease(seg(t,T.sig[0],T.sig[0]+2.2));
+    pos=lerpV(K1P,fc.pos,k);look=lerpV(K1L,fc.look,k)}
+  return {pos,look}
+}
+
+/* boucle de rendu */
+let mode='idle',t0=0,seekOffset=0;
+const sfxAt={};
+function frame(now){
+  requestAnimationFrame(frame);
+  const showGL=(cur===0&&mode!=='room')||slides[cur]?.id==='outro';
+  $('gl').style.opacity=showGL?1:0;$('stars').style.opacity=showGL?0:1;
+  if(!showGL)return;
+  const time=now/1000;
+  clouds.material.uniforms.shift.value=time*.0015;
+  constel.rotation.y=time*.004;
+  sat.userData.beacon.material.opacity=(Math.sin(time*6)>.6)?1:.15;
+  let pos,look;
+  if(mode==='idle'){const a=time*.05;pos=OUT_POS.clone().applyAxisAngle(new THREE.Vector3(0,1,0),Math.sin(a)*.06);look=OUT_LOOK}
+  else if(mode==='intro'){const t=(now-t0)/1000+seekOffset;const st=introState(t);pos=st.pos;look=st.look;introOverlay(t)}
+  else if(mode==='outro'){const t=(now-t0)/1000+seekOffset;const st=outroState(t);pos=st.pos;look=st.look;outroOverlay(t)}
+  if(pos){camera.position.copy(pos);const w=clamp((pos.length()-1.15)/.6);camera.up.copy(pos.clone().normalize().lerp(new THREE.Vector3(0,1,0),w).normalize());camera.lookAt(look)}
+  const dist=camera.position.length();constel.children[0].material.opacity=clamp((dist-1.15)/.6)*.85;
+  renderer.render(scene,camera);
+  reticles();
+}
+function project(v){const p=v.clone().project(camera);return {x:(p.x+1)/2*1600,y:(1-p.y)/2*900,vis:p.z<1&&p.z>-1}}
+let retOn={sat:0,gs:0};
+function reticles(){
+  const a=project(S),b=project(G);
+  const rs=$('retSat'),rg=$('retGs');
+  rs.style.left=a.x+'px';rs.style.top=a.y+'px';rs.style.opacity=a.vis?retOn.sat:0;
+  rg.style.left=b.x+'px';rg.style.top=b.y+'px';rg.style.opacity=b.vis?retOn.gs:0;
+}
+
+function introOverlay(t){
+  const L=[...$('teleL').children];
+  [.8,4.4,8.4,11].forEach((s,i)=>{L[i].style.transition='opacity .5s';L[i].style.opacity=t>s?1:0});
+  $('teleR').style.transition='opacity .6s';$('teleR').style.opacity=t>.8?1:0;
+  $('alt').textContent=Math.max(0,Math.round((camera.position.length()-1)*6371)).toLocaleString('fr-FR');
+  const d=new Date(Date.UTC(2026,9,1,12,12,0)+t*1000);$('utc').textContent=d.toISOString().slice(11,19);
+  retOn.sat=(t>4.4&&t<8.6)?1:0;retOn.gs=(t>8.4&&t<11.5)?1:0;
+  const sigStart=T.sig[0]+.4;
+  if(t>T.sig[0]){const f=easeIn(seg(t,sigStart,T.sig[1]));const p=pulseAt(f);
+    beam.visible=beamHalo.visible=pulse.visible=true;setBeam(S,p,.00006);pulse.position.copy(p);
+    pulse.scale.setScalar(camera.position.distanceTo(p)*.05*(1+.25*Math.sin(t*20)));
+    beamMat.opacity=.9;
+    if(!sfxAt.ping){sfxAt.ping=1;ping()}
+    if(t>sigStart+.5&&!sfxAt.whoosh){sfxAt.whoosh=1;whoosh(5.5)}
+  }else{beam.visible=beamHalo.visible=pulse.visible=false}
+  $('flash').style.opacity=seg(t,...T.flash);
+  if(t>=T.flash[1]&&mode==='intro'){mode='room';playRoom()}
+}
+
+/* outro : on remonte de la France jusqu'à l'orbite, puis vue d'ensemble */
+function outroState(t){
+  const a=ease(seg(t,0,5.5)),b=ease(seg(t,4.5,10));
+  const fc=followCam(.82);
+  let pos=lerpV(fc.pos,K0P,a);let look=lerpV(fc.look,K0L,a);
+  if(t>4.5){pos=lerpV(K0P,OUT_POS,b);look=lerpV(K0L,OUT_LOOK,Math.pow(b,2.2));const r=pos.length();if(r<R_SAT+.0005)pos.setLength(R_SAT+.0005)}
+  return {pos,look}
+}
+function outroOverlay(t){beam.visible=beamHalo.visible=t<3;pulse.visible=false;if(t<3){setBeam(S,G,.00006);beamMat.opacity=1-t/3}
+  const k=clamp((t-6.5)/1.2);$('outroText').style.opacity=k;$('outroText').style.transform=`translateY(${(1-k)*30}px)`;
+  $('flash').style.opacity=1-clamp(t/1.2);retOn.sat=retOn.gs=0}
+
+/* ================= Son (synthétisé) ================= */
+let actx=null,drone=null;
+function audio(){if(actx)return;try{actx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}
+function startDrone(){if(!actx||drone)return;const g=actx.createGain();g.gain.value=0;g.connect(actx.destination);
+  const lp=actx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=380;lp.connect(g);
+  const os=[55,55.6,82.4].map(f=>{const o=actx.createOscillator();o.type='sawtooth';o.frequency.value=f;o.connect(lp);o.start();return o});
+  g.gain.linearRampToValueAtTime(.07,actx.currentTime+3);drone={g,os}}
+function stopDrone(){if(drone&&actx){const d=drone;drone=null;d.g.gain.cancelScheduledValues(actx.currentTime);d.g.gain.setValueAtTime(d.g.gain.value,actx.currentTime);d.g.gain.linearRampToValueAtTime(0,actx.currentTime+1.2);setTimeout(()=>d.os.forEach(o=>o.stop()),1400)}}
+function tone(f,d,type='sine',v=.2,at=0,slide){if(!actx)return;const t=actx.currentTime+at,o=actx.createOscillator(),g=actx.createGain();
+  o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0008,t+d);o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+d+.05)}
+function ping(){[0,.35,.7].forEach((s,i)=>tone(1320,.9,'sine',.16/(i+1),s))}
+function whoosh(d){if(!actx)return;const n=actx.sampleRate*d,b=actx.createBuffer(1,n,actx.sampleRate),c=b.getChannelData(0);for(let i=0;i<n;i++)c[i]=Math.random()*2-1;
+  const s=actx.createBufferSource();s.buffer=b;const f=actx.createBiquadFilter();f.type='bandpass';f.Q.value=1.2;const g=actx.createGain();const t=actx.currentTime;
+  f.frequency.setValueAtTime(200,t);f.frequency.exponentialRampToValueAtTime(3500,t+d);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.22,t+d*.85);g.gain.linearRampToValueAtTime(0,t+d);
+  s.connect(f);f.connect(g);g.connect(actx.destination);s.start(t)}
+function chime(){[523,659,784,1047].forEach((f,i)=>tone(f,.6,'triangle',.12,i*.07))}
+function pop(at=0){tone(420,.12,'sine',.18,at,900)}
+
+/* ================= Salle : le groupe derrière les PC ================= */
+const PEOPLE=[
+  {name:'Arthur', x:250, hair:'#3b2a1e',style:'short', skin:'#e8c1a0',shirt:'#2b3a55'},
+  {name:'Nathan', x:530, hair:'#1f1a17',style:'curly', skin:'#c99a74',shirt:'#5a2d3a'},
+  {name:'Jihad',  x:800, hair:'#15110f',style:'short', skin:'#b98563',shirt:'#24443a'},
+  {name:'Amen',   x:1070,hair:'#120e0c',style:'buzz',  skin:'#7a5038',shirt:'#3e3a5c'},
+  {name:'Abibou', x:1350,hair:'#0f0c0a',style:'curly', skin:'#6b4430',shirt:'#5c4a2a'},
+];
+function hairBack(p){
+  if(p.style==='curly')return `<g fill="${p.hair}">${[[-40,-205],[0,-222],[40,-205],[-48,-170],[48,-170],[-28,-150],[28,-150],[0,-160]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="34"/>`).join('')}</g>`;
+  if(p.style==='buzz')return `<ellipse cx="0" cy="-188" rx="50" ry="58" fill="${p.skin}"/><ellipse cx="0" cy="-192" rx="50" ry="56" fill="${p.hair}" opacity=".82"/>`;
+  return `<ellipse cx="0" cy="-188" rx="53" ry="60" fill="${p.hair}"/><path d="M-50,-170 Q0,-140 50,-170 L48,-150 Q0,-128 -48,-150Z" fill="${p.hair}"/>`}
+function hairFront(p){
+  if(p.style==='curly')return `<g fill="${p.hair}">${[[-44,-218],[-14,-236],[18,-236],[46,-218],[-58,-188],[58,-188]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="28"/>`).join('')}</g>`;
+  if(p.style==='buzz')return `<path d="M-50,-200 C-50,-252 50,-252 50,-200 C38,-226 -38,-226 -50,-200Z" fill="${p.hair}" opacity=".85"/>`;
+  return `<path d="M-54,-190 C-60,-262 58,-264 54,-192 C44,-222 10,-232 -20,-222 C-36,-216 -48,-206 -54,-190Z" fill="${p.hair}"/>`}
+function torso(p){return `<path d="M-98,40 L-98,-60 C-98,-104 -62,-122 -22,-126 L22,-126 C62,-122 98,-104 98,-60 L98,40Z" fill="${p.shirt}"/>`}
+function personSVG(p,i){
+  const rim=`<path d="M-98,-60 C-98,-104 -62,-122 -22,-126" stroke="#6fb6ff" stroke-opacity=".35" stroke-width="4" fill="none"/>`;
+  const back=`<g class="back">
+      ${torso(p)}${rim}
+      <rect x="-18" y="-150" width="36" height="30" fill="${p.skin}"/>
+      <ellipse cx="-51" cy="-186" rx="9" ry="15" fill="${p.skin}"/><ellipse cx="51" cy="-186" rx="9" ry="15" fill="${p.skin}"/>
+      ${hairBack(p)}
+      <path d="M-50,-200 C-48,-240 -20,-250 0,-250" stroke="#8cc8ff" stroke-opacity=".35" stroke-width="3" fill="none"/>
+      <rect x="-88" y="-70" width="176" height="150" rx="34" fill="#151922" stroke="#262c39" stroke-width="3"/>
+      <rect x="-60" y="-50" width="120" height="6" rx="3" fill="#232937"/>
+    </g>`;
+  const front=`<g class="front" style="display:none">
+      <rect x="-90" y="-160" width="180" height="240" rx="34" fill="#151922" stroke="#262c39" stroke-width="3"/>
+      ${torso(p)}
+      <path d="M-24,-126 L0,-96 L24,-126" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="4"/>
+      <rect x="-17" y="-150" width="34" height="28" fill="${p.skin}"/>
+      <ellipse cx="0" cy="-190" rx="50" ry="58" fill="${p.skin}"/>
+      <ellipse cx="-50" cy="-186" rx="8" ry="14" fill="${p.skin}"/><ellipse cx="50" cy="-186" rx="8" ry="14" fill="${p.skin}"/>
+      ${hairFront(p)}
+      <g class="eyes"><ellipse cx="-18" cy="-192" rx="5" ry="7" fill="#1b1410"/><ellipse cx="18" cy="-192" rx="5" ry="7" fill="#1b1410"/></g>
+      <path d="M-28,-208 Q-18,-214 -8,-208 M8,-208 Q18,-214 28,-208" stroke="#2a1d16" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M-20,-166 Q0,-148 20,-166" stroke="#4a2a20" stroke-width="5" fill="#fff" stroke-linecap="round"/>
+      <ellipse cx="-30" cy="-172" rx="9" ry="5" fill="#ff8a7a" opacity=".25"/><ellipse cx="30" cy="-172" rx="9" ry="5" fill="#ff8a7a" opacity=".25"/>
+      <g class="arm" id="arm${i}"><path d="M70,-100 C92,-140 100,-180 104,-222" stroke="${p.shirt}" stroke-width="34" stroke-linecap="round" fill="none"/>
+        <circle cx="106" cy="-238" r="22" fill="${p.skin}"/></g>
+    </g>`;
+  return `<g transform="translate(${p.x},905) scale(1.4)"><g class="p-turn" id="pers${i}">${back}${front}</g></g>`}
+function monitor(x,i){return `<g transform="translate(${x},0)">
+    <rect x="-120" y="250" width="240" height="150" rx="8" fill="#0d1018" stroke="#2a3140" stroke-width="4"/>
+    <rect id="scr${i}" x="-110" y="260" width="220" height="130" rx="3" fill="#0b1a2e"/>
+    <g id="scrt${i}" font-family="JetBrains Mono,monospace" font-size="13" fill="#67e8f9" opacity=".8"></g>
+    <rect x="-14" y="400" width="28" height="44" fill="#1a1f2a"/><rect x="-60" y="440" width="120" height="10" rx="4" fill="#1a1f2a"/></g>`}
+function buildRoom(){
+  $('roomSvg').innerHTML=`<defs>
+      <radialGradient id="rg" cx="50%" cy="38%" r="70%"><stop offset="0" stop-color="#16243e"/><stop offset=".6" stop-color="#090d16"/><stop offset="1" stop-color="#05070b"/></radialGradient>
+      <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#3aa0ff" stop-opacity=".55"/><stop offset="1" stop-color="#3aa0ff" stop-opacity="0"/></radialGradient>
+      <linearGradient id="beamG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bff4ff" stop-opacity="0"/><stop offset="1" stop-color="#bff4ff"/></linearGradient>
+    </defs>
+    <rect width="1600" height="900" fill="url(#rg)"/>
+    <g opacity=".55"><rect x="620" y="40" width="360" height="170" rx="6" fill="#060a12" stroke="#1d2433" stroke-width="6"/>
+      ${Array.from({length:40},()=>`<circle cx="${630+Math.random()*340}" cy="${50+Math.random()*150}" r="${Math.random()*1.3+.3}" fill="#cfe2ff"/>`).join('')}
+      <line x1="800" y1="40" x2="800" y2="210" stroke="#1d2433" stroke-width="6"/></g>
+    <ellipse id="roomGlow" cx="800" cy="330" rx="780" ry="200" fill="url(#glow)" opacity=".25"/>
+    <rect id="beamIn" x="797" y="0" width="6" height="0" fill="url(#beamG)"/>
+    ${[250,530,800,1070,1350].map(monitor).join('')}
+    <rect x="0" y="448" width="1600" height="26" fill="#121722"/><rect x="0" y="474" width="1600" height="430" fill="#0a0d14"/>
+    ${PEOPLE.map(personSVG).join('')}`;
+  $('bubbles').innerHTML=PEOPLE.map((p,i)=>`<div class="bubble" id="bub${i}" style="left:${p.x-40}px;top:${i%2?380:350}px">Bonjour&nbsp;!</div><div class="nametag" id="tag${i}" style="left:${p.x}px">${p.name}</div>`).join('');
+}
+buildRoom();
+
+const A=(el,k,o)=>el.animate(k,Object.assign({fill:'forwards'},o)).finished.catch(()=>{});
+let roomRun=0;
+const WAIT='<text x="-96" y="285">› liaison GS-FR1</text><text x="-96" y="305">› attente signal…</text><text x="-96" y="325" opacity=".5">› sync gps ok</text>';
+const OK='<text x="-96" y="290" fill="#4ade80" font-size="15" font-weight="700">SIGNAL REÇU</text><text x="-96" y="314">› latence 27 ms</text><text x="-96" y="334">› perte 0,8 %</text><text x="-96" y="354" opacity=".6">› gps ok · capteur ok</text>';
+function resetRoom(){
+  ['room','roomTitle','hint','roomVideo','beamIn','roomGlow',...PEOPLE.flatMap((p,i)=>['pers'+i,'arm'+i,'bub'+i,'tag'+i])].forEach(k=>$(k).getAnimations().forEach(a=>a.cancel()));
+  $('room').style.opacity=0;
+  PEOPLE.forEach((p,i)=>{const g=$('pers'+i);g.querySelector('.back').style.display='';g.querySelector('.front').style.display='none';
+    $('scr'+i).setAttribute('fill','#0b1a2e');$('scrt'+i).innerHTML=WAIT});
+  $('beamIn').setAttribute('height',0);
+}
+async function playRoom(){
+  const run=++roomRun,alive=()=>run===roomRun&&cur===0;
+  stopDrone();resetRoom();
+  $('room').animate([{opacity:0},{opacity:1}],{duration:200,fill:'forwards'});
+  if(hasVideo){const v=$('roomVideo');v.currentTime=0;v.animate([{opacity:0},{opacity:1}],{duration:300,fill:'forwards'});v.play().catch(()=>{});
+    A($('flash'),[{opacity:1},{opacity:0}],{duration:900});return}
+  await A($('flash'),[{opacity:1},{opacity:0}],{duration:1000});if(!alive())return;
+  // le signal entre par la fenêtre et frappe l'écran central
+  await A($('beamIn'),[{height:'0px'},{height:'300px'}],{duration:450,easing:'cubic-bezier(.6,0,.9,.4)'});if(!alive())return;
+  chime();
+  $('beamIn').animate([{opacity:1},{opacity:0}],{duration:600,fill:'forwards'});
+  $('roomGlow').animate([{opacity:.25},{opacity:.9},{opacity:.55}],{duration:900,fill:'forwards'});
+  PEOPLE.forEach((p,i)=>setTimeout(()=>{if(!alive())return;$('scr'+i).setAttribute('fill','#0e3a3a');$('scrt'+i).innerHTML=OK},Math.abs(i-2)*140));
+  await sleep(1300);if(!alive())return;
+  const order=[2,1,3,0,4];
+  PEOPLE.forEach((p,i)=>{const g=$('pers'+i),d=order.indexOf(i)*170;
+    setTimeout(async()=>{if(!alive())return;
+      await A(g,[{transform:'scaleX(1)'},{transform:'scaleX(0.04)'}],{duration:230,easing:'cubic-bezier(.5,0,1,1)'});if(!alive())return;
+      g.querySelector('.back').style.display='none';g.querySelector('.front').style.display='';pop();
+      await A(g,[{transform:'scaleX(0.04) translateY(0)'},{transform:'scaleX(1.06) translateY(-14px)'},{transform:'scaleX(1) translateY(0)'}],{duration:420,easing:'cubic-bezier(.2,1.4,.4,1)'});
+      $('arm'+i).animate([{transform:'rotate(0)'},{transform:'rotate(14deg)'},{transform:'rotate(-10deg)'},{transform:'rotate(14deg)'},{transform:'rotate(0)'}],{duration:900,iterations:2,easing:'ease-in-out'});
+    },d)});
+  await sleep(1100);if(!alive())return;
+  PEOPLE.forEach((p,i)=>{const d=order.indexOf(i)*170;
+    setTimeout(()=>{if(!alive())return;$('bub'+i).animate([{opacity:0,transform:'translateY(16px) scale(.6)'},{opacity:1,transform:'none'}],{duration:380,fill:'forwards',easing:'cubic-bezier(.2,1.6,.4,1)'});
+      $('tag'+i).animate([{opacity:0},{opacity:1}],{duration:400,fill:'forwards'});tone(660+i*80,.18,'triangle',.12)},d)});
+  await sleep(1500);if(!alive())return;
+  $('roomTitle').animate([{opacity:0,transform:'translateY(-20px)'},{opacity:1,transform:'none'}],{duration:700,fill:'forwards'});
+  await sleep(2600);if(!alive())return;
+  PEOPLE.forEach((p,i)=>$('bub'+i).animate([{opacity:1},{opacity:0}],{duration:500,fill:'forwards'}));
+  $('hint').animate([{opacity:0},{opacity:1}],{duration:600,fill:'forwards'});
+}
+/* Si une vidéo groupe.mp4 est posée à côté de ce fichier, elle remplace la scène dessinée */
+let hasVideo=false;
+{const v=$('roomVideo');v.addEventListener('loadeddata',()=>{hasVideo=true});v.addEventListener('error',()=>{hasVideo=false});v.src='groupe.mp4'}
+
+/* ================= Navigation ================= */
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0,started=false;
+$('slideTot').textContent=String(slides.length-2).padStart(2,'0');
+function show(i){
+  const prev=cur;cur=Math.max(0,Math.min(slides.length-1,i));
+  const s=slides[cur];
+  slides.forEach((x,k)=>{x.classList.toggle('active',k===cur);x.classList.remove('enter')});
+  void s.offsetWidth;if(cur!==0&&s.id!=='outro')s.classList.add('enter');
+  $('progress').style.width=(cur/(slides.length-1)*100)+'%';
+  $('hud').classList.toggle('off',cur===0||s.id==='outro');
+  $('slideNo').textContent=String(cur).padStart(2,'0');
+  document.querySelectorAll('#bars .fill').forEach(f=>{f.style.width='0';if(s.id==='bars')setTimeout(()=>f.style.width=f.dataset.w+'%',350)});
+  if(s.id==='answer')$('marker').animate([{left:'100%'},{left:'36.7%'}],{duration:1600,delay:500,easing:'cubic-bezier(.2,.8,.2,1)',fill:'both'});
+  meters(s);
+  if(cur!==0){roomRun++;$('roomVideo').pause()}
+  if(s.id==='outro'){mode='outro';t0=performance.now();seekOffset=0;$('outroText').style.opacity=0;startDrone();setTimeout(()=>{if(slides[cur].id==='outro')ping()},200)}
+  else{if(prev!==cur&&slides[prev].id==='outro')stopDrone();$('flash').style.opacity=0}
+  if(cur===0&&prev!==0&&started)restartIntro();
+}
+function meters(s){const a=$('m100'),b=$('m30');if(!a.children.length){a.innerHTML='<i></i>'.repeat(30);b.innerHTML='<i></i>'.repeat(30)}
+  [...b.children].forEach((e,k)=>{e.classList.remove('on');if(s.contains(b)&&k<11)setTimeout(()=>e.classList.add('on'),600+k*60)})}
+function restartIntro(){
+  resetRoom();roomRun++;Object.keys(sfxAt).forEach(k=>delete sfxAt[k]);
+  [...$('teleL').children].forEach(e=>e.style.opacity=0);$('flash').style.opacity=0;$('pressStart').style.display='none';
+  mode='intro';t0=performance.now();seekOffset=0;startDrone();
+}
+function start(){started=true;audio();restartIntro()}
+function toggleFS(){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+addEventListener('keydown',e=>{
+  if(!started&&cur===0){if(e.key.toLowerCase()==='f'){toggleFS();return}e.preventDefault();start();return}
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();show(cur+1)}
+  else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();show(cur-1)}
+  else if(e.key==='Home')show(0);
+  else if(e.key==='End')show(slides.length-1);
+  else if(e.key.toLowerCase()==='r'&&cur===0)restartIntro();
+  else if(e.key.toLowerCase()==='r'&&slides[cur].id==='outro')show(cur);
+  else if(e.key.toLowerCase()==='f')toggleFS();
+});
+addEventListener('click',()=>{if(!started&&cur===0)start()});
+/* pour les tests : seek(t) saute à l'instant t de l'animation en cours */
+window.seek=t=>{if(!started&&cur===0){started=true;restartIntro()}seekOffset=t;t0=performance.now()};
+show(0);requestAnimationFrame(frame);
+</script>
+</body>
+</html>
