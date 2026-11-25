@@ -345,6 +345,74 @@ p{margin:0}
 .fx{font-family:var(--mono);font-size:17px;padding:14px 0;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--rule);margin-bottom:18px}
 .fx span{display:block;font-family:var(--font);font-size:14px;color:var(--muted);margin-top:6px}
 
+
+/* ================= FICHES PROJET ================= */
+.fp-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px}
+.fp-head h2{font-size:48px}
+.fp-sub{font-size:17px;color:var(--muted);margin-top:12px}
+.fp-wx{display:flex;align-items:center;gap:18px;border-left:1.5px solid var(--ink);padding:4px 0 4px 26px;flex:none}
+.fp-wx .wx{width:78px;height:78px}
+.fp-wx small{display:block;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.fp-wx b{display:block;font-family:var(--display);font-size:24px;font-weight:600;letter-spacing:-.02em;margin-top:4px;white-space:nowrap}
+.fp-wx b.l4{color:var(--red)}.fp-wx b.l0{color:var(--muted)}
+.fp-grid{display:grid;grid-template-columns:1.2fr .95fr 1.1fr;gap:46px;margin-top:34px}
+.kt{width:100%;border-collapse:collapse;font-size:15px}
+.kt th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:4px 10px 8px 0}
+.kt td{padding:9px 10px 9px 0;border-bottom:1px solid var(--rule);line-height:1.3}
+.kt td:first-child{padding-left:18px;position:relative}
+.kt .k{font-family:var(--mono);font-size:14px;white-space:nowrap}
+.kt .mu{color:var(--muted)}
+.st{position:absolute;left:0;top:14px;width:9px;height:9px;border-radius:50%}
+.st.ok,.e.ok{background:var(--green)}.st.warn{background:var(--m2)}.st.bad{background:var(--red)}.st.na{background:var(--faint)}
+.e.ok{background:none;color:var(--green)}.e.warn{color:#A87508}.e.bad{color:var(--red);font-weight:600}.e.na{color:var(--muted)}
+.bb{position:relative;height:16px;background:transparent;margin:16px 0 12px;border-bottom:1px solid var(--rule2)}
+.bb span{position:absolute;top:0;height:16px}
+.bb .s1{left:0;background:var(--ink)}.bb .s2{background:#7C8BB5}.bb .s3{background:#D9DCE3}
+.bb .ov{top:-4px;height:24px;background:repeating-linear-gradient(135deg,rgba(194,49,58,.85) 0 4px,rgba(194,49,58,.35) 4px 8px)}
+.bb .pv{top:-10px;height:36px;width:2px;background:var(--ink)}
+.bb .pv i{position:absolute;top:-16px;left:-14px;font-style:normal;font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.bn{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.bn small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.bn b{display:block;font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:-.02em;margin-top:3px;white-space:nowrap}
+.bn b.bad{color:var(--red)}
+.bn span{display:block;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.aft{margin-top:12px;font-size:15px;color:var(--ink2)}.aft b{color:var(--acc)}
+.fl1{list-style:none;margin:12px 0 0;padding:0}
+.fl1 li{position:relative;padding:0 0 11px 18px;font-size:16px;line-height:1.4}
+.fl1 li::before{content:"";position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:50%;background:var(--ink2)}
+.fl1.att li::before{background:var(--red)}
+.q{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:-.015em;margin:14px 0 12px}
+.ops{display:grid;gap:8px}
+.op{display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:start;padding:11px 12px;border:1px solid var(--rule);background:var(--paper)}
+.op i{font-style:normal;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-family:var(--mono);font-size:13px;font-weight:600}
+.op b{display:block;font-size:15.5px;font-weight:600;line-height:1.3}
+.op span{display:block;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.4}
+.op em{font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);padding-top:4px}
+.op.rec{border-color:var(--acc);box-shadow:inset 3px 0 0 var(--acc)}
+.op.rec i{background:var(--acc);border-color:var(--acc);color:#fff}
+.cm{font-size:15.5px;line-height:1.5;color:var(--ink2);margin-top:12px}
+
+/* ================= BUDGET ================= */
+.bt{width:100%;border-collapse:collapse;margin-top:28px}
+.bt th{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:right;padding:0 0 10px 14px;border-bottom:1.5px solid var(--ink)}
+.bt th:first-child,.bt td:first-child{text-align:left;padding-left:0}
+.bt td{padding:12px 0 12px 14px;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:16px;text-align:right;white-space:nowrap}
+.bt td:first-child{font-family:var(--font);font-size:17px}
+.bt td.bad{color:var(--red);font-weight:600}.bt td.good{color:var(--acc);font-weight:600}
+.bt tr.t td{font-weight:600;border-bottom:1.5px solid var(--ink)}
+.bt td .wx{width:30px;height:30px;margin-right:10px}
+
+.rv td .wx{vertical-align:middle}
+.rv td.dc{white-space:nowrap;font-size:14.5px;color:var(--ink2)}
+.rv td.dc .ck{display:inline-grid;width:22px;height:22px;margin:0 6px 0 14px;vertical-align:-5px}
+.rv td.dc .ck:first-child{margin-left:0}
+.rv td.dc .ck svg{width:14px;height:14px}
+.rv tr.env td{border-top:1.5px solid var(--ink)}
+.rv td{padding:11px 16px 11px 0;font-size:16px}
+.endl{display:flex;align-items:center;gap:34px;margin-top:26px}
+.endl p{font-size:16.5px;color:var(--ink2);line-height:1.5}
+.endl p b{color:var(--acc)}
+
 /* contrôles */
 .ctrl{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border:1px solid var(--rule);border-radius:99px;padding:4px;z-index:5;opacity:0;transition:opacity .3s}
 .ctrl:hover,.ctrl:focus-within{opacity:1}
@@ -515,41 +583,185 @@ p{margin:0}
   <div class="notes"><h4>Anass · 1 min 30</h4><ul><li>Tous les services clients se posent sur l'extranet : c'est l'espace client sécurisé. #207 est le seul indépendant.</li><li>L'audit a trouvé trois failles de fond : authentification, cloisonnement, hébergement. On ne peut pas ouvrir sans les corriger.</li><li>Résultat : des lots livrés que personne ne voit, deux lots à l'arrêt.</li></ul></div>
 </section>
 
-<!-- 06 · FICHE PROJET -->
-<section class="slide" data-who="Anass" data-part="1">
-  <div class="kicker r">Fiche projet</div>
-  <div class="body" style="justify-content:flex-start">
-    <div class="fiche r" style="--i:1">
-      <div class="f-name"><small>Projet</small><b>Enjeu 2 · Digitaliser la relation client</b><span>Sponsor : Christopher Bazin<br>6 lots · T2 2025 → T4 2027 <span class="h">H1</span></span></div>
-      <div class="f-kpi">
-        <div><em>Budget</em><span>415 → 531 K€</span><i class="dn">↘</i></div>
-        <div><em>Avancement</em><span>69 % / 81 % prévu</span><i class="dn">↘</i></div>
-        <div><em>ROI 5 ans</em><span>875 → 523 K€</span><i class="dn">↘</i></div>
-        <div><em>Lots livrés</em><span>2 sur 6, +1 en prod.</span><i class="up">↗</i></div>
-        <div><em>Retard socle</em><span>168 jours</span><i class="dn">↘</i></div>
-        <div><em>Clients actifs</em><span>0 % · cible &gt; 50 %</span><i class="eq">→</i></div>
-      </div>
-      <div class="f-wx"><span class="wx" data-wx="4" data-tr="dn"></span><b>Tempête de Noël</b></div>
-      <div class="f-row"><h4>Fait</h4><ul><li>#207 Prospects en service (avril)</li><li>#202 Fiche synthèse livrée (juillet)</li><li>#203 Sollicitations en production (octobre)</li></ul></div>
-      <div class="f-row att"><h4>Points d'attention</h4><ul><li>#201 bloqué par trois failles de sécurité</li><li>#204 et #206 attendent le socle</li><li>Chefs de projet métiers pris par les bilans, de janvier à mai <span class="h">H8</span></li></ul></div>
-      <div class="f-row"><h4>Décisions</h4><div class="f-dec">
-        <div><span class="d">D1</span><span class="o">#201 · A prolonger · B portail du marché · <b>C socle sécurisé</b></span><span class="a">→</span><span>130 K€ au lieu de 175, ouverture le 31/03/2027</span></div>
-        <div><span class="d">D2</span><span class="o">#204 · A attendre · <b>B avancer en parallèle</b> · C fusionner</span><span class="a">→</span><span>+5 K€, mise en service 6 mois plus tôt</span></div>
-        <div><span class="d">D3</span><span class="o">#206 · A garder · <b>B l'adosser au socle</b> · C abandonner</span><span class="a">→</span><span>35 K€ au lieu de 50, factures en ligne en juin 2027</span></div>
-      </div></div>
-      <div class="f-row"><h4>Plan de com</h4><div class="f-com">
-        <div><em>Quoi</em>Le nouveau calendrier et le socle sécurisé</div>
-        <div><em>Qui</em>Sponsor, managers de pôle, experts-comptables</div>
-        <div><em>Comment</em>Réunions de pôle, message aux clients, pilote</div>
-        <div><em>Fréquence</em>Flash mensuel, comité semestriel</div>
-      </div></div>
+<!-- FICHE #201 -->
+<section class="slide fp" data-who="Anass" data-part="1">
+  <div class="fp-head">
+    <div><div class="kicker r">Fiche projet 1 sur 6 · #201 · priorité 1</div>
+      <h2 class="r" style="--i:1;max-width:none">Extranet clients</h2>
+      <p class="fp-sub r" style="--i:2">Chef de projet : AMOA ITS · ouverture prévue le 30/06/2026, proposée le 31/03/2027</p></div>
+    <div class="fp-wx r" style="--i:2"><span class="wx" data-wx="4" data-tr="dn"></span><div><small>Météo · tendance en baisse</small><b class="l4">Tempête de Noël ↘</b></div></div>
+  </div>
+  <div class="fp-grid">
+    <div class="r" style="--i:3">
+      <div class="lbl">Indicateurs</div>
+      <table class="kt"><thead><tr><th>KPI</th><th>Valeur</th><th>Cible</th><th>Écart</th></tr></thead><tbody><tr><td><i class="st bad"></i>Avancement</td><td class="k">70 %</td><td class="k mu">100 %</td><td class="k e bad">−30 pts</td></tr><tr><td><i class="st bad"></i>Failles critiques ouvertes</td><td class="k">3</td><td class="k mu">0</td><td class="k e bad">+3</td></tr><tr><td><i class="st bad"></i>Accès en double authentification</td><td class="k">0 %</td><td class="k mu">100 %</td><td class="k e bad">−100 pts</td></tr><tr><td><i class="st na"></i>Clients pilotes inscrits</td><td class="k">0</td><td class="k mu">20</td><td class="k e na">pas encore ouvert</td></tr></tbody></table>
+      <div class="lbl" style="margin-top:24px">Budget</div>
+      <div class="bb"><span class="s1" style="width:50.55%"></span><span class="s2" style="left:50.55%;width:9.89%"></span><span class="s3" style="left:60.44%;width:35.71%"></span><span class="ov" style="left:54.95%;width:41.21%"></span><span class="pv" style="left:54.95%"><i>prévu</i></span></div>
+      <div class="bn"><div><small>Prévu</small><b>100 K€</b></div><div><small>Dépensé</small><b>92 K€</b></div><div><small>Engagé</small><b>18 K€</b></div><div><small>Reste</small><b>65 K€</b></div><div><small>Atterrissage</small><b class="bad">175 K€</b><span>+75 %</span></div></div>
+      <p class="aft">Avec l'option C recommandée : <b>130 K€</b></p>
+    </div>
+    <div class="r" style="--i:4">
+      <div class="lbl">Fait</div><ul class="fl1"><li>Identification et page entreprise développées</li><li>Audit de sécurité réalisé en septembre (décision de juin)</li><li>Chef de projet AMOA ITS en poste depuis juillet</li></ul>
+      <div class="lbl" style="margin-top:24px">Points d'attention</div><ul class="fl1 att"><li>Trois failles : mot de passe seul, dossiers mal cloisonnés, hébergement hors UE</li><li>Porte 71 % du ROI du programme (620 sur 875 K€)</li><li>#202 et #203 invisibles des clients ; #204 et #206 en attente</li></ul>
+    </div>
+    <div class="r" style="--i:5">
+      <div class="lbl">Décision</div><p class="q">Comment terminer l'extranet ?</p><div class="ops"><div class="op"><i>A</i><div><b>Tout corriger, tout livrer</b><span>175 K€ · ouverture 30/06/2027 · ROI 365 K€</span></div></div><div class="op"><i>B</i><div><b>Passer à un portail du marché</b><span>174 K€ · ouverture 30/04/2027 · ROI 396 K€</span></div></div><div class="op rec"><i>C</i><div><b>Ouvrir un socle sécurisé, compléter en 2027</b><span>130 K€ · ouverture 31/03/2027 · ROI 455 K€</span></div><em>Recommandé</em></div></div>
+      <div class="lbl" style="margin-top:22px">Communication</div><p class="cm">Experts-comptables → 20 clients pilotes : invitation en février, par appel puis e-mail. Associés → équipes : nouvelle date d'ouverture, dès le 16 décembre.</p>
     </div>
   </div>
-  <div class="notes"><h4>Anass · 1 min</h4><ul><li>La fiche du programme, au format habituel : KPI et tendance, météo, fait, points d'attention, décisions, plan de com.</li><li>Tout baisse sauf les livraisons : c'est le socle qui tire le reste vers le bas.</li></ul></div>
+  <div class="notes"><h4>Anass · 1 min 15</h4><ul><li>Le lot qui porte 71 % du ROI, et le seul en tempête.</li><li>70 % réalisé, mais trois failles de fond trouvées par l'audit : on ne peut pas ouvrir.</li><li>Nous recommandons C : un socle sécurisé le 31 mars, pour 130 K€. Détail en annexe 3.</li></ul></div>
 </section>
 
+<!-- FICHE #204 -->
+<section class="slide fp" data-who="Jihad" data-part="1">
+  <div class="fp-head">
+    <div><div class="kicker r">Fiche projet 2 sur 6 · #204 · priorité 1</div>
+      <h2 class="r" style="--i:1;max-width:none">Espace documentaire</h2>
+      <p class="fp-sub r" style="--i:2">Chef de projet : AMOA ITS · mise en service prévue le 30/06/2027</p></div>
+    <div class="fp-wx r" style="--i:2"><span class="wx" data-wx="2" data-tr="dn"></span><div><small>Météo · tendance en baisse</small><b class="l2">Premiers flocons ↘</b></div></div>
+  </div>
+  <div class="fp-grid">
+    <div class="r" style="--i:3">
+      <div class="lbl">Indicateurs</div>
+      <table class="kt"><thead><tr><th>KPI</th><th>Valeur</th><th>Cible</th><th>Écart</th></tr></thead><tbody><tr><td><i class="st warn"></i>Cadrage réalisé</td><td class="k">80 %</td><td class="k mu">100 % au 30/11</td><td class="k e warn">−20 pts</td></tr><tr><td><i class="st bad"></i>Clients passant par Dropbox ou WeTransfer</td><td class="k">30 %</td><td class="k mu">0 %</td><td class="k e bad">+30 pts</td></tr><tr><td><i class="st na"></i>Documents reçus par e-mail chaque mois</td><td class="k">1 200</td><td class="k mu">—</td><td class="k e na">référence</td></tr><tr><td><i class="st ok"></i>Solutions de GED présélectionnées</td><td class="k">3</td><td class="k mu">3</td><td class="k e ok">0</td></tr></tbody></table>
+      <div class="lbl" style="margin-top:24px">Budget</div>
+      <div class="bb"><span class="s1" style="width:23.08%"></span><span class="s2" style="left:23.08%;width:0.00%"></span><span class="s3" style="left:23.08%;width:73.08%"></span><span class="pv" style="left:96.15%"><i>prévu</i></span></div>
+      <div class="bn"><div><small>Prévu</small><b>50 K€</b></div><div><small>Dépensé</small><b>12 K€</b></div><div><small>Engagé</small><b>0 K€</b></div><div><small>Reste</small><b>38 K€</b></div><div><small>Atterrissage</small><b class="">50 K€</b><span>0</span></div></div>
+      <p class="aft">Avec l'option B recommandée : <b>55 K€</b></p>
+    </div>
+    <div class="r" style="--i:4">
+      <div class="lbl">Fait</div><ul class="fl1"><li>Besoins recueillis auprès des pôles comptable, social et juridique</li><li>Trois solutions de GED présélectionnées</li><li>Volume de référence mesuré : 1 200 documents par mois</li></ul>
+      <div class="lbl" style="margin-top:24px">Points d'attention</div><ul class="fl1 att"><li>Shadow IT : 30 % des clients envoient leurs pièces hors de notre contrôle</li><li>La réalisation attend le socle de l'extranet</li><li>Deuxième ROI du programme : 250 K€ à préserver</li></ul>
+    </div>
+    <div class="r" style="--i:5">
+      <div class="lbl">Décision</div><p class="q">Faut-il attendre l'extranet ?</p><div class="ops"><div class="op"><i>A</i><div><b>Attendre l'ouverture du socle</b><span>50 K€ · mise en service 31/03/2028 · ROI 194 K€</span></div></div><div class="op rec"><i>B</i><div><b>Préparer dès janvier ce qui n'en dépend pas</b><span>55 K€ · mise en service 30/09/2027 · ROI 226 K€</span></div><em>Recommandé</em></div><div class="op"><i>C</i><div><b>Fusionner le lot dans #201</b><span>socle décalé de 3 mois · −45 K€ sur #201</span></div></div></div>
+      <div class="lbl" style="margin-top:22px">Communication</div><p class="cm">Associés → clients : ne plus envoyer de pièces par Dropbox ou WeTransfer, dès janvier. PMO → pôles : ateliers de choix de la GED en janvier.</p>
+    </div>
+  </div>
+  <div class="notes"><h4>Jihad · 1 min 15</h4><ul><li>Le lot le plus rentable après l'extranet : 75 K€ de gains par an.</li><li>Le shadow IT est déjà là : 30 % des clients contournent nos outils.</li><li>Nous recommandons B : préparer en parallèle, brancher en avril. Détail en annexe 4.</li></ul></div>
+</section>
+
+<!-- FICHE #206 -->
+<section class="slide fp" data-who="Jihad" data-part="1">
+  <div class="fp-head">
+    <div><div class="kicker r">Fiche projet 3 sur 6 · #206 · priorité 3</div>
+      <h2 class="r" style="--i:1;max-width:none">Factures en ligne</h2>
+      <p class="fp-sub r" style="--i:2">Chef de projet : Laurent C. · prévu au T3–T4 2027, proposé au 30/06/2027</p></div>
+    <div class="fp-wx r" style="--i:2"><span class="wx" data-wx="0" data-tr="na"></span><div><small>Météo · tendance —</small><b class="l0">Encore sous le sapin</b></div></div>
+  </div>
+  <div class="fp-grid">
+    <div class="r" style="--i:3">
+      <div class="lbl">Indicateurs</div>
+      <table class="kt"><thead><tr><th>KPI</th><th>Valeur</th><th>Cible</th><th>Écart</th></tr></thead><tbody><tr><td><i class="st bad"></i>Factures émises au format électronique</td><td class="k">0 %</td><td class="k mu">100 % au 01/09/2027</td><td class="k e bad">−100 pts</td></tr><tr><td><i class="st na"></i>Factures envoyées chaque mois</td><td class="k">900</td><td class="k mu">—</td><td class="k e na">référence</td></tr><tr><td><i class="st ok"></i>Avancement (lot non commencé)</td><td class="k">0 %</td><td class="k mu">0 %</td><td class="k e ok">0</td></tr></tbody></table>
+      <div class="lbl" style="margin-top:24px">Budget</div>
+      <div class="bb"><span class="s1" style="width:0.00%"></span><span class="s2" style="left:0.00%;width:0.00%"></span><span class="s3" style="left:0.00%;width:96.15%"></span><span class="pv" style="left:96.15%"><i>prévu</i></span></div>
+      <div class="bn"><div><small>Prévu</small><b>50 K€</b></div><div><small>Dépensé</small><b>0 K€</b></div><div><small>Engagé</small><b>0 K€</b></div><div><small>Reste</small><b>50 K€</b></div><div><small>Atterrissage</small><b class="">50 K€</b><span>0</span></div></div>
+      <p class="aft">Avec l'option B recommandée : <b>35 K€</b></p>
+    </div>
+    <div class="r" style="--i:4">
+      <div class="lbl">Fait</div><ul class="fl1"><li>Analyse de la réforme de la facturation électronique</li><li>Lien établi avec le chantier #105 de l'enjeu 1</li><li>Volume de référence : 900 factures par mois</li></ul>
+      <div class="lbl" style="margin-top:24px">Points d'attention</div><ul class="fl1 att"><li>Émission en facture électronique obligatoire au 1er septembre 2027 <span class="h">H10</span>, avant la fin prévue du lot</li><li>Un module spécifique ferait doublon avec la plateforme agréée</li><li>Aucun gain chiffré : ROI de −100 %</li></ul>
+    </div>
+    <div class="r" style="--i:5">
+      <div class="lbl">Décision</div><p class="q">Tenir l'échéance du 1er septembre 2027 ?</p><div class="ops"><div class="op"><i>A</i><div><b>Garder le plan : lot autonome fin 2027</b><span>50 K€ · en ligne 31/12/2027 · non conforme pendant 4 mois</span></div></div><div class="op rec"><i>B</i><div><b>Émettre via une plateforme agréée, afficher dans MyAltonéo</b><span>35 K€ · en ligne 30/06/2027 · conforme</span></div><em>Recommandé</em></div><div class="op"><i>C</i><div><b>Abandonner le lot</b><span>0 K€ · obligation à traiter hors programme</span></div></div></div>
+      <div class="lbl" style="margin-top:22px">Communication</div><p class="cm">DAF → clients : calendrier de la facture électronique, relayé par la formation du chantier #105. PMO → comptabilité : nouveau circuit de facturation.</p>
+    </div>
+  </div>
+  <div class="notes"><h4>Jihad · 1 min 15</h4><ul><li>Pas encore commencé, mais la loi fixe la date : émission électronique obligatoire au 1er septembre 2027.</li><li>Le plan d'origine finit en décembre 2027 : quatre mois hors la loi.</li><li>Nous recommandons B : plus tôt, moins cher, conforme. Détail en annexe 5.</li></ul></div>
+</section>
+
+<!-- FICHE #203 -->
+<section class="slide fp" data-who="Matthieu" data-part="1">
+  <div class="fp-head">
+    <div><div class="kicker r">Fiche projet 4 sur 6 · #203 · priorité 2</div>
+      <h2 class="r" style="--i:1;max-width:none">Sollicitations clients</h2>
+      <p class="fp-sub r" style="--i:2">Chef de projet métier à tiers-temps · prévu le 30/09/2026, en production depuis le 30/10/2026</p></div>
+    <div class="fp-wx r" style="--i:2"><span class="wx" data-wx="3" data-tr="up"></span><div><small>Météo · tendance en hausse</small><b class="l3">Neige qui tient ↗</b></div></div>
+  </div>
+  <div class="fp-grid">
+    <div class="r" style="--i:3">
+      <div class="lbl">Indicateurs</div>
+      <table class="kt"><thead><tr><th>KPI</th><th>Valeur</th><th>Cible</th><th>Écart</th></tr></thead><tbody><tr><td><i class="st warn"></i>Pôles équipés</td><td class="k">2 sur 3</td><td class="k mu">3</td><td class="k e warn">−1</td></tr><tr><td><i class="st warn"></i>Sollicitations tracées</td><td class="k">60 %</td><td class="k mu">100 %</td><td class="k e warn">−40 pts</td></tr><tr><td><i class="st bad"></i>Délai moyen de réponse</td><td class="k">3,5 j</td><td class="k mu">2 j</td><td class="k e bad">+1,5 j</td></tr></tbody></table>
+      <div class="lbl" style="margin-top:24px">Budget</div>
+      <div class="bb"><span class="s1" style="width:87.00%"></span><span class="s2" style="left:87.00%;width:9.16%"></span><span class="s3" style="left:96.15%;width:0.00%"></span><span class="ov" style="left:57.23%;width:38.92%"></span><span class="pv" style="left:57.23%"><i>prévu</i></span></div>
+      <div class="bn"><div><small>Prévu</small><b>50 K€</b></div><div><small>Dépensé</small><b>76 K€</b></div><div><small>Engagé</small><b>8 K€</b></div><div><small>Reste</small><b>0 K€</b></div><div><small>Atterrissage</small><b class="bad">84 K€</b><span>+68 %</span></div></div>
+      
+    </div>
+    <div class="r" style="--i:4">
+      <div class="lbl">Fait</div><ul class="fl1"><li>Outil en production le 30 octobre</li><li>Historique des sollicitations repris (décision de juin)</li><li>Pôles comptable et social équipés</li></ul>
+      <div class="lbl" style="margin-top:24px">Points d'attention</div><ul class="fl1 att"><li>Surcoût de 34 K€ dû à la reprise d'historique</li><li>Délai de réponse au-dessus de la cible</li><li>Visible des clients seulement à l'ouverture de l'extranet</li></ul>
+    </div>
+    <div class="r" style="--i:5">
+      <div class="lbl">Décision</div><p class="q">Comment généraliser le suivi des demandes ?</p><div class="ops"><div class="op rec"><i>A</i><div><b>Outil obligatoire pour toute demande client au 1er février</b><span>0 K€ · 100 % des demandes tracées, délai mesurable</span></div><em>Recommandé</em></div><div class="op"><i>B</i><div><b>Laisser chaque pôle choisir</b><span>0 K€ · suivi partiel, délai non fiable</span></div></div></div>
+      <div class="lbl" style="margin-top:22px">Communication</div><p class="cm">Managers de pôle → collaborateurs : « toute demande client passe par l'outil » au 1er février. Pôle juridique : formation de 2 h en janvier.</p>
+    </div>
+  </div>
+  <div class="notes"><h4>Matthieu · 1 min 15</h4><ul><li>En production, et ça s'améliore depuis juin : tendance en hausse.</li><li>Mais seuls 60 % des demandes sont tracées : on ne peut pas piloter le délai de réponse.</li><li>Décision simple et gratuite : rendre l'outil obligatoire au 1er février.</li></ul></div>
+</section>
+
+<!-- FICHE #202 -->
+<section class="slide fp" data-who="Matthieu" data-part="1">
+  <div class="fp-head">
+    <div><div class="kicker r">Fiche projet 5 sur 6 · #202 · priorité 2</div>
+      <h2 class="r" style="--i:1;max-width:none">Fiche synthèse client et contacts</h2>
+      <p class="fp-sub r" style="--i:2">Propriétaire de la donnée : à nommer · livrée le 10/07/2026, visible des clients le 31/03/2027</p></div>
+    <div class="fp-wx r" style="--i:2"><span class="wx" data-wx="2" data-tr="eq"></span><div><small>Météo · tendance stable</small><b class="l2">Premiers flocons →</b></div></div>
+  </div>
+  <div class="fp-grid">
+    <div class="r" style="--i:3">
+      <div class="lbl">Indicateurs</div>
+      <table class="kt"><thead><tr><th>KPI</th><th>Valeur</th><th>Cible</th><th>Écart</th></tr></thead><tbody><tr><td><i class="st ok"></i>Avancement</td><td class="k">100 %</td><td class="k mu">100 %</td><td class="k e ok">0</td></tr><tr><td><i class="st bad"></i>Contacts en doublon</td><td class="k">18 %</td><td class="k mu">< 2 %</td><td class="k e bad">+16 pts</td></tr><tr><td><i class="st warn"></i>Fiches sociétés complètes</td><td class="k">62 %</td><td class="k mu">95 %</td><td class="k e warn">−33 pts</td></tr></tbody></table>
+      <div class="lbl" style="margin-top:24px">Budget</div>
+      <div class="bb"><span class="s1" style="width:96.15%"></span><span class="s2" style="left:96.15%;width:0.00%"></span><span class="s3" style="left:96.15%;width:0.00%"></span><span class="ov" style="left:89.03%;width:7.12%"></span><span class="pv" style="left:89.03%"><i>prévu</i></span></div>
+      <div class="bn"><div><small>Prévu</small><b>50 K€</b></div><div><small>Dépensé</small><b>54 K€</b></div><div><small>Engagé</small><b>0 K€</b></div><div><small>Reste</small><b>0 K€</b></div><div><small>Atterrissage</small><b class="bad">54 K€</b><span>+8 %</span></div></div>
+      
+    </div>
+    <div class="r" style="--i:4">
+      <div class="lbl">Fait</div><ul class="fl1"><li>Fiche société livrée en interne le 10 juillet</li><li>Contacts repris de l'ERP, de Silaé et d'Outlook</li><li>Règles de dédoublonnage rédigées</li></ul>
+      <div class="lbl" style="margin-top:24px">Points d'attention</div><ul class="fl1 att"><li>18 % de doublons, bientôt visibles des clients</li><li>Aucun propriétaire de la donnée nommé</li><li>Ouverture aux clients liée au socle #201</li></ul>
+    </div>
+    <div class="r" style="--i:5">
+      <div class="lbl">Décision</div><p class="q">Fiabiliser les contacts avant l'ouverture ?</p><div class="ops"><div class="op rec"><i>A</i><div><b>Un propriétaire de la donnée par pôle, dédoublonnage d'ici mars</b><span>0 K€ (temps interne) · données propres à l'ouverture</span></div><em>Recommandé</em></div><div class="op"><i>B</i><div><b>Ouvrir en l'état</b><span>0 K€ · 18 % de doublons visibles par les clients</span></div></div></div>
+      <div class="lbl" style="margin-top:22px">Communication</div><p class="cm">PMO → chargés de mission : règles de saisie des contacts en janvier. Clients : vérification de leur fiche à la première connexion.</p>
+    </div>
+  </div>
+  <div class="notes"><h4>Matthieu · 1 min 15</h4><ul><li>Livré, mais la donnée n'est pas prête : 18 % de doublons.</li><li>Si on ouvre en l'état, le client voit nos erreurs dès sa première connexion.</li><li>Décision : nommer un propriétaire de la donnée par pôle et dédoublonner d'ici mars.</li></ul></div>
+</section>
+
+<!-- FICHE #207 -->
+<section class="slide fp" data-who="Matthieu" data-part="1">
+  <div class="fp-head">
+    <div><div class="kicker r">Fiche projet 6 sur 6 · #207 · priorité 2</div>
+      <h2 class="r" style="--i:1;max-width:none">Gestion des prospects</h2>
+      <p class="fp-sub r" style="--i:2">Lot hors extranet · livré le 03/04/2026 (prévu le 31/03/2026) · clôture proposée</p></div>
+    <div class="fp-wx r" style="--i:2"><span class="wx" data-wx="1" data-tr="eq"></span><div><small>Météo · tendance stable</small><b class="l1">Ciel de réveillon →</b></div></div>
+  </div>
+  <div class="fp-grid">
+    <div class="r" style="--i:3">
+      <div class="lbl">Indicateurs</div>
+      <table class="kt"><thead><tr><th>KPI</th><th>Valeur</th><th>Cible</th><th>Écart</th></tr></thead><tbody><tr><td><i class="st ok"></i>Avancement</td><td class="k">100 %</td><td class="k mu">100 %</td><td class="k e ok">0</td></tr><tr><td><i class="st ok"></i>Utilisateurs actifs</td><td class="k">85 %</td><td class="k mu">80 %</td><td class="k e ok">+5 pts</td></tr><tr><td><i class="st warn"></i>Taux de conversion des prospects</td><td class="k">7 %</td><td class="k mu">10 %</td><td class="k e warn">−3 pts</td></tr></tbody></table>
+      <div class="lbl" style="margin-top:24px">Budget</div>
+      <div class="bb"><span class="s1" style="width:96.15%"></span><span class="s2" style="left:96.15%;width:0.00%"></span><span class="s3" style="left:96.15%;width:0.00%"></span><span class="ov" style="left:93.71%;width:2.44%"></span><span class="pv" style="left:93.71%"><i>prévu</i></span></div>
+      <div class="bn"><div><small>Prévu</small><b>115 K€</b></div><div><small>Dépensé</small><b>118 K€</b></div><div><small>Engagé</small><b>0 K€</b></div><div><small>Reste</small><b>0 K€</b></div><div><small>Atterrissage</small><b class="bad">118 K€</b><span>+3 %</span></div></div>
+      
+    </div>
+    <div class="r" style="--i:4">
+      <div class="lbl">Fait</div><ul class="fl1"><li>Module en service depuis avril</li><li>Associés et managers formés</li><li>95 prospects suivis, 7 devenus clients</li></ul>
+      <div class="lbl" style="margin-top:24px">Points d'attention</div><ul class="fl1 att"><li>Dépassement final de 3 K€</li><li>Taux de conversion encore sous la cible</li><li>Adoption à entretenir dans la durée</li></ul>
+    </div>
+    <div class="r" style="--i:5">
+      <div class="lbl">Décision</div><p class="q">Clôturer le lot ?</p><div class="ops"><div class="op rec"><i>A</i><div><b>Clôturer, passer en maintenance, suivre l'adoption chaque mois</b><span>budget final 118 K€</span></div><em>Recommandé</em></div><div class="op"><i>B</i><div><b>Prolonger pour améliorer la conversion</b><span>+10 K€ · ROI du lot ramené à 142 K€</span></div></div></div>
+      <div class="lbl" style="margin-top:22px">Communication</div><p class="cm">PMO → équipes : bilan et bonnes pratiques dans la newsletter interne. Adoption suivie dans le rapport flash mensuel.</p>
+    </div>
+  </div>
+  <div class="notes"><h4>Matthieu · 1 min 15</h4><ul><li>Le seul lot indépendant de l'extranet, et un succès : 85 % d'utilisateurs actifs.</li><li>On propose de le clôturer et de suivre l'adoption, plutôt que d'y remettre 10 K€.</li></ul></div>
+</section>
+
+
+
+
 <!-- 07 · RISQUES -->
-<section class="slide" data-who="Jihad" data-part="1">
+<section class="slide" data-who="Jihad" data-part="2">
   <div class="kicker r">Risques</div>
   <h2 class="r" style="--i:1;max-width:30ch">Trois risques rouges, tous nés du socle</h2>
   <div class="body">
@@ -568,7 +780,7 @@ p{margin:0}
       </div>
       <ol class="rl r" style="--i:3">
         <li><span class="id red">R1</span><div><b>Fuite de données entre clients</b><span>Parade : <em>aucune ouverture avant correction et test d'intrusion</em> · AMOA ITS</span></div></li>
-        <li><span class="id red">R2</span><div><b>Effet domino du retard de #201</b><span>Parade : <em>socle court (D1) et #204 en parallèle (D2)</em> · PMO</span></div></li>
+        <li><span class="id red">R2</span><div><b>Effet domino du retard de #201</b><span>Parade : <em>socle court (#201-C) et #204 en parallèle (#204-B)</em> · PMO</span></div></li>
         <li><span class="id red">R3</span><div><b>Dépassement de l'enveloppe, +116 K€</b><span>Parade : <em>les trois décisions ramènent l'écart à +61 K€</em> · Sponsor</span></div></li>
         <li><span class="id org">R4</span><div><b>Des clients qui n'adoptent pas l'extranet</b><span>Parade : <em>pilote de 20 clients <span class="h">H9</span>, aide à la première connexion</em></span></div></li>
         <li><span class="id org">R5</span><div><b>Chefs de projet métiers pris par les bilans</b><span>Parade : <em>ateliers en janvier puis en juin</em></span></div></li>
@@ -578,83 +790,38 @@ p{margin:0}
   <div class="notes"><h4>Jihad · 1 min</h4><ul><li>R1 à R3 sont rouges et viennent tous de l'extranet : traiter le socle traite les trois.</li><li>Chaque risque a une parade et un porteur. Ce qui nous amène aux décisions.</li></ul></div>
 </section>
 
-<!-- 08 · D1 -->
-<section class="slide" data-who="Jihad" data-part="2">
-  <div class="kicker r">Décision 1 sur 3 · Extranet #201</div>
-  <h2 class="r" style="--i:1;max-width:30ch">Ouvrir un socle sécurisé le 31 mars, compléter ensuite</h2>
-  <div class="dhead r" style="--i:2"><span class="wx" data-wx="4" data-tr="dn"></span><span>70 % réalisé · 92 K€ dépensés sur 100 · chaque mois de fermeture coûte <b>15 K€</b> de gains <span class="cc">calculé</span></span></div>
-  <table class="dm r" style="--i:3">
-    <colgroup><col class="l"><col><col><col></colgroup>
-    <thead><tr><th></th>
-      <th><span class="tag"></span><div class="opt"><i>A</i>Tout corriger, tout livrer</div></th>
-      <th><span class="tag"></span><div class="opt"><i>B</i>Passer à un portail du marché</div></th>
-      <th class="rec"><span class="tag">Recommandé</span><div class="opt"><i>C</i>Socle sécurisé d'abord</div></th></tr></thead>
+<!-- BUDGET -->
+<section class="slide" data-who="Lucas" data-part="2">
+  <div class="kicker r">Synthèse budgétaire</div>
+  <h2 class="r" style="--i:1;max-width:30ch">476 K€ après décisions, au lieu de 531 K€</h2>
+  <table class="bt r" style="--i:2">
+    <thead><tr><th>Lot</th><th>Prévu</th><th>Dépensé</th><th>Engagé</th><th>Reste à faire</th><th>Atterrissage</th><th>Écart</th><th>Après décisions</th></tr></thead>
     <tbody>
-      <tr><td class="l">Ce qu'on fait</td><td class="w">Corriger les trois failles dans le développement actuel</td><td class="w">Arrêter le spécifique, intégrer une solution sous abonnement</td><td class="w rec">Double authentification, cloisonnement, hébergement en France ; le reste en 2027</td></tr>
-      <tr><td class="l">Coût final</td><td class="k bad">175 K€</td><td class="k bad">174 K€</td><td class="k rec">130 K€</td></tr>
-      <tr><td class="l">Ouverture</td><td class="k">30 juin 2027</td><td class="k">30 avril 2027</td><td class="k good rec">31 mars 2027</td></tr>
-      <tr><td class="l">ROI du lot · plan 620</td>
-        <td><div class="bar"><span class="bg"></span><span class="fg grow" style="width:calc((100% - 76px)*.589)"></span><span class="plan" style="left:calc(100% - 76px)"></span><span>365 K€</span></div></td>
-        <td><div class="bar"><span class="bg"></span><span class="fg grow" style="--i:1;width:calc((100% - 76px)*.639)"></span><span class="plan" style="left:calc(100% - 76px)"></span><span>396 K€</span></div></td>
-        <td class="rec"><div class="bar"><span class="bg"></span><span class="fg grow" style="--i:2;width:calc((100% - 76px)*.734)"></span><span class="plan" style="left:calc(100% - 76px)"></span><span>455 K€</span></div></td></tr>
-      <tr><td class="l">Point faible</td><td class="w">Le plus cher et le plus tard</td><td class="w">Une partie des 92 K€ perdue, dépendance à un éditeur</td><td class="w rec">Mise à jour des contacts par le client en seconde version</td></tr>
+      <tr><td><span class="wx" data-wx="4"></span>#201 Extranet clients</td><td>100</td><td>92</td><td>18</td><td>65</td><td>175</td><td class="bad">+75 %</td><td class="good">130</td></tr>
+      <tr><td><span class="wx" data-wx="2"></span>#204 Espace documentaire</td><td>50</td><td>12</td><td>0</td><td>38</td><td>50</td><td>0 %</td><td class="good">55</td></tr>
+      <tr><td><span class="wx" data-wx="0"></span>#206 Factures en ligne</td><td>50</td><td>0</td><td>0</td><td>50</td><td>50</td><td>0 %</td><td class="good">35</td></tr>
+      <tr><td><span class="wx" data-wx="3"></span>#203 Sollicitations clients</td><td>50</td><td>76</td><td>8</td><td>0</td><td>84</td><td class="bad">+68 %</td><td>84</td></tr>
+      <tr><td><span class="wx" data-wx="2"></span>#202 Fiche synthèse et contacts</td><td>50</td><td>54</td><td>0</td><td>0</td><td>54</td><td>+8 %</td><td>54</td></tr>
+      <tr><td><span class="wx" data-wx="1"></span>#207 Gestion des prospects</td><td>115</td><td>118</td><td>0</td><td>0</td><td>118</td><td>+3 %</td><td>118</td></tr>
+      <tr class="t"><td>Programme, en K€</td><td>415</td><td>352</td><td>26</td><td>153</td><td class="bad">531</td><td class="bad">+28 %</td><td class="good">476</td></tr>
     </tbody>
   </table>
-  <div class="why r" style="--i:4"><p><b>Pourquoi C.</b> C'est le socle qui débloque quatre lots : l'ouvrir trois mois plus tôt que A, pour 45 K€ de moins, réduit l'effet domino.</p><p class="note"><b>Calcul</b> · ROI = 15 K€ × mois d'ouverture sur la période − coût. A : 36 × 15 − 175 · B : 38 × 15 − 174 · C : 39 × 15 − 130. Coûts et dates estimés par le PMO <span class="h">H6</span>. Trait vertical : ROI prévu au plan.</p></div>
-  <div class="notes"><h4>Jihad · 1 min 30</h4><ul><li>Mêmes critères pour les trois options : coût, date d'ouverture, ROI.</li><li>B semble moderne mais coûte autant que A, gaspille une partie de l'existant et nous rend dépendants.</li><li>Nous demandons de valider C.</li></ul></div>
+  <div class="after r" style="--i:3">
+    <div><small>Atterrissage actuel</small><div class="v"><b style="color:var(--red)">531 K€</b></div><span>+116 K€ sur l'enveloppe de juin</span></div>
+    <div><small>Après décisions</small><div class="v"><b class="good">476 K€</b></div><span>+61 K€, soit +15 %</span></div>
+    <div><small>ROI à 5 ans</small><div class="v"><s>523</s><b class="good">660 K€</b></div><span>875 K€ visés à l'origine</span></div>
+    <div><small>Gains annuels</small><div class="v"><b>322 K€</b></div><span>inchangés, atteints un an plus tard</span></div>
+  </div>
+  <p class="nx r" style="--i:4">Atterrissage = dépensé + engagé + reste à faire. Prévus par lot calculés (annexe 2) ; dépenses au 15/12 construites pour ce comité <span class="h">H4</span>.</p>
+  <div class="notes"><h4>Lucas · 1 min</h4><ul><li>Lecture de gauche à droite : ce qu'on avait prévu, ce qui est dépensé, engagé, ce qui reste, et où on atterrit.</li><li>Sans décision, 531 K€. Avec nos recommandations, 476 K€ : l'extranet coûte 45 K€ de moins, les factures 15 K€ de moins, l'espace documentaire 5 K€ de plus.</li><li>Les surcoûts de #203 et #207 sont déjà dépensés : on ne peut plus les rattraper.</li></ul></div>
 </section>
 
-<!-- 09 · D2 -->
-<section class="slide" data-who="Matthieu" data-part="2">
-  <div class="kicker r">Décision 2 sur 3 · Espace documentaire #204</div>
-  <h2 class="r" style="--i:1;max-width:30ch">Préparer dès janvier tout ce qui ne dépend pas de l'extranet</h2>
-  <div class="dhead r" style="--i:2"><span class="wx" data-wx="2" data-tr="dn"></span><span>Cadrage à 15 % · 50 K€ · le lot le plus rentable après l'extranet : <b>75 K€ de gains par an</b> <span class="cc">calculé</span></span></div>
-  <table class="dm r" style="--i:3">
-    <colgroup><col class="l"><col><col><col></colgroup>
-    <thead><tr><th></th>
-      <th><span class="tag"></span><div class="opt"><i>A</i>Attendre le socle</div></th>
-      <th class="rec"><span class="tag">Recommandé</span><div class="opt"><i>B</i>Avancer en parallèle</div></th>
-      <th><span class="tag"></span><div class="opt"><i>C</i>Fusionner dans #201</div></th></tr></thead>
-    <tbody>
-      <tr><td class="l">Ce qu'on fait</td><td class="w">Démarrer la réalisation après l'ouverture du socle</td><td class="w rec">Arborescence par domaine, droits, reprise des documents ; branchement en avril</td><td class="w">Un seul lot, une seule équipe avec l'extranet</td></tr>
-      <tr><td class="l">Coût final</td><td class="k">50 K€</td><td class="k rec">55 K€</td><td class="k">50 K€</td></tr>
-      <tr><td class="l">Mise en service</td><td class="k bad">31 mars 2028</td><td class="k good rec">30 sept. 2027</td><td class="k">30 juin 2027</td></tr>
-      <tr><td class="l">Effet ROI · plan 250</td>
-        <td><div class="bar"><span class="bg"></span><span class="fg grow" style="width:calc((100% - 76px)*.776)"></span><span class="plan" style="left:calc(100% - 76px)"></span><span>194 K€</span></div></td>
-        <td class="rec"><div class="bar"><span class="bg"></span><span class="fg grow" style="--i:1;width:calc((100% - 76px)*.904)"></span><span class="plan" style="left:calc(100% - 76px)"></span><span>226 K€</span></div></td>
-        <td><div class="bar"><span class="bg"></span><span class="fg grow" style="--i:2;width:calc((100% - 76px)*.82)"></span><span class="plan" style="left:calc(100% - 76px)"></span><span>205 K€</span></div></td></tr>
-      <tr><td class="l">Point faible</td><td class="w">Neuf mois de gains perdus, équipe à l'arrêt</td><td class="w rec">Ateliers à placer hors période de bilans</td><td class="w">Retarde le socle de 3 mois : −45 K€ sur #201</td></tr>
-    </tbody>
-  </table>
-  <div class="why r" style="--i:4"><p><b>Pourquoi B.</b> L'essentiel de #204 ne dépend pas de l'extranet. Le préparer maintenant gagne six mois pour 5 K€, sans charger le lot en tempête.</p><p class="note"><b>Calcul</b> · 6,25 K€ par mois de service. A : 39 × 6,25 − 50 · B : 45 × 6,25 − 55 · C : 250 sur #204 − 3 × 15 sur #201 <span class="h">H6</span>.</p></div>
-  <div class="notes"><h4>Matthieu · 1 min 15</h4><ul><li>#204 est priorité 1 et rapporte 75 K€ par an : on ne le laisse pas attendre.</li><li>C semble aussi bien, mais il alourdit l'extranet, déjà en tempête.</li><li>Nous demandons de valider B.</li></ul></div>
-</section>
 
-<!-- 10 · D3 -->
-<section class="slide" data-who="Matthieu" data-part="2">
-  <div class="kicker r">Décision 3 sur 3 · Factures en ligne #206</div>
-  <h2 class="r" style="--i:1;max-width:30ch">Ajouter les factures au socle, pour moins cher et plus tôt</h2>
-  <div class="dhead r" style="--i:2"><span class="wx" data-wx="0"></span><span>Prévu au second semestre 2027 · 50 K€ · aucun gain chiffré, mais nécessaire au « 100 % digital »</span></div>
-  <table class="dm r" style="--i:3">
-    <colgroup><col class="l"><col><col><col></colgroup>
-    <thead><tr><th></th>
-      <th><span class="tag"></span><div class="opt"><i>A</i>Garder le plan</div></th>
-      <th class="rec"><span class="tag">Recommandé</span><div class="opt"><i>B</i>L'adosser au socle</div></th>
-      <th><span class="tag"></span><div class="opt"><i>C</i>Abandonner</div></th></tr></thead>
-    <tbody>
-      <tr><td class="l">Ce qu'on fait</td><td class="w">Un lot autonome au second semestre 2027</td><td class="w rec">Une rubrique « Mes factures » reliée à l'ERP, dans l'espace déjà sécurisé</td><td class="w">Les factures continuent de partir par e-mail</td></tr>
-      <tr><td class="l">Coût final</td>
-        <td><div class="bar"><span class="bg"></span><span class="fg grow" style="width:calc(100% - 76px)"></span><span>50 K€</span></div></td>
-        <td class="rec"><div class="bar"><span class="bg"></span><span class="fg grow" style="--i:1;width:calc((100% - 76px)*.7)"></span><span>35 K€</span></div></td>
-        <td><div class="bar"><span class="bg"></span><span>0 K€</span></div></td></tr>
-      <tr><td class="l">Factures en ligne</td><td class="k">31 déc. 2027</td><td class="k good rec">30 juin 2027</td><td class="k bad">jamais</td></tr>
-      <tr><td class="l">Objectif 100 % digital</td><td class="k">atteint</td><td class="k good rec">atteint</td><td class="k bad">abandonné</td></tr>
-      <tr><td class="l">Point faible</td><td class="w">Refait une partie de ce que construit l'extranet</td><td class="w rec">À lancer après l'ouverture du 31 mars</td><td class="w">Le client garde deux canaux</td></tr>
-    </tbody>
-  </table>
-  <div class="why r" style="--i:4"><p><b>Pourquoi B et pas C.</b> C économise 35 K€ de plus, mais renonce à l'objectif validé en juin. B coûte moins que prévu et termine le parcours client.</p><p class="note"><b>Calcul</b> · sans gain chiffré, ROI = − coût. 35 K€ : estimation du PMO, qui retire ce que le socle apporte déjà <span class="h">H6</span>.</p></div>
-  <div class="notes"><h4>Matthieu · 1 min</h4><ul><li>Lot sans ROI : la vraie question est de savoir si l'objectif 100 % digital tient toujours.</li><li>Arbitrage transparent : C est le moins cher, mais c'est un renoncement. Nous recommandons B.</li></ul></div>
-</section>
+
+
+
+
+
 
 <!-- 11 · PLAN DE COM -->
 <section class="slide" data-who="Lucas" data-part="3">
@@ -672,7 +839,7 @@ p{margin:0}
     <tbody>
       <tr><td><b>Direction</b></td><td>Météo, écarts, décisions</td><td>PMO, sponsor</td><td>Comité, rapport flash d'une page</td><td class="fq">semestriel, flash mensuel</td><td>Options chiffrées pour chaque arbitrage</td></tr>
       <tr><td><b>Collaborateurs</b></td><td>Ce qui change dans leur travail, et quand</td><td>Managers de pôle</td><td>Réunion de pôle, guide d'une page, un référent par pôle</td><td class="fq">mensuel</td><td>2 h de formation avant chaque mise en service</td></tr>
-      <tr><td><b>Clients</b></td><td>Date d'ouverture, sécurité, bénéfices</td><td>Leur expert-comptable</td><td>Message personnel, tutoriel vidéo</td><td class="fq">à l'ouverture, puis trimestriel</td><td>Pilote, aide à la première connexion</td></tr>
+      <tr><td><b>Clients</b></td><td>Date d'ouverture, sécurité, fin des envois par Dropbox ou WeTransfer</td><td>Leur expert-comptable</td><td>Message personnel, tutoriel vidéo</td><td class="fq">à l'ouverture, puis trimestriel</td><td>Pilote, aide à la première connexion, enquête à 3 mois</td></tr>
       <tr><td><b>Chefs de projet métiers</b></td><td>Planning recalé, charge attendue</td><td>PMO</td><td>Point d'avancement, planning partagé</td><td class="fq">hebdomadaire</td><td>Ateliers hors période de bilans</td></tr>
       <tr><td><b>ITS et sous-traitants</b></td><td>Périmètre du socle, exigences de sécurité</td><td>AMOA ITS</td><td>Comité projet, revue du contrat</td><td class="fq">tous les 15 jours</td><td>Test d'intrusion avant chaque ouverture</td></tr>
     </tbody>
@@ -680,30 +847,30 @@ p{margin:0}
   <div class="notes"><h4>Lucas · 1 min 30</h4><ul><li>Un public, un message, un porteur. Les clients l'apprennent par leur expert-comptable, pas par un e-mail générique.</li><li>On accompagne avant chaque mise en service, pas après.</li></ul></div>
 </section>
 
-<!-- 12 · RELEVÉ DE DÉCISIONS -->
+
+<!-- RELEVÉ DE DÉCISIONS -->
 <section class="slide" data-who="Arthur" data-part="3" id="sEnd">
   <div class="kicker r">Relevé de décisions</div>
-  <h2 class="r" style="--i:1;max-width:30ch">Quatre validations pour sortir de la tempête</h2>
+  <h2 class="r" style="--i:1;max-width:30ch">À vous de trancher : sept validations</h2>
   <table class="rv r" style="--i:2">
-    <thead><tr><th></th><th>Décision</th><th>Budget</th><th>Effet</th><th>Porteur</th><th>Échéance</th><th>Validé</th></tr></thead>
+    <thead><tr><th>Lot</th><th>Choix recommandé</th><th>Impact</th><th>Porteur</th><th>Échéance</th><th>Décision du comité</th></tr></thead>
     <tbody>
-      <tr><td class="d">D1</td><td>Extranet #201 · socle sécurisé (option C)</td><td class="k">130 K€ · +30</td><td>Ouverture 31/03/2027</td><td>AMOA ITS</td><td class="k">31/03/2027</td><td><span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span></td></tr>
-      <tr><td class="d">D2</td><td>Espace documentaire #204 · en parallèle (B)</td><td class="k">55 K€ · +5</td><td>Mise en service 30/09/2027</td><td>PMO</td><td class="k">30/09/2027</td><td><span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span></td></tr>
-      <tr><td class="d">D3</td><td>Factures #206 · adossées au socle (B)</td><td class="k">35 K€ · −15</td><td>Factures en ligne 30/06/2027</td><td>PMO</td><td class="k">30/06/2027</td><td><span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span></td></tr>
-      <tr><td class="d">D4</td><td>Enveloppe révisée et planning recalé sur ces dates</td><td class="k">476 K€ · +61</td><td>Nouvelle référence des écarts</td><td>Sponsor</td><td class="k">aujourd'hui</td><td><span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span></td></tr>
+      <tr><td><span class="wx" data-wx="4" style="width:30px;height:30px"></span> <b>#201</b></td><td>C · socle sécurisé, compléter en 2027</td><td class="k">130 K€ · +30</td><td>AMOA ITS</td><td class="k">31/03/2027</td><td class="dc"><span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Validée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Ajournée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Refusée</td></tr>
+      <tr><td><span class="wx" data-wx="2" style="width:30px;height:30px"></span> <b>#204</b></td><td>B · préparer en parallèle dès janvier</td><td class="k">55 K€ · +5</td><td>AMOA ITS</td><td class="k">30/09/2027</td><td class="dc"><span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Validée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Ajournée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Refusée</td></tr>
+      <tr><td><span class="wx" data-wx="0" style="width:30px;height:30px"></span> <b>#206</b></td><td>B · plateforme agréée, factures dans MyAltonéo</td><td class="k">35 K€ · −15</td><td>Laurent C.</td><td class="k">30/06/2027</td><td class="dc"><span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Validée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Ajournée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Refusée</td></tr>
+      <tr><td><span class="wx" data-wx="3" style="width:30px;height:30px"></span> <b>#203</b></td><td>A · outil obligatoire au 1er février</td><td class="k">0 K€</td><td>Managers de pôle</td><td class="k">01/02/2027</td><td class="dc"><span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Validée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Ajournée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Refusée</td></tr>
+      <tr><td><span class="wx" data-wx="2" style="width:30px;height:30px"></span> <b>#202</b></td><td>A · propriétaire de la donnée, dédoublonnage</td><td class="k">0 K€</td><td>PMO</td><td class="k">31/03/2027</td><td class="dc"><span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Validée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Ajournée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Refusée</td></tr>
+      <tr><td><span class="wx" data-wx="1" style="width:30px;height:30px"></span> <b>#207</b></td><td>A · clôture et passage en maintenance</td><td class="k">118 K€ final</td><td>PMO</td><td class="k">31/12/2026</td><td class="dc"><span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Validée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Ajournée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Refusée</td></tr>
+      <tr class="env"><td><b>Programme</b></td><td>Enveloppe révisée, planning recalé sur ces dates</td><td class="k">476 K€ · +61</td><td>Sponsor</td><td class="k">aujourd'hui</td><td class="dc"><span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Validée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Ajournée <span class="ck"><svg viewBox="0 0 20 20"><path d="M4 10.5l4 4 8-9"/></svg></span>Refusée</td></tr>
     </tbody>
   </table>
-  <div class="after r" style="--i:3">
-    <div><small>Météo attendue</small>
-      <div class="morph" id="morph"><div class="stack"><span class="wx a" data-wx="4" data-tr="dn"></span><span class="wx b" data-wx="2" data-tr="up"></span></div><div class="lab"><b class="a" style="color:var(--red)">Tempête de Noël</b><b class="b">Premiers flocons</b></div></div>
-      <span>R1 et R2 restent ouverts jusqu'à l'ouverture</span></div>
-    <div><small>À terminaison</small><div class="v"><s>531</s><b class="good">476 K€</b></div><span>pour 415 K€ validés en juin</span></div>
-    <div><small>ROI à 5 ans</small><div class="v"><s>523</s><b class="good">660 K€</b></div><span>875 K€ visés à l'origine</span></div>
-    <div><small>Gains annuels</small><div class="v"><b>322 K€</b></div><span>inchangés, atteints un an plus tard</span></div>
+  <div class="endl r" style="--i:3">
+    <div class="morph" id="morph"><div class="stack"><span class="wx a" data-wx="4" data-tr="dn"></span><span class="wx b" data-wx="2" data-tr="up"></span></div><div class="lab"><b class="a" style="color:var(--red)">Tempête de Noël</b><b class="b">Premiers flocons</b></div></div>
+    <p>Si tout est validé : <b>476 K€</b> à terminaison, <b>660 K€</b> de ROI, factures conformes au 1er septembre 2027. Prochains rendez-vous : flash à l'ouverture du socle le 31/03/2027, comité le 15/06/2027.</p>
   </div>
-  <p class="nx r" style="--i:4"><b>Prochains rendez-vous</b> · point flash à l'ouverture du socle, 31 mars 2027 · comité stratégique, 15 juin 2027 · détail des calculs en annexe</p>
-  <div class="notes"><h4>Arthur · 1 min</h4><ul><li>Quatre cases à cocher : les trois décisions et l'enveloppe qui en découle (cliquer pour cocher).</li><li>Avec elles, la tempête redevient « premiers flocons ». Le ROI ne revient pas à 875 K€ : nous préférons le dire maintenant.</li></ul></div>
+  <div class="notes"><h4>Arthur · 1 min</h4><ul><li>Une ligne par lot, plus l'enveloppe : chaque décision peut être validée, ajournée ou refusée (cliquer pour cocher).</li><li>Si tout est validé, la tempête redevient « premiers flocons ». Le ROI ne revient pas à 875 K€ : nous préférons le dire maintenant.</li></ul></div>
 </section>
+
 
 <!-- A1 · HYPOTHÈSES -->
 <section class="slide an" data-who="Annexe" data-part="4">
@@ -713,12 +880,13 @@ p{margin:0}
     <div><b>H1</b><span>Programme lancé au T2 2025 : planning d'origine conservé (ordre et durées des lots), décalé de deux ans.</span></div>
     <div><b>H2</b><span>Méthode des fiches enjeux : ROI = 4 × gain annuel − coût sur 5 ans (année 1 sans gain), retrouvée sur 9 des 10 idées de l'enjeu 1.</span></div>
     <div><b>H3</b><span>Coût et gain de chaque lot déduits de H2 ; coût de #207 = 415 K€ − coût des cinq autres lots.</span></div>
-    <div><b>H4</b><span>Avancement, dépenses, dates réelles et constats d'audit au 15/12/2026 : situation construite pour ce comité.</span></div>
+    <div><b>H4</b><span>Avancement, dépenses, dates réelles, valeurs des KPI et constats d'audit au 15/12/2026 : situation construite pour ce comité.</span></div>
     <div><b>H5</b><span>Le lot #205 n'apparaît pas dans la liste : retiré ou fusionné avant le lancement.</span></div>
     <div><b>H6</b><span>Coûts et dates des options : estimations du PMO à ±20 %. Gains comptés par mois de service sur la période de 5 ans.</span></div>
     <div><b>H7</b><span>Comité stratégique semestriel ; le précédent s'est tenu le 16 juin 2026.</span></div>
     <div><b>H8</b><span>De janvier à mai, la période des bilans réduit de moitié la disponibilité des chefs de projet métiers.</span></div>
     <div><b>H9</b><span>Pilote de l'extranet avec 20 clients volontaires avant l'ouverture à tous.</span></div>
+    <div><b>H10</b><span>Altonéo est une PME : la réforme de la facturation électronique l'oblige à émettre ses factures en format électronique au 1er septembre 2027 (réception obligatoire depuis le 1er septembre 2026).</span></div>
   </div>
 </section>
 
@@ -758,6 +926,78 @@ p{margin:0}
     </div>
   </div>
 </section>
+<!-- 08 · D1 -->
+<section class="slide an" data-who="Annexe" data-part="4">
+  <div class="kicker r">Annexe 3 · Détail de la décision #201</div>
+  <h2 class="r" style="--i:1;max-width:30ch">Ouvrir un socle sécurisé le 31 mars, compléter ensuite</h2>
+  <div class="dhead r" style="--i:2"><span class="wx" data-wx="4" data-tr="dn"></span><span>70 % réalisé · 92 K€ dépensés sur 100 · chaque mois de fermeture coûte <b>15 K€</b> de gains <span class="cc">calculé</span></span></div>
+  <table class="dm r" style="--i:3">
+    <colgroup><col class="l"><col><col><col></colgroup>
+    <thead><tr><th></th>
+      <th><span class="tag"></span><div class="opt"><i>A</i>Tout corriger, tout livrer</div></th>
+      <th><span class="tag"></span><div class="opt"><i>B</i>Passer à un portail du marché</div></th>
+      <th class="rec"><span class="tag">Recommandé</span><div class="opt"><i>C</i>Socle sécurisé d'abord</div></th></tr></thead>
+    <tbody>
+      <tr><td class="l">Ce qu'on fait</td><td class="w">Corriger les trois failles dans le développement actuel</td><td class="w">Arrêter le spécifique, intégrer une solution sous abonnement</td><td class="w rec">Double authentification, cloisonnement, hébergement en France ; le reste en 2027</td></tr>
+      <tr><td class="l">Coût final</td><td class="k bad">175 K€</td><td class="k bad">174 K€</td><td class="k rec">130 K€</td></tr>
+      <tr><td class="l">Ouverture</td><td class="k">30 juin 2027</td><td class="k">30 avril 2027</td><td class="k good rec">31 mars 2027</td></tr>
+      <tr><td class="l">ROI du lot · plan 620</td>
+        <td><div class="bar"><span class="bg"></span><span class="fg grow" style="width:calc((100% - 76px)*.589)"></span><span class="plan" style="left:calc(100% - 76px)"></span><span>365 K€</span></div></td>
+        <td><div class="bar"><span class="bg"></span><span class="fg grow" style="--i:1;width:calc((100% - 76px)*.639)"></span><span class="plan" style="left:calc(100% - 76px)"></span><span>396 K€</span></div></td>
+        <td class="rec"><div class="bar"><span class="bg"></span><span class="fg grow" style="--i:2;width:calc((100% - 76px)*.734)"></span><span class="plan" style="left:calc(100% - 76px)"></span><span>455 K€</span></div></td></tr>
+      <tr><td class="l">Point faible</td><td class="w">Le plus cher et le plus tard</td><td class="w">Une partie des 92 K€ perdue, dépendance à un éditeur</td><td class="w rec">Mise à jour des contacts par le client en seconde version</td></tr>
+    </tbody>
+  </table>
+  <div class="why r" style="--i:4"><p><b>Pourquoi C.</b> C'est le socle qui débloque quatre lots : l'ouvrir trois mois plus tôt que A, pour 45 K€ de moins, réduit l'effet domino.</p><p class="note"><b>Calcul</b> · ROI = 15 K€ × mois d'ouverture sur la période − coût. A : 36 × 15 − 175 · B : 38 × 15 − 174 · C : 39 × 15 − 130. Coûts et dates estimés par le PMO <span class="h">H6</span>. Trait vertical : ROI prévu au plan.</p></div>
+  </section>
+<!-- 09 · D2 -->
+<section class="slide an" data-who="Annexe" data-part="4">
+  <div class="kicker r">Annexe 4 · Détail de la décision #204</div>
+  <h2 class="r" style="--i:1;max-width:30ch">Préparer dès janvier tout ce qui ne dépend pas de l'extranet</h2>
+  <div class="dhead r" style="--i:2"><span class="wx" data-wx="2" data-tr="dn"></span><span>Cadrage à 15 % · 50 K€ · le lot le plus rentable après l'extranet : <b>75 K€ de gains par an</b> <span class="cc">calculé</span></span></div>
+  <table class="dm r" style="--i:3">
+    <colgroup><col class="l"><col><col><col></colgroup>
+    <thead><tr><th></th>
+      <th><span class="tag"></span><div class="opt"><i>A</i>Attendre le socle</div></th>
+      <th class="rec"><span class="tag">Recommandé</span><div class="opt"><i>B</i>Avancer en parallèle</div></th>
+      <th><span class="tag"></span><div class="opt"><i>C</i>Fusionner dans #201</div></th></tr></thead>
+    <tbody>
+      <tr><td class="l">Ce qu'on fait</td><td class="w">Démarrer la réalisation après l'ouverture du socle</td><td class="w rec">Arborescence par domaine, droits, reprise des documents ; branchement en avril</td><td class="w">Un seul lot, une seule équipe avec l'extranet</td></tr>
+      <tr><td class="l">Coût final</td><td class="k">50 K€</td><td class="k rec">55 K€</td><td class="k">50 K€</td></tr>
+      <tr><td class="l">Mise en service</td><td class="k bad">31 mars 2028</td><td class="k good rec">30 sept. 2027</td><td class="k">30 juin 2027</td></tr>
+      <tr><td class="l">Effet ROI · plan 250</td>
+        <td><div class="bar"><span class="bg"></span><span class="fg grow" style="width:calc((100% - 76px)*.776)"></span><span class="plan" style="left:calc(100% - 76px)"></span><span>194 K€</span></div></td>
+        <td class="rec"><div class="bar"><span class="bg"></span><span class="fg grow" style="--i:1;width:calc((100% - 76px)*.904)"></span><span class="plan" style="left:calc(100% - 76px)"></span><span>226 K€</span></div></td>
+        <td><div class="bar"><span class="bg"></span><span class="fg grow" style="--i:2;width:calc((100% - 76px)*.82)"></span><span class="plan" style="left:calc(100% - 76px)"></span><span>205 K€</span></div></td></tr>
+      <tr><td class="l">Point faible</td><td class="w">Neuf mois de gains perdus, équipe à l'arrêt</td><td class="w rec">Ateliers à placer hors période de bilans</td><td class="w">Retarde le socle de 3 mois : −45 K€ sur #201</td></tr>
+    </tbody>
+  </table>
+  <div class="why r" style="--i:4"><p><b>Pourquoi B.</b> L'essentiel de #204 ne dépend pas de l'extranet. Le préparer maintenant gagne six mois pour 5 K€, sans charger le lot en tempête.</p><p class="note"><b>Calcul</b> · 6,25 K€ par mois de service. A : 39 × 6,25 − 50 · B : 45 × 6,25 − 55 · C : 250 sur #204 − 3 × 15 sur #201 <span class="h">H6</span>.</p></div>
+  </section>
+<!-- 10 · D3 -->
+<section class="slide an" data-who="Annexe" data-part="4">
+  <div class="kicker r">Annexe 5 · Détail de la décision #206</div>
+  <h2 class="r" style="--i:1;max-width:30ch">Facturer via une plateforme agréée : moins cher, plus tôt, conforme</h2>
+  <div class="dhead r" style="--i:2"><span class="wx" data-wx="0"></span><span>Prévu au second semestre 2027 · 50 K€ · émission électronique obligatoire au 1er septembre 2027 <span class="h">H10</span></span></div>
+  <table class="dm r" style="--i:3">
+    <colgroup><col class="l"><col><col><col></colgroup>
+    <thead><tr><th></th>
+      <th><span class="tag"></span><div class="opt"><i>A</i>Garder le plan</div></th>
+      <th class="rec"><span class="tag">Recommandé</span><div class="opt"><i>B</i>Plateforme agréée</div></th>
+      <th><span class="tag"></span><div class="opt"><i>C</i>Abandonner</div></th></tr></thead>
+    <tbody>
+      <tr><td class="l">Ce qu'on fait</td><td class="w">Un lot autonome au second semestre 2027</td><td class="w rec">Émission via une plateforme agréée, factures affichées dans MyAltonéo</td><td class="w">Les factures continuent de partir par e-mail</td></tr>
+      <tr><td class="l">Coût final</td>
+        <td><div class="bar"><span class="bg"></span><span class="fg grow" style="width:calc(100% - 76px)"></span><span>50 K€</span></div></td>
+        <td class="rec"><div class="bar"><span class="bg"></span><span class="fg grow" style="--i:1;width:calc((100% - 76px)*.7)"></span><span>35 K€</span></div></td>
+        <td><div class="bar"><span class="bg"></span><span>0 K€</span></div></td></tr>
+      <tr><td class="l">Factures en ligne</td><td class="k">31 déc. 2027</td><td class="k good rec">30 juin 2027</td><td class="k bad">jamais</td></tr>
+      <tr><td class="l">Facture électronique au 01/09/2027</td><td class="k bad">non conforme 4 mois</td><td class="k good rec">conforme</td><td class="k bad">hors programme</td></tr>
+      <tr><td class="l">Point faible</td><td class="w">Quatre mois hors obligation légale</td><td class="w rec">À lancer après l'ouverture du 31 mars</td><td class="w">Le client garde deux canaux</td></tr>
+    </tbody>
+  </table>
+  <div class="why r" style="--i:4"><p><b>Pourquoi B.</b> L'émission de factures électroniques devient obligatoire au 1er septembre 2027 <span class="h">H10</span> : A arrive quatre mois trop tard, C laisse l'obligation sans solution. B coûte moins que prévu et termine le parcours client.</p><p class="note"><b>Calcul</b> · sans gain chiffré, ROI = − coût. 35 K€ : estimation du PMO, qui retire ce que le socle apporte déjà <span class="h">H6</span>.</p></div>
+  </section>
 
 </div></div>
 
@@ -963,7 +1203,7 @@ function SnowGlobe(canvas,onBolt){
 
 /* ================= Navigation ================= */
 (function(){
-  const PARTS=['Où en sommes-nous','Pourquoi ça bloque','Ce que nous proposons','Comment nous accompagnons'];
+  const PARTS=['Où en sommes-nous','Lot par lot','Risques et budget','Décider et accompagner'];
   const slides=[...document.querySelectorAll('.slide')];
   const deck=document.getElementById('deck'),np=document.getElementById('np');
   const reduce=matchMedia('(prefers-reduced-motion:reduce)');
