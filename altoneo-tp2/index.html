@@ -339,6 +339,18 @@ p{margin:0}
 .at td.k{font-family:var(--mono);font-size:14px;white-space:nowrap}
 .at tr.t td{font-weight:600;border-bottom:1.5px solid var(--ink)}
 .a2{display:grid;grid-template-columns:1.15fr 1fr;gap:60px;margin-top:16px}
+.steps>div{display:grid;grid-template-columns:30px 1fr;gap:10px;padding:11px 0;border-bottom:1px solid var(--rule)}
+.steps>div:first-child{border-top:1.5px solid var(--ink)}
+.steps i{font-style:normal;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--acc);padding-top:2px}
+.steps p{margin:0;font-size:15.5px;line-height:1.45;color:var(--ink2)}
+.steps b{color:var(--ink);font-weight:600}
+.an code{font-family:var(--mono);font-size:.9em;color:var(--ink);white-space:nowrap}
+.at u{text-decoration:none;font-family:var(--font);font-size:.82em;color:var(--muted)}
+.at th u{font-size:1em}
+.at td.k b{font-weight:700}
+.chk{margin-top:14px;font-size:14.5px;line-height:1.5;color:var(--ink2)}.chk b{color:var(--acc)}
+.ex{font-size:15px;line-height:1.5;color:var(--ink2);margin:10px 0 14px}
+.a2b{grid-template-columns:1fr 1.1fr}
 .fx{font-family:var(--mono);font-size:17px;padding:14px 0;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--rule);margin-bottom:18px}
 .fx span{display:block;font-family:var(--font);font-size:14px;color:var(--muted);margin-top:6px}
 
@@ -1005,38 +1017,72 @@ p{margin:0}
 </section>
 
 <!-- A2 · CALCULS -->
-<section class="slide an" data-who="Annexe" data-part="4">
-  <div class="kicker">Annexe 2 · Calculs</div>
-  <h2>D'où viennent les chiffres</h2>
+<section class="slide an" data-who="Annexe" data-part="4" data-an="2">
+  <div class="kicker">Annexe 2 · Calculs, 1 sur 2</div>
+  <h2 style="max-width:none">Le coût et le gain de chaque lot, retrouvés à partir de la fiche enjeu</h2>
   <div class="a2">
-    <div>
-      <div class="fx">ROI = 4 × gain annuel − coût sur 5 ans<span>Vérifié sur l'enjeu 1 : #104 → 4 × 50 − 80 = 120 · #110 → 4 × 388 − 320 = 1 232 · #116 → 4 × 225 − 400 = 500</span></div>
-      <table class="at">
-        <thead><tr><th>Lot</th><th>ROI · ROI %</th><th>Coût calculé</th><th>Gain annuel calculé</th></tr></thead>
-        <tbody>
-          <tr><td>#201 Extranet</td><td class="k">620 · 620 %</td><td class="k">620 ÷ 6,2 = 100</td><td class="k">(620 + 100) ÷ 4 = 180</td></tr>
-          <tr><td>#204 Espace doc.</td><td class="k">250 · 500 %</td><td class="k">250 ÷ 5 = 50</td><td class="k">(250 + 50) ÷ 4 = 75</td></tr>
-          <tr><td>#202, #203, #206</td><td class="k">−50 · −100 %</td><td class="k">50 <u>chacun</u></td><td class="k">0</td></tr>
-          <tr><td>#207 Prospects</td><td class="k">155 · non transmis</td><td class="k">415 − 300 = 115</td><td class="k">(155 + 115) ÷ 4 = 67,5</td></tr>
-          <tr class="t"><td>Total</td><td class="k">875</td><td class="k">415</td><td class="k">322,5</td></tr>
-        </tbody>
-      </table>
-      <p class="note" style="margin-top:14px">Travaux réalisés, valorisés au coût prévu de chaque lot : 115 + 50 + 0,9 × 50 + 0,7 × 100 + 0,15 × 50 = 288 K€. Prévus à cette date : 115 + 50 + 50 + 100 + 0,45 × 50 = 338 K€.</p>
+    <div class="steps">
+      <div><i>1</i><p><b>Ce que donne la fiche enjeu n°2.</b> Pour chaque lot : un ROI en K€ et ce ROI en % du coût du lot. Pour tout l'enjeu : 415 K€ investis, 322 K€ de gains par an, 875 K€ de ROI. Le coût et le gain de chaque lot ne sont pas donnés.</p></div>
+      <div><i>2</i><p><b>Le coût du lot.</b> Le ROI en % rapporte le ROI au coût, donc <code>coût = ROI ÷ ROI %</code>. Exemple #201 : 620 K€ ÷ 620 % = <b>100 K€</b>.</p></div>
+      <div><i>3</i><p><b>Le gain par an.</b> Sur 5 ans, la première année sert à construire : la fiche compte 4 années de gains. <code>ROI = 4 × gain annuel − coût</code>, donc <code>gain annuel = (ROI + coût) ÷ 4</code>. Exemple #201 : (620 + 100) ÷ 4 = <b>180 K€ par an</b>.</p></div>
+      <div><i>4</i><p><b>Une règle vérifiée, pas devinée.</b> Les fiches de l'enjeu 1 donnent coût, gain et ROI : la règle s'y vérifie sur 9 idées sur 10. Exemple #104 : 4 × 50 − 80 = 120 K€, le ROI affiché <span class="h">H2</span>.</p></div>
+      <div><i>5</i><p><b>Le cas de #207.</b> Son ROI en % n'est pas transmis : son coût est ce qui reste des 415 K€ une fois les cinq autres lots comptés, 415 − 300 = <b>115 K€</b> <span class="h">H3</span>.</p></div>
     </div>
     <div>
       <table class="at">
-        <thead><tr><th>Lot · K€</th><th>Sans décision</th><th>ROI</th><th>Avec D1 à D3</th><th>ROI</th></tr></thead>
+        <thead><tr><th>Lot</th><th>Donné : ROI</th><th>Donné : ROI %</th><th>Coût<br>= ROI ÷ %</th><th>Gain par an<br>= (ROI + coût) ÷ 4</th></tr></thead>
         <tbody>
-          <tr><td>#207</td><td class="k">118</td><td class="k">152</td><td class="k">118</td><td class="k">152</td></tr>
-          <tr><td>#202</td><td class="k">54</td><td class="k">−54</td><td class="k">54</td><td class="k">−54</td></tr>
-          <tr><td>#203</td><td class="k">84</td><td class="k">−84</td><td class="k">84</td><td class="k">−84</td></tr>
-          <tr><td>#201</td><td class="k">175</td><td class="k">365</td><td class="k">130</td><td class="k">455</td></tr>
-          <tr><td>#204</td><td class="k">50</td><td class="k">194</td><td class="k">55</td><td class="k">226</td></tr>
-          <tr><td>#206</td><td class="k">50</td><td class="k">−50</td><td class="k">35</td><td class="k">−35</td></tr>
-          <tr class="t"><td>Programme</td><td class="k">531</td><td class="k">523</td><td class="k">476</td><td class="k">660</td></tr>
+          <tr><td>#201 Extranet</td><td class="k">620</td><td class="k">620 %</td><td class="k">100</td><td class="k">180</td></tr>
+          <tr><td>#204 Espace documentaire</td><td class="k">250</td><td class="k">500 %</td><td class="k">50</td><td class="k">75</td></tr>
+          <tr><td>#207 Prospects</td><td class="k">155</td><td class="k mu">non transmis</td><td class="k">115 <u>reste</u></td><td class="k">67,5</td></tr>
+          <tr><td>#202 Fiche synthèse</td><td class="k">−50</td><td class="k">−100 %</td><td class="k">50</td><td class="k">0</td></tr>
+          <tr><td>#203 Sollicitations</td><td class="k">−50</td><td class="k">−100 %</td><td class="k">50</td><td class="k">0</td></tr>
+          <tr><td>#206 Factures</td><td class="k">−50</td><td class="k">−100 %</td><td class="k">50</td><td class="k">0</td></tr>
+          <tr class="t"><td>Total, en K€</td><td class="k">875</td><td class="k"></td><td class="k">415</td><td class="k">322,5</td></tr>
         </tbody>
       </table>
-      <p class="note" style="margin-top:14px">« Sans décision » = options A. Gain mensuel = gain annuel ÷ 12 : 15 K€ pour #201, 6,25 K€ pour #204. Montants réels au 15/12 pour les lots livrés (H4).</p>
+      <p class="chk"><b>Contrôle.</b> Les totaux retombent sur les chiffres de la fiche enjeu : 415 K€ investis, 322 K€ de gains par an, 875 K€ de ROI. Un ROI de −100 % veut dire un lot sans gain chiffré : il ne rapporte rien directement et son ROI est son coût en négatif.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide an" data-who="Annexe" data-part="4" data-an="2">
+  <div class="kicker">Annexe 2 · Calculs, 2 sur 2</div>
+  <h2 style="max-width:none">Comment nous mesurons l'avancement et l'effet des décisions sur le ROI</h2>
+  <div class="a2 a2b">
+    <div>
+      <div class="lbl">Avancement au 15/12 : 288 K€ faits, 338 K€ prévus</div>
+      <p class="ex">Chaque lot pèse son coût prévu. Un lot de 100 K€ fait à 70 % compte pour 70 K€ de travaux réalisés. On compare avec ce que le planning prévoyait d'avoir fait à cette date <span class="h">H4</span>.</p>
+      <table class="at">
+        <thead><tr><th>Lot</th><th>Coût prévu</th><th>Fait</th><th>Travaux faits</th><th>Prévu au 15/12</th></tr></thead>
+        <tbody>
+          <tr><td>#207</td><td class="k">115</td><td class="k">livré</td><td class="k">115</td><td class="k">115</td></tr>
+          <tr><td>#202</td><td class="k">50</td><td class="k">livré</td><td class="k">50</td><td class="k">50</td></tr>
+          <tr><td>#203</td><td class="k">50</td><td class="k">90 %</td><td class="k">45</td><td class="k">50 <u>livré</u></td></tr>
+          <tr><td>#201</td><td class="k">100</td><td class="k">70 %</td><td class="k">70</td><td class="k">100 <u>livré</u></td></tr>
+          <tr><td>#204</td><td class="k">50</td><td class="k">15 %</td><td class="k">7,5</td><td class="k">22,5 <u>45 %</u></td></tr>
+          <tr><td>#206</td><td class="k">50</td><td class="k">0</td><td class="k">0</td><td class="k">0</td></tr>
+          <tr class="t"><td>Total, K€</td><td class="k">415</td><td class="k"></td><td class="k">288</td><td class="k">338</td></tr>
+        </tbody>
+      </table>
+      <p class="chk">Soit <b>50 K€ de travaux en retard</b>, alors que 352 K€ sont déjà dépensés.</p>
+    </div>
+    <div>
+      <div class="lbl">ROI après décisions : 523 → 660 K€</div>
+      <p class="ex">Un lot ne rapporte qu'une fois en service. Le plan comptait 48 mois de gains par lot : chaque mois de retard en retire un. <code>ROI = mois de service × gain par mois − coût final</code> <span class="h">H6</span>.</p>
+      <table class="at">
+        <thead><tr><th>Lot</th><th>Gain / mois</th><th>Sans décision <u>(options A)</u></th><th>Avec nos décisions</th></tr></thead>
+        <tbody>
+          <tr><td>#201</td><td class="k">15</td><td class="k">36 × 15 − 175 = <b>365</b></td><td class="k">39 × 15 − 130 = <b>455</b></td></tr>
+          <tr><td>#204</td><td class="k">6,25</td><td class="k">39 × 6,25 − 50 = <b>194</b></td><td class="k">45 × 6,25 − 55 = <b>226</b></td></tr>
+          <tr><td>#207</td><td class="k">5,625</td><td class="k">48 × 5,625 − 118 = <b>152</b></td><td class="k">inchangé, <b>152</b></td></tr>
+          <tr><td>#202</td><td class="k">0</td><td class="k">0 − 54 = <b>−54</b></td><td class="k">inchangé, <b>−54</b></td></tr>
+          <tr><td>#203</td><td class="k">0</td><td class="k">0 − 84 = <b>−84</b></td><td class="k">inchangé, <b>−84</b></td></tr>
+          <tr><td>#206</td><td class="k">0</td><td class="k">0 − 50 = <b>−50</b></td><td class="k">0 − 35 = <b>−35</b></td></tr>
+          <tr class="t"><td>Total, K€</td><td class="k"></td><td class="k">523</td><td class="k">660</td></tr>
+        </tbody>
+      </table>
+      <p class="chk">Gain par mois = gain par an ÷ 12. Le ROI d'origine, 875 K€, supposait tous les lots livrés à l'heure et au prix prévu.</p>
     </div>
   </div>
 </section>
@@ -1354,7 +1400,7 @@ function SnowGlobe(canvas,onBolt){
       h.innerHTML='<div class="parts">'+(p===4?'<span class="on"><b>A</b>Annexes</span>':PARTS.map((t,j)=>'<span'+(j===p?' class="on"':'')+'><b>0'+(j+1)+'</b>'+t+'</span>').join(''))+'</div><span>Altonéo · Comité stratégique</span>';
       s.prepend(h)}
     if(!s.classList.contains('cover')){const f=document.createElement('div');f.className='foot';
-      f.innerHTML='<span>'+(s.dataset.who==='Annexe'?'':'● '+s.dataset.who)+'</span><span>'+(s.classList.contains('an')?'A'+(++an):String(k+1).padStart(2,'0')+' / '+main)+'</span>';
+      f.innerHTML='<span>'+(s.dataset.who==='Annexe'?'':'● '+s.dataset.who)+'</span><span>'+(s.classList.contains('an')?'A'+(s.dataset.an?(an=parseInt(s.dataset.an)):++an):String(k+1).padStart(2,'0')+' / '+main)+'</span>';
       s.appendChild(f)}
   });
 
